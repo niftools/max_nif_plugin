@@ -230,7 +230,7 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 		if (result!=Exporter::Ok)
 			throw exception("Unknown error.");
 
-		WriteNifTree("d:\\test.nif", NiObjectRef(root), VER_20_0_0_5, 11);
+		WriteNifTree(name, NiObjectRef(root), VER_20_0_0_5, 11);
 	}
 
 	catch (exception &e)
