@@ -14,7 +14,10 @@ void Exporter::strippify(TriStrips &strips, const Triangles &tris)
 	PrimitiveGroup * groups = 0;
 	unsigned short numGroups = 0;
 	
-	SetStitchStrips( false );
+	// GF 3, what about others?
+	SetCacheSize(CACHESIZE_GEFORCE3);
+	// don't generate hundreds of strips
+	SetStitchStrips(true);
 	GenerateStrips(data, tris.size()*3, &groups, &numGroups);
 
 	free( data );
