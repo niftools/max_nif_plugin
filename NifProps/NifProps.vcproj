@@ -216,10 +216,10 @@
 				RelativePath=".\DllEntry.cpp">
 			</File>
 			<File
-				RelativePath="..\MaxPlugins.cpp">
+				RelativePath="..\NifGui.cpp">
 			</File>
 			<File
-				RelativePath="..\NifGui.cpp">
+				RelativePath="..\NifPlugins.cpp">
 			</File>
 			<File
 				RelativePath="NifProps.cpp">
@@ -235,10 +235,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
-				RelativePath="..\MaxPlugins.h">
+				RelativePath="..\NifGui.h">
 			</File>
 			<File
-				RelativePath="..\NifGui.h">
+				RelativePath="..\NifPlugins.h">
 			</File>
 			<File
 				RelativePath="NifProps.h">
