@@ -1,0 +1,32 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifExport", "NifExport.vcproj", "{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "niflib", "niflib\niflib.vcproj", "{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Hybrid
+		ConfigName.2 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.ActiveCfg = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.Build.0 = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.Build.0 = Release|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Debug.ActiveCfg = Debug|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Debug.Build.0 = Debug|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Hybrid.ActiveCfg = Release|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Hybrid.Build.0 = Release|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Release.ActiveCfg = Release|Win32
+		{3654B4B3-0B58-4C0A-8915-18A388C4A4DF}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,332 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PANEL DIALOGEX 0, 0, 108, 113
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_CB_MATERIAL,13,61,80,157,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Material",IDC_LBL_MATERIAL,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_GROUP,12,52,80,8
+    COMBOBOX        IDC_CB_LAYER,14,85,80,171,CBS_DROPDOWNLIST | WS_VSCROLL | 
+                    WS_TABSTOP
+    CONTROL         "Layer",IDC_LBL_LAYER,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_GROUP,12,76,80,8
+    GROUPBOX        "Havok",IDC_GRP_HAVOK,7,42,94,64
+    GROUPBOX        "Object",IDC_GRP_OBJECT,7,7,94,32
+    CONTROL         "Is Collision Mesh",IDC_CHK_ISCOLL,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,20,80,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 101
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 106
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_PANEL DLGINIT
+BEGIN
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x7453, 0x6e6f, 0x0065, 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x6c43, 0x746f, 0x0068, 
+    IDC_CB_MATERIAL, 0x403, 5, 0
+0x6944, 0x7472, "\000" 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x6c47, 0x7361, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x7247, 0x7361, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x654d, 0x6174, 0x006c, 
+    IDC_CB_MATERIAL, 0x403, 8, 0
+0x724f, 0x6167, 0x696e, 0x0063, 
+    IDC_CB_MATERIAL, 0x403, 5, 0
+0x6b53, 0x6e69, "\000" 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x6157, 0x6574, 0x0072, 
+    IDC_CB_MATERIAL, 0x403, 5, 0
+0x6f57, 0x646f, "\000" 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6548, 0x7661, 0x2079, 0x7453, 0x6e6f, 0x0065, 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6548, 0x7661, 0x2079, 0x654d, 0x6174, 0x006c, 
+    IDC_CB_MATERIAL, 0x403, 11, 0
+0x6548, 0x7661, 0x2079, 0x6f57, 0x646f, "\000" 
+    IDC_CB_MATERIAL, 0x403, 6, 0
+0x6843, 0x6961, 0x006e, 
+    IDC_CB_MATERIAL, 0x403, 5, 0
+0x6e53, 0x776f, "\000" 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x7453, 0x6e6f, 0x2065, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x6c43, 0x746f, 0x2068, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6944, 0x7472, 0x5320, 0x6174, 0x7269, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x6c47, 0x7361, 0x2073, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x7247, 0x7361, 0x2073, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x654d, 0x6174, 0x206c, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 15, 0
+0x724f, 0x6167, 0x696e, 0x2063, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6b53, 0x6e69, 0x5320, 0x6174, 0x7269, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x6157, 0x6574, 0x2072, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6f57, 0x646f, 0x5320, 0x6174, 0x7269, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 19, 0
+0x6548, 0x7661, 0x2079, 0x7453, 0x6e6f, 0x2065, 0x7453, 0x6961, 0x7372, 
+"\000" 
+    IDC_CB_MATERIAL, 0x403, 19, 0
+0x6548, 0x7661, 0x2079, 0x654d, 0x6174, 0x206c, 0x7453, 0x6961, 0x7372, 
+"\000" 
+    IDC_CB_MATERIAL, 0x403, 18, 0
+0x6548, 0x7661, 0x2079, 0x6f57, 0x646f, 0x5320, 0x6174, 0x7269, 0x0073, 
+
+    IDC_CB_MATERIAL, 0x403, 13, 0
+0x6843, 0x6961, 0x206e, 0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_MATERIAL, 0x403, 12, 0
+0x6e53, 0x776f, 0x5320, 0x6174, 0x7269, 0x0073, 
+    IDC_CB_MATERIAL, 0x403, 9, 0
+0x6c45, 0x7665, 0x7461, 0x726f, "\000" 
+    IDC_CB_LAYER, 0x403, 13, 0
+0x6e55, 0x6469, 0x6e65, 0x6974, 0x6966, 0x6465, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7453, 0x7461, 0x6369, "\000" 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x6e41, 0x6d69, 0x7453, 0x7461, 0x6369, "\000" 
+    IDC_CB_LAYER, 0x403, 12, 0
+0x7254, 0x6e61, 0x7073, 0x7261, 0x6e65, 0x0074, 
+    IDC_CB_LAYER, 0x403, 8, 0
+0x6c43, 0x7475, 0x6574, 0x0072, 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x6557, 0x7061, 0x6e6f, "\000" 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x7250, 0x6a6f, 0x6365, 0x6974, 0x656c, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x7053, 0x6c65, 0x006c, 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x6942, 0x6570, 0x0064, 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x7254, 0x6565, "\000" 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x7250, 0x706f, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x6157, 0x6574, 0x0072, 
+    IDC_CB_LAYER, 0x403, 8, 0
+0x7254, 0x6769, 0x6567, 0x0072, 
+    IDC_CB_LAYER, 0x403, 8, 0
+0x6554, 0x7272, 0x6961, 0x006e, 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x7254, 0x7061, "\000" 
+    IDC_CB_LAYER, 0x403, 14, 0
+0x6f4e, 0x436e, 0x6c6f, 0x696c, 0x6164, 0x6c62, 0x0065, 
+    IDC_CB_LAYER, 0x403, 10, 0
+0x6c43, 0x756f, 0x5464, 0x6172, 0x0070, 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7247, 0x756f, 0x646e, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x6f50, 0x7472, 0x6c61, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7453, 0x6961, 0x7372, "\000" 
+    IDC_CB_LAYER, 0x403, 15, 0
+0x6843, 0x7261, 0x6f43, 0x746e, 0x6f72, 0x6c6c, 0x7265, "\000" 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x7641, 0x696f, 0x4264, 0x786f, "\000" 
+    IDC_CB_LAYER, 0x403, 2, 0
+0x003f, 
+    IDC_CB_LAYER, 0x403, 2, 0
+0x003f, 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x6143, 0x656d, 0x6172, 0x6950, 0x6b63, "\000" 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x7449, 0x6d65, 0x6950, 0x6b63, "\000" 
+    IDC_CB_LAYER, 0x403, 12, 0
+0x694c, 0x656e, 0x664f, 0x6953, 0x6867, 0x0074, 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x6150, 0x6874, 0x6950, 0x6b63, "\000" 
+    IDC_CB_LAYER, 0x403, 12, 0
+0x7543, 0x7473, 0x6d6f, 0x6950, 0x6b63, 0x0031, 
+    IDC_CB_LAYER, 0x403, 12, 0
+0x7543, 0x7473, 0x6d6f, 0x6950, 0x6b63, 0x0032, 
+    IDC_CB_LAYER, 0x403, 15, 0
+0x7053, 0x6c65, 0x456c, 0x7078, 0x6f6c, 0x6973, 0x6e6f, "\000" 
+    IDC_CB_LAYER, 0x403, 13, 0
+0x7244, 0x706f, 0x6970, 0x676e, 0x6950, 0x6b63, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x744f, 0x6568, 0x0072, 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x6548, 0x6461, "\000" 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x6f42, 0x7964, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7053, 0x6e69, 0x3165, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7053, 0x6e69, 0x3265, "\000" 
+    IDC_CB_LAYER, 0x403, 10, 0
+0x554c, 0x7070, 0x7265, 0x7241, 0x006d, 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x464c, 0x726f, 0x4165, 0x6d72, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x484c, 0x6e61, 0x0064, 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x544c, 0x6968, 0x6867, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x434c, 0x6c61, 0x0066, 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x464c, 0x6f6f, 0x0074, 
+    IDC_CB_LAYER, 0x403, 10, 0
+0x5552, 0x7070, 0x7265, 0x7241, 0x006d, 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x4652, 0x726f, 0x4165, 0x6d72, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x4852, 0x6e61, 0x0064, 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x5452, 0x6968, 0x6867, "\000" 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x4352, 0x6c61, 0x0066, 
+    IDC_CB_LAYER, 0x403, 6, 0
+0x4652, 0x6f6f, 0x0074, 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x6154, 0x6c69, "\000" 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x6953, 0x6564, 0x6557, 0x7061, 0x6e6f, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x6853, 0x6569, 0x646c, "\000" 
+    IDC_CB_LAYER, 0x403, 7, 0
+0x7551, 0x7669, 0x7265, "\000" 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x6142, 0x6b63, 0x6557, 0x7061, 0x6e6f, "\000" 
+    IDC_CB_LAYER, 0x403, 11, 0
+0x6142, 0x6b63, 0x6557, 0x7061, 0x6e6f, "\000" 
+    IDC_CB_LAYER, 0x403, 9, 0
+0x6f50, 0x796e, 0x6154, 0x6c69, "\000" 
+    IDC_CB_LAYER, 0x403, 5, 0
+0x6957, 0x676e, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_LIBDESCRIPTION      "Set Nif Properties"
+    IDS_CATEGORY            "Utilities"
+    IDS_CLASS_NAME          "NifProps"
+    IDS_PARAMS              "Parameters"
+    IDS_SPIN                "Spin"
+END
+
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

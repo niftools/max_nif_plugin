@@ -1,0 +1,76 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifExport", "NifExport\NifExport.vcproj", "{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NIFlib", "NifExport\niflib\niflib.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifProps", "NifProps\NifProps.vcproj", "{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifFurniture", "NifFurniture\NifFurniture.vcproj", "{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Debug - PCH
+		ConfigName.2 = Hybrid
+		ConfigName.3 = PyNiflib
+		ConfigName.4 = Release
+		ConfigName.5 = Release - DLL
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.0 = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.ActiveCfg = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.Build.0 = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.Build.0 = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.Build.0 = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug.ActiveCfg = Debug|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug.Build.0 = Debug|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - PCH.ActiveCfg = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - PCH.Build.0 = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Hybrid.ActiveCfg = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Hybrid.Build.0 = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.PyNiflib.ActiveCfg = Debug|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.PyNiflib.Build.0 = Debug|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release.ActiveCfg = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release.Build.0 = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - DLL.ActiveCfg = Release - DLL|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - DLL.Build.0 = Release - DLL|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.ActiveCfg = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.Build.0 = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.Build.0 = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.Build.0 = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - PCH.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.ActiveCfg = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Hybrid.Build.0 = Hybrid|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.ActiveCfg = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.PyNiflib.Build.0 = Debug|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release.Build.0 = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.ActiveCfg = Release|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - DLL.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
