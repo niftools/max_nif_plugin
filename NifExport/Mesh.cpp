@@ -97,6 +97,9 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 	data->SetUVSetCount(1);
 	data->SetUVSet(0, grp.uvs);
 
+	if (grp.vcolors.size() > 0)
+		data->SetVertexColors(grp.vcolors);
+
 	shape->SetData(data);
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
@@ -108,19 +111,38 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 	return true;
 }
 
-int Exporter::addVertex(FaceGroup &grp, const Point3 &pt, const Point3 &uv, const Point3 &norm)
+int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh)
 {
+	Point3 pt = mesh->verts[ mesh->faces[ face ].v[ vi ] ];
+	Point3 uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]];
+	Point3 norm = getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi ]));
+
+	VertColor col;
+	if (mVertexColors && mesh->vertCol)
+		col = mesh->vertCol[ mesh->vcFace[ face ].t[ vi ] ];
+
 	for (int i=0; i<grp.verts.size(); i++)
 	{
 		if (equal(grp.verts[i], pt, mWeldThresh) &&
 			grp.uvs[i].u==uv.x && grp.uvs[i].v==uv.y &&
 			equal(grp.vnorms[i], norm, 0))
+		{
+			if (mVertexColors && mesh->vertCol &&
+				(grp.vcolors[i].r!=col.x ||
+				 grp.vcolors[i].g!=col.y ||
+				 grp.vcolors[i].b!=col.z))
+				continue;
+
 			return i;
+		}
 	}
 	
 	grp.verts.push_back(Vector3(pt.x, pt.y, pt.z));
 	grp.uvs.push_back(TexCoord(uv.x, uv.y));
 	grp.vnorms.push_back(Vector3(norm.x, norm.y, norm.z));
+
+	if (mVertexColors && mesh->vertCol)
+		grp.vcolors.push_back(Color4(col.x, col.y, col.z, 1));
 
 	return grp.verts.size()-1;
 }
@@ -130,11 +152,13 @@ void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh)
 	Triangle tri;
 	for (int i=0; i<3; i++)
 	{
-		Point3 tv = mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ]; // * tm;
+/*		Point3 tv = mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ]; // * tm;
 		tri[i] = addVertex(grp, 
 			               tv, 
 						   mesh->tVerts[ mesh->tvFace[ face ].t[ vi[i] ]], 
 						   getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi[i] ])));
+*/
+		tri[i] = addVertex(grp, face, vi[i], mesh);
 	}
 
 	grp.faces.push_back(tri);

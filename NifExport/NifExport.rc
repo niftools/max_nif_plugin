@@ -102,7 +102,7 @@ BEGIN
     CONTROL         "Export Co&llision",IDC_CHK_COLL,"Button",
                     BS_AUTOCHECKBOX | WS_TABSTOP,85,18,68,10
     CONTROL         "&Vertex Colors",IDC_CHK_VCOLORS,"Button",
-                    BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,85,31,68,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,85,31,68,10
     LTEXT           "http://niftools.sourceforge.net",IDC_LBL_LINK,98,87,95,
                     14,SS_NOTIFY | SS_CENTERIMAGE
 END

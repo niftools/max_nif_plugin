@@ -90,7 +90,7 @@ private:
 	/* mesh export */
 	// adds a vertex to a face group if it doesn't exist yet. returns new or previous index into the
 	// vertex array.
-	int 				addVertex(FaceGroup &grp, const Point3 &pt, const Point3 &uv, const Point3 &norm);
+	int 				addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh);
 	// adds a face to a face group
 	void				addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh);
 	// returns true if at least one of the colors in the group has a value != (1, 1, 1, 1)

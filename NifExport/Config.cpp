@@ -29,7 +29,7 @@ void Exporter::writeConfig()
 	regSet(hKey, "npx_furn", mExportFurn);
 	regSet(hKey, "npx_lights", mExportLights);
 	regSet(hKey, "npx_vcolors", mVertexColors);
-	regSet(hKey, "npx_wthresh", mWeldThresh);
+//	regSet(hKey, "npx_wthresh", mWeldThresh);
 	regSet(hKey, "npx_tprefix", mTexPrefix);
 	regSet(hKey, "npx_coll", mExportCollision);
 }
@@ -52,7 +52,7 @@ void Exporter::readConfig()
 	regGet(hKey, "npx_furn", mExportFurn);
 	regGet(hKey, "npx_lights", mExportLights);
 	regGet(hKey, "npx_vcolors", mVertexColors);
-	regGet(hKey, "npx_wthresh", mWeldThresh);
+//	regGet(hKey, "npx_wthresh", mWeldThresh);
 	regGet(hKey, "npx_tprefix", mTexPrefix);
 	regGet(hKey, "npx_coll", mExportCollision);
 }
