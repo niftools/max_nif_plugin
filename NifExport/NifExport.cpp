@@ -70,6 +70,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 				CheckDlgButton(hWnd, IDC_CHK_VCOLORS, Exporter::mVertexColors);
 				SetDlgItemText(hWnd, IDC_ED_TEXPREFIX, Exporter::mTexPrefix.c_str());
 				CheckDlgButton(hWnd, IDC_CHK_COLL, Exporter::mExportCollision);
+				CheckDlgButton(hWnd, IDC_CHK_REMAP, Exporter::mRemapIndices);
 
 				TSTR tmp;
 				tmp.printf("%.4f", Exporter::mWeldThresh);
@@ -97,6 +98,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 						Exporter::mExportLights = IsDlgButtonChecked(hWnd, IDC_CHK_LIGHTS);
 						Exporter::mVertexColors = IsDlgButtonChecked(hWnd, IDC_CHK_VCOLORS);
 						Exporter::mExportCollision = IsDlgButtonChecked(hWnd, IDC_CHK_COLL);
+						Exporter::mRemapIndices = IsDlgButtonChecked(hWnd, IDC_CHK_REMAP);
 							
 						GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
 						Exporter::mTexPrefix = tmp;

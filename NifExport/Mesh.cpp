@@ -79,7 +79,9 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 		NiTriStripsRef stripsShape = DynamicCast<NiTriStrips>(CreateBlock("NiTriStrips"));
 		shape = DynamicCast<NiTriBasedGeom>(stripsShape);
 
-		NiTriStripsDataRef stripData = makeTriStripsData(grp.faces);
+		TriStrips strips;
+		strippify(strips, grp);
+		NiTriStripsDataRef stripData = makeTriStripsData(strips);
 		data = DynamicCast<NiTriBasedGeomData>(stripData);
 
 	} else

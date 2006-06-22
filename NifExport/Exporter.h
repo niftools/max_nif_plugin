@@ -30,6 +30,7 @@ public:
 	static bool			mVertexColors;
 	static float		mWeldThresh;
 	static bool			mExportCollision;
+	static bool			mRemapIndices;
 
 	Exporter(Interface *i);
 
@@ -83,9 +84,9 @@ private:
 	bool				equal(const Vector3 &a, const Point3 &b, float thresh);
 
 	/* tristrips */
-	void				strippify(TriStrips &strips, const Triangles &tris);
+	void				strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris);
+	void				strippify(TriStrips &strips, FaceGroup &grp);
 	NiTriStripsDataRef	makeTriStripsData(const TriStrips &strips);
-	NiTriStripsDataRef	makeTriStripsData(const Triangles &tris);
 
 	/* mesh export */
 	// adds a vertex to a face group if it doesn't exist yet. returns new or previous index into the

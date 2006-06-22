@@ -10,6 +10,7 @@ bool Exporter::mVertexColors=true;
 float Exporter::mWeldThresh=0.1f;
 string Exporter::mTexPrefix="textures";
 bool Exporter::mExportCollision=true;
+bool Exporter::mRemapIndices=true;
 
 Exporter::Exporter(Interface *i)
 	: mI(i)

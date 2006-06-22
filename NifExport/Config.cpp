@@ -32,6 +32,7 @@ void Exporter::writeConfig()
 //	regSet(hKey, "npx_wthresh", mWeldThresh);
 	regSet(hKey, "npx_tprefix", mTexPrefix);
 	regSet(hKey, "npx_coll", mExportCollision);
+	regSet(hKey, "npx_remap", mRemapIndices);
 }
 
 void Exporter::readConfig(INode *node)
@@ -55,6 +56,7 @@ void Exporter::readConfig()
 //	regGet(hKey, "npx_wthresh", mWeldThresh);
 	regGet(hKey, "npx_tprefix", mTexPrefix);
 	regGet(hKey, "npx_coll", mExportCollision);
+	regGet(hKey, "npx_remap", mRemapIndices);
 }
 
 

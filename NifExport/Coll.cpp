@@ -77,7 +77,9 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 	for (int i=0; i<mesh->getNumFaces(); i++)
 		addFace(tris, verts, vnorms, i, vi, mesh);
 
-	NiTriStripsDataRef data = makeTriStripsData(tris);
+	TriStrips strips;
+	strippify(strips, verts, vnorms, tris);
+	NiTriStripsDataRef data = makeTriStripsData(strips);
 	data->SetVertices(verts);
 	data->SetNormals(vnorms);
 
