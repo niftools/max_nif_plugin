@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#define REGPATH "Software\\NifTools\\NifPlugins"
+#define REGPATH "Software\\NifTools\\MaxPlugins"
 
 void regSet(HKEY hKey, const char *value, float f);
 void regSet(HKEY hKey, const char *value, bool b);

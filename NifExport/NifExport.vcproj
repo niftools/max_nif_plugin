@@ -247,6 +247,12 @@
 			<File
 				RelativePath="..\NifPlugins.cpp">
 				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
@@ -265,6 +271,12 @@
 				<File
 					RelativePath="NvTriStrip\NvTriStrip.cpp">
 					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
@@ -274,6 +286,12 @@
 				<File
 					RelativePath="NvTriStrip\NvTriStripObjects.cpp">
 					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
 							Name="VCCLCompilerTool"
@@ -282,6 +300,12 @@
 				</File>
 				<File
 					RelativePath="NvTriStrip\VertexCache.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"/>
+					</FileConfiguration>
 					<FileConfiguration
 						Name="Debug|Win32">
 						<Tool
