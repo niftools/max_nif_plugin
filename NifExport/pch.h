@@ -22,8 +22,12 @@
 #include "niflib/obj/NiMaterialProperty.h"
 #include "niflib/obj/NiTexturingProperty.h"
 #include "niflib/obj/NiSourceTexture.h"
+#include "niflib/obj/BsxFlags.h"
+#include "niflib/obj/NiStringExtraData.h"
 
 #include "NvTriStrip/NvTriStrip.h"
+#include <deque>
+#include "TriStripper/tri_stripper.h"
 
 #include "../NifPlugins.h"
 #include "Exporter.h"

@@ -20,6 +20,17 @@ Exporter::Exporter(Interface *i)
 
 Exporter::Result Exporter::export(NiNodeRef &root, INode *node)
 {
+	BSXFlagsRef bsx = DynamicCast<BSXFlags>(CreateBlock("BSXFlags"));
+	bsx->SetName("BSX");
+	bsx->SetFlags(0x00000002);
+
+	NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
+	strings->SetName("UPB");
+	strings->SetData("Ellasticity = 0.300000\r\nFriction = 0.300000\r\nUnyielding = 0\r\nProxy_Geometry = <None>\r\nUse_Display_Proxy = 0\r\nDisplay_Children = 1\r\nDisable_Collisions = 0\r\nInactive = 0\r\nDisplay_Proxy = <None>\r\nMass = 0.000000\r\nSimulation_Geometry = 2\r\nCollision_Groups = 589825\r\n");
+
+	root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+	root->AddExtraData(DynamicCast<NiExtraData>(strings));
+
 	mNiRoot = root;
 	return exportTree(root, node);
 }
