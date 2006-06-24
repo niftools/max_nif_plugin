@@ -309,7 +309,7 @@
 				OutputFile="D:\3dsmax6\plugins\NifProps.dlu"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				AdditionalLibraryDirectories="D:\3dsmax8\maxsdk\lib"
+				AdditionalLibraryDirectories="D:\3dsmax6\maxsdk\lib"
 				ModuleDefinitionFile=".\NifProps.def"
 				ProgramDatabaseFile="D:\3dsmax6\plugins\NifProps.dlu"
 				SubSystem="2"
@@ -319,6 +319,78 @@
 				SetChecksum="TRUE"
 				BaseAddress="0x16860000"
 				ImportLibrary=".\Release6\NifProps.lib"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release\NifProps.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 7|Win32"
+			OutputDirectory="Release7"
+			IntermediateDirectory="Release7"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/LD "
+				Optimization="2"
+				GlobalOptimizations="TRUE"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="TRUE"
+				OptimizeForProcessor="2"
+				AdditionalIncludeDirectories="D:\3dsmax7\maxsdk\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				BufferSecurityCheck="FALSE"
+				EnableFunctionLevelLinking="TRUE"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile=".\Release7\NifProps.pch"
+				AssemblerListingLocation=".\Release7\"
+				ObjectFile=".\Release7\"
+				ProgramDataBaseFileName=".\Release7\"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib bmm.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib gup.lib paramblk2.lib"
+				OutputFile="D:\3dsmax7\plugins\NifProps.dlu"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories="D:\3dsmax7\maxsdk\lib"
+				ModuleDefinitionFile=".\NifProps.def"
+				ProgramDatabaseFile="D:\3dsmax7\plugins\NifProps.dlu"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				OptimizeForWindows98="1"
+				SetChecksum="TRUE"
+				BaseAddress="0x16860000"
+				ImportLibrary=".\Release7\NifProps.lib"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
