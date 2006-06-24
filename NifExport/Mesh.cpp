@@ -113,12 +113,16 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 	return true;
 }
 
-int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh)
+int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm)
 {
 	Point3 pt = mesh->verts[ mesh->faces[ face ].v[ vi ] ];
-	Point3 uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]];
+	Point3 uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
 	Point3 norm = getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi ]));
 
+/*	uv.z = uv.x;
+	uv.x = uv.y;
+	uv.y = uv.z;
+*/
 	VertColor col;
 	if (mVertexColors && mesh->vertCol)
 		col = mesh->vertCol[ mesh->vcFace[ face ].t[ vi ] ];
@@ -149,18 +153,24 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh)
 	return grp.verts.size()-1;
 }
 
-void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh)
+void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm)
 {
 	Triangle tri;
 	for (int i=0; i<3; i++)
 	{
+		DWORD t0 = mesh->tvFace[ face ].getTVert(0);
+		DWORD t1 = mesh->tvFace[ face ].getTVert(1);
+		DWORD t2 = mesh->tvFace[ face ].getTVert(2);
+
+		int dir = mesh->tvFace[ face ].Direction(t0, t1);
+
 /*		Point3 tv = mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ]; // * tm;
 		tri[i] = addVertex(grp, 
 			               tv, 
 						   mesh->tVerts[ mesh->tvFace[ face ].t[ vi[i] ]], 
 						   getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi[i] ])));
 */
-		tri[i] = addVertex(grp, face, vi[i], mesh);
+		tri[i] = addVertex(grp, face, vi[i], mesh, texm);
 	}
 
 	grp.faces.push_back(tri);
@@ -190,7 +200,11 @@ bool Exporter::splitMesh(INode *node, Mesh *mesh, FaceGroups &grps, TimeValue t)
 	for (i=0; i<mesh->getNumFaces(); i++) 
 	{
 		int mtlID = (numSubMtls!=0) ? (mesh->faces[i].getMatID() % numSubMtls) : 0;
-		addFace(grps[mtlID], i, vi, mesh);
+
+		Matrix3 texm;
+		getTextureMatrix(texm, getMaterial(node, mtlID));
+
+		addFace(grps[mtlID], i, vi, mesh, texm);
 	}
 
 	return true;

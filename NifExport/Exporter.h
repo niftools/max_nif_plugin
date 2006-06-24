@@ -3,6 +3,8 @@
 
 using namespace Niflib;
 
+class BitmapTex;
+
 class Exporter
 {
 
@@ -91,9 +93,9 @@ private:
 	/* mesh export */
 	// adds a vertex to a face group if it doesn't exist yet. returns new or previous index into the
 	// vertex array.
-	int 				addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh);
+	int 				addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm);
 	// adds a face to a face group
-	void				addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh);
+	void				addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm);
 	// returns true if at least one of the colors in the group has a value != (1, 1, 1, 1)
 	bool				hasVertexColors(FaceGroup &grp);
 	// creates face groups from faces with same sub material id
@@ -108,6 +110,8 @@ private:
 	void				makeTexture(NiAVObjectRef &parent, Mtl *mtl);
 	// creates a NiMaterialProperty
 	void				makeMaterial(NiAVObjectRef &parent, Mtl *mtl);
+	BitmapTex			*getTexture(Mtl *mtl);
+	void				getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 
 	/* havok & collision */
 	bool				hasCollision(INode *node);

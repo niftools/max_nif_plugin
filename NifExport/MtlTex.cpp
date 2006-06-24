@@ -1,16 +1,14 @@
 #include "pch.h"
 #include "stdmat.h"
 
-void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
+BitmapTex *Exporter::getTexture(Mtl *mtl)
 {
 	if (!mtl)
-		return;
-
-	string mtlName = mtl->GetName();
+		return NULL;
 
 	int texMaps = mtl->NumSubTexmaps();
 	if (!texMaps)
-		return;
+		return NULL;
 
 	BitmapTex *bmTex = NULL;
 	for (int i=0; i<texMaps; i++)
@@ -25,6 +23,22 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 			break;
 		}
 	}
+
+	return bmTex;
+}
+
+void Exporter::getTextureMatrix(Matrix3 &mat, Mtl *mtl)
+{
+	BitmapTex *tex = getTexture(mtl);
+	if (tex)
+		tex->GetUVTransform(mat);
+	else
+		mat.IdentityMatrix();
+}
+
+void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
+{
+	BitmapTex *bmTex = getTexture(mtl);
 
 	if (!bmTex)
 		return;

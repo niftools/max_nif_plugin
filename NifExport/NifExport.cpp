@@ -153,7 +153,7 @@ int NifExport::ExtCount()
 
 const TCHAR *NifExport::Ext(int n)
 {		
-	return _T("nif");
+	return _T("fif");
 }
 
 const TCHAR *NifExport::LongDesc()

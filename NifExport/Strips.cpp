@@ -33,6 +33,32 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 
 void Exporter::strippify(TriStrips &strips, FaceGroup &grp)
 {
+/*	vector<unsigned int> idcs(grp.faces.size()*3);
+	int i;
+	for (i=0; i<grp.faces.size(); i++)
+	{
+		idcs[i * 3 + 0] = grp.faces[i][0];
+		idcs[i * 3 + 1] = grp.faces[i][1];
+		idcs[i * 3 + 2] = grp.faces[i][2];
+	}
+	
+	tri_stripper stripper(idcs);
+
+	tri_stripper::primitives_vector groups;
+	stripper.Strip(&groups);
+
+	for (i=0; i<groups.size(); i++)
+	{
+		if (groups[i].m_Type != tri_stripper::PT_Triangle_Strip)
+			continue;
+		
+		strips.push_back(TriStrip(groups[i].m_Indices.size()));
+		TriStrip &strip = strips.back();
+
+		for (int j=0; j<groups[i].m_Indices.size(); j++)
+			strip[j] = groups[i].m_Indices[j];
+	}
+*/
 	unsigned short *data = (unsigned short *)malloc(grp.faces.size() * 3 * 2);
 
 	int i;
