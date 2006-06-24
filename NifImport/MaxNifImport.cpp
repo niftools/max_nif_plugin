@@ -107,6 +107,11 @@ public:
    bool hasSkeleton;
    bool isBiped;
    bool removeUnusedImportedBones;
+   bool forceRotation;
+
+   float minBoneWidth;
+   float maxBoneWidth;
+   float boneWidthToLengthRatio;
 
    vector<NiObjectRef> blocks;
    vector<NiNodeRef> nodes;
@@ -169,6 +174,8 @@ public:
 
    bool ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom);
    Texmap* CreateTexture(TexDesc& desc);
+
+   INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
 };
 
 
@@ -475,6 +482,11 @@ void NifImporter::LoadIniSettings()
    bipedAnkleAttach = GetIniValue<float>(BipedImportSection, "BipedAnkleAttach", 0.2f);
    bipedTrianglePelvis = GetIniValue<bool>(BipedImportSection, "BipedTrianglePelvis", false);
    removeUnusedImportedBones = GetIniValue<bool>(BipedImportSection, "RemoveUnusedImportedBones", false);
+   forceRotation = GetIniValue<bool>(BipedImportSection, "ForceRotation", false);
+
+   minBoneWidth = GetIniValue<float>(BipedImportSection, "MinBoneWidth", 0.5f);
+   maxBoneWidth = GetIniValue<float>(BipedImportSection, "MaxBoneWidth", 3.0f);
+   boneWidthToLengthRatio = GetIniValue<float>(BipedImportSection, "BoneWidthToLengthRatio", 0.25f);
 
    importSkeleton = hasSkeleton = HasSkeleton();
    isBiped = IsBiped();
@@ -738,7 +750,7 @@ void NifImporter::ScaleBiped(IBipMaster* master, NiNodeRef block, bool Recurse)
 }
 
 
-INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis)
+INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis)
 {
    if (FPInterface * fpBones = GetCOREInterface(Interface_ID(0x438aff72, 0xef9675ac)))
    {
@@ -751,12 +763,8 @@ INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAx
          if (INode *n = result.n)
          {
             n->SetName(const_cast<TCHAR*>(name.c_str()));
-
-            const float wmin = 0.5f;
-            const float wmax = 3.0f;
             float len = fabs(Length(startPos)-Length(endPos));
-            float width = max(wmin, min(wmax, len / 4.0f));
-
+            float width = max(minBoneWidth, min(maxBoneWidth, len * boneWidthToLengthRatio));
             if (Object* o = n->GetObjectRef())
             {
                setMAXScriptValue(o->GetReference(0), "width", 0, width);
@@ -784,6 +792,7 @@ void NifImporter::ImportBones(NiNodeRef node)
       vector<NiNodeRef> children = DynamicCast<NiNode>(node->GetChildren());
       NiNodeRef parent = node->GetParent();
 
+      PosRotScale prs = prsDefault;
       Matrix3 im = TOMATRIX3(node->GetWorldTransform(), true);
       Point3 p = im.GetTrans();
       Quat q(im);
@@ -795,13 +804,14 @@ void NifImporter::ImportBones(NiNodeRef node)
          INode *pinode = bone->GetParentNode();
          if (pinode)
             bone->Detach(0,1);
-         PositionAndRotateNode(bone, p, q);
+         PositionAndRotateNode(bone, p, q, prs);
          if (pinode)
             pinode->AttachChild(bone, 1);
       }
       else
       {
          Vector3 ppos;
+         Point3 zAxis(0,1,0);
          if (!children.empty()) {
             for (vector<NiNodeRef>::iterator itr=children.begin(), end = children.end(); itr != end; ++itr) {
                Matrix44 cwt = (*itr)->GetWorldTransform();
@@ -816,12 +826,18 @@ void NifImporter::ImportBones(NiNodeRef node)
             Matrix44 pwt = parent->GetWorldTransform();
             Matrix33 prot; float pscale;
             pwt.Decompose(ppos, prot, pscale);
+            if (forceRotation)
+               prs = prsPos;
+         }
+         else
+         {
+            if (forceRotation)
+               prs = prsPos;
          }
          Point3 pp(ppos.x, ppos.y, ppos.z);
-         Point3 zAxis(0,1,0);
          if (bone = CreateBone(name, p, pp, zAxis))
          {
-            PositionAndRotateNode(bone, p, q);
+            PositionAndRotateNode(bone, p, q, prs);
             if (parent)
             {
                if (INode *pn = gi->GetINodeByName(parent->GetName().c_str()))

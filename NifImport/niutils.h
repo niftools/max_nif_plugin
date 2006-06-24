@@ -194,7 +194,15 @@ extern void FindImages(NameValueCollection& images, const string& rootPath, cons
 extern void RenameNode(Interface *gi, LPCTSTR SrcName, LPCTSTR DstName);
 extern TriObject* GetTriObject(Object *o);
 extern Modifier *GetSkin(INode *node);
-extern void PositionAndRotateNode(INode *n, Point3 p, Quat& q, TimeValue t = 0);
+
+enum PosRotScale
+{
+   prsPos = 0x1,
+   prsRot = 0x2,
+   prsScale = 0x4,
+   prsDefault = prsPos | prsRot | prsScale,
+};
+extern void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs = prsDefault, TimeValue t = 0);
 
 extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks, const string& name );
 extern std::vector<Niflib::NiNodeRef> SelectNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match);
@@ -216,6 +224,10 @@ static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = true){
    if (invert) m.Invert();
    m.SetTrans(Point3(pos.x, pos.y, pos.z));
    return m;
+}
+
+static inline Quat TOQUAT(const Niflib::Quaternion& q){
+   return Quat(q.x, q.y, q.z, q.w);
 }
 
 #endif // _NIUTILS_H_

@@ -356,7 +356,7 @@ Modifier *GetSkin(INode *node)
 
 // Set Position and Rotation on a standard controller will need to handle bipeds
 //   Always in World Transform coordinates
-void PositionAndRotateNode(INode *n, Point3 p, Quat& q, TimeValue t)
+void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs, TimeValue t)
 {
    if (Control *c = n->GetTMController()) {
 
@@ -368,15 +368,19 @@ void PositionAndRotateNode(INode *n, Point3 p, Quat& q, TimeValue t)
          // Get the Biped Export Interface from the controller 
          //IBipedExport *BipIface = (IBipedExport *) c->GetInterface(I_BIPINTERFACE);
          IOurBipExport *BipIface = (IOurBipExport *) c->GetInterface(I_OURINTERFACE);
-         BipIface->SetBipedRotation(q, t, n, 0/*???*/);
-         BipIface->SetBipedPosition(p, t, n);
+         if (prs & prsRot)
+            BipIface->SetBipedRotation(q, t, n, 0/*???*/);
+         if (prs & prsPos)
+            BipIface->SetBipedPosition(p, t, n);
       }
       else
       {
-         if (Control *rotCtrl = c->GetRotationController())
-            rotCtrl->SetValue(t, &q, 1, CTRL_ABSOLUTE);
-         if (Control *posCtrl = c->GetPositionController())
-            posCtrl->SetValue(t, &p, 1, CTRL_ABSOLUTE);
+         if (prs & prsRot)
+            if (Control *rotCtrl = c->GetRotationController())
+               rotCtrl->SetValue(t, &q, 1, CTRL_ABSOLUTE);
+         if (prs & prsPos)
+            if (Control *posCtrl = c->GetPositionController())
+               posCtrl->SetValue(t, &p, 1, CTRL_ABSOLUTE);
       }
    }
 }
