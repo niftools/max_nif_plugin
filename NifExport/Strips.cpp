@@ -18,47 +18,59 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 	tri_stripper::primitives_vector groups;
 	stripper.Strip(&groups);
 
+	// triangles left over
+	Triangles stris;
 	for (i=0; i<groups.size(); i++)
 	{
-		if (groups[i].m_Type != tri_stripper::PT_Triangle_Strip)
-			continue;
-		
-		strips.push_back(TriStrip(groups[i].m_Indices.size()));
-		TriStrip &strip = strips.back();
+		if (groups[i].m_Type == tri_stripper::PT_Triangle_Strip)
+		{			
+			strips.push_back(TriStrip(groups[i].m_Indices.size()));
+			TriStrip &strip = strips.back();
 
-		for (int j=0; j<groups[i].m_Indices.size(); j++)
-			strip[j] = groups[i].m_Indices[j];
+			for (int j=0; j<groups[i].m_Indices.size(); j++)
+				strip[j] = groups[i].m_Indices[j];
+		} else
+		{
+			int size = stris.size();
+			stris.resize(size + groups[i].m_Indices.size()/3);
+			for (int j=(size>0)?(size-1):0; j<stris.size(); j++)
+			{
+				stris[j][0] = groups[i].m_Indices[j*3+0];
+				stris[j][1] = groups[i].m_Indices[j*3+1];
+				stris[j][2] = groups[i].m_Indices[j*3+2];
+			}
+		}
+	}
+
+	if (stris.size())
+	{
+		// stitch em
+		TriStrip strip;
+		if (strips.size() > 0)
+		{
+			strip.push_back(strips.back()[strips.back().size()-1]);
+			strip.push_back(stris[0][0]);
+		}
+		for (i=0; i<stris.size(); i++)
+		{
+			if (i > 0)
+			{
+				strip.push_back(stris[i][0]);
+				strip.push_back(stris[i][0]);
+			}
+
+			strip.push_back(stris[i][0]);
+			strip.push_back(stris[i][1]);
+			strip.push_back(stris[i][2]);
+			if (i < stris.size()-1)
+				strip.push_back(stris[i][2]);
+		}
+		strips.push_back(strip);
 	}
 }
 
 void Exporter::strippify(TriStrips &strips, FaceGroup &grp)
 {
-/*	vector<unsigned int> idcs(grp.faces.size()*3);
-	int i;
-	for (i=0; i<grp.faces.size(); i++)
-	{
-		idcs[i * 3 + 0] = grp.faces[i][0];
-		idcs[i * 3 + 1] = grp.faces[i][1];
-		idcs[i * 3 + 2] = grp.faces[i][2];
-	}
-	
-	tri_stripper stripper(idcs);
-
-	tri_stripper::primitives_vector groups;
-	stripper.Strip(&groups);
-
-	for (i=0; i<groups.size(); i++)
-	{
-		if (groups[i].m_Type != tri_stripper::PT_Triangle_Strip)
-			continue;
-		
-		strips.push_back(TriStrip(groups[i].m_Indices.size()));
-		TriStrip &strip = strips.back();
-
-		for (int j=0; j<groups[i].m_Indices.size(); j++)
-			strip[j] = groups[i].m_Indices[j];
-	}
-*/
 	unsigned short *data = (unsigned short *)malloc(grp.faces.size() * 3 * 2);
 
 	int i;
@@ -119,7 +131,8 @@ void Exporter::strippify(TriStrips &strips, FaceGroup &grp)
 
 					grp.verts[a] = tmp.verts[b];
 					grp.vnorms[a] = tmp.vnorms[b];
-					grp.uvs[a] = tmp.uvs[b];
+					if (grp.uvs.size() > 0)
+						grp.uvs[a] = tmp.uvs[b];
 					if (grp.vcolors.size() > 0)
 						grp.vcolors[a] = tmp.vcolors[b];
 				}

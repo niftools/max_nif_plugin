@@ -114,7 +114,6 @@ private:
 	void				getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 
 	/* havok & collision */
-	bool				hasCollision(INode *node);
 	int					addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm);
 	void				addFace(Triangles &tris, vector<Vector3> &verts, vector<Vector3> &vnorms, 
 		                    int face, const int vi[3], Mesh *mesh);

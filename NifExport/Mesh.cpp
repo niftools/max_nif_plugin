@@ -96,8 +96,12 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 
 	data->SetVertices(grp.verts);
 	data->SetNormals(grp.vnorms);
-	data->SetUVSetCount(1);
-	data->SetUVSet(0, grp.uvs);
+
+	if (grp.uvs.size() > 0)
+	{
+		data->SetUVSetCount(1);
+		data->SetUVSet(0, grp.uvs);
+	}
 
 	if (grp.vcolors.size() > 0)
 		data->SetVertexColors(grp.vcolors);
@@ -116,13 +120,12 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm)
 {
 	Point3 pt = mesh->verts[ mesh->faces[ face ].v[ vi ] ];
-	Point3 uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
 	Point3 norm = getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi ]));
 
-/*	uv.z = uv.x;
-	uv.x = uv.y;
-	uv.y = uv.z;
-*/
+	Point3 uv;
+	if (mesh->tvFace)
+		uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
+
 	VertColor col;
 	if (mVertexColors && mesh->vertCol)
 		col = mesh->vertCol[ mesh->vcFace[ face ].t[ vi ] ];
@@ -130,9 +133,11 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 	for (int i=0; i<grp.verts.size(); i++)
 	{
 		if (equal(grp.verts[i], pt, mWeldThresh) &&
-			grp.uvs[i].u==uv.x && grp.uvs[i].v==uv.y &&
 			equal(grp.vnorms[i], norm, 0))
 		{
+			if (mesh->tvFace && (grp.uvs[i].u!=uv.x || grp.uvs[i].v!=uv.y))
+				continue;
+
 			if (mVertexColors && mesh->vertCol &&
 				(grp.vcolors[i].r!=col.x ||
 				 grp.vcolors[i].g!=col.y ||
@@ -144,8 +149,10 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 	}
 	
 	grp.verts.push_back(Vector3(pt.x, pt.y, pt.z));
-	grp.uvs.push_back(TexCoord(uv.x, uv.y));
 	grp.vnorms.push_back(Vector3(norm.x, norm.y, norm.z));
+
+	if (mesh->tvFace)
+		grp.uvs.push_back(TexCoord(uv.x, uv.y));
 
 	if (mVertexColors && mesh->vertCol)
 		grp.vcolors.push_back(Color4(col.x, col.y, col.z, 1));
@@ -158,11 +165,12 @@ void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, co
 	Triangle tri;
 	for (int i=0; i<3; i++)
 	{
-		DWORD t0 = mesh->tvFace[ face ].getTVert(0);
+/*		DWORD t0 = mesh->tvFace[ face ].getTVert(0);
 		DWORD t1 = mesh->tvFace[ face ].getTVert(1);
 		DWORD t2 = mesh->tvFace[ face ].getTVert(2);
 
 		int dir = mesh->tvFace[ face ].Direction(t0, t1);
+*/
 
 /*		Point3 tv = mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ]; // * tm;
 		tri[i] = addVertex(grp, 
