@@ -1,4 +1,4 @@
-LIBRARY maxProject1
+LIBRARY NifExport
 EXPORTS
 	LibDescription			@1
 	LibNumberClasses		@2
