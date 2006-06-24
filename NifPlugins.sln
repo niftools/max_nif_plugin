@@ -9,9 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifFurniture", "NifFurnitur
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		ConfigName.0 = Debug - Max 6
-		ConfigName.1 = Debug - Max 8
-		ConfigName.2 = Release - Max 6
+		ConfigName.0 = Debug - Max 8
+		ConfigName.1 = Release - Max 6
+		ConfigName.2 = Release - Max 7
 		ConfigName.3 = Release - Max 8
 	EndGlobalSection
 	GlobalSection(ProjectDependencies) = postSolution
@@ -20,36 +20,34 @@ Global
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.0 = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.ActiveCfg = Debug - Max 6|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.Build.0 = Debug - Max 6|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.ActiveCfg = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.Build.0 = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.ActiveCfg = Release - Max 6|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.Build.0 = Release - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7.ActiveCfg = Release - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7.Build.0 = Release - Max 7|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8.ActiveCfg = Release|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8.Build.0 = Release|Win32
-		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 6.ActiveCfg = Debug - Max 6|Win32
-		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 6.Build.0 = Debug - Max 6|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 8.ActiveCfg = Debug|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 8.Build.0 = Debug|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 6.ActiveCfg = Release - Max 6|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 6.Build.0 = Release - Max 6|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 7.ActiveCfg = Release - Max 7|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 7.Build.0 = Release - Max 7|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 8.ActiveCfg = Release|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 8.Build.0 = Release|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.ActiveCfg = Debug - Max 6|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.Build.0 = Debug - Max 6|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.ActiveCfg = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.Build.0 = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.ActiveCfg = Release - Max 6|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.Build.0 = Release - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7.ActiveCfg = Release - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7.Build.0 = Release - Max 7|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8.ActiveCfg = Release|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8.Build.0 = Release|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.ActiveCfg = Debug - Max 6|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6.Build.0 = Debug - Max 6|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.ActiveCfg = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8.Build.0 = Debug|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.ActiveCfg = Release - Max 6|Win32
-		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6.Build.0 = Release - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7.ActiveCfg = Release - Max 7|Win32
 		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
