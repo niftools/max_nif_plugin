@@ -54,7 +54,7 @@
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Release\MaxNifImport.pch"
 				AssemblerListingLocation=".\Release\"
 				ObjectFile=".\Release\"
@@ -154,7 +154,7 @@
 				ExceptionHandling="2"
 				RuntimeLibrary="1"
 				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\Debug\MaxNifImport.pch"
 				AssemblerListingLocation=".\Debug\"
 				ObjectFile=".\Debug\"
@@ -236,6 +236,14 @@
 			<File
 				RelativePath=".\stdafx.cpp"
 				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>

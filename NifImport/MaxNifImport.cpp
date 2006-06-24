@@ -93,6 +93,7 @@ public:
    bool enableAutoSmooth;
    float autoSmoothAngle;
    bool flipUVTextures;
+   bool enableSkinSupport;
 
    // Biped/Bones related settings
    string skeleton;
@@ -465,6 +466,7 @@ void NifImporter::LoadIniSettings()
    enableAutoSmooth = GetIniValue<bool>(NifImportSection, "EnableAutoSmooth", true);
    autoSmoothAngle = GetIniValue<float>(NifImportSection, "AutoSmoothAngle", 30.0f);
    flipUVTextures = GetIniValue<bool>(NifImportSection, "FlipUVTextures", true);
+   enableSkinSupport = GetIniValue<bool>(NifImportSection, "EnableSkinSupport", true);
 
    skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";
 
@@ -611,7 +613,7 @@ void NifImporter::AlignBiped(IBipMaster* master, NiNodeRef block)
       Matrix3 m3 = node->GetNodeTM(TimeValue(), NULL); // local translation m
       master->SetBipedPos(Point3(pos.x, pos.y, pos.z), 0, node, TRUE);
 
-      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
       Matrix3 im = Inverse(m);
 
       Point3 p; Quat q; Point3 s;
@@ -644,7 +646,7 @@ void NifImporter::PositionBiped(IBipMaster* master, NiNodeRef block, bool Recurs
       Matrix3 m3 = node->GetNodeTM(TimeValue(), NULL); // local translation m
       master->SetBipedPos(Point3(pos.x, pos.y, pos.z), 0, node, TRUE);
 
-      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
       Matrix3 im = Inverse(m);
       Point3 p; Quat q; Point3 s;
       DecomposeMatrix(im, p, q, s);
@@ -679,7 +681,7 @@ void NifImporter::RotateBiped(IBipMaster* master, NiNodeRef block, bool Recurse)
       Matrix3 m3 = node->GetNodeTM(TimeValue(), NULL); // local translation m
       master->SetBipedPos(Point3(pos.x, pos.y, pos.z), 0, node, TRUE);
 
-      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
       Matrix3 im = Inverse(m);
 
       Point3 p; Quat q; Point3 s;
@@ -715,7 +717,7 @@ void NifImporter::ScaleBiped(IBipMaster* master, NiNodeRef block, bool Recurse)
       Matrix3 m3 = node->GetNodeTM(TimeValue(), NULL); // local translation m
       master->SetBipedPos(Point3(pos.x, pos.y, pos.z), 0, node, TRUE);
 
-      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+      Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
       Matrix3 im = Inverse(m);
 
       Point3 p; Quat q; Point3 s;
@@ -956,7 +958,8 @@ bool NifImporter::ImportTransform(ImpNode *node, NiAVObjectRef avObject)
    wt.Decompose(pos, rot, scale);
    Point3 p(pos.x, pos.y, pos.z);
 
-   Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+   Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
+   m.Invert();
    m.SetTrans(p);
    node->SetTransform(0,m);   
    return true;
@@ -1067,7 +1070,9 @@ bool NifImporter::ImportMesh(NiTriShapeRef triShape)
       vector<Triangle> v = triShapeData->GetTriangles();
       SetTrangles(mesh, v, hasTexture);
    }
-   ImportSkin(node, triShape);
+   if (enableSkinSupport)
+      ImportSkin(node, triShape);
+
    i->AddNodeToScene(node);   
 
    if (enableAutoSmooth){
@@ -1107,7 +1112,9 @@ bool NifImporter::ImportMesh(NiTriStripsRef triStrips)
       vector<Triangle> v = triStripsData->GetTriangles();
       SetTrangles(mesh, v, hasTexture);
    }
-   ImportSkin(node, triStrips);
+   if (enableSkinSupport)
+      ImportSkin(node, triStrips);
+
    i->AddNodeToScene(node);   
 
    // apply autosmooth after object creation for it to take hold

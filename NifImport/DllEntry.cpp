@@ -10,6 +10,7 @@
 
  *>	Copyright (c) 2006, All Rights Reserved.
  **********************************************************************/
+#include "stdafx.h"
 #include "MaxNifImport.h"
 
 extern ClassDesc2* GetMaxNifImportDesc();
