@@ -134,11 +134,12 @@ public:
       // load file
       blocks = ReadNifList( name );
       nodes = DynamicCast<NiNode>(blocks);
-      if (goToSkeletonBindPosition)
-         GoToSkeletonBindPosition(nodes);
 
       // Apply post processing checks after reading blocks
       if (isValid()){
+         if (goToSkeletonBindPosition && !nodes.empty())
+            nodes[0]->GoToSkeletonBindPosition();
+
          hasSkeleton = HasSkeleton();
          isBiped = IsBiped();
          skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";

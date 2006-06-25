@@ -208,7 +208,6 @@ extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks
 extern std::vector<Niflib::NiNodeRef> SelectNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match);
 extern int CountNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match );
 extern std::vector<std::string> GetNamesOfNodes( const vector<Niflib::NiNodeRef>& blocks );
-extern void GoToSkeletonBindPosition(std::vector<Niflib::NiNodeRef>& blocks);
 
 // Simple conversion helpers
 static inline float TODEG(float x) { return x * 180.0f / PI; }
