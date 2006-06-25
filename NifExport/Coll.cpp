@@ -63,10 +63,10 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 	mesh->buildNormals();
 
 	int lyr, mtl;
-	if (!getHvkLayer(node, lyr))
+	if (!npGetProp(node, NP_HVK_LAYER, lyr))
 		lyr = NP_DEFAULT_HVK_LAYER;
 
-	if (!getHvkMaterial(node, mtl))
+	if (!npGetProp(node, NP_HVK_MATERIAL, mtl))
 		mtl = NP_DEFAULT_HVK_LAYER;
 
 	// setup shape data

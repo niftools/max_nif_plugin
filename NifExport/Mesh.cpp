@@ -212,6 +212,11 @@ bool Exporter::splitMesh(INode *node, Mesh *mesh, FaceGroups &grps, TimeValue t)
 		Matrix3 texm;
 		getTextureMatrix(texm, getMaterial(node, mtlID));
 
+		Matrix3 flip;
+		flip.IdentityMatrix();
+		flip.Scale(Point3(1, -1, 1));
+		texm *= flip;
+
 		addFace(grps[mtlID], i, vi, mesh, texm);
 	}
 

@@ -20,8 +20,10 @@
 #define IDC_CHK_COLL                    1010
 #define IDC_LBL_LINK                    1011
 #define IDC_CHK_VCOLORS                 1012
-#define IDC_CHK_VCOLORS2                1013
 #define IDC_CHK_REMAP                   1013
+#define IDC_CB_GAMES                    1014
+#define IDC_CB_VERSION                  1015
+#define IDC_CB_VERSION2                 1016
 #define IDC_COLOR                       1456
 #define IDC_EDIT                        1490
 #define IDC_SPIN                        1496
@@ -32,7 +34,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1016
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

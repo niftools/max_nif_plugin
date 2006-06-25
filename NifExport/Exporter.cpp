@@ -1,6 +1,6 @@
 #include "pch.h"
 
-int Exporter::mVersion=001;
+int Exporter::mVersion=013;
 bool Exporter::mSelectedOnly=false;
 bool Exporter::mTriStrips=true;
 bool Exporter::mExportHidden=false;
@@ -37,7 +37,7 @@ Exporter::Result Exporter::export(NiNodeRef &root, INode *node)
 
 Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
 {
-	bool coll = isCollision(node);
+	bool coll = npIsCollision(node);
 	if ((coll && !mExportCollision) ||
 		(node->IsHidden() && !mExportHidden && !coll) ||
 		(mSelectedOnly && !node->Selected()))

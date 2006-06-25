@@ -168,7 +168,7 @@ const TCHAR *NifExport::ShortDesc()
 
 const TCHAR *NifExport::AuthorName()
 {			
-	return _T("Alexander Stillich aka Gundalf / The Niftools Team");
+	return _T("Alexander \"Gundalf\" Stillich / The Niftools Team");
 }
 
 const TCHAR *NifExport::CopyrightMessage() 
