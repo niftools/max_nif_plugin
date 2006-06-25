@@ -95,3 +95,31 @@ static const char *HvkLayerNames[] =
 	"Wing",
 	NULL
 };
+
+static const char *HvkMotionSystems[] =
+{
+	"Keyframed",
+	"Box (2)",
+	"Sphere (2)",
+	"Sphere (3)",
+	"Box (4)",
+	"Box (5)",
+	"Keyframed (6)",
+	"Keyframed (7)",
+	"Box",
+	"Keyframed?",
+	NULL
+};
+
+static const char *HvkQualityTypes[] =
+{
+	"Moving",
+	"Fixed",
+	"Keyframed",
+	"Moving(?)",
+	"Critical",
+	"Bullet",
+	"User",
+	"Null",
+	NULL
+};

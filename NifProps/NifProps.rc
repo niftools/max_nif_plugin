@@ -73,22 +73,100 @@ END
 // Dialog
 //
 
-IDD_PANEL DIALOGEX 0, 0, 108, 113
+IDD_PANEL DIALOGEX 0, 0, 107, 402
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_CB_MATERIAL,13,61,80,157,CBS_DROPDOWNLIST | 
-                    WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CB_MATERIAL,12,130,83,157,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Material",IDC_LBL_MATERIAL,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_GROUP,12,52,80,8
-    COMBOBOX        IDC_CB_LAYER,14,85,80,171,CBS_DROPDOWNLIST | WS_VSCROLL | 
-                    WS_TABSTOP
+                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,121,83,8
+    COMBOBOX        IDC_CB_LAYER,12,154,83,171,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Layer",IDC_LBL_LAYER,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_GROUP,12,76,80,8
-    GROUPBOX        "Havok",IDC_GRP_HAVOK,7,42,94,64
-    GROUPBOX        "Object",IDC_GRP_OBJECT,7,7,94,32
+                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,145,83,8
+    GROUPBOX        "Havok",IDC_GRP_HAVOK,5,110,95,285,WS_DISABLED
+    GROUPBOX        "Object",IDC_GRP_OBJECT,5,76,95,32
     CONTROL         "Is Collision Mesh",IDC_CHK_ISCOLL,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,20,80,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,89,80,10
+    GROUPBOX        "Global",IDC_STATIC,5,7,95,65
+    EDITTEXT        IDC_ED_BSXFLAGS,13,30,80,12,ES_AUTOHSCROLL
+    CONTROL         "BSXFlags",IDC_LBL_BSXFLAGS,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_GROUP,13,18,80,8
+    EDITTEXT        IDC_ED_STRINGSEXTRA,13,52,80,12,ES_AUTOHSCROLL
+    CONTROL         "Strings Extra Data",IDC_LBL_STRINGSEXTRA,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,13,43,80,8
+    CONTROL         "Center",IDC_LBL_CENTER,"Static",SS_LEFTNOWORDWRAP | 
+                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,170,31,8
+    CONTROL         "Mass",IDC_LBL_MASS,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_DISABLED | WS_GROUP,12,195,28,8
+    CONTROL         "Friction",IDC_LBL_FRICTION,"Static",SS_LEFTNOWORDWRAP | 
+                    WS_DISABLED | WS_GROUP,42,195,28,8
+    LTEXT           "Resti-\r\ntution",IDC_LBL_RESTITUTION,70,195,24,15,
+                    WS_DISABLED
+    CONTROL         "Motion System",IDC_LBL_MOTION_SYSTEM,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | 
+                    WS_GROUP,12,335,67,8
+    COMBOBOX        IDC_CB_MOTION_SYSTEM,12,344,83,74,CBS_DROPDOWNLIST | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Quality Type",IDC_LBL_QUALITY_TYPE,"Static",
+                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | 
+                    WS_GROUP,12,360,43,8
+    COMBOBOX        IDC_CB_QUALITY_TYPE,12,369,83,63,CBS_DROPDOWN | 
+                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_ED_CENTER_X,"CustEdit",WS_DISABLED | WS_TABSTOP,
+                    12,180,20,10
+    CONTROL         "",IDC_SP_CENTER_X,"SpinnerControl",WS_DISABLED,30,180,7,
+                    10
+    CONTROL         "",IDC_ED_CENTER_Y,"CustEdit",WS_DISABLED | WS_TABSTOP,
+                    42,180,20,10
+    CONTROL         "",IDC_SP_CENTER_Y,"SpinnerControl",WS_DISABLED,60,180,7,
+                    10
+    CONTROL         "",IDC_ED_CENTER_Z,"CustEdit",WS_DISABLED | WS_TABSTOP,
+                    72,180,20,10
+    CONTROL         "",IDC_SP_CENTER_Z,"SpinnerControl",WS_DISABLED,92,180,7,
+                    10
+    CONTROL         "",IDC_ED_MASS,"CustEdit",WS_DISABLED | WS_TABSTOP,12,
+                    215,20,10
+    CONTROL         "",IDC_SP_MASS,"SpinnerControl",WS_DISABLED,30,215,7,10
+    CONTROL         "",IDC_ED_FRICTION,"CustEdit",WS_DISABLED | WS_TABSTOP,
+                    42,215,20,10
+    CONTROL         "",IDC_SP_FRICTION,"SpinnerControl",WS_DISABLED,60,215,7,
+                    10
+    CONTROL         "",IDC_ED_RESTITUTION,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,70,215,20,10
+    CONTROL         "",IDC_SP_RESTITUTION,"SpinnerControl",WS_DISABLED,90,
+                    215,7,10
+    LTEXT           "Linear\r\nDamping",IDC_LBL_LINEAR_DAMPING,12,230,30,17,
+                    WS_DISABLED
+    CONTROL         "",IDC_ED_LINEAR_DAMPING,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,12,250,35,10
+    CONTROL         "",IDC_SP_LINEAR_DAMPING,"SpinnerControl",WS_DISABLED,45,
+                    250,7,10
+    LTEXT           "Angular\r\nDamping",IDC_LBL_ANGULAR_DAMPING,55,230,45,
+                    17,WS_DISABLED
+    CONTROL         "",IDC_ED_ANGULAR_DAMPING,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,55,250,35,10
+    CONTROL         "",IDC_SP_ANGULAR_DAMPING,"SpinnerControl",WS_DISABLED,
+                    90,250,7,10
+    LTEXT           "Max. Linear\r\nVelocity",IDC_LBL_MAX_LINEAR_VELOCITY,12,
+                    265,40,16,WS_DISABLED
+    CONTROL         "",IDC_ED_MAX_LINEAR_VELOCITY,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,12,285,35,10
+    CONTROL         "",IDC_SP_MAX_LINEAR_VELOCITY,"SpinnerControl",
+                    WS_DISABLED,45,285,7,10
+    LTEXT           "Max. Angular\r\nVelocity",IDC_LBL_MAX_ANGULAR_VELOCITY,
+                    55,265,45,16,WS_DISABLED
+    CONTROL         "",IDC_ED_MAX_ANGULAR_VELOCITY,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,55,285,35,10
+    CONTROL         "",IDC_SP_MAX_ANGULAR_VELOCITY,"SpinnerControl",
+                    WS_DISABLED,90,285,7,10
+    LTEXT           "Penetration\r\nDepth",IDC_LBL_PENETRATION_DEPTH,12,300,
+                    40,16,WS_DISABLED
+    CONTROL         "",IDC_ED_PENETRATION_DEPTH,"CustEdit",WS_DISABLED | 
+                    WS_TABSTOP,12,320,35,10
+    CONTROL         "",IDC_SP_PENETRATION_DEPTH,"SpinnerControl",WS_DISABLED,
+                    45,320,7,10
 END
 
 
@@ -103,9 +181,9 @@ BEGIN
     IDD_PANEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 101
+        RIGHTMARGIN, 100
         TOPMARGIN, 7
-        BOTTOMMARGIN, 106
+        BOTTOMMARGIN, 395
     END
 END
 #endif    // APSTUDIO_INVOKED
