@@ -1,36 +1,37 @@
 #include "Max.h"
 #include "NifPlugins.h"
 
-bool isCollision(INode *node)
+bool npIsCollision(INode *node)
 {
-	BOOL b;
-	return node && node->GetUserPropBool(_T(NP_PROP_HASCOLL), b) && b;
+	int i;
+	return npGetProp(node, NP_HASCOLL, i) && i;
 }
 
-void setCollision(INode *node, bool coll)
+void npSetCollision(INode *node, bool coll)
+{
+	npSetProp(node, NP_HASCOLL, (bool)coll);
+}
+
+bool npGetProp(INode *node, const TSTR &prop, int &value)
+{
+	return node && node->GetUserPropInt(prop, value);
+}
+
+void npSetProp(INode *node, const TSTR &prop, int value)
 {
 	if (node)
-		node->SetUserPropBool(_T(NP_PROP_HASCOLL), coll);
+		node->SetUserPropInt(prop, value);
 }
 
-bool getHvkLayer(INode *node, int &layer)
+bool npGetProp(INode *node, const TSTR &prop, float &value)
 {
-	return node && node->GetUserPropInt(_T(NP_PROP_HVK_LAYER), layer);
+	return node && node->GetUserPropFloat(prop, value);
 }
 
-void setHvkLayer(INode *node, int layer)
-{
-	if (node)
-		node->SetUserPropInt(_T(NP_PROP_HVK_LAYER), layer);
-}
-
-bool getHvkMaterial(INode *node, int &mtl)
-{
-	return node && node->GetUserPropInt(_T(NP_PROP_HVK_MATERIAL), mtl);
-}
-
-void setHvkMaterial(INode *node, int mtl)
+void npSetProp(INode *node, const TSTR &prop, float value)
 {
 	if (node)
-		node->SetUserPropInt(_T(NP_PROP_HVK_MATERIAL), mtl);
+		node->SetUserPropFloat(prop, value);
 }
+
+
