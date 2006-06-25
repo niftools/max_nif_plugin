@@ -532,6 +532,9 @@ void NifImporter::LoadIniSettings()
    } else {
       appSettings = FindAppSetting(curapp);
    }
+   if (appSettings == NULL && !TheAppSettings.empty()){
+      appSettings = &TheAppSettings.front();
+   }
 
    useBiped = GetIniValue<bool>(NifImportSection, "UseBiped", false);
    skeletonCheck = GetIniValue<string>(NifImportSection, "SkeletonCheck", "Bip*");
