@@ -106,6 +106,7 @@ NameValueCollection ReadIniSection(LPCTSTR Section, LPCTSTR iniFileName )
 
 // Expand Qualifiers in string using a ${Name} syntax.  Name will be looked up in the
 //    NameValueCollection and expand in place.  Missing names will expand to empty.
+//    - Please dont give self-referential strings
 string ExpandQualifiers(const string& src, const NameValueCollection& map)
 {
    string value;
@@ -125,7 +126,7 @@ string ExpandQualifiers(const string& src, const NameValueCollection& map)
                   string key = src.substr(i+1, term-i-1);
                   NameValueCollection::const_iterator kvp = map.find(key);
                   if (kvp != map.end()) {
-                     value.append(kvp->second);
+                     value.append(ExpandQualifiers(kvp->second, map));
                   } 
                   i = term;
                }
@@ -137,7 +138,7 @@ string ExpandQualifiers(const string& src, const NameValueCollection& map)
                   string key = src.substr(i+1, term-i-1);
                   NameValueCollection::const_iterator kvp = map.find(key);
                   if (kvp != map.end()) {
-                     value.append(kvp->second);
+                     value.append(ExpandQualifiers(kvp->second, map));
                   } 
                   i = term;
                }
@@ -511,5 +512,17 @@ void FindImages(NameValueCollection& images, const string& rootPath, const strin
       {
          BuildFileNameMap(images, rootPath.c_str(), (*itr).c_str(), ddsMatch);
       }
+   }
+}
+
+
+void GoToSkeletonBindPosition(vector<NiNodeRef>& blocks)
+{
+   //Send all skeleton roots to bind position
+   for (uint i = 0; i < blocks.size(); ++i) {
+   	NiNodeRef node = blocks[i];
+   	if ( node != NULL && node->IsSkeletonRoot() ) {
+   		node->GoToSkeletonBindPosition();
+   	}
    }
 }

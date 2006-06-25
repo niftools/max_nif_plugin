@@ -19,21 +19,32 @@ HISTORY:
 class AppSettings
 {
 public:
-   AppSettings(const std::string& name) : Name(name), parsedImages(false) {}
+   AppSettings(const std::string& name) 
+      : Name(name)
+      , parsedImages(false) 
+      , useSkeleton(false)
+      , goToSkeletonBindPosition(true)
+   {}
 
    std::string Name;
    std::string rootPath;
    bool parsedImages;
    stringlist searchPaths;
+   stringlist textureRootPaths;
    stringlist rootPaths;
    stringlist extensions;
    std::string Skeleton;
+   bool useSkeleton;
+   bool goToSkeletonBindPosition;
    NameValueCollection Environment;
    NameValueCollection imgTable;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);
    std::string FindImage(const std::string& fname);
+
+   // Check whether the given file is a child of the root paths
+   bool IsFileInRootPaths(const std::string& fname);
 
    template<typename T>
    inline T GetSetting(std::string setting){
@@ -73,10 +84,32 @@ public:
    }
 };
 
-typedef std::map<std::string, AppSettings, ltstr> AppSettingsMap;
+typedef std::list<AppSettings> AppSettingsMap;
+
+struct AppSettingsNameEquivalence : public ltstr
+{
+   bool operator()(const AppSettings& n1, const AppSettings& n2) const { 
+      return ltstr::operator()(n1.Name, n2.Name);
+   }
+   bool operator()(const string& n1, const AppSettings& n2) const { 
+      return ltstr::operator()(n1, n2.Name);
+   }
+   bool operator()(const AppSettings& n1, const string& n2) const { 
+      return ltstr::operator()(n1.Name, n2);
+   }
+};
 
 // The Global Map
 //  Global so that I dont have to parse the texture directories on every import
 extern AppSettingsMap TheAppSettings;
+
+inline AppSettings* FindAppSetting(const std::string& name){
+   AppSettingsNameEquivalence equiv;
+   for (AppSettingsMap::iterator itr=TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
+      if (!equiv(*itr, name) && !equiv(name, *itr))
+         return &(*itr);
+   }
+   return NULL;
+}
 
 #endif //_APPSETTINGS_H_

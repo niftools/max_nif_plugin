@@ -94,6 +94,7 @@ public:
    float autoSmoothAngle;
    bool flipUVTextures;
    bool enableSkinSupport;
+   bool goToSkeletonBindPosition;
 
    // Biped/Bones related settings
    string skeleton;
@@ -108,6 +109,8 @@ public:
    bool isBiped;
    bool removeUnusedImportedBones;
    bool forceRotation;
+   bool browseForSkeleton;
+   string defaultSkeletonName;
 
    float minBoneWidth;
    float maxBoneWidth;
@@ -124,12 +127,33 @@ public:
       if (p) *p = 0;
       path = buffer;
 
+      // Load ini settings
+      iniFileValid = false;
+      LoadIniSettings();
+
+      // load file
       blocks = ReadNifList( name );
       nodes = DynamicCast<NiNode>(blocks);
-      iniFileValid = false;
+      if (goToSkeletonBindPosition)
+         GoToSkeletonBindPosition(nodes);
 
-      if (isValid()) {
-         LoadIniSettings();
+      // Apply post processing checks after reading blocks
+      if (isValid()){
+         hasSkeleton = HasSkeleton();
+         isBiped = IsBiped();
+         skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";
+         importSkeleton &= hasSkeleton;
+
+         // Guess that the skeleton is the same one in the current directory
+         if (importSkeleton && !defaultSkeletonName.empty()) {
+            TCHAR buffer[MAX_PATH];
+            GetFullPathName(name.c_str(), _countof(buffer), buffer, NULL);
+            PathRemoveFileSpec(buffer);
+            PathAddBackslash(buffer);
+            PathAppend(buffer, defaultSkeletonName.c_str());
+            if (-1 != _taccess(buffer, 0))
+               skeleton = buffer;
+         }
       }
    }
    bool isValid() const { return (0 != blocks.size()); }
@@ -398,17 +422,49 @@ int MaxNifImport::DoImport(const TCHAR *filename,ImpInterface *i, Interface *gi,
       else
       {
          vector<string> importedBones;
-         if (importer.importSkeleton && !importer.skeleton.empty())
+         if (importer.importSkeleton)
          {
-            NifImporter skelImport(importer.skeleton.c_str(), i, gi, suppressPrompts);
-            if (skelImport.isValid())
+            if (importer.browseForSkeleton)
             {
-               if (skelImport.useBiped){
-                  skelImport.ImportBipeds(skelImport.nodes);
-               } else {
-                  skelImport.ImportBones(DynamicCast<NiNode>(skelImport.nodes[0]->GetChildren()));
-                  if (importer.removeUnusedImportedBones){
-                     importedBones = GetNamesOfNodes(skelImport.nodes);
+               TCHAR filter[64], *pfilter=filter;
+               pfilter = _tcscpy(filter, this->ShortDesc());
+               pfilter = _tcscat(pfilter, " (*.NIF)");
+               pfilter += strlen(pfilter);
+               *pfilter++ = '\0';
+               _tcscpy(pfilter, "*.NIF");
+               pfilter += strlen(pfilter);
+               *pfilter++ = '\0';
+               *pfilter++ = '\0';
+
+               TCHAR filename[MAX_PATH];
+               GetFullPathName(importer.skeleton.c_str(), _countof(filename), filename, NULL);
+
+               OPENFILENAME ofn;
+               memset(&ofn, 0, sizeof(ofn));
+               ofn.lStructSize = sizeof(ofn);
+               ofn.hwndOwner = gi->GetMAXHWnd();
+               ofn.lpstrFilter = filter;
+               ofn.lpstrFile = filename;
+               ofn.nMaxFile = _countof(filename);
+               ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
+               ofn.lpstrDefExt = TEXT("NIF");
+               ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
+               importer.importSkeleton = GetOpenFileName(&ofn) ? true : false;
+               if (importer.importSkeleton) {
+                  importer.skeleton = filename;
+               }
+            }
+            if (importer.importSkeleton && !importer.skeleton.empty()) {
+               NifImporter skelImport(importer.skeleton.c_str(), i, gi, suppressPrompts);
+               if (skelImport.isValid())
+               {
+                  if (skelImport.useBiped){
+                     skelImport.ImportBipeds(skelImport.nodes);
+                  } else {
+                     skelImport.ImportBones(DynamicCast<NiNode>(skelImport.nodes[0]->GetChildren()));
+                     if (importer.removeUnusedImportedBones){
+                        importedBones = GetNamesOfNodes(skelImport.nodes);
+                     }
                   }
                }
             }
@@ -417,7 +473,8 @@ int MaxNifImport::DoImport(const TCHAR *filename,ImpInterface *i, Interface *gi,
 
             importer.ImportBones(DynamicCast<NiNode>(importer.nodes[0]->GetChildren()));
             ok = importer.ImportMeshes(importer.nodes[0]);
-            if (importer.removeUnusedImportedBones){
+
+            if (importer.importSkeleton && importer.removeUnusedImportedBones){
                vector<string> importedNodes = GetNamesOfNodes(importer.nodes);
                sort(importedBones.begin(), importedBones.end());
                sort(importedNodes.begin(), importedNodes.end());
@@ -460,9 +517,20 @@ void NifImporter::LoadIniSettings()
    this->iniFileName = iniName;
    iniFileValid = (-1 != _access(iniName, 0));
 
-   string curapp = GetIniValue<string>(NifImportSection, "CurrentApp", "");
-   AppSettingsMap::iterator itr = TheAppSettings.find(curapp);
-   appSettings = (itr != TheAppSettings.end()) ? &(*itr).second : NULL;
+   // Locate which application to use. If Auto, find first app where this file appears in the root path list
+   appSettings = NULL;
+   string curapp = GetIniValue<string>(NifImportSection, "CurrentApp", "AUTO");
+   if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+      // Scan Root paths
+      for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
+         if ((*itr).IsFileInRootPaths(this->name)) {
+            appSettings = &(*itr);
+            break;
+         }
+      }
+   } else {
+      appSettings = FindAppSetting(curapp);
+   }
 
    useBiped = GetIniValue<bool>(NifImportSection, "UseBiped", false);
    skeletonCheck = GetIniValue<string>(NifImportSection, "SkeletonCheck", "Bip*");
@@ -475,21 +543,20 @@ void NifImporter::LoadIniSettings()
    flipUVTextures = GetIniValue<bool>(NifImportSection, "FlipUVTextures", true);
    enableSkinSupport = GetIniValue<bool>(NifImportSection, "EnableSkinSupport", true);
 
-   skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";
-
    bipedHeight = GetIniValue<float>(BipedImportSection, "BipedHeight", 131.90f);
    bipedAngle = GetIniValue<float>(BipedImportSection, "BipedAngle", 90.0f);
    bipedAnkleAttach = GetIniValue<float>(BipedImportSection, "BipedAnkleAttach", 0.2f);
    bipedTrianglePelvis = GetIniValue<bool>(BipedImportSection, "BipedTrianglePelvis", false);
    removeUnusedImportedBones = GetIniValue<bool>(BipedImportSection, "RemoveUnusedImportedBones", false);
-   forceRotation = GetIniValue<bool>(BipedImportSection, "ForceRotation", false);
+   forceRotation = GetIniValue<bool>(BipedImportSection, "ForceRotation", true);
+   browseForSkeleton = GetIniValue<bool>(BipedImportSection, "BrowseForSkeleton", true);
+   defaultSkeletonName = GetIniValue<string>(BipedImportSection, "DefaultSkeletonName", "Skeleton.Nif");
 
    minBoneWidth = GetIniValue<float>(BipedImportSection, "MinBoneWidth", 0.5f);
    maxBoneWidth = GetIniValue<float>(BipedImportSection, "MaxBoneWidth", 3.0f);
    boneWidthToLengthRatio = GetIniValue<float>(BipedImportSection, "BoneWidthToLengthRatio", 0.25f);
 
-   importSkeleton = hasSkeleton = HasSkeleton();
-   isBiped = IsBiped();
+   goToSkeletonBindPosition = (appSettings ? appSettings->goToSkeletonBindPosition : false);
 }
 
 void NifImporter::SaveIniSettings()
@@ -773,6 +840,7 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
          }
          return result.n;
       }
+      fpBones->ReleaseInterface();
    }
    return NULL;
 }
@@ -797,6 +865,32 @@ void NifImporter::ImportBones(NiNodeRef node)
       Point3 p = im.GetTrans();
       Quat q(im);
       q.Normalize();
+      Vector3 ppos;
+      Point3 zAxis(0,1,0);
+      if (!children.empty()) {
+         for (vector<NiNodeRef>::iterator itr=children.begin(), end = children.end(); itr != end; ++itr) {
+            Matrix44 cwt = (*itr)->GetWorldTransform();
+            Vector3 cpos; Matrix33 crot; float cscale;
+            cwt.Decompose(cpos, crot, cscale);
+            ppos += cpos;
+         }
+         ppos /= children.size();
+      }
+      else if (parent)
+      {
+         Matrix44 pwt = parent->GetWorldTransform();
+         Matrix33 prot; float pscale;
+         pwt.Decompose(ppos, prot, pscale);
+         if (forceRotation)
+            prs = prsPos;
+      }
+      else
+      {
+         if (forceRotation)
+            prs = prsPos;
+      }
+      Point3 pp(ppos.x, ppos.y, ppos.z);
+
       INode *bone = gi->GetINodeByName(name.c_str());
       if (bone)
       {
@@ -810,31 +904,6 @@ void NifImporter::ImportBones(NiNodeRef node)
       }
       else
       {
-         Vector3 ppos;
-         Point3 zAxis(0,1,0);
-         if (!children.empty()) {
-            for (vector<NiNodeRef>::iterator itr=children.begin(), end = children.end(); itr != end; ++itr) {
-               Matrix44 cwt = (*itr)->GetWorldTransform();
-               Vector3 cpos; Matrix33 crot; float cscale;
-               cwt.Decompose(cpos, crot, cscale);
-               ppos += cpos;
-            }
-            ppos /= children.size();
-         }
-         else if (parent)
-         {
-            Matrix44 pwt = parent->GetWorldTransform();
-            Matrix33 prot; float pscale;
-            pwt.Decompose(ppos, prot, pscale);
-            if (forceRotation)
-               prs = prsPos;
-         }
-         else
-         {
-            if (forceRotation)
-               prs = prsPos;
-         }
-         Point3 pp(ppos.x, ppos.y, ppos.z);
          if (bone = CreateBone(name, p, pp, zAxis))
          {
             PositionAndRotateNode(bone, p, q, prs);
@@ -968,16 +1037,7 @@ bool NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObjec
 
 bool NifImporter::ImportTransform(ImpNode *node, NiAVObjectRef avObject)
 {
-   Matrix44 wt = avObject->GetWorldTransform();
-
-   Vector3 pos; Matrix33 rot; float scale;
-   wt.Decompose(pos, rot, scale);
-   Point3 p(pos.x, pos.y, pos.z);
-
-   Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3(0,0,0));
-   m.Invert();
-   m.SetTrans(p);
-   node->SetTransform(0,m);   
+   node->SetTransform(0,TOMATRIX3(avObject->GetWorldTransform()));   
    return true;
 }
 
@@ -1173,54 +1233,55 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
    Mesh& m = triObject->GetMesh();
 
    //get the skin interface
-   ISkin *skin = (ISkin *) skinMod->GetInterface(I_SKIN);
-   ISkinImportData* iskinImport = (ISkinImportData*) skinMod->GetInterface(I_SKINIMPORTDATA);
+   if (ISkin *skin = (ISkin *) skinMod->GetInterface(I_SKIN)){
+      ISkinImportData* iskinImport = (ISkinImportData*) skinMod->GetInterface(I_SKINIMPORTDATA);
 
-   // Create Bone List
-   Tab<INode*> bones;
-   int i=0;
-   for (vector<NiNodeRef>::iterator itr = nifBones.begin(), end = nifBones.end(); itr != end; ++itr, ++i){
-      string name = (*itr)->GetName();
-      INode *boneRef = gi->GetINodeByName(name.c_str());
-      bones.Append(1, &boneRef);
-      iskinImport->AddBoneEx(boneRef, TRUE);
+      // Create Bone List
+      Tab<INode*> bones;
+      int i=0;
+      for (vector<NiNodeRef>::iterator itr = nifBones.begin(), end = nifBones.end(); itr != end; ++itr, ++i){
+         string name = (*itr)->GetName();
+         INode *boneRef = gi->GetINodeByName(name.c_str());
+         bones.Append(1, &boneRef);
+         iskinImport->AddBoneEx(boneRef, TRUE);
 
-      // Set Bone Transform
-      //Matrix3 tm = boneRef->GetObjectTM(0);
-      //Matrix3 m = TOMATRIX3(data->GetBoneTransform(i));
-      //iskinImport->SetBoneTm(boneRef, tm, m);
-   }
-   ObjectState os = tnode->EvalWorldState(0);
+         // Set Bone Transform
+         //Matrix3 tm = boneRef->GetObjectTM(0);
+         //Matrix3 m = TOMATRIX3(data->GetBoneTransform(i));
+         //iskinImport->SetBoneTm(boneRef, tm, m);
+      }
+      ObjectState os = tnode->EvalWorldState(0);
 
-   // Need to trigger ModifyObject in BonesDefMod prior to adding vertices or nothing is added
-   GetCOREInterface()->ForceCompleteRedraw();
+      // Need to trigger ModifyObject in BonesDefMod prior to adding vertices or nothing is added
+      GetCOREInterface()->ForceCompleteRedraw();
 
-   // Need to get a list of bones and weights for each vertex.
-   vector<VertexHolder> vertexHolders;
-   vertexHolders.resize(m.numVerts);
-   for (int i=0, n=data->GetBoneCount();i<n; ++i){
-      if (INode *boneRef = bones[i]){
-         vector<SkinWeight> weights = data->GetBoneWeights(i);
-         for (vector<SkinWeight>::iterator itr=weights.begin(), end=weights.end(); itr != end; ++itr){
-            VertexHolder& h = vertexHolders[itr->index];
-            h.vertIndex = itr->index;
-            ++h.count;
-            h.weights.Append(1, &itr->weight);
-            h.boneNodeList.Append(1, &boneRef);
+      // Need to get a list of bones and weights for each vertex.
+      vector<VertexHolder> vertexHolders;
+      vertexHolders.resize(m.numVerts);
+      for (int i=0, n=data->GetBoneCount();i<n; ++i){
+         if (INode *boneRef = bones[i]){
+            vector<SkinWeight> weights = data->GetBoneWeights(i);
+            for (vector<SkinWeight>::iterator itr=weights.begin(), end=weights.end(); itr != end; ++itr){
+               VertexHolder& h = vertexHolders[itr->index];
+               h.vertIndex = itr->index;
+               ++h.count;
+               h.weights.Append(1, &itr->weight);
+               h.boneNodeList.Append(1, &boneRef);
+            }
          }
       }
-   }
 
-   // Assign the weights 
-   for (vector<VertexHolder>::iterator itr=vertexHolders.begin(), end=vertexHolders.end(); itr != end; ++itr){
-      VertexHolder& h = (*itr);
-      if (h.count){
-         float sum = 0.0f;
-         for (int i=0; i<h.count; ++i)
-            sum += h.weights[i];
-         ASSERT(fabs(sum-1.0) < 0.001);
-         BOOL add = iskinImport->AddWeights(tnode, h.vertIndex, h.boneNodeList, h.weights);
-         add = add;
+      // Assign the weights 
+      for (vector<VertexHolder>::iterator itr=vertexHolders.begin(), end=vertexHolders.end(); itr != end; ++itr){
+         VertexHolder& h = (*itr);
+         if (h.count){
+            float sum = 0.0f;
+            for (int i=0; i<h.count; ++i)
+               sum += h.weights[i];
+            ASSERT(fabs(sum-1.0) < 0.001);
+            BOOL add = iskinImport->AddWeights(tnode, h.vertIndex, h.boneNodeList, h.weights);
+            add = add;
+         }
       }
    }
    return ok;

@@ -20,10 +20,10 @@ void AppSettings::Initialize(Interface *gi)
       string Applications = GetIniValue<string>("System", "KnownApplications", "", iniName);
       stringlist apps = TokenizeString(Applications.c_str(), ";");
       for (stringlist::iterator appstr=apps.begin(); appstr != apps.end(); ++appstr){
-         AppSettingsMap::iterator itr = TheAppSettings.find(*appstr);
-         if (itr == TheAppSettings.end()){
-            itr = TheAppSettings.insert(TheAppSettings.end(), AppSettingsMap::value_type(*appstr, AppSettings(*appstr)) );
-            (*itr).second.ReadSettings(iniName);
+         AppSettings* setting = FindAppSetting(*appstr);
+         if (NULL == setting){
+            AppSettingsMap::iterator itr = TheAppSettings.insert(TheAppSettings.end(), AppSettings(*appstr));
+            (*itr).ReadSettings(iniName);
          }
       }
    }
@@ -48,17 +48,14 @@ void AppSettings::ReadSettings(string iniFile)
    std::swap(Environment, settings);
 
    rootPath = GetSetting<string>("RootPath");
-
-   string searchPathString = GetSetting<string>("TextureSearchPaths");
-   searchPaths = TokenizeString(searchPathString.c_str(), ";");
-
-   string extensionString = GetSetting<string>("TextureExtensions");
-   extensions = TokenizeString(extensionString.c_str(), ";");
-
-   string texRootPathString = GetSetting<string>("TextureRootPaths");
-   rootPaths = TokenizeString(texRootPathString.c_str(), ";");
+   rootPaths = TokenizeString(GetSetting<string>("RootPaths").c_str(), ";");
+   searchPaths = TokenizeString(GetSetting<string>("TextureSearchPaths").c_str(), ";");
+   extensions = TokenizeString(GetSetting<string>("TextureExtensions").c_str(), ";");
+   textureRootPaths = TokenizeString(GetSetting<string>("TextureRootPaths").c_str(), ";");
 
    Skeleton = GetSetting<string>("Skeleton");
+   useSkeleton = GetSetting<bool>("UseSkeleton", useSkeleton);
+   goToSkeletonBindPosition = GetSetting<bool>("GoToSkeletonBindPosition", goToSkeletonBindPosition);
 }
 
 string AppSettings::FindImage(const string& fname){
@@ -71,7 +68,7 @@ string AppSettings::FindImage(const string& fname){
    }
 
    // Test if its relative and in one of the specified root paths
-   for (stringlist::iterator itr = rootPaths.begin(), end = rootPaths.end(); itr != end; ++itr ){
+   for (stringlist::iterator itr = textureRootPaths.begin(), end = textureRootPaths.end(); itr != end; ++itr ){
       PathCombine(buffer, itr->c_str(), fname.c_str());
       if (-1 != _taccess(buffer, 0)){
          return string(buffer);
@@ -100,3 +97,24 @@ string AppSettings::FindImage(const string& fname){
    return fname;
 }
 
+
+// Check whether the given file is a child of the root paths
+bool AppSettings::IsFileInRootPaths(const std::string& fname)
+{
+   TCHAR root[MAX_PATH];
+   TCHAR file[MAX_PATH];
+   GetFullPathName(fname.c_str(), _countof(file), file, NULL);
+   PathMakePretty(file);
+
+   for (stringlist::iterator itr = rootPaths.begin(), end = rootPaths.end(); itr != end; ++itr ){
+      GetFullPathName((*itr).c_str(), _countof(root), root, NULL);
+      PathAddBackslash(root);
+      PathMakePretty(root);
+      if (-1 != _taccess(root,0)) {
+         int len = _tcslen(root);
+         if (0 == _tcsncmp(root, file, len))
+            return true;
+      }
+   }
+   return false;
+}

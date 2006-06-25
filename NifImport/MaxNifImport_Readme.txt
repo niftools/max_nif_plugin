@@ -10,19 +10,36 @@ It uses the NIF File Format Library and Tools library.
 See the plugin INI file for advanced configuration.
 
 =========================
-INSTALL
-=========================
-Extract file to 3dsmax8 installation directory.
-
-Edit the MaxNifTools.ini file to adjust paths and other settings.
-
-=========================
 REQUIREMENTS
 =========================
 3ds Max 8
 
 =========================
-UNINSTALLING
+INSTALL
+=========================
+Extract file to 3dsmax8 installation directory.
+
+Its highly recommended that you edit the MaxNifTools.ini file to adjust paths 
+and other settings to you machine.
+
+Most importantly:
+1. Remove irrelevant applications from the KnownApplications list
+
+2. Fix the RootPaths, TexturePaths and TextureSearchPaths in the Applications for your machine.
+
+   - The ini file has a substitution mechanism to make it easier to just change one location
+     and refer to that path in other areas.
+   
+   - RootPaths is used to determine if the imported nif is in one of those directories
+     if so it assumes the nif is from that app and uses those settings for import.
+     
+   - TexturePaths is used to test if the relative path in the nif is relative to that directory.
+   
+   - TextureSearchPaths will be recursively scanned for file names that match the extensions
+     (this can be time consuming so keep it to only relevant directories to you).
+
+=========================
+UNINSTALL
 =========================
 Delete the installed files from 3dsmax directory. See the list below in the 
 Installed Files section.
@@ -36,7 +53,7 @@ v 0.1
 =========================
 KNOWN ISSUES
 =========================
-None
+o Bipeds do not import correctly.  Bones are doing better at the moment.
 
 =========================
 INSTALLED FILES
