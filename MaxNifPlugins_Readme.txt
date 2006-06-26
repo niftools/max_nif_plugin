@@ -1,10 +1,10 @@
 						MaxPlugins 0.1.2
 						================
 
-  	This releases simply introduces an importer to make a unified release.
+  	This releases introduces an importer and fixes some bugs in the exporter.
   
 	This plugin set currently consists of an exporter, importer and a utility 
- 	plugin. This is a early release, so expect it to be buggy. 
+ 	plugin. This is a early release, so expect it to be buggy.  	
 	
 	Report problems and ask questions here:
 	
@@ -15,6 +15,16 @@
 		http://www.silgrad.com/wbb2/thread.php?threadid=2477	
 		
 	Enjoy!
+
+	Additional Notes
+	----------------
+		
+	Set the layer value to "NonCollidable", if you want to be able to walk through 
+	your objects, while still being able to activate them.
+
+	If your collision mesh comes out deformed, go to the utilities tab, 
+	choose "Reset XForm" and click "Reset Selected". This should fix it.
+
 
 	
 	Changes since 0.1
@@ -34,7 +44,7 @@
 	------------
 
   	Exporter and Utility:
-    	3D Studio Max 6+, tested with version 8.
+    	3D Studio Max 6, 7 and 8
 	
   	Importer
     	3d Studio Max 8, untested with previous releases

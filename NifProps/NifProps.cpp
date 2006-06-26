@@ -184,8 +184,13 @@ void NifProps::enableGUI(BOOL obj, BOOL hvk)
 	EnableWindow(GetDlgItem(mPanel, IDC_GRP_OBJECT), obj);
 	EnableWindow(GetDlgItem(mPanel, IDC_CHK_ISCOLL), obj);
 
-	for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
-		EnableWindow(GetDlgItem(mPanel, i), hvk);
+	EnableWindow(GetDlgItem(mPanel, IDC_GRP_HAVOK), hvk);
+	EnableWindow(GetDlgItem(mPanel, IDC_LBL_MATERIAL), hvk);
+	EnableWindow(GetDlgItem(mPanel, IDC_CB_MATERIAL), hvk);
+	EnableWindow(GetDlgItem(mPanel, IDC_LBL_LAYER), hvk);
+	EnableWindow(GetDlgItem(mPanel, IDC_CB_LAYER), hvk);
+//	for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
+//		EnableWindow(GetDlgItem(mPanel, i), hvk);
 }
 
 void NifProps::SelectionSetChanged(Interface *ip, IUtil *iu)
