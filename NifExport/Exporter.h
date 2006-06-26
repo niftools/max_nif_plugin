@@ -84,6 +84,8 @@ private:
 	void				nodeTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
 	Point3				getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);
 	bool				equal(const Vector3 &a, const Point3 &b, float thresh);
+	BitmapTex			*getTexture(Mtl *mtl);
+	void				getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 
 	/* tristrips */
 	void				strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris);
@@ -96,13 +98,11 @@ private:
 	int 				addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm);
 	// adds a face to a face group
 	void				addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm);
-	// returns true if at least one of the colors in the group has a value != (1, 1, 1, 1)
-	bool				hasVertexColors(FaceGroup &grp);
 	// creates face groups from faces with same sub material id
 	bool				splitMesh(INode *node, Mesh *, FaceGroups &grps, TimeValue t);
 	// creates a NiTriStrips or NiTriShape hierarchy from a face group
 	bool				makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp);
-	// splits mesh and makes and converts it into nif blocks
+	// splits mesh and converts it into nif blocks
 	Result				exportMesh(NiNodeRef &parent, INode *node, TimeValue t);
 
 	/* texture & material */
@@ -110,8 +110,6 @@ private:
 	void				makeTexture(NiAVObjectRef &parent, Mtl *mtl);
 	// creates a NiMaterialProperty
 	void				makeMaterial(NiAVObjectRef &parent, Mtl *mtl);
-	BitmapTex			*getTexture(Mtl *mtl);
-	void				getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 
 	/* havok & collision */
 	int					addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm);

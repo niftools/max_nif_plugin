@@ -41,7 +41,18 @@ public:
 
 	void SetTranslation(const Vector3 &v);
 	void SetRotation(const QuaternionXYZW &q);
-	void SetLayerCopy(int l);
+	void SetLayerCopy(int l);	
+	void SetCenter(const Vector3 &v);
+	void SetMass(float f);
+	void SetLinearDamping(float f);
+	void SetAngularDamping(float f);
+	void SetFriction(float f);
+	void SetRestitution(float f);
+	void SetMaxLinearVelocity(float f);
+	void SetMaxAngularVelocity(float f);
+	void SetPenetrationDepth(float f);
+	void SetMotionSystem(int i);
+	void SetQualityType(int i);
 
 protected:
 	BHK_RIGID_BODY_MEMBERS

@@ -52,3 +52,57 @@ void bhkRigidBody::SetLayerCopy(int l)
 	layerCopy_ = l;
 }
 
+void bhkRigidBody::SetCenter(const Vector3 &v)
+{
+	center = v;
+}
+
+void bhkRigidBody::SetMass(float f)
+{
+	mass = f;
+}
+
+void bhkRigidBody::SetLinearDamping(float f)
+{
+	linearDamping = f;
+}
+
+void bhkRigidBody::SetAngularDamping(float f)
+{
+	angularDamping = f;
+}
+
+void bhkRigidBody::SetFriction(float f)
+{
+	friction = f;
+}
+
+void bhkRigidBody::SetRestitution(float f)
+{
+	restitution = f;
+}
+
+void bhkRigidBody::SetMaxLinearVelocity(float f)
+{
+	maxLinearVelocity = f;
+}
+
+void bhkRigidBody::SetMaxAngularVelocity(float f)
+{
+	maxAngularVelocity = f;
+}
+
+void bhkRigidBody::SetPenetrationDepth(float f)
+{
+	penDepth = f;
+}
+
+void bhkRigidBody::SetMotionSystem(int i)
+{
+	motionSystem_ = i;
+}
+
+void bhkRigidBody::SetQualityType(int i)
+{
+	qualityType = i;
+}

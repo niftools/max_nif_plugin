@@ -58,8 +58,6 @@ Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
 
 		parent->AddChild(DynamicCast<NiAVObject>(n));
 		parent = n;
-//		fprintf(pStream,"%s%s \"%s\" {\n", indent.data(), ID_GROUP, FixupName(node->GetName())); 
-//		indentLevel++;
 	}
 
 

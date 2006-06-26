@@ -300,7 +300,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
-				AdditionalIncludeDirectories="D:\code\NifExport\niflib;d:\3dsmax6\maxsdk\include"
+				AdditionalIncludeDirectories="D:\code\MaxPlugins\NifExport\niflib;d:\3dsmax6\maxsdk\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"

@@ -22,14 +22,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &parent, INode *node, TimeValue 
 
 	Mesh *mesh = &tri->GetMesh();
 	mesh->buildNormals();
-/*
-	Matrix3 pm = node->GetParentTM(t);
-	pm.Invert();
-	Matrix3 tm = node->GetObjTMAfterWSM(t) * pm;
-	Matrix33 rot;
-	convertMatrix(rot, tm);
-	Vector3 trans(tm.GetTrans().x, tm.GetTrans().y, tm.GetTrans().z);
-*/
+
 	Matrix33 rot;
 	Vector3 trans;
 	nodeTransform(rot, trans, node, t);
@@ -65,7 +58,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &parent, INode *node, TimeValue 
 	}
 
 	if (alloc)
-		delete tri;
+		tri->DeleteMe();
 
 	return result;
 }
@@ -74,6 +67,7 @@ bool Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp)
 {
 	NiTriBasedGeomRef shape;
 	NiTriBasedGeomDataRef data;
+
 	if (mTriStrips)
 	{
 		NiTriStripsRef stripsShape = DynamicCast<NiTriStrips>(CreateBlock("NiTriStrips"));
@@ -164,22 +158,7 @@ void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, co
 {
 	Triangle tri;
 	for (int i=0; i<3; i++)
-	{
-/*		DWORD t0 = mesh->tvFace[ face ].getTVert(0);
-		DWORD t1 = mesh->tvFace[ face ].getTVert(1);
-		DWORD t2 = mesh->tvFace[ face ].getTVert(2);
-
-		int dir = mesh->tvFace[ face ].Direction(t0, t1);
-*/
-
-/*		Point3 tv = mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ]; // * tm;
-		tri[i] = addVertex(grp, 
-			               tv, 
-						   mesh->tVerts[ mesh->tvFace[ face ].t[ vi[i] ]], 
-						   getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi[i] ])));
-*/
 		tri[i] = addVertex(grp, face, vi[i], mesh, texm);
-	}
 
 	grp.faces.push_back(tri);
 }
@@ -204,6 +183,10 @@ bool Exporter::splitMesh(INode *node, Mesh *mesh, FaceGroups &grps, TimeValue t)
 		vi[2] = 2;
 	}
 
+	Matrix3 flip;
+	flip.IdentityMatrix();
+	flip.Scale(Point3(1, -1, 1));
+
 	int i, numSubMtls = nodeMtl?nodeMtl->NumSubMtls():0;
 	for (i=0; i<mesh->getNumFaces(); i++) 
 	{
@@ -212,9 +195,6 @@ bool Exporter::splitMesh(INode *node, Mesh *mesh, FaceGroups &grps, TimeValue t)
 		Matrix3 texm;
 		getTextureMatrix(texm, getMaterial(node, mtlID));
 
-		Matrix3 flip;
-		flip.IdentityMatrix();
-		flip.Scale(Point3(1, -1, 1));
 		texm *= flip;
 
 		addFace(grps[mtlID], i, vi, mesh, texm);

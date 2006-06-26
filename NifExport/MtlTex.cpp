@@ -1,41 +1,6 @@
 #include "pch.h"
 #include "stdmat.h"
 
-BitmapTex *Exporter::getTexture(Mtl *mtl)
-{
-	if (!mtl)
-		return NULL;
-
-	int texMaps = mtl->NumSubTexmaps();
-	if (!texMaps)
-		return NULL;
-
-	BitmapTex *bmTex = NULL;
-	for (int i=0; i<texMaps; i++)
-	{
-		Texmap *texMap = mtl->GetSubTexmap(i);
-		if (!texMap)
-			continue;
-
-		if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
-		{
-			bmTex = (BitmapTex*)texMap;
-			break;
-		}
-	}
-
-	return bmTex;
-}
-
-void Exporter::getTextureMatrix(Matrix3 &mat, Mtl *mtl)
-{
-	BitmapTex *tex = getTexture(mtl);
-	if (tex)
-		tex->GetUVTransform(mat);
-	else
-		mat.IdentityMatrix();
-}
-
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 {
 	BitmapTex *bmTex = getTexture(mtl);
@@ -124,4 +89,39 @@ Mtl *Exporter::getMaterial(INode *node, int subMtl)
 		return nodeMtl;
 	}
 	return NULL;
+}
+
+BitmapTex *Exporter::getTexture(Mtl *mtl)
+{
+	if (!mtl)
+		return NULL;
+
+	int texMaps = mtl->NumSubTexmaps();
+	if (!texMaps)
+		return NULL;
+
+	BitmapTex *bmTex = NULL;
+	for (int i=0; i<texMaps; i++)
+	{
+		Texmap *texMap = mtl->GetSubTexmap(i);
+		if (!texMap)
+			continue;
+
+		if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+		{
+			bmTex = (BitmapTex*)texMap;
+			break;
+		}
+	}
+
+	return bmTex;
+}
+
+void Exporter::getTextureMatrix(Matrix3 &mat, Mtl *mtl)
+{
+	BitmapTex *tex = getTexture(mtl);
+	if (tex)
+		tex->GetUVTransform(mat);
+	else
+		mat.IdentityMatrix();
 }

@@ -184,13 +184,14 @@ void NifProps::enableGUI(BOOL obj, BOOL hvk)
 	EnableWindow(GetDlgItem(mPanel, IDC_GRP_OBJECT), obj);
 	EnableWindow(GetDlgItem(mPanel, IDC_CHK_ISCOLL), obj);
 
-	EnableWindow(GetDlgItem(mPanel, IDC_GRP_HAVOK), hvk);
+/*	EnableWindow(GetDlgItem(mPanel, IDC_GRP_HAVOK), hvk);
 	EnableWindow(GetDlgItem(mPanel, IDC_LBL_MATERIAL), hvk);
 	EnableWindow(GetDlgItem(mPanel, IDC_CB_MATERIAL), hvk);
 	EnableWindow(GetDlgItem(mPanel, IDC_LBL_LAYER), hvk);
 	EnableWindow(GetDlgItem(mPanel, IDC_CB_LAYER), hvk);
-//	for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
-//		EnableWindow(GetDlgItem(mPanel, i), hvk);
+*/
+	for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
+		EnableWindow(GetDlgItem(mPanel, i), hvk);
 }
 
 void NifProps::SelectionSetChanged(Interface *ip, IUtil *iu)
@@ -221,42 +222,38 @@ void NifProps::selectionChanged()
 	CheckDlgButton(mPanel, IDC_CHK_ISCOLL, isColl);
 	
 	int mtl, lyr, msys, qtype;
-	if (!npGetProp(nodeSel, NP_HVK_MATERIAL, mtl))
-	{
-		mtl = NP_DEFAULT_HVK_MATERIAL;
-		npSetProp(nodeSel, NP_HVK_MATERIAL, mtl);
+	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel;
+	Vector3 center;
 
-	} else
-		mtl = max(0, min(mCbMaterial.count()-1, mtl));
+	npGetProp(nodeSel, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	npGetProp(nodeSel, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
+	npGetProp(nodeSel, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
+	npGetProp(nodeSel, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
+	npGetProp(nodeSel, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
+	npGetProp(nodeSel, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
+	npGetProp(nodeSel, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
+	npGetProp(nodeSel, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
+	npGetProp(nodeSel, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_FRICTION);
+	npGetProp(nodeSel, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
+	npGetProp(nodeSel, NP_HVK_CENTER, center);
 
-	if (!npGetProp(nodeSel, NP_HVK_LAYER, lyr))
-	{
-		lyr = NP_DEFAULT_HVK_LAYER;
-		npSetProp(nodeSel, NP_HVK_LAYER, lyr);
+	mCbMaterial.select(max(0, min(mtl, mCbMaterial.count()-1)));
+	mCbLayer.select(max(0, min(lyr, mCbLayer.count()-1)));
+	mCbMotionSystem.select(max(0, min(msys, mCbMotionSystem.count()-1)));
+	mCbQualityType.select(max(0, min(qtype, mCbQualityType.count()-1)));
 
-	} else
-		lyr = max(0, min(mCbLayer.count()-1, lyr));
+	mSpins[IDC_SP_CENTER_X]->SetValue(center.x, TRUE);
+	mSpins[IDC_SP_CENTER_Y]->SetValue(center.y, TRUE);
+	mSpins[IDC_SP_CENTER_Z]->SetValue(center.z, TRUE);
 
-	if (!npGetProp(nodeSel, NP_HVK_MOTION_SYSTEM, msys))
-	{
-		msys = NP_DEFAULT_HVK_MOTION_SYSTEM;
-		npSetProp(nodeSel, NP_HVK_MOTION_SYSTEM, msys);
+	mSpins[IDC_SP_MASS]->SetValue(mass, TRUE);
+	mSpins[IDC_SP_LINEAR_DAMPING]->SetValue(lindamp, TRUE);
+	mSpins[IDC_SP_ANGULAR_DAMPING]->SetValue(angdamp, TRUE);
+	mSpins[IDC_SP_FRICTION]->SetValue(frict, TRUE);
+	mSpins[IDC_SP_MAX_LINEAR_VELOCITY]->SetValue(maxlinvel, TRUE);
+	mSpins[IDC_SP_MAX_ANGULAR_VELOCITY]->SetValue(maxangvel, TRUE);
 
-	} else
-		msys = max(0, min(mCbMotionSystem.count()-1, msys));
 
-	if (!npGetProp(nodeSel, NP_HVK_QUALITY_TYPE, qtype))
-	{
-		qtype = NP_DEFAULT_HVK_QUALITY_TYPE;
-		npSetProp(nodeSel, NP_HVK_QUALITY_TYPE, qtype);
-
-	} else
-		qtype = max(0, min(mCbQualityType.count()-1, qtype));
-
-	mCbMaterial.select(mtl);
-	mCbLayer.select(lyr);
-	mCbMotionSystem.select(msys);
-	mCbQualityType.select(lyr);
 }
 
 void NifProps::Init(HWND hWnd)
@@ -274,6 +271,8 @@ void NifProps::Destroy(HWND hWnd)
 
 BOOL NifProps::dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	Vector3 center;
+
 	switch (msg) 
 	{
 		case WM_INITDIALOG:
@@ -326,6 +325,57 @@ BOOL NifProps::dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 
+		case CC_SPINNER_CHANGE:
+			if (!mNode)
+				break;
+
+			switch (LOWORD(wParam))
+			{
+				case IDC_SP_CENTER_X:
+					npGetProp(mNode, NP_HVK_CENTER, center);
+					center.x = mSpins[IDC_SP_CENTER_X]->GetFVal();
+					npSetProp(mNode, NP_HVK_CENTER, center);
+					break;
+				case IDC_SP_CENTER_Y:
+					npGetProp(mNode, NP_HVK_CENTER, center);
+					center.y = mSpins[IDC_SP_CENTER_Y]->GetFVal();
+					npSetProp(mNode, NP_HVK_CENTER, center);
+					break;
+				case IDC_SP_CENTER_Z:
+					npGetProp(mNode, NP_HVK_CENTER, center);
+					center.z = mSpins[IDC_SP_CENTER_Z]->GetFVal();
+					npSetProp(mNode, NP_HVK_CENTER, center);
+					break;
+
+				case IDC_SP_MASS:
+					npSetProp(mNode, NP_HVK_MASS, mSpins[IDC_SP_MASS]->GetFVal());
+					break;
+				case IDC_SP_FRICTION:
+					npSetProp(mNode, NP_HVK_FRICTION, mSpins[IDC_SP_FRICTION]->GetFVal());
+					break;
+				case IDC_SP_RESTITUTION:
+					npSetProp(mNode, NP_HVK_RESTITUTION, mSpins[IDC_SP_RESTITUTION]->GetFVal());
+					break;
+
+				case IDC_SP_LINEAR_DAMPING:
+					npSetProp(mNode, NP_HVK_LINEAR_DAMPING, mSpins[IDC_SP_LINEAR_DAMPING]->GetFVal());
+					break;
+				case IDC_SP_ANGULAR_DAMPING:
+					npSetProp(mNode, NP_HVK_ANGULAR_DAMPING, mSpins[IDC_SP_ANGULAR_DAMPING]->GetFVal());
+					break;
+
+				case IDC_SP_MAX_LINEAR_VELOCITY:
+					npSetProp(mNode, NP_HVK_MAX_LINEAR_VELOCITY, mSpins[IDC_SP_MAX_LINEAR_VELOCITY]->GetFVal());
+					break;
+				case IDC_SP_MAX_ANGULAR_VELOCITY:
+					npSetProp(mNode, NP_HVK_MAX_ANGULAR_VELOCITY, mSpins[IDC_SP_MAX_ANGULAR_VELOCITY]->GetFVal());
+					break;
+
+				case IDC_SP_PENETRATION_DEPTH:
+					npSetProp(mNode, NP_HVK_PENETRATION_DEPTH, mSpins[IDC_SP_PENETRATION_DEPTH]->GetFVal());
+					break;
+			}
+			break;
 
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:

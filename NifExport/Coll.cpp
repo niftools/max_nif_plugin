@@ -62,12 +62,25 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 	Mesh *mesh = &tri->GetMesh();
 	mesh->buildNormals();
 
-	int lyr, mtl;
-	if (!npGetProp(node, NP_HVK_LAYER, lyr))
-		lyr = NP_DEFAULT_HVK_LAYER;
+	// get data from node
+	int lyr, mtl, msys, qtype;
+	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel, resti, pendepth;
+	Vector3 center;
 
-	if (!npGetProp(node, NP_HVK_MATERIAL, mtl))
-		mtl = NP_DEFAULT_HVK_LAYER;
+	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
+	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	npGetProp(node, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
+	npGetProp(node, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
+	npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
+	npGetProp(node, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
+	npGetProp(node, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
+	npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
+	npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
+	npGetProp(node, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_MAX_LINEAR_VELOCITY);
+	npGetProp(node, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
+	npGetProp(node, NP_HVK_PENETRATION_DEPTH, pendepth, NP_DEFAULT_HVK_PENETRATION_DEPTH);
+	npGetProp(node, NP_HVK_CENTER, center);
+
 
 	// setup shape data
 	vector<Vector3> verts;
@@ -122,9 +135,19 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 	body->SetRotation(q);
 	body->SetTranslation(Vector3(trans.x/7, trans.y/7, trans.z/7));
 
-
 	body->SetLayer(lyr);
 	body->SetLayerCopy(lyr);
+	body->SetMotionSystem(msys);
+	body->SetQualityType(qtype);
+	body->SetMass(mass);
+	body->SetLinearDamping(lindamp);
+	body->SetAngularDamping(angdamp);
+	body->SetFriction(frict);
+	body->SetRestitution(resti);
+	body->SetMaxLinearVelocity(maxlinvel);
+	body->SetMaxAngularVelocity(maxangvel);
+	body->SetPenetrationDepth(pendepth);
+	body->SetCenter(center);
 
 	// link
 	parent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));

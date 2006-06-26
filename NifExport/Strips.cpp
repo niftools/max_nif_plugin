@@ -20,6 +20,7 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 
 	// triangles left over
 	Triangles stris;
+
 	for (i=0; i<groups.size(); i++)
 	{
 		if (groups[i].m_Type == tri_stripper::PT_Triangle_Strip)
