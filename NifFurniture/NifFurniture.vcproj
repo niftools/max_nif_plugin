@@ -427,12 +427,27 @@
 			<File
 				RelativePath=".\NifFurniture.def">
 			</File>
+			<File
+				RelativePath="..\NifGui.cpp">
+			</File>
+			<File
+				RelativePath="..\NifPlugins.cpp">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
+				RelativePath="FurnitureMarkers.h">
+			</File>
+			<File
 				RelativePath=".\NifFurniture.h">
+			</File>
+			<File
+				RelativePath="..\NifGui.h">
+			</File>
+			<File
+				RelativePath="..\NifPlugins.h">
 			</File>
 			<File
 				RelativePath=".\resource.h">
