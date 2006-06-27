@@ -4,6 +4,8 @@
 #include "niflib/nif_math.h"
 using Niflib::Vector3;
 
+/* node properties */
+
 #define NP_HASCOLL							_T("np_coll")
 #define NP_HVK_LAYER						_T("np_hvk_layer")
 #define NP_HVK_MATERIAL						_T("np_hvk_mtl")
@@ -19,6 +21,9 @@ using Niflib::Vector3;
 #define NP_HVK_MOTION_SYSTEM				_T("np_hvk_msys")
 #define NP_HVK_QUALITY_TYPE					_T("np_hvk_qtype")
 
+#define NP_FRN_POS							_T("np_frn_pos")
+
+/* default values */
 #define NP_DEFAULT_HVK_MATERIAL				9
 #define NP_DEFAULT_HVK_LAYER				1
 #define NP_DEFAULT_HVK_MASS					0
@@ -32,6 +37,22 @@ using Niflib::Vector3;
 #define NP_DEFAULT_HVK_MOTION_SYSTEM		7
 #define NP_DEFAULT_HVK_QUALITY_TYPE			1
 
+#define NP_DEFAULT_FRN_MARKER_TYPE			NP_FRN_SLEEP_LEFT
+
+/* other constants */
+enum NpFrnPos
+{
+	NP_FRN_SLEEP_LEFT		= 1,
+	NP_FRN_SLEEP_RIGHT		= 2,
+	NP_FRN_BEDROLL_LEFT		= 3,
+	NP_FRN_BEDROLL_RIGHT	= 4,
+	NP_FRN_SIT_LEFT			= 11,
+	NP_FRN_SIT_RIGHT		= 12,
+	NP_FRN_SIT_BACK			= 13,
+	NP_FRN_SIT_FRONT		= 14
+};
+
+/* property access */
 bool	npIsCollision(INode *node);
 void	npSetCollision(INode *node, bool coll);
 
