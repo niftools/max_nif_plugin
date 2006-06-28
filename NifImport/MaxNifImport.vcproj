@@ -86,6 +86,8 @@
 				ModuleDefinitionFile=".\MaxNifImport.def"
 				ProgramDatabaseFile=".\Release\MaxNifImport.pdb"
 				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
 				SetChecksum="true"
 				BaseAddress="0x16860000"
 				ImportLibrary=".\Release\MaxNifImport.lib"
@@ -113,7 +115,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;C:\3dsmax8\plugcfg&quot; (&#x0D;&#x0A;   if not exist &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;      copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;   )&#x0D;&#x0A;)&#x0D;&#x0A;if exist &quot;C:\3dsmax8&quot; (&#x0D;&#x0A;    xcopy /D /Y /I &quot;$(ProjectDir)MaxNifImport_Readme.txt&quot; &quot;C:\3dsmax8\&quot;&#x0D;&#x0A;)&#x0D;&#x0A;"
+				CommandLine="if exist &quot;C:\3dsmax8\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;if exist &quot;C:\3dsmax8&quot; (&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)..\MaxNifPlugins_Readme.txt&quot; &quot;$(ProjectDir)Staging\&quot;&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(ProjectDir)Staging\plugins\&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(ProjectDir)Staging\plugcfg&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -215,7 +217,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;C:\3dsmax8\plugcfg&quot; (&#x0D;&#x0A;   if not exist &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;      copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;   )&#x0D;&#x0A;)&#x0D;&#x0A;if exist &quot;C:\3dsmax8&quot; (&#x0D;&#x0A;    xcopy /D /Y /I &quot;$(ProjectDir)MaxNifImport_Readme.txt&quot; &quot;C:\3dsmax8\&quot;&#x0D;&#x0A;)&#x0D;&#x0A;"
+				CommandLine="if exist &quot;C:\3dsmax8\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;C:\3dsmax8\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -317,10 +319,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\MaxNifImport_Readme.txt"
-			>
-		</File>
 		<File
 			RelativePath=".\MaxNifTools.ini"
 			>

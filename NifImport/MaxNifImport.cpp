@@ -138,7 +138,7 @@ public:
       // Apply post processing checks after reading blocks
       if (isValid()){
          if (goToSkeletonBindPosition && !nodes.empty())
-            nodes[0]->GoToSkeletonBindPosition();
+            GoToSkeletonBindPosition(nodes);
 
          hasSkeleton = HasSkeleton();
          isBiped = IsBiped();

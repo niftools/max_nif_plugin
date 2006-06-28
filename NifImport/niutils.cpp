@@ -514,3 +514,15 @@ void FindImages(NameValueCollection& images, const string& rootPath, const strin
       }
    }
 }
+
+
+void GoToSkeletonBindPosition(vector<NiNodeRef>& blocks)
+{
+   //Send all skeleton roots to bind position
+   for (uint i = 0; i < blocks.size(); ++i) {
+   	NiNodeRef node = blocks[i];
+   	if ( node != NULL && node->IsSkeletonRoot() ) {
+   		node->GoToSkeletonBindPosition();
+   	}
+   }
+}
