@@ -482,11 +482,15 @@ void WriteNifTree( ostream & out, NiObjectRef const & root, unsigned int version
 		// unknown int 3
 		WriteUInt( user_version, out );
 		// Creator?
-		WriteShortString( "msawyer", out );
+		ShortString s;
+		s.str = "NifExport";
+		NifStream(s, out);
 		// Export Type?
-		WriteShortString( "TriStrip Process Script", out );
+		s.str = "Default"; 
+		NifStream(s, out);
 		// Export Script?
-		WriteShortString( "Default Export Script", out );
+		s.str = "Default";
+		NifStream(s, out);
 	}
 	
 	//New header data exists from version 5.0.0.1 on

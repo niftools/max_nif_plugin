@@ -14,6 +14,10 @@ All rights reserved.  Please see niflib.h for licence. */
 #include "NiControllerManager.h"
 #include "NiStringPalette.h"
 #include "NiTimeController.h"
+#include "NiSingleInterpolatorController.h"
+#include "NiObjectNET.h"
+#include "NiProperty.h"
+#include "NiStringPalette.h"
 using namespace Niflib;
 
 //Definition of TYPE constant
@@ -49,190 +53,96 @@ const Type & NiControllerSequence::GetType() const {
 
 NiControllerManager * NiControllerSequence::Parent() const { return NULL; }
 
-void NiControllerSequence::SetTextKey( const string new_name, const Ref<NiTextKeyExtraData> & txt_key ) {
+void NiControllerSequence::SetTextKey( const Ref<NiTextKeyExtraData> & txt_key ) {
 	//Set new name
-	textKeys.name = new_name;
-	throw runtime_error("The SetTextKey function cannot be implemented until prolems in the XML are solved.");
-	//TODO: "ControllerLink" can only link to Interpolators.  This is incorrect.  Must be fixed in XML.
-	//Need to set txt_key reference to a variable in textKeys
+	textKeysName = txt_key->GetName();
+	textKeys = txt_key;
 }
 
-void NiControllerSequence::AddController( const string target_name, const Ref<NiTimeController> & obj ) {
+void NiControllerSequence::AddController( const Ref<NiTimeController> & obj ) {
 	//Make sure the link isn't null
 	if ( obj == NULL ) {
 		throw runtime_error("Attempted to add a null controller to NiControllerSequence block.");
 	}
 
-	throw runtime_error("The AddController function cannot be implemented until prolems in the XML are solved.");
-	//TODO:  ControllerLinks should store controllers, not interpolators.  Cannot implement this.
-	//KfChild kc;
+	NiObjectNETRef target = obj->GetTarget();
+	if ( target == NULL ) {
+		throw runtime_error("Controller must have a target to be added to a NiControllerSequence.");
+	}
 
-	
-	//kc.block = new_link;
+	//Make a new ControllerLink and fill out necessary data
+	ControllerLink cl;
+	cl.controller = obj;
+	cl.targetName = target->GetName();
+	cl.nodeName = target->GetName();
 
-	////Check for a string palette
-	//blk_ref str_pal = GetAttr("String Palette")->asLink();
-	//if ( str_pal.is_null() == true ) {
-	//	//No string palette, store name internally
-	//	kc.name = new_name;
-	//} else {
-	//	//String palette exists - store name and controller type there
+	NiPropertyRef prop = DynamicCast<NiProperty>(target);
+	if ( prop != NULL ) {
+		cl.propertyType = prop->GetType().GetTypeName();
+	}
 
-	//	//Make sure they didn't give us empty strings
-	//	if ( new_name.size() == 0 || controller_type.size() == 0 ) {
-	//		throw runtime_error( "You cannot use empty name or controller type strings when using a string palette.");
-	//	}
+	cl.controllerType = obj->GetType().GetTypeName();
 
-	//	//Get palette
-	//	string pal = str_pal->GetAttr("Palette")->asString();
-
-	//	//--Search for copies of the text we want to add--//
-
-	//	//Search for the name string
-	//	int offset = (int)pal.find( new_name );
-	//	if ( offset == -1 ) {
-	//		//String not found, append it
-	//		kc.name_offset = (uint)pal.size();
-	//		pal.append( new_name + '\0' );
-	//	} else {
-	//		//String found, use existing offset
-	//		kc.name_offset = offset;
-	//	}
-
-	//	//Search for the controller type string
-	//	offset = (int)pal.find( controller_type );
-	//	if ( offset == -1 ) {
-	//		//String not found, append it
-	//		kc.controller_offset = (uint)pal.size();
-	//		pal.append( controller_type + '\0' );
-	//	} else {
-	//		//String found, use existing offset
-	//		kc.controller_offset = offset;
-	//	}
-
-	//	//Store the palette back to the string pal block
-	//	str_pal->GetAttr("Palette")->Set( pal );
-	//}
-	//
-	//children.push_back( kc );
-
-	////Add new child
-	//AddChild( kc.block.get_block() );
-	//
-	////This should be impossible now, but don't want to forget it later
-	//if ( kc.unk_link.is_null() != true ) {
-	//	AddChild( kc.unk_link.get_block() );
-	//}
+	//Add finished ControllerLink to list
+	controlledBlocks.push_back( cl );
 }
 
-void NiControllerSequence::AddInterpolator( const string target_name, const Ref<NiInterpolator> & obj, string controller_type ) {
+void NiControllerSequence::AddInterpolator( const Ref<NiSingleInterpolatorController> & obj, byte priority ) {
 	//Make sure the link isn't null
 	if ( obj == NULL ) {
-		throw runtime_error("Attempted to add a null interpolator to NiControllerSequence block.");
+		throw runtime_error("Attempted to add a null controller to NiControllerSequence block.");
 	}
 
-	throw runtime_error("The AddInterpolator function cannot be implemented until prolems in the XML are solved.");
+	NiInterpolatorRef interp = obj->GetInterpolator();
+	if ( interp == NULL ) {
+		throw runtime_error("Controller must have an interpolator attached to be added to a NiControllerSequence with the AddInterpolator function.");
+	}
 
-	//TODO: Hold off on this until the XML for this block is fixed up.
-	//KfChild kc;
+	NiObjectNETRef target = obj->GetTarget();
+	if ( target == NULL ) {
+		throw runtime_error("Controller must have a target to be added to a NiControllerSequence.");
+	}
 
-	//kc.block = new_link;
+	//If there are existing ControllerLinks, use the same StringPalette they're using
+	NiStringPaletteRef str_pal;
+	if ( controlledBlocks.size() > 0 ) {
+		str_pal = controlledBlocks[0].stringPalette;
+	} else {
+		//No existing ones, so make a new one
+		str_pal = new NiStringPalette;
+	}
 
-	////Check for a string palette
-	//blk_ref str_pal = GetAttr("String Palette")->asLink();
-	//if ( str_pal.is_null() == true ) {
-	//	//No string palette, store name internally
-	//	kc.name = new_name;
-	//} else {
-	//	//String palette exists - store name and controller type there
+	//Make a new ControllerLink and fill out necessary data
+	ControllerLink cl;
 
-	//	//Make sure they didn't give us empty strings
-	//	if ( new_name.size() == 0 || controller_type.size() == 0 ) {
-	//		throw runtime_error( "You cannot use empty name or controller type strings when using a string palette.");
-	//	}
+	cl.interpolator = interp;
+	cl.priority_ = priority;
+	cl.nodeNameOffset = str_pal->AddSubStr( target->GetName() );
 
-	//	//Get palette
-	//	string pal = str_pal->GetAttr("Palette")->asString();
+	NiPropertyRef prop = DynamicCast<NiProperty>(target);
+	if ( prop != NULL ) {
+		cl.propertyTypeOffset = str_pal->AddSubStr( prop->GetType().GetTypeName() );
+	}
 
-	//	//--Search for copies of the text we want to add--//
+	cl.controllerTypeOffset = str_pal->AddSubStr( obj->GetType().GetTypeName() );
 
-	//	//Search for the name string
-	//	int offset = (int)pal.find( new_name );
-	//	if ( offset == -1 ) {
-	//		//String not found, append it
-	//		kc.name_offset = (uint)pal.size();
-	//		pal.append( new_name + '\0' );
-	//	} else {
-	//		//String found, use existing offset
-	//		kc.name_offset = offset;
-	//	}
-
-	//	//Search for the controller type string
-	//	offset = (int)pal.find( controller_type );
-	//	if ( offset == -1 ) {
-	//		//String not found, append it
-	//		kc.controller_offset = (uint)pal.size();
-	//		pal.append( controller_type + '\0' );
-	//	} else {
-	//		//String found, use existing offset
-	//		kc.controller_offset = offset;
-	//	}
-
-	//	//Store the palette back to the string pal block
-	//	str_pal->GetAttr("Palette")->Set( pal );
-	//}
-	//
-	//children.push_back( kc );
-
-	////Add new child
-	//AddChild( kc.block.get_block() );
-	//
-	////This should be impossible now, but don't want to forget it later
-	//if ( kc.unk_link.is_null() != true ) {
-	//	AddChild( kc.unk_link.get_block() );
-	//}
+	//Add finished ControllerLink to list
+	controlledBlocks.push_back( cl );
 }
 
-void NiControllerSequence::ClearChildren() {
+void NiControllerSequence::ClearControllerData() {
 	
 	throw runtime_error("The AddInterpolator function cannot be implemented until prolems in the XML are solved.");
 
-	//TODO: Hold off on this until the XML is sorted out
-	////Cycle through all Kf Children, removing them as parents from the blocks they refer to
-	//for (uint i = 0; i < children.size(); ++i ) {
-	//	if ( children[i].block.is_null() != true ) {
-	//		RemoveChild( children[i].block.get_block() );
-	//	}
-	//	if ( children[i].unk_link.is_null() != true ) {
-	//		RemoveChild( children[i].unk_link.get_block() );
-	//	}
-	//}
-
-	////Clear list
-	//children.clear();
-
-	////Check for a string palette
-	//blk_ref str_pal = GetAttr("String Palette")->asLink();
-	//if ( str_pal.is_null() == false ) {
-	//	//There's a string palette, so clear it out
-	//	str_pal->GetAttr("Palette")->Set( "" );
-	//}
+	//Clear list
+	controlledBlocks.clear();
 }
 
-string NiControllerSequence::GetSubStr( const string & pal, short offset ) const {
-	string out;
-	
-	// -1 is a null offset
-	if ( offset == -1 ) {
-		return out;
-	}
-
-	for ( uint i = offset; i < pal.size(); ++i ) {
-		if ( pal[i] == '\0' ) {
-			break;
-		}
-		out.push_back( pal[i] );
-	}
-
-	return out;
+vector<ControllerLink> NiControllerSequence::GetControllerData() const {
+	return controlledBlocks;
 }
+
+Ref<NiTextKeyExtraData> NiControllerSequence::GetTextKeyExtraData() const {
+	return textKeys;
+}
+

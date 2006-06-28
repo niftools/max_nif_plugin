@@ -33,6 +33,13 @@ public:
 	virtual list<NiObjectRef> GetRefs() const;
 	virtual const Type & GetType() const;
 
+	void SetRadius(float f);
+	void SetRadius1(float f);
+	void SetRadius2(float f);
+
+	void SetFirstPoint(const Vector3 &v);
+	void SetSecondPoint(const Vector3 &v);
+
 protected:
 	BHK_CAPSULE_SHAPE_MEMBERS
 	STANDARD_INTERNAL_METHODS

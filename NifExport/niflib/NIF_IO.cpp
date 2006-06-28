@@ -176,11 +176,6 @@ void WriteString( string const & val, ostream& out ) {
 	out.write( val.c_str(), std::streamsize(val.size()) );
 }
 
-void WriteShortString( string const & val, ostream& out ) {
-	WriteByte( byte(val.size()+1), out );
-	out.write( val.c_str(), std::streamsize(val.size()+1) );
-}
-
 void WriteBool( bool val, ostream& out, unsigned int version ) {
 	if ( version < 0x04010001 ) {
 		//Bools are stored as integers before version 4.1.0.1
@@ -274,6 +269,25 @@ void NifStream( HeaderString const & val, ostream& out, uint version ) {
 
 ostream & operator<<( ostream & out, HeaderString const & val ) {
 	return out << val.header;
+}
+
+//ShortString
+void NifStream( ShortString & val, istream& in, uint version ) {
+	byte len = ReadByte( in );
+	char * buffer = new char[len];
+	in.read( buffer, len );
+	val.str = buffer;
+	delete [] buffer;
+};
+
+void NifStream( ShortString const & val, ostream& out, uint version ) {
+	WriteByte( byte(val.str.size() + 1), out );
+	out.write( val.str.c_str(), std::streamsize(val.str.size()) );
+	WriteByte( 0, out );
+};
+
+ostream & operator<<( ostream & out, ShortString const & val ) {
+	return out << val.str;
 }
 
 //TexCoord

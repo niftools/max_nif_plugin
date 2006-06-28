@@ -35,3 +35,24 @@ const Type & bhkCapsuleShape::GetType() const {
 	return TYPE;
 };
 
+void bhkCapsuleShape::SetRadius(float f) {
+	radius = f;
+}
+
+void bhkCapsuleShape::SetRadius1(float f) {
+	radius1 = f;
+}
+
+void bhkCapsuleShape::SetRadius2(float f) {
+	radius2 = f;
+}
+
+void bhkCapsuleShape::SetFirstPoint(const Vector3 &v) {
+	firstPoint = v;
+}
+
+void bhkCapsuleShape::SetSecondPoint(const Vector3 &v) {
+	secondPoint = v;
+}
+
+

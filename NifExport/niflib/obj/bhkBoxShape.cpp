@@ -35,3 +35,7 @@ const Type & bhkBoxShape::GetType() const {
 	return TYPE;
 };
 
+void bhkBoxShape::SetDimensions(const Vector3 &v) {
+	dimensions = v;
+}
+

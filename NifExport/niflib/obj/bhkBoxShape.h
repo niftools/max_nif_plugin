@@ -33,6 +33,8 @@ public:
 	virtual list<NiObjectRef> GetRefs() const;
 	virtual const Type & GetType() const;
 
+	void SetDimensions(const Vector3 &v);
+
 protected:
 	BHK_BOX_SHAPE_MEMBERS
 	STANDARD_INTERNAL_METHODS

@@ -1248,21 +1248,23 @@ InternalFixLinks( objects, link_stack, version, user_version ); \
 return InternalGetRefs(); \
 
 #define BHK_NI_TRI_STRIPS_SHAPE_MEMBERS \
-array<float,2> unknownFloats1; \
-array<uint,5> unknownInts1; \
-array<float,3> unknownFloats2; \
+float unknownFloat1; \
+uint unknownInt1; \
+array<uint,4> unknownInts1; \
 uint unknownInt2; \
+Vector3 scale; \
+uint unknownInt3; \
 mutable uint numStripsData; \
 vector<Ref<NiTriStripsData > > stripsData; \
-mutable uint numUnknownInts3; \
-vector<uint > unknownInts3; \
+mutable uint numUnknownInts2; \
+vector<uint > unknownInts2; \
 
 #define BHK_NI_TRI_STRIPS_SHAPE_INCLUDE "bhkSphereRepShape.h" \
 
 #define BHK_NI_TRI_STRIPS_SHAPE_PARENT bhkSphereRepShape \
 
 #define BHK_NI_TRI_STRIPS_SHAPE_CONSTRUCT \
- : unknownInt2((uint)0), numStripsData((uint)0), numUnknownInts3((uint)0) \
+ : unknownFloat1(0.1f), unknownInt1((uint)0x004ABE60), unknownInt2((uint)1), scale(1.0f, 1.0f, 1.0f), unknownInt3((uint)0), numStripsData((uint)0), numUnknownInts2((uint)0) \
 
 #define BHK_NI_TRI_STRIPS_SHAPE_READ \
 InternalRead( in, link_stack, version, user_version ); \
@@ -2395,12 +2397,12 @@ return InternalGetRefs(); \
 
 #define NI_CONTROLLER_SEQUENCE_MEMBERS \
 string name; \
-ControllerLink textKeys; \
+string textKeysName; \
+Ref<NiTextKeyExtraData > textKeys; \
 mutable uint numControlledBlocks; \
 uint unknownInt1; \
 vector<ControllerLink > controlledBlocks; \
 float weight; \
-Ref<NiTextKeyExtraData > textKeys2; \
 uint cycleType; \
 uint unknownInt0; \
 float frequency; \
@@ -2417,7 +2419,7 @@ Ref<NiStringPalette > stringPalette; \
 #define NI_CONTROLLER_SEQUENCE_PARENT NiObject \
 
 #define NI_CONTROLLER_SEQUENCE_CONSTRUCT \
- : numControlledBlocks((uint)0), unknownInt1((uint)0), weight(1.0f), textKeys2(NULL), cycleType((uint)0), unknownInt0((uint)0), frequency(0.0f), startTime(0.0f), stopTime(0.0f), unknownFloat2(0.0f), unknownByte((byte)0), manager(NULL), stringPalette(NULL) \
+ : textKeys(NULL), numControlledBlocks((uint)0), unknownInt1((uint)0), weight(1.0f), cycleType((uint)0), unknownInt0((uint)0), frequency(0.0f), startTime(0.0f), stopTime(0.0f), unknownFloat2(0.0f), unknownByte((byte)0), manager(NULL), stringPalette(NULL) \
 
 #define NI_CONTROLLER_SEQUENCE_READ \
 InternalRead( in, link_stack, version, user_version ); \

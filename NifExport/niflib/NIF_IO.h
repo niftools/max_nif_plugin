@@ -11,47 +11,13 @@ All rights reserved.  Please see niflib.h for licence. */
 #include <sstream>
 #include <vector>
 #include "nif_math.h"
+#include "nif_versions.h"
 namespace Niflib {
 using namespace std;
 
 #ifndef NULL
 #define NULL 0
 #endif
-
-//--Constants--//
-
-//NIF Versions
-const unsigned int VER_4_0_0_2     = 0x04000002; /*!< Nif Version 4.0.0.2 */ 
-const unsigned int VER_4_1_0_12    = 0x0401000C; /*!< Nif Version 4.1.0.12 */ 
-const unsigned int VER_4_2_0_2     = 0x04020002; /*!< Nif Version 4.2.0.2 */ 
-const unsigned int VER_4_2_1_0     = 0x04020100; /*!< Nif Version 4.2.1.0 */ 
-const unsigned int VER_4_2_2_0     = 0x04020200; /*!< Nif Version 4.2.2.0 */ 
-const unsigned int VER_10_0_1_0    = 0x0A000100; /*!< Nif Version 10.0.1.0 */ 
-const unsigned int VER_10_1_0_0    = 0x0A010000; /*!< Nif Version 10.1.0.0 */ 
-const unsigned int VER_10_2_0_0    = 0x0A020000; /*!< Nif Version 10.2.0.0 */ 
-const unsigned int VER_20_0_0_4    = 0x14000004; /*!< Nif Version 20.0.0.4 */ 
-const unsigned int VER_20_0_0_5    = 0x14000005; /*!< Nif Version 20.0.0.4 */ 
-const unsigned int VER_UNSUPPORTED = 0xFFFFFFFF; /*!< Unsupported Nif Version */
-const unsigned int VER_INVALID     = 0xFFFFFFFE; /*!< Not a Nif file */
-
-
-
-/*! Keyframe trees are game dependent, so here we define a few games. */
-enum NifGame {
-	KF_MW = 0, /*!< keyframe files: NiSequenceStreamHelper header, .kf extension */
-	KF_DAOC = 1, /*!< keyframe files: NiNode header, .kfa extension */
-	KF_CIV4 = 2 /*!< keyframe files: NiControllerSequence header, .kf extension */
-};
-
-/*! Export options. */
-enum ExportOptions { 
-	EXPORT_NIF = 0, /*!< NIF */
-	EXPORT_NIF_KF = 1, /*!< NIF + single KF + KFM */
-	EXPORT_NIF_KF_MULTI = 2, /*!< NIF + multiple KF + KFM */
-	EXPORT_KF = 3, /*!< single KF */
-	EXPORT_KF_MULTI = 4 /*!< multiple KF */
-};
-
 
 //--Non-mathematical Basic Types--//
 
@@ -134,6 +100,8 @@ public:
       array_Traits<T>::Finalize(v_, len_);
    }
 
+//These operators cause SWIG warnings
+#ifndef SWIG
    //! Copy Assignment
    array& operator=(const array& other) {
       array tmp( other );
@@ -168,6 +136,7 @@ public:
       return v_[index];
    } 
 
+#endif
    operator T*() const {
       return v_;
    }
@@ -218,6 +187,10 @@ private:
 
 struct HeaderString {
 	string header;
+};
+
+struct ShortString {
+	string str;
 };
 
 //TODO:  This is temporary to make it compile.  Should eventually be adjusted to display 1's and 0's insted of as an int.
@@ -353,7 +326,6 @@ void WriteShort( short val, ostream& out );
 void WriteByte( byte val, ostream& out );
 void WriteFloat( float val, ostream& out );
 void WriteString( string const & val, ostream& out );
-void WriteShortString( string const & val, ostream& out );
 void WriteBool( bool val, ostream& out, unsigned int version );
 
 //-- NifStream And ostream Functions --//
@@ -395,11 +367,6 @@ void NifStream( string & val, istream& in, uint version = 0 );
 void NifStream( string const & val, ostream& out, uint version = 0  );
 
 //--Structs--//
-
-////HeaderString
-//void NifStream( HeaderString & val, istream& in, uint version = 0 );
-//void NifStream( HeaderString const & val, ostream& out, uint version = 0 );
-//ostream & operator<<( ostream & out, HeaderString const & val );
 
 //TexCoord
 void NifStream( TexCoord & val, istream& in, uint version = 0 );
@@ -511,6 +478,11 @@ void NifStream( HeaderString & val, istream& in, uint version = 0 );
 void NifStream( HeaderString const & val, ostream& out, uint version = 0  );
 ostream & operator<<( ostream & out, HeaderString const & val );
 
+//ShortString
+void NifStream( ShortString & val, istream& in, uint version = 0 );
+void NifStream( ShortString const & val, ostream& out, uint version = 0  );
+ostream & operator<<( ostream & out, ShortString const & val );
+
 //--Templates--//
 
 void NifStream( Key<Quaternion> & key, istream& file, uint version, KeyType type );
@@ -577,7 +549,8 @@ void NifStream( Key<T> const & key, ostream & file, uint version, int type ) {
 	NifStream( key, file, version, (KeyType)type );
 }
 
-ostream & operator<<( ostream & out, PixelLayout const & val );
+//These operators cause SWIG warnings
+#ifndef SWIG
 template <class T> 
 ostream & operator<<( ostream & out, Key<T> const & val ) {
 	return out << "Time:  " << val.time << endl
@@ -587,6 +560,7 @@ ostream & operator<<( ostream & out, Key<T> const & val ) {
 			   << "Bias:  " << val.bias << endl
 			   << "Continuity:  " << val.continuity << endl;
 }
+#endif
 
 //Key<Quaternion>
 //void StreamQuatKey( Key<Quaternion> & key, istream& file, uint version, KeyType type );

@@ -33,6 +33,8 @@ public:
 	virtual list<NiObjectRef> GetRefs() const;
 	virtual const Type & GetType() const;
 
+	void	SetRadius(float f);
+
 protected:
 	BHK_SPHERE_SHAPE_MEMBERS
 	STANDARD_INTERNAL_METHODS

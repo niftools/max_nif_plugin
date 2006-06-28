@@ -38,10 +38,11 @@ public:
 	virtual list<NiObjectRef> GetRefs() const;
 	virtual const Type & GetType() const;
 
-	void	SetUnknownFloats1(const array<float,2> &);
+/*	void	SetUnknownFloats1(const array<float,2> &);
 	void	SetUnknownFloats2(const array<float,3> &);
 	void	SetUnknownInts1(const array<uint,5> &);
-	void	SetUnknownInts3(const vector<uint> &);
+*/
+	void	SetUnknownInts2(const vector<uint> &);
 
 	void	SetNumStripsData(int i);
 	void	SetStripsData(int i, Ref<NiTriStripsData> &);

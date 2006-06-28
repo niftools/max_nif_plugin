@@ -46,7 +46,7 @@ void bhkNiTriStripsShape::SetStripsData(int i, Ref<NiTriStripsData> &strips)
 {
 	stripsData[i] = strips;
 }
-
+/*
 void bhkNiTriStripsShape::SetUnknownFloats1(const array<float,2> &floats)
 {
 	unknownFloats1 = floats;
@@ -61,10 +61,10 @@ void bhkNiTriStripsShape::SetUnknownInts1(const array<uint,5> &ints)
 {
 	unknownInts1 = ints;
 }
-
-void bhkNiTriStripsShape::SetUnknownInts3(const vector<uint> &ints)
+*/
+void bhkNiTriStripsShape::SetUnknownInts2(const vector<uint> &ints)
 {
-	numUnknownInts3 = (uint)ints.size();
-	unknownInts3 = ints;
+	numUnknownInts2 = (uint)ints.size();
+	unknownInts2 = ints;
 }
 

@@ -49,19 +49,39 @@ POSSIBILITY OF SUCH DAMAGE. */
 #include <map>
 #include "dll_export.h"
 #include "nif_math.h"
-#include "NIF_IO.h"
-#include "obj/NiObject.h"
-#include "obj/NiNode.h"
-#include "obj/NiAVObject.h"
-//#include "gen/obj_defines.h"
-//#include "kfm.h"
+#include "nif_versions.h"
+#include "Ref.h"
 
 using namespace std;
 namespace Niflib {
 
+//Classes used
+class NiObject;
+class NiNode;
+class NiAVObject;
+class NiControllerSequence;
+
 #ifndef NULL
 #define NULL 0  /*!< Definition used to detect null pointers. */ 
 #endif
+
+//--Constants--//
+
+/*! Keyframe trees are game dependent, so here we define a few games. */
+enum NifGame {
+	KF_MW = 0, /*!< keyframe files: NiSequenceStreamHelper header, .kf extension */
+	KF_DAOC = 1, /*!< keyframe files: NiNode header, .kfa extension */
+	KF_CIV4 = 2 /*!< keyframe files: NiControllerSequence header, .kf extension */
+};
+
+/*! Export options. */
+enum ExportOptions { 
+	EXPORT_NIF = 0, /*!< NIF */
+	EXPORT_NIF_KF = 1, /*!< NIF + single KF + KFM */
+	EXPORT_NIF_KF_MULTI = 2, /*!< NIF + multiple KF + KFM */
+	EXPORT_KF = 3, /*!< single KF */
+	EXPORT_KF_MULTI = 4 /*!< multiple KF */
+};
 
 //--Main Functions--//
 
@@ -114,14 +134,14 @@ NIFLIB_API unsigned int CheckNifHeader( string const & file_name );
  * 
  * \sa ReadNifTree, WriteNifTree
  */
-NIFLIB_API vector<NiObjectRef> ReadNifList( string const & file_name );
+NIFLIB_API vector< Ref<NiObject> > ReadNifList( string const & file_name );
 
 /*!
  * Reads the given input stream and returns a vector of block references
  * \param stream The input stream to read NIF data from.
  * \return A vector of block references that point to all the blocks read from the stream.
  */
-NIFLIB_API vector<NiObjectRef> ReadNifList( istream & in );
+NIFLIB_API vector< Ref<NiObject> > ReadNifList( istream & in );
 
 /*!
  * Reads the given file by file name and returns a reference to the root block.
@@ -140,14 +160,14 @@ NIFLIB_API vector<NiObjectRef> ReadNifList( istream & in );
  * 
  * \sa ReadNifList, WriteNifTree
  */
-NIFLIB_API NiObjectRef ReadNifTree( string const & file_name );
+NIFLIB_API Ref<NiObject> ReadNifTree( string const & file_name );
 
 /*!
  * Reads the given input stream and returns a reference to the root block.
  * \param stream The input stream to read NIF data from.
  * \return A block reference that points to the root of the tree of data blocks contained in the NIF file.
  */
-NIFLIB_API NiObjectRef ReadNifTree( istream & in );
+NIFLIB_API Ref<NiObject> ReadNifTree( istream & in );
 
 /*!
  * Creates a new NIF file of the given file name by crawling through the data tree starting with the root block given.
@@ -170,7 +190,7 @@ NIFLIB_API NiObjectRef ReadNifTree( istream & in );
  * 
  * \sa ReadNifList, WriteNifTree
  */
-NIFLIB_API void WriteNifTree( string const & file_name, NiObjectRef const & root, unsigned int version = VER_4_0_0_2, unsigned int user_version = 0 );
+NIFLIB_API void WriteNifTree( string const & file_name, Ref<NiObject> const & root, unsigned int version = VER_4_0_0_2, unsigned int user_version = 0 );
 
 /*!
  * Writes a nif tree to an ostream starting at the given root block.
@@ -178,18 +198,27 @@ NIFLIB_API void WriteNifTree( string const & file_name, NiObjectRef const & root
  * \param root The root block to start from when writing out the NIF data.  All decedents of this block will be written to the stream in tree-descending order.
  * \param version The version of the NIF format to use when writing a file.  Default is version 4.0.0.2.
  */
-NIFLIB_API void WriteNifTree( ostream & stream, NiObjectRef const & root, unsigned int version = VER_4_0_0_2, unsigned int user_version = 0 );
+NIFLIB_API void WriteNifTree( ostream & stream, Ref<NiObject> const & root, unsigned int version = VER_4_0_0_2, unsigned int user_version = 0 );
 
-//TODO:  This was written by Amorilia.  Figure out how to fix it.
-///*!
-// * Writes a bunch of files given a base file name, and a pointer to the root block of the Nif file tree.
-// * \param file_name The desired file name for the base NIF file. This name serves as the basis for the names of any Kf files and Kfm files as well.  The path is relative to the working directory unless a full path is specified.
-// * \param root The root block to start from when writing out the NIF file.
-// * \param version The version of the NIF format to use when writing a file.
-// * \param export_files What files to write: NIF, NIF + KF + KFM, NIF + KF's + KFM, KF only, KF's only
-// * \param kf_type The KF type (Morrowind style, DAoC style, CivIV style, ...)
-// */
-//NIFLIB_API void WriteFileGroup( string const & file_name, NiObjectRef const & root, unsigned int version, unsigned int export_files, unsigned int kf_type );
+/*!
+ * Writes a bunch of files given a base file name, and a pointer to the root block of the Nif file tree.
+ * \param file_name The desired file name for the base NIF file. This name serves as the basis for the names of any Kf files and Kfm files as well.  The path is relative to the working directory unless a full path is specified.
+ * \param root The root block to start from when writing out the NIF file.
+ * \param version The version of the NIF format to use when writing a file.
+ * \param export_files What files to write: NIF, NIF + KF + KFM, NIF + KF's + KFM, KF only, KF's only
+ * \param kf_type The KF type (Morrowind style, DAoC style, CivIV style, ...)
+ */
+NIFLIB_API void WriteFileGroup( string const & file_name, Ref<NiObject> const & root, unsigned int version, ExportOptions export_files, NifGame kf_type );
+
+/*!
+ * Creates a clone of an entire tree of objects.
+ * \param root The root block to start from when cloning the NIF data.  All referenced objects will be included in the new tree.
+ * \param version The version of the NIF format to use when writing a file.  Default is version 4.0.0.2.
+ * \param user_version The user version of the NIF format to use when writing a file.  Default is user version 0.
+ * \return The root of the new cloned tree.
+ */
+NIFLIB_API Ref<NiObject> CloneNifTree( Ref<NiObject> const & root, unsigned int version = VER_4_0_0_2, unsigned int user_version = 0 );
+
 
 //TODO:  Figure out how to fix this to work with the new system
 /*!
@@ -198,7 +227,8 @@ NIFLIB_API void WriteNifTree( ostream & stream, NiObjectRef const & root, unsign
  * \param right The root block of the second Nif tree to merge.
  * \param version The version of the nif format to use during the clone operation on the right-hand tree.  The default is the highest version availiable.
  */
-//NIFLIB_API void MergeNifTrees( NiNodeRef target, NiAVObjectRef right, unsigned int version = 0xffffffff );
+//NIFLIB_API void MergeNifTrees( NiNodeRef target, NiAVObjectRef right, unsigned int version = 0xFFFFFFFF );
+NIFLIB_API void MergeNifTrees( const Ref<NiNode> & target, const Ref<NiControllerSequence> & right, unsigned int version = 0xFFFFFFFF, unsigned int user_version = 0 );
 
 
 //// Returns list of all blocks in the tree rooted by root block.
@@ -224,7 +254,7 @@ NIFLIB_API void WriteNifTree( ostream & stream, NiObjectRef const & root, unsign
  * 
  * sa BlocksInMemory
  */
-NIFLIB_API NiObjectRef CreateBlock( string block_type );
+NIFLIB_API Ref<NiObject> CreateBlock( string block_type );
 
 /*!
  * Returns whether the requested version is supported.
@@ -513,7 +543,15 @@ NiNode * node = new NiNode;
 
 All NIF objects inherit from \ref NiObject so a good place to start would be understanding the methods of that class.
 
-You can access the member functions of any class through a Ref smart pointer of the right type by using the -> operator.  In Python you can simply use the dot (.) operator.
+You can access the member functions of any class through a Ref smart pointer of the right type by using the -> operator.  In Python you will need to use the Ptr() function as an intermediary between a smart reference and the object that it holds, like so:
+
+\code
+//C++
+niNode->GetChildren;
+
+#Python
+niNode.Ptr().GetChildren()
+\endcode
 
 If you have a Ref of one type, such as a generic NiObjectRef, and you want to know if the object it points to also inherits from the NiNode class, you use the \ref DynamicCast template function.  To cast from a NiObjectRef to a NiNodeRef, you would do the following:
 

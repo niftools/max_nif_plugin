@@ -20,11 +20,11 @@ struct NIFLIB_API LODRange {
 	/*!
 	 * Begining of range.
 	 */
-	float rnear;
+	float nearExtent;
 	/*!
 	 * End of Range.
 	 */
-	float rfar;
+	float farExtent;
 };
 
 }
