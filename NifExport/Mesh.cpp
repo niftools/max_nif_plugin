@@ -1,38 +1,116 @@
 #include "pch.h"
 
-Exporter::Result Exporter::exportMesh(NiNodeRef &parent, INode *node, TimeValue t)
+/*
+
+void FPUtility::GetAlphaVal(void)
+{
+	if(ip->GetSelNodeCount()<1)return;
+	INode *node = ip->GetSelNode(0);
+	if(!node)return;
+ 	ObjectState os = node->EvalWorldState(0);
+	Object *obj = os.obj;
+	BOOL delMesh = false;
+
+	if (obj && obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) { 
+		TriObject * tri = NULL;
+		tri = (TriObject *) obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
+		if (obj != tri) 
+			delMesh = true; // we own the copy
+		if (tri) 
+		{
+			Mesh * mesh = &(tri->GetMesh());
+			MeshDelta md(*mesh);
+			BOOL support = mesh->mapSupport(MAP_ALPHA);
+			if(support)
+			{
+				UVVert *alpha = mesh->mapVerts(MAP_ALPHA);
+				for(int i=0;igetNumVerts();i++)
+				{
+					float a = alpha[i].x;
+				}
+			}
+
+		}
+
+		if (delMesh)
+			delete tri;
+	}
+}
+				
+*/
+
+
+Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
+{
+	bool coll = npIsCollision(node);
+	if ((coll && !mExportCollision) ||
+		(node->IsHidden() && !mExportHidden && !coll) ||
+		(mSelectedOnly && !node->Selected()))
+		return Skip;
+
+	NiNodeRef newParent;
+	TimeValue t = 0;
+	ObjectState os = node->EvalWorldState(t); 
+	if (!coll && os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
+	{
+/*		newParent = DynamicCast<NiNode>(CreateBlock("NiNode"));
+		parent->AddChild(DynamicCast<NiAVObject>(newParent));
+
+		Matrix33 rot;
+		Vector3 trans;
+		nodeTransform(rot, trans, node, t);
+
+		newParent->SetLocalRotation(rot);
+		newParent->SetLocalTranslation(trans);
+		string name = (char*)node->GetName();
+		newParent->SetName(name);
+*/
+		newParent = makeNode(parent, node);
+
+		Result result;
+		result = exportMesh(newParent, node, t);
+		if (result != Ok)
+			return result;
+
+	} else
+	if (node->IsGroupHead())
+	{
+		newParent = makeNode(parent, node);
+/*		newParent = DynamicCast<NiNode>(CreateBlock("NiNode"));
+		Matrix33 rot;
+		Vector3 trans;
+		nodeTransform(rot, trans, node, t);
+		newParent->SetLocalRotation(rot);
+		newParent->SetLocalTranslation(trans);
+		string name = (char*)node->GetName();
+		newParent->SetName(name);
+
+		parent->AddChild(DynamicCast<NiAVObject>(newParent));
+*/
+	} else
+		newParent = parent;
+
+	for (int i=0; i<node->NumberOfChildren(); i++) 
+	{
+		Result result = exportMeshes(newParent, node->GetChildNode(i));
+		if (result!=Ok && result!=Skip)
+			return result;
+	}
+
+	return Ok;
+}
+
+
+Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
 {	
 	ObjectState os = node->EvalWorldState(t);
-	if (!os.obj || os.obj->SuperClassID()!=GEOMOBJECT_CLASS_ID)
-		return Error;
-		
-	BOOL alloc;
-	Object *obj = os.obj;
-	if (!obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) 
-		return Error;
 
-	TriObject *tri = (TriObject *) obj->ConvertToType(t, Class_ID(TRIOBJ_CLASS_ID, 0));
+	TriObject *tri = (TriObject *)os.obj->ConvertToType(t, Class_ID(TRIOBJ_CLASS_ID, 0));
 	if (!tri)
 		return Error;
 
-	if (obj != tri) 
-		alloc = TRUE;
-	else
-		alloc = FALSE;
-
 	Mesh *mesh = &tri->GetMesh();
 	mesh->buildNormals();
-
-	Matrix33 rot;
-	Vector3 trans;
-	nodeTransform(rot, trans, node, t);
-
-	NiNodeRef ninode = DynamicCast<NiNode>(CreateBlock("NiNode"));
-	ninode->SetLocalRotation(rot);
-	ninode->SetLocalTranslation(trans);
-	string name = (char*)node->GetName();
-	ninode->SetName(name);
-	parent->AddChild(DynamicCast<NiAVObject>(ninode));
 
 	Result result = Ok;
 	while (1)
@@ -57,7 +135,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &parent, INode *node, TimeValue 
 		break;
 	}
 
-	if (alloc)
+	if (tri != os.obj)
 		tri->DeleteMe();
 
 	return result;

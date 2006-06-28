@@ -32,10 +32,25 @@ Exporter::Result Exporter::export(NiNodeRef &root, INode *node)
 	root->AddExtraData(DynamicCast<NiExtraData>(strings));
 
 	mNiRoot = root;
-	return exportTree(root, node);
+	
+	Result result;
+	result = exportMeshes(root, node);
+	if (result != Ok)
+		return result;
+		
+	if (mExportCollision)
+	{
+	
+		result = exportCollision(root, node);
+		if (result != Ok)
+			return result;
+	}
+	return Ok;
 }
 
-Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
+#if 0
+
+Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
 {
 	bool coll = npIsCollision(node);
 	if ((coll && !mExportCollision) ||
@@ -60,26 +75,65 @@ Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
 		parent = n;
 	}
 
+	Result result;
 
 	ObjectState os = node->EvalWorldState(t); 
-
-	Result result;
 	if (os.obj) 
 	{
 		// We look at the super class ID to determine the type of the object.
 		switch(os.obj->SuperClassID()) 
 		{
 			case GEOMOBJECT_CLASS_ID: 
-				if (!coll)
+/*				if (os.obj->ClassID() == SCUBA_CLASS_ID)
 				{
-					result = exportMesh(parent, node, t);
-					if (result != Ok)
-						return result;
+					float radius = 0;
+					float height = 0;
+					IParamArray *params = os.obj->GetParamBlock();
+					params->GetValue(os.obj->GetParamBlockIndex(CAPSULE_RADIUS), 0, radius, FOREVER);
+					params->GetValue(os.obj->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height, FOREVER);
+
+					int foo=1+2;
+				} else
+				if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
+				{
+					float length = 0;
+					float height = 0;
+					float width = 0; 
+
+					IParamArray *params = os.obj->GetParamBlock();
+					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_LENGTH), 0, length, FOREVER);
+					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_HEIGHT), 0, height, FOREVER);
+					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_WIDTH), 0, width, FOREVER);
+
+					int foo=1+2;
+
+				} else
+				if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
+				{
+					float radius = 0;
+
+					IParamArray *params = os.obj->GetParamBlock();
+					params->GetValue(os.obj->GetParamBlockIndex(SPHERE_RADIUS), 0, radius, FOREVER);
+
+					int foo=1+2;
+
 				} else
 				{
-					if (!makeCollisionHierarchy(mNiRoot, node, t))
-						return Error;
+*/
+					if (!coll)
+					{
+
+						result = exportMesh(parent, node, t);
+						if (result != Ok)
+							return result;
+					} /*else
+					{
+
+						if (!makeCollisionHierarchy(mNiRoot, node, t))
+							return Error;
+					}
 				}
+*/
 				break;
 /*
 			case CAMERA_CLASS_ID:
@@ -101,7 +155,7 @@ Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
 
 	for (int i=0; i<node->NumberOfChildren(); i++) 
 	{
-		Result result = exportTree(parent, node->GetChildNode(i));
+		Result result = exportMeshes(parent, node->GetChildNode(i));
 		if (result!=Ok && result!=Skip)
 			return result;
 	}
@@ -111,3 +165,5 @@ Exporter::Result Exporter::exportTree(NiNodeRef &parent, INode *node)
 
 	return Ok;
 }
+
+#endif

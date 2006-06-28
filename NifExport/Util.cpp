@@ -87,3 +87,21 @@ bool Exporter::equal(const Vector3 &a, const Point3 &b, float thresh)
 		   (fabsf(a.y-b.y) <= thresh) &&
 		   (fabsf(a.z-b.z) <= thresh);
 }
+
+NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
+{
+	NiNodeRef node = DynamicCast<NiNode>(CreateBlock("NiNode"));
+	
+	Matrix33 rot;
+	Vector3 trans;
+	TimeValue t = 0;
+	nodeTransform(rot, trans, maxNode, t, local);
+	
+	node->SetLocalRotation(rot);
+	node->SetLocalTranslation(trans);
+	string name = (char*)maxNode->GetName();
+	node->SetName(name);
+
+	parent->AddChild(DynamicCast<NiAVObject>(node));
+	return node;
+}

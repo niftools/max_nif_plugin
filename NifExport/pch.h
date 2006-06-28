@@ -12,13 +12,17 @@
 // niflib/Ref.h' header guard caused havok!
 // near & far 
 #include "niflib/pch.h"
+#include "niflib/obj/NiNode.h"
 #include "niflib/obj/NiTriStrips.h"
 #include "niflib/obj/NiTriStripsData.h"
 #include "niflib/obj/NiTriShape.h"
 #include "niflib/obj/NiTriShapeData.h"
 #include "niflib/obj/bhkCollisionObject.h"
-#include "niflib/obj/bhkRigidBodyT.h"
+#include "niflib/obj/bhkRigidBody.h"
 #include "niflib/obj/bhkNiTriStripsShape.h"
+#include "niflib/obj/bhkBoxShape.h"
+#include "niflib/obj/bhkSphereShape.h"
+#include "niflib/obj/bhkCapsuleShape.h"
 #include "niflib/obj/NiMaterialProperty.h"
 #include "niflib/obj/NiTexturingProperty.h"
 #include "niflib/obj/NiSourceTexture.h"
