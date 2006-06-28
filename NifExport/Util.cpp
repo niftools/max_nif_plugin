@@ -105,3 +105,50 @@ NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 	parent->AddChild(DynamicCast<NiAVObject>(node));
 	return node;
 }
+
+bool Exporter::isCollisionGroup(INode *maxNode, bool root)
+{
+	if (root)
+	{
+		if (!maxNode->IsGroupHead())
+			return false;
+	} else
+	{
+		if (npIsCollision(maxNode))
+			return true;
+	}
+
+	for (int i=0; i<maxNode->NumberOfChildren(); i++) 
+	{
+		if (isCollisionGroup(maxNode->GetChildNode(i), false))
+			return true;
+	}
+
+	return false;
+}
+
+bool Exporter::isMeshGroup(INode *maxNode, bool root)
+{
+	if (root)
+	{
+		if (!maxNode->IsGroupHead())
+			return false;
+	} else
+	{
+		if (!npIsCollision(maxNode))
+		{
+			TimeValue t = 0;
+			ObjectState os = maxNode->EvalWorldState(t); 
+			if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+				return true;
+		}
+	}
+
+	for (int i=0; i<maxNode->NumberOfChildren(); i++) 
+	{
+		if (isMeshGroup(maxNode->GetChildNode(i), false))
+			return true;
+	}
+
+	return false;
+}

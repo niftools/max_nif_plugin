@@ -242,8 +242,10 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 {
 	// marked as collision?
+	bool coll = npIsCollision(node);
+
 	NiNodeRef newParent;
-	if (npIsCollision(node))
+	if (coll)
 	{
 /*		NiNodeRef n = DynamicCast<NiNode>(CreateBlock("NiNode"));
 		parent->AddChild(DynamicCast<NiAVObject>(n));
@@ -279,7 +281,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
 
 	} else
-	if (node->IsGroupHead())
+	if (isCollisionGroup(node))
 	{
 		newParent = makeNode(parent, node);
 	} else

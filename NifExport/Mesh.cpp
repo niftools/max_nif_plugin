@@ -43,28 +43,14 @@ void FPUtility::GetAlphaVal(void)
 Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
 {
 	bool coll = npIsCollision(node);
-	if ((coll && !mExportCollision) ||
-		(node->IsHidden() && !mExportHidden && !coll) ||
-		(mSelectedOnly && !node->Selected()))
+	if (coll ||	(node->IsHidden() && !mExportHidden && !coll) || (mSelectedOnly && !node->Selected()))
 		return Skip;
 
 	NiNodeRef newParent;
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t); 
-	if (!coll && os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
+	if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
 	{
-/*		newParent = DynamicCast<NiNode>(CreateBlock("NiNode"));
-		parent->AddChild(DynamicCast<NiAVObject>(newParent));
-
-		Matrix33 rot;
-		Vector3 trans;
-		nodeTransform(rot, trans, node, t);
-
-		newParent->SetLocalRotation(rot);
-		newParent->SetLocalTranslation(trans);
-		string name = (char*)node->GetName();
-		newParent->SetName(name);
-*/
 		newParent = makeNode(parent, node);
 
 		Result result;
@@ -73,20 +59,10 @@ Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
 			return result;
 
 	} else
-	if (node->IsGroupHead())
+	if (isMeshGroup(node))
 	{
 		newParent = makeNode(parent, node);
-/*		newParent = DynamicCast<NiNode>(CreateBlock("NiNode"));
-		Matrix33 rot;
-		Vector3 trans;
-		nodeTransform(rot, trans, node, t);
-		newParent->SetLocalRotation(rot);
-		newParent->SetLocalTranslation(trans);
-		string name = (char*)node->GetName();
-		newParent->SetName(name);
 
-		parent->AddChild(DynamicCast<NiAVObject>(newParent));
-*/
 	} else
 		newParent = parent;
 

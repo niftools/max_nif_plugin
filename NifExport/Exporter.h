@@ -88,6 +88,10 @@ private:
 	BitmapTex				*getTexture(Mtl *mtl);
 	void					getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 	NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
+	// returns true if the node contains collision objects
+	bool					isCollisionGroup(INode *maxNode, bool root=true);
+	// returns true if the node contains meshes
+	bool					isMeshGroup(INode *maxNode, bool root=true);
 
 	/* tristrips */
 	void					strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris);
