@@ -135,28 +135,28 @@ void NifProps::BeginEditParams(Interface *ip, IUtil *iu)
 	mNode = NULL;
 
 	const char **str;
-	str = HvkMaterialNames;
+	str = NpHvkMaterialNames;
 	while (*str)
 	{
 		mCbMaterial.add(*str);
 		str++;
 	}
 
-	str = HvkLayerNames;
+	str = NpHvkLayerNames;
 	while (*str)
 	{
 		mCbLayer.add(*str);
 		str++;
 	}
 
-	str = HvkMotionSystems;
+	str = NpHvkMotionSystems;
 	while (*str)
 	{
 		mCbMotionSystem.add(*str);
 		str++;
 	}
 
-	str = HvkQualityTypes;
+	str = NpHvkQualityTypes;
 	while (*str)
 	{
 		mCbQualityType.add(*str);

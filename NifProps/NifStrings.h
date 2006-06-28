@@ -1,4 +1,4 @@
-static const char *HvkMaterialNames[] =
+static const char *NpHvkMaterialNames[] =
 {
 	"Stone",
 	"Cloth",
@@ -34,7 +34,7 @@ static const char *HvkMaterialNames[] =
 	NULL
 };
 
-static const char *HvkLayerNames[] =
+static const char *NpHvkLayerNames[] =
 {
 	"Unidentified",
 	"Static",
@@ -96,7 +96,7 @@ static const char *HvkLayerNames[] =
 	NULL
 };
 
-static const char *HvkMotionSystems[] =
+static const char *NpHvkMotionSystems[] =
 {
 	"Keyframed",
 	"Box (2)",
@@ -111,7 +111,7 @@ static const char *HvkMotionSystems[] =
 	NULL
 };
 
-static const char *HvkQualityTypes[] =
+static const char *NpHvkQualityTypes[] =
 {
 	"Moving",
 	"Fixed",
