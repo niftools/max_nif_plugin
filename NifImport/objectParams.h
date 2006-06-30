@@ -190,7 +190,7 @@ bool getMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T& value)
 }
 
 // Get the parameter controller
-Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamDimension*& dim)
+inline Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamDimension*& dim)
 {
 	Control* rval = NULL;
 	assert(obj != NULL);
@@ -217,7 +217,7 @@ Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamDimensio
 }
 
 // Set the parameter controller
-bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* control, ParamDimension* dim)
+inline bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* control, ParamDimension* dim)
 {
 	bool rval = false;
 	assert(obj != NULL);

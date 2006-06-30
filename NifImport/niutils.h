@@ -31,6 +31,9 @@ INFO: See Implementation for minimalist comments
 #include <color.h>
 
 // Niflib Headers
+#include <obj\NiObject.h>
+#include <obj\NiAVObject.h>
+#include <obj\NiObjectNET.h>
 #include <obj\NiNode.h>
 #include <nif_math.h>
 
@@ -192,8 +195,6 @@ extern string ExpandEnvironment(const string& src);
 extern void FindImages(NameValueCollection& images, const string& rootPath, const stringlist& searchpaths, const stringlist& extensions);
 
 extern void RenameNode(Interface *gi, LPCTSTR SrcName, LPCTSTR DstName);
-extern TriObject* GetTriObject(Object *o);
-extern Modifier *GetSkin(INode *node);
 
 enum PosRotScale
 {
@@ -202,13 +203,37 @@ enum PosRotScale
    prsScale = 0x4,
    prsDefault = prsPos | prsRot | prsScale,
 };
-extern void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs = prsDefault, TimeValue t = 0);
+extern void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
+extern void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs = prsDefault, TimeValue t = 0);
 
 extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks, const string& name );
 extern std::vector<Niflib::NiNodeRef> SelectNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match);
 extern int CountNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match );
 extern std::vector<std::string> GetNamesOfNodes( const vector<Niflib::NiNodeRef>& blocks );
-extern void GoToSkeletonBindPosition(std::vector<Niflib::NiNodeRef>& blocks);
+extern std::vector<Niflib::NiNodeRef> SelectNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match);
+
+struct NodeEquivalence
+{
+   bool operator()(const Niflib::NiNodeRef& lhs, const Niflib::NiNodeRef& rhs) const{
+      return (!lhs || !rhs) ? (lhs < rhs) : (lhs->GetName() < rhs->GetName());
+   }
+   bool operator()(const Niflib::NiNodeRef& lhs, const std::string& rhs) const{
+      return (lhs->GetName() < rhs);
+   }
+   bool operator()(const std::string& lhs, const Niflib::NiNodeRef& rhs) const{
+      return (lhs < rhs->GetName());
+   }
+};
+
+inline Niflib::NiNodeRef BinarySearch(vector<Niflib::NiNodeRef> &nodes, const string& name)
+{
+   typedef std::pair<vector<Niflib::NiNodeRef>::iterator, vector<Niflib::NiNodeRef>::iterator> NiNodePair;
+   NiNodePair pair = std::equal_range(nodes.begin(), nodes.end(), name, NodeEquivalence());
+   if (pair.first != pair.second) {
+      return (*pair.first);
+   }
+   return Niflib::NiNodeRef();
+}
 
 // Simple conversion helpers
 static inline float TODEG(float x) { return x * 180.0f / PI; }
@@ -218,7 +243,7 @@ static inline Color TOCOLOR(const Niflib::Color3& c3) {
    return Color(c3.r, c3.g, c3.b);
 }
 
-static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = true){
+static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = false){
    Niflib::Vector3 pos; Niflib::Matrix33 rot; float scale;
    tm.Decompose(pos, rot, scale);
    Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
@@ -227,8 +252,39 @@ static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = true){
    return m;
 }
 
-static inline Quat TOQUAT(const Niflib::Quaternion& q){
-   return Quat(q.x, q.y, q.z, q.w);
+
+static inline Point3 TOPOINT3(const Niflib::Vector3& v){
+   return Point3(v.x, v.y, v.z);
+}
+
+static inline Quat TOQUAT(const Niflib::Quaternion& q, bool inverse = false){
+   Quat qt(q.x, q.y, q.z, q.w);
+   return (inverse) ? qt.Inverse() : qt;
+}
+
+static inline AngAxis TOANGAXIS(const Niflib::Quaternion& q, bool inverse = false){
+   Quat qt(q.x, q.y, q.z, q.w);
+   if (inverse) qt.Invert();
+   return AngAxis(q.x, q.y, q.z, q.w);
+}
+
+
+template <typename U, typename T>
+inline Niflib::Ref<U> SelectFirstObjectOfType( vector<Niflib::Ref<T> > const & objs ) {
+   for (vector<Niflib::Ref<T> >::const_iterator itr = objs.begin(), end = objs.end(); itr != end; ++itr) {
+      Niflib::Ref<U> obj = DynamicCast<U>(*itr);
+      if (obj) return obj;
+   }
+   return Niflib::Ref<U>();
+}
+
+template <typename U, typename T>
+inline Niflib::Ref<U> SelectFirstObjectOfType( list<Niflib::Ref<T> > const & objs ) {
+   for (list<Niflib::Ref<T> >::const_iterator itr = objs.begin(), end = objs.end(); itr != end; ++itr) {
+      Niflib::Ref<U> obj = DynamicCast<U>(*itr);
+      if (obj) return obj;
+   }
+   return Niflib::Ref<U>();
 }
 
 #endif // _NIUTILS_H_

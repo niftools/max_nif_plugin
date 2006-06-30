@@ -21,8 +21,4 @@
 #include <commctrl.h>
 #include <shlwapi.h>
 
-#include "Max.h"
-#include "resource.h"
-#include "istdplug.h"
-#include "iparamb2.h"
-#include "iparamm2.h"
+#include "MaxNifImport.h"

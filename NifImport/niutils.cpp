@@ -306,61 +306,20 @@ void RenameNode(Interface *gi, LPCTSTR SrcName, LPCTSTR DstName)
    if (node != NULL) node->SetName(const_cast<LPTSTR>(DstName));
 }
 
-// Locate a TriObject in an Object if it exists
-TriObject* GetTriObject(Object *o)
+void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 {
-   if (o && o->CanConvertToType(triObjectClassID))
-      return (TriObject *)o->ConvertToType(0, triObjectClassID);
-   while (o->SuperClassID() == GEN_DERIVOB_CLASS_ID && o)
-   {
-      IDerivedObject* dobj = (IDerivedObject *)(o);
-      o = dobj->GetObjRef();
-      if (o && o->CanConvertToType(triObjectClassID))
-         return (TriObject *)o->ConvertToType(0, triObjectClassID);
-   }
-   return NULL;
-}
-
-// Get or Create the Skin Modifier
-Modifier *GetSkin(INode *node)
-{
-   Object* pObj = node->GetObjectRef();
-   if (!pObj) return NULL;
-   while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-   {
-      IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
-      int Idx = 0;
-      while (Idx < pDerObj->NumModifiers())
-      {
-         // Get the modifier. 
-         Modifier* mod = pDerObj->GetModifier(Idx);
-         if (mod->ClassID() == SKIN_CLASSID)
-         {
-            // is this the correct Physique Modifier based on index?
-            return mod;
-         }
-         Idx++;
-      }
-      pObj = pDerObj->GetObjRef();
-   }
-
-   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
-
-   //create a skin modifier and add it
-   Modifier *skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
-   dobj->SetAFlag(A_LOCK_TARGET);
-   dobj->AddModifier(skinMod);
-   dobj->ClearAFlag(A_LOCK_TARGET);
-   node->SetObjectRef(dobj);
-   return skinMod;
+   Point3 p = m3.GetTrans();
+   Quat q = m3;
+   PosRotScaleNode(n, p, q, 1.0f, prs, t);
 }
 
 // Set Position and Rotation on a standard controller will need to handle bipeds
 //   Always in World Transform coordinates
-void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs, TimeValue t)
+void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t)
 {
    if (Control *c = n->GetTMController()) {
 
+      ScaleValue sv(Point3(s,s,s));
       // Bipeds are special.  And will crash if you dont treat them with care
       if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
          ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
@@ -369,6 +328,8 @@ void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs, TimeVal
          // Get the Biped Export Interface from the controller 
          //IBipedExport *BipIface = (IBipedExport *) c->GetInterface(I_BIPINTERFACE);
          IOurBipExport *BipIface = (IOurBipExport *) c->GetInterface(I_OURINTERFACE);
+         if (prs & prsScale)
+            BipIface->SetBipedScale(sv, t, n);
          if (prs & prsRot)
             BipIface->SetBipedRotation(q, t, n, 0/*???*/);
          if (prs & prsPos)
@@ -376,6 +337,9 @@ void PositionAndRotateNode(INode *n, Point3 p, Quat& q, PosRotScale prs, TimeVal
       }
       else
       {
+         if (prs & prsScale)
+            if (Control *sclCtrl = c->GetScaleController())
+               sclCtrl->SetValue(t, &sv, 1, CTRL_ABSOLUTE);
          if (prs & prsRot)
             if (Control *rotCtrl = c->GetRotationController())
                rotCtrl->SetValue(t, &q, 1, CTRL_ABSOLUTE);
@@ -516,13 +480,3 @@ void FindImages(NameValueCollection& images, const string& rootPath, const strin
 }
 
 
-void GoToSkeletonBindPosition(vector<NiNodeRef>& blocks)
-{
-   //Send all skeleton roots to bind position
-   for (uint i = 0; i < blocks.size(); ++i) {
-   	NiNodeRef node = blocks[i];
-   	if ( node != NULL && node->IsSkeletonRoot() ) {
-   		node->GoToSkeletonBindPosition();
-   	}
-   }
-}
