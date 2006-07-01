@@ -105,7 +105,8 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
 {
    Mesh& mesh = o->GetMesh();
 
-   node->SetTransform(0,TOMATRIX3(triGeom->GetLocalTransform()));  
+   Matrix44 baseTM = (importBones) ? triGeom->GetLocalTransform() : triGeom->GetWorldTransform();
+   node->SetTransform(0,TOMATRIX3(baseTM));  
 
    // Vertex info
    {
@@ -311,38 +312,31 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
    if (ISkin *skin = (ISkin *) skinMod->GetInterface(I_SKIN)){
       ISkinImportData* iskinImport = (ISkinImportData*) skinMod->GetInterface(I_SKINIMPORTDATA);
 
-      Matrix3 m3;
+      Matrix3 m3(TRUE);
       if (applyOverallTransformToSkinAndBones) {
-         Matrix3 initNodeTM, initObjTM;
-         initNodeTM.IdentityMatrix(), initObjTM.IdentityMatrix();
-         skin->GetSkinInitTM(tnode, initNodeTM, false);
-         skin->GetSkinInitTM(tnode, initObjTM, true);
          m3 = TOMATRIX3(data->GetOverallTransform());
-         iskinImport->SetSkinTm(tnode, initNodeTM * m3, initObjTM * m3);
+         Matrix3 im3 = Inverse(m3);
+         iskinImport->SetSkinTm(tnode, im3, im3); // ???
       }
       // Create Bone List
       Tab<INode*> bones;
-      int i=0;
-      for (vector<NiNodeRef>::iterator itr = nifBones.begin(), end = nifBones.end(); itr != end; ++itr, ++i){
-         string name = (*itr)->GetName();
+      for (size_t i=0; i<nifBones.size(); ++i){
+         NiNodeRef bone = nifBones[i];
+         Matrix3 b3 = TOMATRIX3(data->GetBoneTransform(i));
+         Matrix3 ib3 = Inverse(b3);
+
+         string name = bone->GetName();
          if (INode *boneRef = gi->GetINodeByName(name.c_str())) {
             bones.Append(1, &boneRef);
             iskinImport->AddBoneEx(boneRef, TRUE);
 
             // Set Bone Transform
             if (applyOverallTransformToSkinAndBones) {
-               Matrix3 initNodeTM, initBoneTM;
-               initNodeTM.IdentityMatrix(), initBoneTM.IdentityMatrix();
-               skin->GetBoneInitTM(boneRef, initNodeTM, false);
-               skin->GetBoneInitTM(boneRef, initBoneTM, true);
-               iskinImport->SetBoneTm(boneRef, initNodeTM * m3, initBoneTM * m3);
+               iskinImport->SetBoneTm(boneRef, ib3, ib3);
             }
          }
       }
       ObjectState os = tnode->EvalWorldState(0);
-
-      // Need to trigger ModifyObject in BonesDefMod prior to adding vertices or nothing is added
-      GetCOREInterface()->ForceCompleteRedraw();
 
       // Need to get a list of bones and weights for each vertex.
       vector<VertexHolder> vertexHolders;
@@ -372,6 +366,11 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
             add = add;
          }
       }
+      // This is a kludge to get skin transforms to update and avoid jumping around after modifying the transforms.
+      //   Initially they show up incorrectly but magically fix up if you go to the modifier roll up.
+      //   There is still an outstanding issue with skeleton and GetObjectTMBeforeWSM.
+      skinMod->DisableModInViews();
+      skinMod->EnableModInViews();
    }
    return ok;
 }

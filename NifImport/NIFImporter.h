@@ -30,6 +30,7 @@ public:
    bool goToSkeletonBindPosition;
 
    // Biped/Bones related settings
+   bool importBones;
    string skeleton;
    float bipedHeight;
    string skeletonCheck;

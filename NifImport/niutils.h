@@ -303,4 +303,7 @@ inline Niflib::Ref<U> SelectFirstObjectOfType( list<Niflib::Ref<T> > const & obj
    return Niflib::Ref<U>();
 }
 
+TSTR PrintMatrix3(Matrix3& m);
+TSTR PrintMatrix44(Niflib::Matrix44& m);
+
 #endif // _NIUTILS_H_

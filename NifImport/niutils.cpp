@@ -494,3 +494,37 @@ void FindImages(NameValueCollection& images, const string& rootPath, const strin
 }
 
 
+// Debugger Trace Window Utilities
+TSTR PrintMatrix3(Matrix3& m)
+{
+   Point3 pt = m.GetTrans();
+   float y,p,r;
+   m.GetYawPitchRoll(&y,&p,&r);
+   return FormatText("Matrix3: [%g,%g,%g] <%g,%g,%g>\n"
+      ,pt.x, pt.y, pt.z
+      ,TODEG(y), TODEG(p), TODEG(r)
+      );
+}
+
+void DumpMatrix3(Matrix3& m)
+{
+   OutputDebugString(PrintMatrix3(m));
+}
+
+TSTR PrintMatrix44(Matrix44& m)
+{
+   Vector3 p; Matrix33 rot; float sc;
+   m.Decompose(p, rot, sc);
+   Quaternion q = rot.AsQuaternion();
+   Float3 f = q.AsEulerYawPitchRoll();
+
+   return FormatText("Matrix3: [%g,%g,%g] <%g,%g,%g> (%g)\n"
+      ,p.x, p.y, p.z
+      ,TODEG(f[0]), TODEG(f[1]), TODEG(f[2])
+      ,sc
+      );
+}
+void DumpMatrix44(Matrix44& m)
+{
+   OutputDebugString(PrintMatrix44(m));
+}

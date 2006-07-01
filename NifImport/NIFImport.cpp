@@ -62,7 +62,7 @@ void NifImporter::Initialize()
 {
    // Apply post processing checks after reading blocks
    if (isValid()){
-      if (goToSkeletonBindPosition && !nodes.empty())
+      if (goToSkeletonBindPosition && !nodes.empty() && importBones)
          GoToSkeletonBindPosition(nodes);
 
       // Only support biped if CreateNewBiped can be found.
@@ -124,6 +124,7 @@ void NifImporter::LoadIniSettings()
    flipUVTextures = GetIniValue<bool>(NifImportSection, "FlipUVTextures", true);
    enableSkinSupport = GetIniValue<bool>(NifImportSection, "EnableSkinSupport", true);
 
+   importBones = GetIniValue<bool>(BipedImportSection, "ImportBones", true);
    bipedHeight = GetIniValue<float>(BipedImportSection, "BipedHeight", 131.90f);
    bipedAngle = GetIniValue<float>(BipedImportSection, "BipedAngle", 90.0f);
    bipedAnkleAttach = GetIniValue<float>(BipedImportSection, "BipedAnkleAttach", 0.2f);
@@ -192,7 +193,7 @@ bool NifImporter::DoImport()
    else
    {
       vector<string> importedBones;
-      if (importSkeleton)
+      if (importSkeleton && importBones)
       {
          if (browseForSkeleton)
          {
@@ -239,15 +240,17 @@ bool NifImporter::DoImport()
                }
             }
          }
-      } else if (hasSkeleton && useBiped) {
+      } else if (hasSkeleton && useBiped && importBones) {
          ImportBipeds(nodes);
       }
 
       if (isValid()) {
-         if (strmatch(rootNode->GetName(), "Scene Root"))
-            ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
-         else
-            ImportBones(rootNode);
+         if (importBones) {
+            if (strmatch(rootNode->GetName(), "Scene Root"))
+               ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+            else
+               ImportBones(rootNode);
+         }
 
          ok = ImportMeshes(rootNode);
 
