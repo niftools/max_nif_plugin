@@ -48,13 +48,19 @@ public:
    float maxBoneWidth;
    float boneWidthToLengthRatio;
    bool createNubsForBones;
+   stringlist dummyNodeMatches;
+   bool convertBillboardsToDummyNodes;
+   bool uncontrolledDummies;
 
    // Animation related Settings
    bool replaceTCBRotationWithBezier;
    bool enableAnimations;
+   bool requireMultipleKeys;
+   bool applyOverallTransformToSkinAndBones;
 
    vector<Niflib::NiObjectRef> blocks;
    vector<Niflib::NiNodeRef> nodes;
+   map<string,int> ctrlCount; // counter for number of controllers referencing a node
 
    NifImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts);
    virtual void Initialize();

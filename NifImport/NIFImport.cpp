@@ -46,8 +46,8 @@ static void BuildNodes(NiNodeRef object, vector<NiNodeRef>& nodes)
 {
    if (!object)
       return;
+   nodes.push_back(object);
    vector<NiNodeRef> links = DynamicCast<NiNode>(object->GetChildren());
-   nodes.insert(nodes.end(), links.begin(), links.end());
    for (vector<NiNodeRef>::iterator itr = links.begin(), end = links.end(); itr != end; ++itr)
       BuildNodes(*itr, nodes);
 }
@@ -136,11 +136,26 @@ void NifImporter::LoadIniSettings()
    maxBoneWidth = GetIniValue<float>(BipedImportSection, "MaxBoneWidth", 3.0f);
    boneWidthToLengthRatio = GetIniValue<float>(BipedImportSection, "BoneWidthToLengthRatio", 0.25f);
    createNubsForBones = GetIniValue<bool>(BipedImportSection, "CreateNubsForBones", true);
+   dummyNodeMatches = TokenizeString(GetIniValue<string>(BipedImportSection, "DummyNodeMatches", "").c_str(), ";");
+   convertBillboardsToDummyNodes = GetIniValue<bool>(BipedImportSection, "ConvertBillboardsToDummyNodes", true);
+   uncontrolledDummies = GetIniValue<bool>(BipedImportSection, "UncontrolledDummies", true);
 
    replaceTCBRotationWithBezier = GetIniValue<bool>(AnimImportSection, "ReplaceTCBRotationWithBezier", true);
    enableAnimations = GetIniValue<bool>(AnimImportSection, "EnableAnimations", true);
+   requireMultipleKeys = GetIniValue<bool>(AnimImportSection, "RequireMultipleKeys", true);
+   applyOverallTransformToSkinAndBones = GetIniValue<bool>(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
 
-   goToSkeletonBindPosition = (appSettings ? appSettings->goToSkeletonBindPosition : false);
+   goToSkeletonBindPosition = false;
+   // Override specific settings
+   if (appSettings) {
+      if (appSettings->disableCreateNubsForBones)
+         createNubsForBones = false;
+      goToSkeletonBindPosition = appSettings->goToSkeletonBindPosition;
+      if (!appSettings->dummyNodeMatches.empty())
+         dummyNodeMatches = appSettings->dummyNodeMatches;
+      if (appSettings->applyOverallTransformToSkinAndBones != -1)
+         applyOverallTransformToSkinAndBones = appSettings->applyOverallTransformToSkinAndBones ? true : false;
+   }
 }
 
 void NifImporter::SaveIniSettings()
@@ -229,7 +244,11 @@ bool NifImporter::DoImport()
       }
 
       if (isValid()) {
-         ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+         if (strmatch(rootNode->GetName(), "Scene Root"))
+            ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+         else
+            ImportBones(rootNode);
+
          ok = ImportMeshes(rootNode);
 
          if (importSkeleton && removeUnusedImportedBones){

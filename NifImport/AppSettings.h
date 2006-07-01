@@ -24,6 +24,7 @@ public:
       , parsedImages(false) 
       , useSkeleton(false)
       , goToSkeletonBindPosition(true)
+      , disableCreateNubsForBones(false)
    {}
 
    std::string Name;
@@ -36,8 +37,11 @@ public:
    std::string Skeleton;
    bool useSkeleton;
    bool goToSkeletonBindPosition;
+   bool disableCreateNubsForBones;
    NameValueCollection Environment;
    NameValueCollection imgTable;
+   stringlist dummyNodeMatches;
+   int applyOverallTransformToSkinAndBones;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);

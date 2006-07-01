@@ -15,6 +15,9 @@ HISTORY:
 #include <obj/NiTriBasedGeom.h>
 #include <obj/NiTriBasedGeomData.h>
 #include <obj/NiTimeController.h>
+#include <obj/NiMultiTargetTransformController.h>
+#include <obj/NiStringExtraData.h>
+#include <obj/NiBillboardNode.h>
 #include <float.h>
 #include <dummy.h>
 
@@ -316,7 +319,6 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
 
 INode *NifImporter::CreateHelper(const string& name, Point3 startPos)
 {
-   //POINTHELP_CLASS_ID
    if (DummyObject *ob = (DummyObject *)gi->CreateInstance(HELPER_CLASS_ID,Class_ID(DUMMY_CLASS_ID,0))) {
       const float DUMSZ = 1.0f;
       ob->SetBox(Box3(Point3(-DUMSZ,-DUMSZ,-DUMSZ),Point3(DUMSZ,DUMSZ,DUMSZ)));
@@ -327,6 +329,14 @@ INode *NifImporter::CreateHelper(const string& name, Point3 startPos)
          return n;
       }
    }
+   //if (Object *ob = (Object *)gi->CreateInstance(HELPER_CLASS_ID,Class_ID(BONE_CLASS_ID,0))) {
+   //   if (INode *n = gi->CreateObjectNode(ob)) {
+   //      n->SetName(const_cast<TCHAR*>(name.c_str()));
+   //      Quat q; q.Identity();
+   //      PosRotScaleNode(n, startPos, q, 1.0f, prsPos);
+   //      return n;
+   //   }
+   //}
    return  NULL;
 }
 
@@ -350,10 +360,52 @@ float GetObjectLength(NiAVObjectRef obj)
    return clen;
 }
 
+static void BuildControllerRefList(NiNodeRef node, map<string,int>& ctrlCount)
+{
+   list<NiTimeControllerRef> ctrls = node->GetControllers();
+   for (list<NiTimeControllerRef>::iterator itr = ctrls.begin(), end = ctrls.end(); itr != end; ++itr) {
+      list<NiNodeRef> nlist = DynamicCast<NiNode>((*itr)->GetRefs());
+
+      // Append extra targets.  Goes away if GetRefs eventually returns the extra targets
+      if (NiMultiTargetTransformControllerRef multiCtrl = DynamicCast<NiMultiTargetTransformController>(*itr)) {
+         vector<NiNodeRef> extra = multiCtrl->GetExtraTargets();
+         nlist.insert(nlist.end(), extra.begin(), extra.end());
+      }
+
+      for (list<NiNodeRef>::iterator nitr = nlist.begin(); nitr != nlist.end(); ++nitr){
+         string name = (*nitr)->GetName();
+         map<string,int>::iterator citr = ctrlCount.find(name);
+         if (citr != ctrlCount.end())
+            ++(*citr).second;
+         else
+            ctrlCount[name] = 1;
+      }
+   }
+}
+
+static bool HasControllerRef(map<string,int>& ctrlCount, const string& name)
+{
+   return (ctrlCount.find(name) != ctrlCount.end());
+}
+
+static bool HasUserPropBuffer(NiNodeRef node)
+{
+   if (node) {
+      if (NiStringExtraDataRef data = SelectFirstObjectOfType<NiStringExtraData>(node->GetExtraData())){
+         if (strmatch(data->GetName(), "UserPropBuffer"))
+            return true;
+      }
+   }
+   return false;
+}
+
 void NifImporter::ImportBones(NiNodeRef node)
 {
    try 
    {
+      if (uncontrolledDummies)
+         BuildControllerRefList(node, ctrlCount);
+
       string name = node->GetName();
       vector<NiAVObjectRef> children = node->GetChildren();
       vector<NiNodeRef> childNodes = DynamicCast<NiNode>(children);
@@ -404,22 +456,19 @@ void NifImporter::ImportBones(NiNodeRef node)
       }
       else
       {
-         list<NiTimeControllerRef> ctrls = node->GetControllers();
-         if (parent == NULL || parent->GetParent() == NULL || ctrls.empty())
-         {
+         bool isDummy = ( (uncontrolledDummies && !HasControllerRef(ctrlCount, name))
+                     || (!dummyNodeMatches.empty() && wildmatch(dummyNodeMatches, name))
+                     || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TypeConst()))
+                      );
+         if (isDummy && createNubsForBones)
             bone = CreateHelper(name, p);
-            if (ctrls.empty())
-               bone->Hide(TRUE);
-         }
          else if (bone = CreateBone(name, p, pp, zAxis))
          {
             PosRotScaleNode(bone, p, q, scale, prs);
-            if (createNubsForBones && childNodes.empty()){
-               if (INode *helper = CreateHelper(string().assign(name).append(" Nub"), pp)){
-                  helper->Hide(TRUE);
-                  bone->AttachChild(helper, 1);
-               }
-            }
+            if (isDummy)
+               bone->Hide(TRUE);
+            else
+               bone->Hide(node->GetHidden() ? TRUE : FALSE);
          }
          if (bone)
          {
@@ -428,7 +477,6 @@ void NifImporter::ImportBones(NiNodeRef node)
                if (INode *pn = gi->GetINodeByName(parent->GetName().c_str()))
                   pn->AttachChild(bone, 1);
             }
-            bone->Hide(node->GetHidden() ? TRUE : FALSE);
          }
       }
       if (bone)

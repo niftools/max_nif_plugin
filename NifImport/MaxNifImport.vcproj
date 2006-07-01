@@ -49,7 +49,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/LD "
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include"
+				AdditionalIncludeDirectories=""
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES"
 				StringPooling="true"
 				ExceptionHandling="2"

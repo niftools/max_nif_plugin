@@ -41,9 +41,6 @@ INFO: See Implementation for minimalist comments
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
 
-extern int wildcmp(const TCHAR *wild, const TCHAR *string);
-extern int wildcmpi(const TCHAR *wild, const TCHAR *string);
-
 // Trim whitespace before and after a string
 inline TCHAR *Trim(TCHAR*&p) { 
    while(_istspace(*p)) *p++ = 0; 
@@ -114,6 +111,30 @@ struct NumericStringEquivalence
    }
 };
 
+// Common collections that I use
+typedef std::map<std::string, std::string, ltstr> NameValueCollection;
+typedef std::pair<std::string, std::string> KeyValuePair;
+typedef std::list<std::string> stringlist;
+
+extern int wildcmp(const TCHAR *wild, const TCHAR *string);
+extern int wildcmpi(const TCHAR *wild, const TCHAR *string);
+
+inline bool strmatch(const string& lhs, const std::string& rhs) {
+   return (0 == _tcsicmp(lhs.c_str(), rhs.c_str()));
+}
+inline bool strmatch(const TCHAR* lhs, const std::string& rhs) {
+   return (0 == _tcsicmp(lhs, rhs.c_str()));
+}
+inline bool strmatch(const string& lhs, const TCHAR* rhs) {
+   return (0 == _tcsicmp(lhs.c_str(), rhs));
+}
+inline bool strmatch(const TCHAR* lhs, const TCHAR* rhs) {
+   return (0 == _tcsicmp(lhs, rhs));
+}
+
+bool wildmatch(const string& match, const std::string& value);
+bool wildmatch(const stringlist& matches, const std::string& value);
+
 // Generic IniFile reading routine
 template<typename T>
 inline T GetIniValue(LPCTSTR Section, LPCTSTR Setting, T Default, LPCTSTR iniFileName){
@@ -177,11 +198,6 @@ template<>
 inline void SetIniValue<TSTR>(LPCTSTR Section, LPCTSTR Setting, TSTR value, LPCTSTR iniFileName){
    WritePrivateProfileString(Section, Setting, value.data(), iniFileName);
 }
-
-// Common collections that I use
-typedef std::map<std::string, std::string, ltstr> NameValueCollection;
-typedef std::pair<std::string, std::string> KeyValuePair;
-typedef std::list<std::string> stringlist;
 
 extern TSTR FormatText(const TCHAR* format,...);
 extern std::string FormatString(const TCHAR* format,...);

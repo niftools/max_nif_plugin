@@ -299,6 +299,20 @@ int wildcmpi(const TCHAR *wild, const TCHAR *string) {
    return !*wild;
 }
 
+bool wildmatch(const string& match, const std::string& value) 
+{
+   return (wildcmpi(match.c_str(), value.c_str())) ? true : false;
+}
+
+bool wildmatch(const stringlist& matches, const std::string& value)
+{
+   for (stringlist::const_iterator itr=matches.begin(), end=matches.end(); itr != end; ++itr){
+      if (wildcmpi((*itr).c_str(), value.c_str()))
+         return true;
+   }
+   return false;
+}
+
 //! Renames Max Node if it exists
 void RenameNode(Interface *gi, LPCTSTR SrcName, LPCTSTR DstName)
 {

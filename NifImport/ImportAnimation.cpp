@@ -35,6 +35,8 @@ enum {
 };
 
 const float FramesPerSecond = 30.0f;
+const float FramesIncrement = 1.0f/30.0f;
+
 const int TicksPerFrame = GetTicksPerFrame();
 
 inline TimeValue TimeToFrame(float t) {
@@ -260,6 +262,9 @@ bool NifImporter::ImportAnimation()
    if (!enableAnimations)
       return false;
 
+   if (nodes.empty())
+      return false;
+
    AnimationImport ai(*this);
    return ai.AddValues(DynamicCast<NiObjectNET>(nodes[0]->GetChildren()));
 }
@@ -267,7 +272,6 @@ bool NifImporter::ImportAnimation()
 bool KFMImporter::ImportAnimation()
 {
    bool ok = false;
-   const float FramesIncrement = 1.0f/30.0f;
    int curFrame = 0;
    // Read Kf files
 #ifdef USE_UNSUPPORTED_CODE
@@ -367,10 +371,6 @@ bool AnimationImport::AddValues(NiObjectNETRef nref)
    if (NULL == c)
       return false;
 
- /*  vector<KeyTextValue> tkeys = BuildKeyValues(nref);
-   if (tkeys.empty())
-      return false;*/
-
    float time = 0.0f;
    list< NiTimeControllerRef > clist = nref->GetControllers();
    if (NiTransformControllerRef tc = SelectFirstObjectOfType<NiTransformController>(clist)) {
@@ -389,13 +389,33 @@ bool AnimationImport::AddValues(NiObjectNETRef nref)
 
 bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
 {
+   vector<Vector3Key> posKeys = data->GetTranslateKeys();
+   vector<QuatKey> quatKeys = data->GetQuatRotateKeys();
+   vector<FloatKey> sclKeys = data->GetScaleKeys();
+   vector<FloatKey> xKeys = data->GetXRotateKeys();
+   vector<FloatKey> yKeys = data->GetYRotateKeys();
+   vector<FloatKey> zKeys = data->GetZRotateKeys();
+
+   // Require more than one key to import (to avoid zero frame positioning used in mw and daoc
+   if (ni.requireMultipleKeys && 
+      !( posKeys.size() > 1
+      || quatKeys.size() > 1
+      || sclKeys.size() > 1
+      || xKeys.size() > 1
+      || yKeys.size() > 1
+      || zKeys.size() > 1
+      ))
+   {
+      return false;
+   }
+
    // Handle Translation
    switch (data->GetTranslateType())
    {
    case LINEAR_KEY:
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
-         SplitKeys(data->GetTranslateKeys(), xkeys, ykeys, zkeys);
+         SplitKeys(posKeys, xkeys, ykeys, zkeys);
          SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
          SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
          SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
@@ -406,7 +426,7 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    case XYZ_ROTATION_KEY:
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
-         SplitKeys(data->GetTranslateKeys(), xkeys, ykeys, zkeys);
+         SplitKeys(posKeys, xkeys, ykeys, zkeys);
          SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
          SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
          SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
@@ -416,7 +436,7 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    case TBC_KEY:
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(TCBINTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
-         SplitKeys(data->GetTranslateKeys(), xkeys, ykeys, zkeys);
+         SplitKeys(posKeys, xkeys, ykeys, zkeys);
          SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
          SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
          SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
@@ -429,21 +449,21 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    {
    case LINEAR_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(LININTERP_ROTATION_CLASS_ID,0), Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<ILinRotKey, QuatKey>(subCtrl, data->GetQuatRotateKeys(), time);
+         SetKeys<ILinRotKey, QuatKey>(subCtrl, quatKeys, time);
       }
       break;
 
    case QUADRATIC_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<IBezQuatKey, QuatKey>(subCtrl, data->GetQuatRotateKeys(), time);
+         SetKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
       }
       break;
 
    case XYZ_ROTATION_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(EULER_CONTROL_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), data->GetXRotateKeys(), time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), data->GetYRotateKeys(), time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), data->GetZRotateKeys(), time);
+         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xKeys, time);
+         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), yKeys, time);
+         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zKeys, time);
       }
       break;
 
@@ -451,11 +471,11 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
       if (ni.replaceTCBRotationWithBezier) {
          // TCB simply is not working for me.  Better off with Bezier as a workaround
          if (Control *subCtrl = MakeRotation(c, Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-            SetKeys<IBezQuatKey, QuatKey>(subCtrl, data->GetQuatRotateKeys(), time);
+            SetKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
          }
       } else {
          if (Control *subCtrl = MakeRotation(c, Class_ID(TCBINTERP_ROTATION_CLASS_ID,0), Class_ID(TCBINTERP_FLOAT_CLASS_ID,0))) {
-            SetKeys<ITCBRotKey, QuatKey>(subCtrl, data->GetQuatRotateKeys(), time);
+            SetKeys<ITCBRotKey, QuatKey>(subCtrl, quatKeys, time);
          }
       }
       break;
@@ -465,18 +485,18 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    {
    case LINEAR_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(LININTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<ILinScaleKey, FloatKey>(subCtrl, data->GetScaleKeys(), time);
+         SetKeys<ILinScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    case QUADRATIC_KEY:
    case XYZ_ROTATION_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(HYBRIDINTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<IBezScaleKey, FloatKey>(subCtrl, data->GetScaleKeys(), time);
+         SetKeys<IBezScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    case TBC_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(TCBINTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<ITCBScaleKey, FloatKey>(subCtrl, data->GetScaleKeys(), time);
+         SetKeys<ITCBScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    }

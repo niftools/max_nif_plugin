@@ -56,6 +56,10 @@ void AppSettings::ReadSettings(string iniFile)
    Skeleton = GetSetting<string>("Skeleton");
    useSkeleton = GetSetting<bool>("UseSkeleton", useSkeleton);
    goToSkeletonBindPosition = GetSetting<bool>("GoToSkeletonBindPosition", goToSkeletonBindPosition);
+   disableCreateNubsForBones = GetSetting<bool>("DisableCreateNubsForBones", disableCreateNubsForBones);
+   applyOverallTransformToSkinAndBones = GetSetting<int>("ApplyOverallTransformToSkinAndBones", -1);
+
+   dummyNodeMatches = TokenizeString(GetSetting<string>("DummyNodeMatches").c_str(), ";");
 }
 
 string AppSettings::FindImage(const string& fname){

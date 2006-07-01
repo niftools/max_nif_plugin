@@ -1,8 +1,7 @@
-						MaxPlugins 0.1.2
+						MaxPlugins 0.1.3
 						================
 
-  	This releases introduces an importer and fixes some bugs in the exporter.
-  
+ 
 	This plugin set currently consists of an exporter, importer and a utility 
  	plugin. This is a early release, so expect it to be buggy.  	
 	
@@ -26,12 +25,23 @@
 	choose "Reset XForm" and click "Reset Selected". This should fix it.
 
 
+	Change log
+	----------
 	
-	Changes since 0.1
-	-----------------
-  
-  	- Introduced the importer
-  
+	  0.1.3
+	  -----
+	  
+	o Importer
+	  - Fixed alignment issues when importing Morrowind Armor nifs
+	  - Added initial animation support (only for animations internal to nif, no kf file support yet)
+     - Fixed numerous issues with bone system (biped is still broken)
+     - Fixed issues with skin and doac nifs
+	  
+	  0.1.2
+	  -----
+	  
+	- Introduced the importer
+    
 	- Fixed collision generation, turned out that Oblivion
 	  doesn't like NvTriStrip's strips. Thanks to Razorwing
 	  for discovering the bug and Tanguy Fautré for his
@@ -47,7 +57,7 @@
     	3D Studio Max 6, 7 and 8
 	
   	Importer
-    	3d Studio Max 8, untested with previous releases
+    	3d Studio Max 8
 
 	Installation
 	------------
