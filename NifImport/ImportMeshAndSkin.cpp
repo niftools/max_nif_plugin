@@ -312,12 +312,9 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
    if (ISkin *skin = (ISkin *) skinMod->GetInterface(I_SKIN)){
       ISkinImportData* iskinImport = (ISkinImportData*) skinMod->GetInterface(I_SKINIMPORTDATA);
 
-      Matrix3 m3(TRUE);
-      if (applyOverallTransformToSkinAndBones) {
-         m3 = TOMATRIX3(data->GetOverallTransform());
-         Matrix3 im3 = Inverse(m3);
-         iskinImport->SetSkinTm(tnode, im3, im3); // ???
-      }
+      Matrix3 m3 = TOMATRIX3(data->GetOverallTransform());
+      Matrix3 im3 = Inverse(m3);
+      iskinImport->SetSkinTm(tnode, m3, m3); // ???
       // Create Bone List
       Tab<INode*> bones;
       for (size_t i=0; i<nifBones.size(); ++i){
@@ -331,9 +328,10 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
             iskinImport->AddBoneEx(boneRef, TRUE);
 
             // Set Bone Transform
-            if (applyOverallTransformToSkinAndBones) {
-               iskinImport->SetBoneTm(boneRef, ib3, ib3);
-            }
+            Matrix3 tm = ib3;
+            if (applyOverallTransformToSkinAndBones)
+               ib3 *= im3;
+            iskinImport->SetBoneTm(boneRef, ib3, ib3);
          }
       }
       ObjectState os = tnode->EvalWorldState(0);

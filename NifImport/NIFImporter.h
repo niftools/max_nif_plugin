@@ -75,12 +75,9 @@ public:
    bool HasSkeleton();
    bool IsBiped();
    void ImportBones(vector<Niflib::NiNodeRef>& bones);
-   void ImportBones(Niflib::NiNodeRef blocks);
+   void ImportBones(Niflib::NiNodeRef blocks, bool recurse = true);
    void ImportBipeds(vector<Niflib::NiNodeRef>& blocks);
    void AlignBiped(IBipMaster* master, Niflib::NiNodeRef block);
-   void PositionBiped(IBipMaster* master, Niflib::NiNodeRef block, bool Recurse = false);
-   void RotateBiped(IBipMaster* master, Niflib::NiNodeRef block, bool Recurse = false);
-   void ScaleBiped(IBipMaster* master, Niflib::NiNodeRef block, bool Recurse = false);
    bool ImportMeshes(Niflib::NiNodeRef block);
    string FindImage(const string& name);
 
