@@ -225,7 +225,6 @@ bool NifImporter::DoImport()
             skelImport.DoImport();
             if (!skelImport.useBiped && removeUnusedImportedBones)
                importedBones = GetNamesOfNodes(skelImport.nodes);
-            ok = ImportMeshes(rootNode); // do we really want to import meshes on skeletons?
          }
       }
    } else if (hasSkeleton && useBiped && importBones) {
