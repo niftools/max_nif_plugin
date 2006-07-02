@@ -182,95 +182,83 @@ bool NifImporter::DoImport()
 {
    bool ok = true;
    NiNodeRef rootNode = root;
-   if (isBiped)
+
+   vector<string> importedBones;
+   if (!isBiped && importSkeleton && importBones)
    {
-      if (useBiped){
-         ImportBipeds(nodes);
-      } else {
-         ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
-      }
-   }
-   else
-   {
-      vector<string> importedBones;
-      if (importSkeleton && importBones)
+      if (browseForSkeleton)
       {
-         if (browseForSkeleton)
+         TCHAR filter[64], *pfilter=filter;
+         pfilter = _tcscpy(filter, shortDescription.c_str());
+         pfilter = _tcscat(pfilter, " (*.NIF)");
+         pfilter += strlen(pfilter);
+         *pfilter++ = '\0';
+         _tcscpy(pfilter, "*.NIF");
+         pfilter += strlen(pfilter);
+         *pfilter++ = '\0';
+         *pfilter++ = '\0';
+
+         TCHAR filename[MAX_PATH];
+         GetFullPathName(skeleton.c_str(), _countof(filename), filename, NULL);
+
+         OPENFILENAME ofn;
+         memset(&ofn, 0, sizeof(ofn));
+         ofn.lStructSize = sizeof(ofn);
+         ofn.hwndOwner = gi->GetMAXHWnd();
+         ofn.lpstrFilter = filter;
+         ofn.lpstrFile = filename;
+         ofn.nMaxFile = _countof(filename);
+         ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
+         ofn.lpstrDefExt = TEXT("NIF");
+         ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
+         importSkeleton = GetOpenFileName(&ofn) ? true : false;
+         if (importSkeleton) {
+            skeleton = filename;
+         }
+      }
+      if (importSkeleton && !skeleton.empty()) {
+         NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
+         if (skelImport.isValid())
          {
-            TCHAR filter[64], *pfilter=filter;
-            pfilter = _tcscpy(filter, shortDescription.c_str());
-            pfilter = _tcscat(pfilter, " (*.NIF)");
-            pfilter += strlen(pfilter);
-            *pfilter++ = '\0';
-            _tcscpy(pfilter, "*.NIF");
-            pfilter += strlen(pfilter);
-            *pfilter++ = '\0';
-            *pfilter++ = '\0';
-
-            TCHAR filename[MAX_PATH];
-            GetFullPathName(skeleton.c_str(), _countof(filename), filename, NULL);
-
-            OPENFILENAME ofn;
-            memset(&ofn, 0, sizeof(ofn));
-            ofn.lStructSize = sizeof(ofn);
-            ofn.hwndOwner = gi->GetMAXHWnd();
-            ofn.lpstrFilter = filter;
-            ofn.lpstrFile = filename;
-            ofn.nMaxFile = _countof(filename);
-            ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
-            ofn.lpstrDefExt = TEXT("NIF");
-            ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
-            importSkeleton = GetOpenFileName(&ofn) ? true : false;
-            if (importSkeleton) {
-               skeleton = filename;
-            }
+            skelImport.isBiped = true;
+            skelImport.importBones = true;
+            skelImport.DoImport();
+            if (!skelImport.useBiped && removeUnusedImportedBones)
+               importedBones = GetNamesOfNodes(skelImport.nodes);
+            ok = ImportMeshes(rootNode); // do we really want to import meshes on skeletons?
          }
-         if (importSkeleton && !skeleton.empty()) {
-            NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
-            if (skelImport.isValid())
-            {
-               if (skelImport.useBiped){
-                  skelImport.ImportBipeds(skelImport.nodes);
-               } else {
-                  NiNodeRef skelRoot = skelImport.root;
-                  skelImport.ImportBones(DynamicCast<NiNode>(skelRoot->GetChildren()));
-                  if (removeUnusedImportedBones){
-                     importedBones = GetNamesOfNodes(skelImport.nodes);
-                  }
-               }
-            }
-         }
-      } else if (hasSkeleton && useBiped && importBones) {
-         ImportBipeds(nodes);
+      }
+   } else if (hasSkeleton && useBiped && importBones) {
+      ImportBipeds(nodes);
+   }
+
+   if (isValid()) {
+      if (importBones) {
+         if (strmatch(rootNode->GetName(), "Scene Root"))
+            ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+         else
+            ImportBones(rootNode);
       }
 
-      if (isValid()) {
-         if (importBones) {
-            if (strmatch(rootNode->GetName(), "Scene Root"))
-               ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
-            else
-               ImportBones(rootNode);
-         }
+      ok = ImportMeshes(rootNode);
 
-         ok = ImportMeshes(rootNode);
-
-         if (importSkeleton && removeUnusedImportedBones){
-            vector<string> importedNodes = GetNamesOfNodes(nodes);
-            sort(importedBones.begin(), importedBones.end());
-            sort(importedNodes.begin(), importedNodes.end());
-            vector<string> results;
-            results.resize(importedBones.size());
-            vector<string>::iterator end = set_difference ( 
-               importedBones.begin(), importedBones.end(),
-               importedNodes.begin(), importedNodes.end(), results.begin());
-            for (vector<string>::iterator itr = results.begin(); itr != end; ++itr){
-               if (INode *node = gi->GetINodeByName((*itr).c_str())){
-                  node->Delete(0, TRUE);
-               }
+      if (importSkeleton && removeUnusedImportedBones){
+         vector<string> importedNodes = GetNamesOfNodes(nodes);
+         sort(importedBones.begin(), importedBones.end());
+         sort(importedNodes.begin(), importedNodes.end());
+         vector<string> results;
+         results.resize(importedBones.size());
+         vector<string>::iterator end = set_difference ( 
+            importedBones.begin(), importedBones.end(),
+            importedNodes.begin(), importedNodes.end(), results.begin());
+         for (vector<string>::iterator itr = results.begin(); itr != end; ++itr){
+            if (INode *node = gi->GetINodeByName((*itr).c_str())){
+               node->Delete(0, TRUE);
             }
          }
       }
    }
+
 
    // Kick of animation import
    ImportAnimation();
