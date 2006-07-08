@@ -32,6 +32,10 @@ inline Value* make_maxscript_value(const Color& rgb);
 inline Value* make_maxscript_value(LPCTSTR str);
 inline Value* make_maxscript_value(ReferenceTarget* rtarg);
 
+#if VERSION_3DSMAX <= ((MAX_RELEASE_R7<<16)+(15<<8)+0)
+inline void clear_error_source_data() {}
+#endif
+
 // Not all of the paramters for materials and shaders
 // are published in the interfaces. ObjectParams class
 // is used to access the properties of objects the same
@@ -244,7 +248,6 @@ inline bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* c
 	pop_alloc_frame();
 	return rval;
 }
-
 
 // These helpers are used to convert C++ values to
 // their MAXScript value. Maxscript uses different

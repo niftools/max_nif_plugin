@@ -369,11 +369,13 @@ Control *AnimationImport::GetTMController(const string& name)
    if (NULL == c)
       return NULL;
 
+#ifdef USE_BIPED
    // ignore bipeds for now.
    if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
       ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
       ||(c->ClassID() == FOOTPRINT_CLASS_ID))
       return NULL;
+#endif
 
    return c;
 }

@@ -23,7 +23,9 @@
 #include <istdplug.h>
 #include <iparamb2.h>
 #include <iparamm2.h>
-#include <cs/Biped8Api.h>
+#ifdef USE_BIPED
+#  include <cs/Biped8Api.h>
+#endif
 #include <scenetraversal.h> 
 #include <plugapi.h>
 #include <triobj.h> 

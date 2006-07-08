@@ -105,6 +105,7 @@ bool NifImporter::IsBiped()
 
 void NifImporter::ImportBipeds(vector<NiNodeRef>& nodes)
 {
+#ifdef USE_BIPED
    IBipMaster* master = NULL;
    try 
    {
@@ -195,6 +196,7 @@ void NifImporter::ImportBipeds(vector<NiNodeRef>& nodes)
    }
    if (master)
       master->EndModes(BMODE_FIGURE, TRUE);
+#endif
 }
 
 static float CalcLength(NiNodeRef node, vector<NiAVObjectRef>& children)
@@ -297,6 +299,7 @@ static float CalcScale(INode *bone, NiNodeRef node, vector<NiNodeRef>& children)
    return 1.0f;
 }
 
+#ifdef USE_BIPED
 void PosRotScaleBiped(IBipMaster* master, INode *n, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t = 0)
 {
    if (prs & prsScale)
@@ -306,6 +309,7 @@ void PosRotScaleBiped(IBipMaster* master, INode *n, Point3 p, Quat& q, float s, 
    if (prs & prsPos)
       master->SetBipedPos(p, t, n, FALSE);
 }
+
 AngAxis CalcAngAxis(Point3 vs, Point3 vf)
 {
    Point3 cross = CrossProd(vs, vf);
@@ -315,6 +319,7 @@ AngAxis CalcAngAxis(Point3 vs, Point3 vf)
    float dot = DotProd(vs, vf);
    return AngAxis( cross, acos( dot ) );
 }
+
 Matrix3 GenerateRotMatrix(AngAxis a)
 {
    Matrix3 m(TRUE);
@@ -334,6 +339,7 @@ Matrix3 GenerateRotMatrix(AngAxis a)
    m[2][2] =      rcos + w*w*(1-rcos);
    return m;
 }
+
 static AngAxis CalcTransform(INode *bone, NiNodeRef node, vector<NiNodeRef>& children)
 {
    Matrix3 mr(TRUE);
@@ -370,11 +376,13 @@ static AngAxis CalcTransform(INode *bone, NiNodeRef node, vector<NiNodeRef>& chi
    }
    return mr;
 }
+#endif
 
 
 
 void NifImporter::AlignBiped(IBipMaster* master, NiNodeRef node)
 {
+#ifdef USE_BIPED
    NiNodeRef parent = node->GetParent();
    string name = node->GetName();
    vector<NiAVObjectRef> children = node->GetChildren();
@@ -446,6 +454,7 @@ void NifImporter::AlignBiped(IBipMaster* master, NiNodeRef node)
    for (vector<NiNodeRef>::iterator itr = childNodes.begin(), end = childNodes.end(); itr != end; ++itr){
       AlignBiped(master, *itr);
    }
+#endif
 }
 
 INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis)

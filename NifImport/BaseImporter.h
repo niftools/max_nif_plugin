@@ -14,6 +14,7 @@ HISTORY:
 #ifndef __BASEIMPORTER_H__
 #define __BASEIMPORTER_H__
 
+class IBipMaster;
 extern IBipMaster * (_cdecl * Max8CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int,int,int,int,int);
 
 // Importer Base

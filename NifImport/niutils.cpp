@@ -19,8 +19,10 @@ HISTORY:
 #include <sstream>
 #include <modstack.h>
 #include <iskin.h>
-#include <cs/Biped8Api.h>
-#include <cs/OurExp.h> 
+#ifdef USE_BIPED
+#  include <cs/Biped8Api.h>
+#  include <cs/OurExp.h> 
+#endif
 using namespace std;
 using namespace Niflib;
 
@@ -332,8 +334,8 @@ void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t)
 {
    if (Control *c = n->GetTMController()) {
-
       ScaleValue sv(Point3(s,s,s));
+#ifdef USE_BIPED
       // Bipeds are special.  And will crash if you dont treat them with care
       if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
          ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
@@ -350,6 +352,7 @@ void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, Time
             BipIface->SetBipedPosition(p, t, n);
       }
       else
+#endif
       {
          if (prs & prsScale)
             if (Control *sclCtrl = c->GetScaleController())
