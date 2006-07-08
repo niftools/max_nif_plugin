@@ -334,6 +334,9 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
             iskinImport->SetBoneTm(boneRef, ib3, ib3);
          }
       }
+      if (bones.Count() != data->GetBoneCount())
+         return false;
+
       ObjectState os = tnode->EvalWorldState(0);
 
       // Need to get a list of bones and weights for each vertex.
