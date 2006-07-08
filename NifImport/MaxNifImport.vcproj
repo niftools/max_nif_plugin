@@ -154,7 +154,7 @@
 				AdditionalOptions="/LD "
 				Optimization="0"
 				AdditionalIncludeDirectories=""
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE"
 				GeneratePreprocessedFile="0"
 				ExceptionHandling="2"
 				RuntimeLibrary="1"
@@ -235,6 +235,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\KFImporter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\MaxNifImport.def"
 				>
 			</File>
@@ -263,6 +267,10 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath=".\KFImporter.h"
+				>
+			</File>
 			<File
 				RelativePath=".\niutils.h"
 				>

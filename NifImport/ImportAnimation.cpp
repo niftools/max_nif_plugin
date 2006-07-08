@@ -14,6 +14,7 @@ HISTORY:
 #include "MaxNifImport.h"
 #include "NIFImporter.h"
 #include "KFMImporter.h"
+#include "KFImporter.h"
 #include <obj/NiInterpolator.h>
 #include <obj/NiTransformInterpolator.h>
 #include <obj/NiTransformData.h>
@@ -23,7 +24,7 @@ HISTORY:
 #include <obj/NiKeyframeController.h>
 #include <obj/NiKeyframeData.h>
 #include <obj/NiStringPalette.h>
-
+#include <obj/NiBSplineCompTransformInterpolator.h>
 using namespace Niflib;
 
 const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
@@ -71,7 +72,7 @@ template<>
 inline ILinRotKey MapKey<ILinRotKey, QuatKey>(QuatKey& key, float time)
 {
    ILinRotKey rKey;
-   rKey.val = TOQUAT(key.data);
+   rKey.val = TOQUAT(key.data, true);
    return InitLinKey(rKey, key, time);
 }
 
@@ -127,7 +128,7 @@ template<>
 inline IBezQuatKey MapKey<IBezQuatKey, QuatKey>(QuatKey& key, float time)
 {
    IBezQuatKey rKey;
-   rKey.val = TOQUAT(key.data);
+   rKey.val = TOQUAT(key.data, true);
    return InitBezKey(rKey, key, time);
 }
 
@@ -164,7 +165,7 @@ template<>
 inline ITCBRotKey MapKey<ITCBRotKey, QuatKey>(QuatKey& key, float time)
 {
    ITCBRotKey rKey;
-   rKey.val = TOQUAT(key.data);
+   rKey.val = TOQUAT(key.data, true);
    InitTCBKey(rKey, key, time);
    rKey.flags = TCBKEY_QUATVALID;
    return rKey;
@@ -250,6 +251,7 @@ struct AnimationImport
 
    bool AddValues(Control *c, NiKeyframeDataRef data, float time);
 
+   Control* MakePosition(Control *tmCont, Class_ID clsid);
    Control* MakePositionXYZ(Control *tmCont, Class_ID clsid);
    Control* MakeRotation(Control *tmCont, Class_ID rotClsid, Class_ID rollClsid);
    Control* MakeScale(Control *tmCont, Class_ID clsid);
@@ -265,8 +267,9 @@ bool NifImporter::ImportAnimation()
    if (nodes.empty())
       return false;
 
+   NiNodeRef rootNode = root;
    AnimationImport ai(*this);
-   return ai.AddValues(DynamicCast<NiObjectNET>(nodes[0]->GetChildren()));
+   return ai.AddValues(DynamicCast<NiObjectNET>(rootNode->GetChildren()));
 }
 
 bool KFMImporter::ImportAnimation()
@@ -274,11 +277,14 @@ bool KFMImporter::ImportAnimation()
    bool ok = false;
    int curFrame = 0;
    // Read Kf files
-#ifdef USE_UNSUPPORTED_CODE
+
    AnimationImport ai(*this);
 
-   float time = 0.0f;
+   float time = FramesIncrement;
    for(vector<NiControllerSequenceRef>::iterator itr = kf.begin(); itr != kf.end(); ++itr){
+
+      float minTime = 1e+35f;
+      float maxTime = 0.0f;
 
       NiControllerSequenceRef cntr = (*itr);
       vector<ControllerLink> links = cntr->GetControllerData();
@@ -298,31 +304,58 @@ bool KFMImporter::ImportAnimation()
 
          float start = cntr->GetStartTime();
          float stop = cntr->GetStopTime();
+         float total = (stop - start);
          if ((*lnk).interpolator){
             if (NiTransformInterpolatorRef interp = (*lnk).interpolator) {
                if (NiTransformDataRef data = interp->GetData()){
-                  ok |= ai.AddValues(c, data, time);
-                  time += (stop-start) + FramesIncrement; // round to nearest 10f ?
+                  if (ai.AddValues(c, data, time)) {
+                     minTime = min(minTime, start);
+                     maxTime = max(maxTime, stop);
+                     ok = true;
+                  }
+               }
+            } else if (NiBSplineCompTransformInterpolatorRef interp = (*lnk).interpolator) {
+               int npoints = total * 60.0f;
+
+               NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
+               data->SetRotateType(QUADRATIC_KEY);
+               data->SetTranslateType(QUADRATIC_KEY);
+               data->SetScaleType(QUADRATIC_KEY);
+               data->SetTranslateKeys( interp->SampleTranslateKeys(npoints, 4) );
+               data->SetQuatRotateKeys( interp->SampleQuatRotateKeys(npoints, 4) );
+               data->SetScaleKeys( interp->SampleScaleKeys(npoints, 4) );
+
+               if (ai.AddValues(c, data, time)) {
+                  minTime = min(minTime, start);
+                  maxTime = max(maxTime, stop);
+                  ok = true;
                }
             }
          } else if ((*lnk).controller) {
             if (NiTransformControllerRef tc = DynamicCast<NiTransformController>((*lnk).controller)) {
                if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
                   if (NiTransformDataRef data = interp->GetData()){
-                     ok |= ai.AddValues(c, data, time);
-                     time += (stop-start) + FramesIncrement; // round to nearest 10f ?
+                     if (ai.AddValues(c, data, time)) {
+                        minTime = min(minTime, start);
+                        maxTime = max(maxTime, stop);
+                        ok = true;
+                     }
                   }
                }
             } else if (NiKeyframeControllerRef kfc = DynamicCast<NiKeyframeController>((*lnk).controller)) {
-               if (NiKeyframeDataRef kfData = kfc->GetData()) {
-                  ok |= ai.AddValues(c, kfData, time);
-                  time += (stop-start) + FramesIncrement; // round to nearest 10f ?
+               if (NiKeyframeDataRef data = kfc->GetData()) {
+                  if (ai.AddValues(c, data, time)) {
+                     minTime = min(minTime, start);
+                     maxTime = max(maxTime, stop);
+                     ok = true;
+                  }
                }
             }
          }
       }
+      if (maxTime > minTime && maxTime > 0.0f)
+         time += (maxTime-minTime) + FramesIncrement;
    }
-#endif
    return ok;
 }
 
@@ -371,7 +404,7 @@ bool AnimationImport::AddValues(NiObjectNETRef nref)
    if (NULL == c)
       return false;
 
-   float time = 0.0f;
+   float time = FramesIncrement;
    list< NiTimeControllerRef > clist = nref->GetControllers();
    if (NiTransformControllerRef tc = SelectFirstObjectOfType<NiTransformController>(clist)) {
       if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
@@ -544,20 +577,28 @@ Control* AnimationImport::MakeScale(Control *tmCont, Class_ID clsid)
    return NULL;
 }
 
+Control* AnimationImport::MakePosition(Control *tmCont, Class_ID clsid)
+{
+   Interface *ip = ni.gi;
+   if (Control *c = tmCont->GetPositionController()) {
+      if (c->ClassID()!=clsid) {
+         if (Control *tmpCtrl = (Control*)ip->CreateInstance(CTRL_POSITION_CLASS_ID, clsid)){
+            if (!tmCont->SetPositionController(tmpCtrl))
+               tmpCtrl->DeleteThis();
+            else
+               c = tmpCtrl;
+         }
+      }
+      return c;
+   }
+   return NULL;
+}
+
 Control* AnimationImport::MakePositionXYZ(Control *tmCont, Class_ID clsid)
 {
    Interface *ip = ni.gi;
-   if (Control *c = tmCont->GetPositionController()){
-      // First make the controller and XYZ Independent position controller, then fix individuals
-      if (c->ClassID()!= IPOS_CONTROL_CLASS_ID) {
-         if (Control *tmp = (Control*)ip->CreateInstance(CTRL_POSITION_CLASS_ID, IPOS_CONTROL_CLASS_ID)) {
-            if (!tmCont->SetPositionController(tmp)) {
-               tmp->DeleteThis();
-            } else {
-               c = tmp;
-            }
-         }
-      }
+   // First make the controller and XYZ Independent position controller, then fix individuals
+   if (Control *c = MakePosition(tmCont, IPOS_CONTROL_CLASS_ID)){
       if (Control *x = c->GetXController()){
          if (x->ClassID()!= clsid) {
             if (Control *tmp = (Control*)ip->CreateInstance(CTRL_FLOAT_CLASS_ID, clsid))

@@ -23,6 +23,7 @@ class KFMImporter : public NifImporter
    typedef NifImporter BaseClass;
 public:
    KFMImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts);
+   KFMImporter();
    ~KFMImporter(void);
 
    void ReadBlocks();

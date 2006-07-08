@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "MaxNifImport.h"
 #include "KFMImporter.h"
+#include "KFImporter.h"
 using namespace Niflib;
 
 #define MaxNifImport_CLASS_ID	Class_ID(0x794ac1c1, 0x8b4c64c7)
@@ -130,9 +131,9 @@ MaxNifImport::~MaxNifImport()
 int MaxNifImport::ExtCount()
 {
 #ifdef USE_UNSUPPORTED_CODE
-	return 2;
+	return 3;
 #else
-   return 1;
+   return 2;
 #endif
 }
 
@@ -141,7 +142,8 @@ const TCHAR *MaxNifImport::Ext(int n)
    switch (n)
    {
    case 0: return _T("NIF");
-   case 1: return _T("KFM");
+   case 1: return _T("KF");
+   case 2: return _T("KFM");
    }
    return _T("");	
 }
@@ -222,21 +224,25 @@ int MaxNifImport::DoImport(const TCHAR *filename,ImpInterface *i, Interface *gi,
 
       LPCTSTR ext = PathFindExtension(filename);
 
-      if (_tcsicmp(ext, ".KFM") == 0)
-      {
-         KFMImporter importer(filename, i, gi, suppressPrompts);
-         if (!importer.isValid())
-            return FALSE;
-
-         ok = importer.DoImport();
-
-      }
-      else
+      if (_tcsicmp(ext, ".NIF") == 0)
       {
          NifImporter importer(filename, i, gi, suppressPrompts);
          if (!importer.isValid())
             return FALSE;
-
+         ok = importer.DoImport();
+      }
+      else if (_tcsicmp(ext, ".KFM") == 0)
+      {
+         KFMImporter importer(filename, i, gi, suppressPrompts);
+         if (!importer.isValid())
+            return FALSE;
+         ok = importer.DoImport();
+      }
+      else if (_tcsicmp(ext, ".KF") == 0)
+      {
+         KFImporter importer(filename, i, gi, suppressPrompts);
+         if (!importer.isValid())
+            return FALSE;
          ok = importer.DoImport();
       }
    }
