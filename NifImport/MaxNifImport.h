@@ -24,7 +24,7 @@
 #include <iparamb2.h>
 #include <iparamm2.h>
 #ifdef USE_BIPED
-#  include <cs/Biped8Api.h>
+#  include <cs/BipedApi.h>
 #endif
 #include <scenetraversal.h> 
 #include <plugapi.h>

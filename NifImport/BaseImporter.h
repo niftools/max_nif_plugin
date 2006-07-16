@@ -16,6 +16,7 @@ HISTORY:
 
 class IBipMaster;
 extern IBipMaster * (_cdecl * Max8CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int,int,int,int,int);
+extern IBipMaster * (_cdecl * Max7CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int);
 
 // Importer Base
 class BaseImporter
@@ -47,11 +48,18 @@ public:
       path = buffer;
       iniFileValid = false;
 
-      LPCTSTR Max8CreateNewBipedName = TEXT("?CreateNewBiped@@YAPAVIBipMaster@@MMABVPoint3@@HHHHHHHHHHHHMHHHHHHHH@Z");
       HMODULE hBiped = GetModuleHandle("biped.dlc");
-      if (NULL != hBiped && 0 == Max8CreateNewBiped)
-         *(FARPROC*)&Max8CreateNewBiped = GetProcAddress(hBiped, Max8CreateNewBipedName);
-
+      if (NULL != hBiped)
+      {
+         if (0 == Max8CreateNewBiped && 0 == Max7CreateNewBiped){
+            LPCTSTR Max8CreateNewBipedName = TEXT("?CreateNewBiped@@YAPAVIBipMaster@@MMABVPoint3@@HHHHHHHHHHHHMHHHHHHHH@Z");
+            *(FARPROC*)&Max8CreateNewBiped = GetProcAddress(hBiped, Max8CreateNewBipedName);
+         }
+         if (0 == Max8CreateNewBiped && 0 == Max7CreateNewBiped) {
+            LPCTSTR Max7CreateNewBipedName = TEXT("?CreateNewBiped@@YAPAVIBipMaster@@MMABVPoint3@@HHHHHHHHHHHHMHHHH@Z");
+            *(FARPROC*)&Max7CreateNewBiped = GetProcAddress(hBiped, Max7CreateNewBipedName);
+         }
+      }
       // Load ini settings
       iniFileValid = false;
       LoadIniSettings();

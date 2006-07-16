@@ -307,6 +307,13 @@ bool KFMImporter::ImportAnimation()
          float total = (stop - start);
          if ((*lnk).interpolator){
             if (NiTransformInterpolatorRef interp = (*lnk).interpolator) {
+
+               // Set initial conditions
+               Point3 p = TOPOINT3(interp->GetTranslation());
+               Quat q = TOQUAT(interp->GetRotation());
+               float s = interp->GetScale();
+               PosRotScaleNode(c, p, q, s, prsDefault, 0);
+
                if (NiTransformDataRef data = interp->GetData()){
                   if (ai.AddValues(c, data, time)) {
                      minTime = min(minTime, start);
@@ -316,6 +323,12 @@ bool KFMImporter::ImportAnimation()
                }
             } else if (NiBSplineCompTransformInterpolatorRef interp = (*lnk).interpolator) {
                int npoints = total * 60.0f;
+
+               // Set initial conditions
+               Point3 p = TOPOINT3(interp->GetTranslation());
+               Quat q = TOQUAT(interp->GetRotation());
+               float s = interp->GetScale();
+               PosRotScaleNode(c, p, q, s, prsDefault, 0);
 
                NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
                data->SetRotateType(QUADRATIC_KEY);
@@ -334,6 +347,12 @@ bool KFMImporter::ImportAnimation()
          } else if ((*lnk).controller) {
             if (NiTransformControllerRef tc = DynamicCast<NiTransformController>((*lnk).controller)) {
                if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
+                  // Set initial conditions
+                  Point3 p = TOPOINT3(interp->GetTranslation());
+                  Quat q = TOQUAT(interp->GetRotation());
+                  float s = interp->GetScale();
+                  PosRotScaleNode(c, p, q, s, prsDefault, 0);
+
                   if (NiTransformDataRef data = interp->GetData()){
                      if (ai.AddValues(c, data, time)) {
                         minTime = min(minTime, start);

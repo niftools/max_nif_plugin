@@ -12,7 +12,7 @@ HISTORY:
 **********************************************************************/
 #include "stdafx.h"
 #include "MaxNifImport.h"
-//#include <cs/Biped8Api.h>
+#include <cs/BipedApi.h>
 #include <obj/NiTriBasedGeom.h>
 #include <obj/NiTriBasedGeomData.h>
 #include <obj/NiTimeController.h>
@@ -152,11 +152,20 @@ void NifImporter::ImportBipeds(vector<NiNodeRef>& nodes)
          int horseTwistLinks = CountNodesByName(bipedNodes, FormatText("%s L Horse*Twist*", bipname.c_str()));
 
          NiNodeRef root = nodes[0];
-         IBipMaster* master = Max8CreateNewBiped(height, angle, wpos, arms, triPelvis, 
-            nnecklinks, nspinelinks, nleglinks, ntaillinks, npony1links, npony2links, 
-            numfingers, nfinglinks, numtoes, ntoelinks, bipedAnkleAttach, prop1exists, 
-            prop2exists, prop3exists, forearmTwistLinks, upperarmTwistLinks, thighTwistLinks,
-            calfTwistLinks, horseTwistLinks);
+         IBipMaster* master = NULL;
+         if (Max8CreateNewBiped) {
+            master = Max8CreateNewBiped(height, angle, wpos, arms, triPelvis, 
+               nnecklinks, nspinelinks, nleglinks, ntaillinks, npony1links, npony2links, 
+               numfingers, nfinglinks, numtoes, ntoelinks, bipedAnkleAttach, prop1exists, 
+               prop2exists, prop3exists, forearmTwistLinks, upperarmTwistLinks, thighTwistLinks,
+               calfTwistLinks, horseTwistLinks);
+         } else if (Max7CreateNewBiped) {
+            master = Max7CreateNewBiped(height, angle, wpos, arms, triPelvis, 
+               nnecklinks, nspinelinks, nleglinks, ntaillinks, npony1links, npony2links, 
+               numfingers, nfinglinks, numtoes, ntoelinks, bipedAnkleAttach, prop1exists, 
+               prop2exists, prop3exists, forearmTwistLinks);
+         }
+
          if (master)
          {
             master->SetRootName(const_cast<TCHAR*>(bipname.c_str()));
@@ -328,15 +337,15 @@ Matrix3 GenerateRotMatrix(AngAxis a)
    float w = a.axis.z;
    float rcos = cos(a.angle);
    float rsin = sin(a.angle);
-   m[0][0] =      rcos + u*u*(1-rcos);
-   m[1][0] =  w * rsin + v*u*(1-rcos);
-   m[2][0] = -v * rsin + w*u*(1-rcos);
-   m[0][1] = -w * rsin + u*v*(1-rcos);
-   m[1][1] =      rcos + v*v*(1-rcos);
-   m[2][1] =  u * rsin + w*v*(1-rcos);
-   m[0][2] =  v * rsin + u*w*(1-rcos);
-   m[1][2] = -u * rsin + v*w*(1-rcos);
-   m[2][2] =      rcos + w*w*(1-rcos);
+   m.GetRow(0)[0] =      rcos + u*u*(1-rcos);
+   m.GetRow(1)[0] =  w * rsin + v*u*(1-rcos);
+   m.GetRow(2)[0] = -v * rsin + w*u*(1-rcos);
+   m.GetRow(0)[1] = -w * rsin + u*v*(1-rcos);
+   m.GetRow(1)[1] =      rcos + v*v*(1-rcos);
+   m.GetRow(2)[1] =  u * rsin + w*v*(1-rcos);
+   m.GetRow(0)[2] =  v * rsin + u*w*(1-rcos);
+   m.GetRow(1)[2] = -u * rsin + v*w*(1-rcos);
+   m.GetRow(2)[2] =      rcos + w*w*(1-rcos);
    return m;
 }
 
@@ -560,7 +569,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       Quat q(im);
       //q.Normalize();
       Vector3 ppos;
-      Point3 zAxis(0,1,0);
+      Point3 zAxis(0,0,0);
       bool hasChildren = !children.empty();
       if (hasChildren) {
          float len = 0.0f;

@@ -20,7 +20,7 @@ HISTORY:
 #include <modstack.h>
 #include <iskin.h>
 #ifdef USE_BIPED
-#  include <cs/Biped8Api.h>
+#  include <cs/BipedApi.h>
 #  include <cs/OurExp.h> 
 #endif
 using namespace std;
@@ -334,13 +334,13 @@ void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t)
 {
    if (Control *c = n->GetTMController()) {
-      ScaleValue sv(Point3(s,s,s));
 #ifdef USE_BIPED
       // Bipeds are special.  And will crash if you dont treat them with care
       if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
          ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
          ||(c->ClassID() == FOOTPRINT_CLASS_ID))
       {
+         ScaleValue sv(Point3(s,s,s));
          // Get the Biped Export Interface from the controller 
          //IBipedExport *BipIface = (IBipedExport *) c->GetInterface(I_BIPINTERFACE);
          IOurBipExport *BipIface = (IOurBipExport *) c->GetInterface(I_OURINTERFACE);
@@ -354,16 +354,28 @@ void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, Time
       else
 #endif
       {
-         if (prs & prsScale)
-            if (Control *sclCtrl = c->GetScaleController())
-               sclCtrl->SetValue(t, &sv, 1, CTRL_ABSOLUTE);
-         if (prs & prsRot)
-            if (Control *rotCtrl = c->GetRotationController())
-               rotCtrl->SetValue(t, &q, 1, CTRL_ABSOLUTE);
-         if (prs & prsPos)
-            if (Control *posCtrl = c->GetPositionController())
-               posCtrl->SetValue(t, &p, 1, CTRL_ABSOLUTE);
+         PosRotScaleNode(c, p, q, s, prs, t);
       }
+   }
+}
+
+void PosRotScaleNode(Control *c, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t)
+{
+   if (c) {
+      if (prs & prsRot && q.w == FloatNegINF) prs = PosRotScale(prs & ~prsRot);
+      if (prs & prsPos && p.x == FloatNegINF) prs = PosRotScale(prs & ~prsPos);
+      if (prs & prsScale && s == FloatNegINF) prs = PosRotScale(prs & ~prsScale);
+
+      ScaleValue sv(Point3(s,s,s));
+      if (prs & prsScale)
+         if (Control *sclCtrl = c->GetScaleController())
+            sclCtrl->SetValue(t, &sv, 1, CTRL_ABSOLUTE);
+      if (prs & prsRot)
+         if (Control *rotCtrl = c->GetRotationController())
+            rotCtrl->SetValue(t, &q, 1, CTRL_ABSOLUTE);
+      if (prs & prsPos)
+         if (Control *posCtrl = c->GetPositionController())
+            posCtrl->SetValue(t, &p, 1, CTRL_ABSOLUTE);
    }
 }
 

@@ -23,6 +23,7 @@ LPCTSTR AnimImportSection = TEXT("AnimationImport");
 
 class IBipMaster;
 IBipMaster * (_cdecl * Max8CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int,int,int,int,int) = 0;
+IBipMaster * (_cdecl * Max7CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int) = 0;
 
 NifImporter::NifImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts)
    : BaseImporter()
@@ -66,7 +67,7 @@ void NifImporter::Initialize()
          GoToSkeletonBindPosition(nodes);
 
       // Only support biped if CreateNewBiped can be found.
-      useBiped &= (Max8CreateNewBiped != NULL);
+      useBiped &= (Max8CreateNewBiped != NULL || Max7CreateNewBiped != NULL);
 
       hasSkeleton = HasSkeleton();
       isBiped = IsBiped();

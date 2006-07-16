@@ -128,7 +128,7 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
          mesh.setNumTVerts(n, FALSE);
          for (int i=0; i<n; ++i) {
             TexCoord& texCoord = texCoords[i];
-            mesh.tVerts[i].Set(texCoord.u, (flipUVTextures) ? -texCoord.v : texCoord.v, 0);
+            mesh.tVerts[i].Set(texCoord.u, (flipUVTextures) ? 1.0f-texCoord.v : texCoord.v, 0);
          }
       }
    }

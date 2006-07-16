@@ -1,4 +1,4 @@
-						MaxPlugins 0.1.3
+						MaxPlugins 0.1.4
 						================
 
  
@@ -28,12 +28,20 @@
 	Change log
 	----------
 	
+	  0.1.4
+	  -----
+	  
+	o Importer
+      - Fixed UV values when flipping so they align properly in UVW window
+      - Fixed issues with DAoC mesh import (in NifLib)
+      - Fixed rotation issue with animation import
+     
 	  0.1.3
 	  -----
 	  
 	o Importer
-	  - Fixed alignment issues when importing Morrowind Armor nifs
-	  - Added initial animation support (only for animations internal to nif, no kf file support yet)
+     - Fixed alignment issues when importing Morrowind Armor nifs
+     - Added initial animation support (only for animations internal to nif, no kf file support yet)
      - Fixed numerous issues with bone system (biped is still broken)
      - Fixed issues with skin and doac nifs
 	  

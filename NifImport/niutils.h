@@ -41,6 +41,11 @@ INFO: See Implementation for minimalist comments
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
 
+const unsigned int IntegerInf = 0x7f7fffff;
+const unsigned int IntegerNegInf = 0xff7fffff;
+const float FloatINF = *(float*)&IntegerInf;
+const float FloatNegINF = *(float*)&IntegerNegInf;
+
 // Trim whitespace before and after a string
 inline TCHAR *Trim(TCHAR*&p) { 
    while(_istspace(*p)) *p++ = 0; 
@@ -220,6 +225,7 @@ enum PosRotScale
    prsDefault = prsPos | prsRot | prsScale,
 };
 extern void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
+extern void PosRotScaleNode(Control *c, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs = prsDefault, TimeValue t = 0);
 
 extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks, const string& name );
