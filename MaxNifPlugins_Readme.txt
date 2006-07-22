@@ -1,96 +1,103 @@
-						MaxPlugins 0.1.4
-						================
+                        MaxPlugins 0.1.5
+                        ================
 
  
-	This plugin set currently consists of an exporter, importer and a utility 
- 	plugin. This is a early release, so expect it to be buggy.  	
-	
-	Report problems and ask questions here:
-	
-		http://niftools.sourceforge.net/forum/viewforum.php?f=6
-		
-	A tutorial on how to use the exporter and utility plugins can be found here:
-	
-		http://www.silgrad.com/wbb2/thread.php?threadid=2477	
-		
-	Enjoy!
+    This plugin set currently consists of an exporter, importer and a utility 
+     plugin. This is a early release, so expect it to be buggy.      
+    
+    Report problems and ask questions here:
+    
+        http://niftools.sourceforge.net/forum/viewforum.php?f=6
+        
+    A tutorial on how to use the exporter and utility plugins can be found here:
+    
+        http://www.silgrad.com/wbb2/thread.php?threadid=2477    
+        
+    Enjoy!
 
-	Additional Notes
-	----------------
-		
-	Set the layer value to "NonCollidable", if you want to be able to walk through 
-	your objects, while still being able to activate them.
+    Additional Notes
+    ----------------
+        
+    Set the layer value to "NonCollidable", if you want to be able to walk through 
+    your objects, while still being able to activate them.
 
-	If your collision mesh comes out deformed, go to the utilities tab, 
-	choose "Reset XForm" and click "Reset Selected". This should fix it.
+    If your collision mesh comes out deformed, go to the utilities tab, 
+    choose "Reset XForm" and click "Reset Selected". This should fix it.
 
 
-	Change log
-	----------
-	
-	  0.1.4
-	  -----
-	  
-	o Importer
+    Change log
+    ----------
+
+      0.1.5
+      -----
+      
+    o Importer
+      - Updated with latest version NifLib
+        + Fixes stray empty triangles when importing NiTriStrip meshes
+    
+      0.1.4
+      -----
+      
+    o Importer
       - Fixed UV values when flipping so they align properly in UVW window
       - Fixed issues with DAoC mesh import (in NifLib)
       - Fixed rotation issue with animation import
      
-	  0.1.3
-	  -----
-	  
-	o Importer
+      0.1.3
+      -----
+      
+    o Importer
      - Fixed alignment issues when importing Morrowind Armor nifs
      - Added initial animation support (only for animations internal to nif, no kf file support yet)
      - Fixed numerous issues with bone system (biped is still broken)
      - Fixed issues with skin and doac nifs
-	  
-	  0.1.2
-	  -----
-	  
-	- Introduced the importer
+      
+      0.1.2
+      -----
+      
+    - Introduced the importer
     
-	- Fixed collision generation, turned out that Oblivion
-	  doesn't like NvTriStrip's strips. Thanks to Razorwing
-	  for discovering the bug and Tanguy Fautré for his
-	  stripper (http://users.telenet.be/tfautre/softdev/tristripper).
-		  		
-	- Fixed materials with transforms, flipped UV coords and 
-	  objects without mapping.
-	
-	Requirements
-	------------
+    - Fixed collision generation, turned out that Oblivion
+      doesn't like NvTriStrip's strips. Thanks to Razorwing
+      for discovering the bug and Tanguy Fautré for his
+      stripper (http://users.telenet.be/tfautre/softdev/tristripper).
+                  
+    - Fixed materials with transforms, flipped UV coords and 
+      objects without mapping.
+    
+    Requirements
+    ------------
 
-  	Exporter and Utility:
-    	3D Studio Max 6, 7 and 8
-	
-  	Importer
-    	3d Studio Max 8
+      Exporter and Utility:
+        3D Studio Max 6, 7 and 8
+    
+      Importer
+        3d Studio Max 8
 
-	Installation
-	------------
-	
-	Copy NifExport.dle, NifProps.dlu, MaxNifImport.dli to your 3dsmax\plugins 
-  	directory.
+    Installation
+    ------------
+    
+    Copy NifExport.dle, NifProps.dlu, MaxNifImport.dli to your 3dsmax\plugins 
+      directory.
   
-  	Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
-		
-	Usage
-	-----
-	
-  	Exporter and Utility:
-  	Use the NifProps utility plugin to mark objects as collision shapes and
-  	set their Havok material and layer properties. Export files using
-  	"File->Export->Gambryo File (*.nif)".
+      Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
+        
+    Usage
+    -----
+    
+      Exporter and Utility:
+      Use the NifProps utility plugin to mark objects as collision shapes and
+      set their Havok material and layer properties. Export files using
+      "File->Export->Gambryo File (*.nif)".
 
-  	Importer:
-    	Import files using "File->Import->Netimmerse/Gamebryo(*.NIF)"
+      Importer:
+        Import files using "File->Import->Netimmerse/Gamebryo(*.NIF)"
   
-    	Its highly recommended that you edit the MaxNifTools.ini file to adjust 
-    	paths and other settings to your machine to make it easier to work with.
-	
-    	1. Remove irrelevant applications from the KnownApplications list
-    	2. Fix the RootPaths, TexturePaths and TextureSearchPaths in the 
+        Its highly recommended that you edit the MaxNifTools.ini file to adjust 
+        paths and other settings to your machine to make it easier to work with.
+    
+        1. Remove irrelevant applications from the KnownApplications list
+        2. Fix the RootPaths, TexturePaths and TextureSearchPaths in the 
         Applications for your machine.
 
        - The ini file has a substitution mechanism to make it easier to just 
@@ -107,23 +114,23 @@
          match the extensions (this can be time consuming so keep it to only 
          relevant directories to you).
  
-	Copyright
-	---------
-	  
-	Copyright (c) 2006, NIF File Format Library and Tools. All rights reserved.
-	
-	Legal
-	-----
-	  
-	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-	"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-	LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-	FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-	INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-	BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-	CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-	LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+    Copyright
+    ---------
+      
+    Copyright (c) 2006, NIF File Format Library and Tools. All rights reserved.
+    
+    Legal
+    -----
+      
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
