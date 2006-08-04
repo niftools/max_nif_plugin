@@ -182,8 +182,6 @@ INode *NifImporter::GetNode(Niflib::NiNodeRef node)
 bool NifImporter::DoImport()
 {
    bool ok = true;
-   NiNodeRef rootNode = root;
-
    vector<string> importedBones;
    if (!isBiped && importSkeleton && importBones)
    {
@@ -233,29 +231,43 @@ bool NifImporter::DoImport()
    }
 
    if (isValid()) {
-      if (importBones) {
-         if (strmatch(rootNode->GetName(), "Scene Root"))
-            ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
-         else
-            ImportBones(rootNode);
-      }
 
-      ok = ImportMeshes(rootNode);
+      if (root->IsDerivedType(NiNode::TypeConst()))
+      {
+         NiNodeRef rootNode = root;
 
-      if (importSkeleton && removeUnusedImportedBones){
-         vector<string> importedNodes = GetNamesOfNodes(nodes);
-         sort(importedBones.begin(), importedBones.end());
-         sort(importedNodes.begin(), importedNodes.end());
-         vector<string> results;
-         results.resize(importedBones.size());
-         vector<string>::iterator end = set_difference ( 
-            importedBones.begin(), importedBones.end(),
-            importedNodes.begin(), importedNodes.end(), results.begin());
-         for (vector<string>::iterator itr = results.begin(); itr != end; ++itr){
-            if (INode *node = gi->GetINodeByName((*itr).c_str())){
-               node->Delete(0, TRUE);
+         if (importBones) {
+            if (strmatch(rootNode->GetName(), "Scene Root"))
+               ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+            else
+               ImportBones(rootNode);
+         }
+
+         ok = ImportMeshes(rootNode);
+
+         if (importSkeleton && removeUnusedImportedBones){
+            vector<string> importedNodes = GetNamesOfNodes(nodes);
+            sort(importedBones.begin(), importedBones.end());
+            sort(importedNodes.begin(), importedNodes.end());
+            vector<string> results;
+            results.resize(importedBones.size());
+            vector<string>::iterator end = set_difference ( 
+               importedBones.begin(), importedBones.end(),
+               importedNodes.begin(), importedNodes.end(), results.begin());
+            for (vector<string>::iterator itr = results.begin(); itr != end; ++itr){
+               if (INode *node = gi->GetINodeByName((*itr).c_str())){
+                  node->Delete(0, TRUE);
+               }
             }
          }
+      }
+      else if (root->IsDerivedType(NiTriShape::TypeConst()))
+      {
+         ok |= ImportMesh(NiTriShapeRef(root));
+      }
+      else if (root->IsDerivedType(NiTriStrips::TypeConst()))
+      {
+         ok |= ImportMesh(NiTriStripsRef(root));
       }
    }
 
