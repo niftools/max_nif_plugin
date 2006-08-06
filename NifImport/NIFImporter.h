@@ -28,6 +28,7 @@ public:
    bool flipUVTextures;
    bool enableSkinSupport;
    bool goToSkeletonBindPosition;
+   bool enableCollision;
 
    // Biped/Bones related settings
    bool importBones;
@@ -59,6 +60,9 @@ public:
    bool requireMultipleKeys;
    bool applyOverallTransformToSkinAndBones;
 
+   // Collision settings
+   float bhkScaleFactor;
+
    vector<Niflib::NiObjectRef> blocks;
    vector<Niflib::NiNodeRef> nodes;
    map<string,int> ctrlCount; // counter for number of controllers referencing a node
@@ -81,6 +85,8 @@ public:
    bool ImportMeshes(Niflib::NiNodeRef block);
    string FindImage(const string& name);
 
+   bool ImportUPB(INode *node, Niflib::NiNodeRef block);
+
    void SetTrangles(Mesh& mesh, vector<Niflib::Triangle>& v, bool hasTexture);
    bool ImportMesh(Niflib::NiTriShapeRef triShape);
    bool ImportMesh(Niflib::NiTriStripsRef triStrips);
@@ -92,6 +98,9 @@ public:
    Texmap* CreateTexture(Niflib::TexDesc& desc);
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);
+
+   // Primary Collision entry point.  Tests for bhk objects
+   bool ImportCollision(Niflib::NiNodeRef node);
 
    INode *GetNode(Niflib::NiNodeRef node);
 

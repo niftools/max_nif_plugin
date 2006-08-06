@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "AppSettings.h"
+#include "niutils.h"
 
 int Exporter::mVersion=013;
 bool Exporter::mSelectedOnly=false;
@@ -11,25 +13,41 @@ float Exporter::mWeldThresh=0.1f;
 string Exporter::mTexPrefix="textures";
 bool Exporter::mExportCollision=true;
 bool Exporter::mRemapIndices=true;
+bool Exporter::mUseRegistry=false;
 
-Exporter::Exporter(Interface *i)
-	: mI(i)
+Exporter::Exporter(Interface *i, AppSettings *appSettings)
+   : mI(i), mAppSettings(appSettings)
 {
-
 }
 
-Exporter::Result Exporter::export(NiNodeRef &root, INode *node)
+Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
 	BSXFlagsRef bsx = DynamicCast<BSXFlags>(CreateBlock("BSXFlags"));
 	bsx->SetName("BSX");
 	bsx->SetFlags(0x00000002);
+   root->AddExtraData(DynamicCast<NiExtraData>(bsx));
 
-	NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
-	strings->SetName("UPB");
-	strings->SetData("Ellasticity = 0.300000\r\nFriction = 0.300000\r\nUnyielding = 0\r\nProxy_Geometry = <None>\r\nUse_Display_Proxy = 0\r\nDisplay_Children = 1\r\nDisable_Collisions = 0\r\nInactive = 0\r\nDisplay_Proxy = <None>\r\nMass = 0.000000\r\nSimulation_Geometry = 2\r\nCollision_Groups = 589825\r\n");
-
-	root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-	root->AddExtraData(DynamicCast<NiExtraData>(strings));
+   // Write the actual UPB sans any np_ prefixed strings
+   TSTR upb;
+   node->GetUserPropBuffer(upb);
+   if (!upb.isNull())
+   {
+      string line;
+      istringstream istr(string(upb), ios_base::out);
+      ostringstream ostr;
+      while (!istr.eof()) {
+         std::getline(istr, line);
+         if (!line.empty() && 0 != line.compare(0, 3, "np_"))
+            ostr << line << endl;
+      }
+      if (!ostr.str().empty())
+      {
+         NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
+         strings->SetName("UPB");
+         strings->SetData(ostr.str());
+         root->AddExtraData(DynamicCast<NiExtraData>(strings));
+      }
+   }
 
 	mNiRoot = root;
 	

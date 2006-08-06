@@ -2,6 +2,12 @@
 
 #include "resource.h"
 
+#include <deque>
+#include <algorithm>
+#include <functional>
+#include <string>
+#include <sstream>
+
 #include "Max.h"
 #include "resource.h"
 #include "istdplug.h"
@@ -11,28 +17,31 @@
 
 // niflib/Ref.h' header guard caused havok!
 // near & far 
-#include "niflib/pch.h"
-#include "niflib/obj/NiNode.h"
-#include "niflib/obj/NiTriStrips.h"
-#include "niflib/obj/NiTriStripsData.h"
-#include "niflib/obj/NiTriShape.h"
-#include "niflib/obj/NiTriShapeData.h"
-#include "niflib/obj/bhkCollisionObject.h"
-#include "niflib/obj/bhkRigidBody.h"
-#include "niflib/obj/bhkNiTriStripsShape.h"
-#include "niflib/obj/bhkBoxShape.h"
-#include "niflib/obj/bhkSphereShape.h"
-#include "niflib/obj/bhkCapsuleShape.h"
-#include "niflib/obj/NiMaterialProperty.h"
-#include "niflib/obj/NiTexturingProperty.h"
-#include "niflib/obj/NiSourceTexture.h"
-#include "niflib/obj/BsxFlags.h"
-#include "niflib/obj/NiStringExtraData.h"
+//#include "niflib/pch.h"
+#include "niflib.h"
+#include "obj/NiNode.h"
+#include "obj/NiTriStrips.h"
+#include "obj/NiTriStripsData.h"
+#include "obj/NiTriShape.h"
+#include "obj/NiTriShapeData.h"
+#include "obj/bhkCollisionObject.h"
+#include "obj/bhkRigidBody.h"
+#include "obj/bhkNiTriStripsShape.h"
+#include "obj/bhkBoxShape.h"
+#include "obj/bhkSphereShape.h"
+#include "obj/bhkCapsuleShape.h"
+#include "obj/NiMaterialProperty.h"
+#include "obj/NiTexturingProperty.h"
+#include "obj/NiSourceTexture.h"
+#include "obj/BsxFlags.h"
+#include "obj/NiStringExtraData.h"
+#include "obj/bhkRigidBodyT.h"
 
 #include "NvTriStrip/NvTriStrip.h"
-#include <deque>
 #include "TriStripper/tri_stripper.h"
 
-#include "../NifPlugins.h"
+#include "NifPlugins.h"
 #include "Exporter.h"
 #include "NifExport.h"
+
+#include <shlwapi.h>

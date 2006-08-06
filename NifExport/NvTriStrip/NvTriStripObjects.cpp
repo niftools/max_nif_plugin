@@ -297,6 +297,9 @@ NvFaceInfo* NvStripifier::FindGoodResetPoint(NvFaceInfoVec &faceInfos, NvEdgeInf
 	if(result == NULL)
 	{
 		int numFaces   = faceInfos.size();
+      if (numFaces == 0)
+         return NULL;
+
 		int startPoint;
 		if(bFirstTimeResetPoint)
 		{

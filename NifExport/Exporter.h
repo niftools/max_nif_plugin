@@ -4,6 +4,7 @@
 using namespace Niflib;
 
 class BitmapTex;
+class AppSettings;
 
 class Exporter
 {
@@ -22,7 +23,7 @@ public:
 	static int				mVersion;
 
 	/* export options, static for dialog usage. */
-
+   static bool          mUseRegistry;
 	static bool				mSelectedOnly;
 	static bool				mTriStrips;
 	static bool				mExportHidden;
@@ -34,9 +35,9 @@ public:
 	static bool				mExportCollision;
 	static bool				mRemapIndices;
 
-	Exporter(Interface *i);
+	Exporter(Interface *i, AppSettings *appSettings);
 
-	Result					export(NiNodeRef &root, INode *node);
+	Result					doExport(NiNodeRef &root, INode *node);
 
 	/* config is written to the registry and the root node
 	of the scene, so that it is restored when opening it
@@ -46,12 +47,12 @@ public:
 	// writes config to root node
 	static void				writeConfig(INode *node);
 	// writes config to registry
-	static void				writeConfig();
+	static void				writeConfig(Interface *i);
 
 	// reads config from root node
 	static void				readConfig(INode *node);
 	// reads config from registry
-	static void				readConfig();
+	static void				readConfig(Interface *i);
 
 private:
 
@@ -73,6 +74,7 @@ private:
 
 	Interface				*mI;
 	NiNodeRef				mNiRoot;
+   AppSettings          *mAppSettings;
 
 	Result					exportCollision(NiNodeRef &root, INode *node);
 	Result					exportMeshes(NiNodeRef &root, INode *node);

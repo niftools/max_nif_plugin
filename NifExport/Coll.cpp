@@ -1,5 +1,13 @@
 #include "pch.h"
 
+#ifdef _DEBUG
+#include <assert.h>
+#include <crtdbg.h>
+#define ASSERT _ASSERTE
+#else
+#define ASSERT(x)
+#endif
+
 static Class_ID SCUBA_CLASS_ID(0x6d3d77ac, 0x79c939a9);
 
 enum
@@ -179,26 +187,26 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 	shape->SetStripsData(0, data);
 	shape->SetMaterial(mtl);
 
-	array<float, 2> unknownFloats1;
-	uint i1 = 0x3DCCCCCD;
-	uint i2 = 0x004ABE60;
-	unknownFloats1[0] = *((float*)&i1);
-	unknownFloats1[1] = *((float*)&i2);
-	shape->SetUnknownFloats1(unknownFloats1);
+	//array<float, 2> unknownFloats1;
+	//uint i1 = 0x3DCCCCCD;
+	//uint i2 = 0x004ABE60;
+	//unknownFloats1[0] = *((float*)&i1);
+	//unknownFloats1[1] = *((float*)&i2);
+	//shape->SetUnknownFloats1(unknownFloats1);
 
-	array<float, 3> unknownFloats2;
-	unknownFloats2[0] = 1;
-	unknownFloats2[1] = 1;
-	unknownFloats2[2] = 1;
-	shape->SetUnknownFloats2(unknownFloats2);
+	//array<float, 3> unknownFloats2;
+	//unknownFloats2[0] = 1;
+	//unknownFloats2[1] = 1;
+	//unknownFloats2[2] = 1;
+	//shape->SetUnknownFloats2(unknownFloats2);
 
-	array<uint, 5> unknownInts1;
-	unknownInts1[4] = 1;
-	shape->SetUnknownInts1(unknownInts1);
+	//array<uint, 5> unknownInts1;
+	//unknownInts1[4] = 1;
+	//shape->SetUnknownInts1(unknownInts1);
 
-	vector<uint> unknownInts3;
-	unknownInts3.resize(1);
-	shape->SetUnknownInts3(unknownInts3);
+	//vector<uint> unknownInts3;
+	//unknownInts3.resize(1);
+	//shape->SetUnknownInts3(unknownInts3);
 
 	// setup collision object
 	bhkCollisionObjectRef co = DynamicCast<bhkCollisionObject>(CreateBlock("bhkCollisionObject"));
@@ -305,15 +313,23 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel, resti, pendepth;
 	Vector3 center;
 
+   // Handle compatibility
+   npGetProp(node, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
+   if (mass != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
+   npGetProp(node, NP_HVK_FRICTION_OLD, frict, NP_DEFAULT_HVK_EMPTY);
+   if (frict != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
+   npGetProp(node, NP_HVK_RESTITUTION_OLD, resti, NP_DEFAULT_HVK_EMPTY);
+   if (resti != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
+
 	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
 	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
 	npGetProp(node, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
 	npGetProp(node, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
-	npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
 	npGetProp(node, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
 	npGetProp(node, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
-	npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
-	npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
 	npGetProp(node, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_MAX_LINEAR_VELOCITY);
 	npGetProp(node, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
 	npGetProp(node, NP_HVK_PENETRATION_DEPTH, pendepth, NP_DEFAULT_HVK_PENETRATION_DEPTH);
@@ -473,10 +489,13 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node)
 	unknownInts1[4] = 1;
 	shape->SetUnknownInts1(unknownInts1);
 */
+
+   ASSERT(!"TODO: Need to support this");
+/* Still not handled
 	vector<uint> unknownInts2;
 	unknownInts2.resize(1);
 	shape->SetUnknownInts2(unknownInts2);
-
+*/
 	if (tri != os.obj)
 		tri->DeleteMe();
 

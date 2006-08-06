@@ -103,7 +103,6 @@ bool NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObjec
             if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOSS_MAP)))
                m->SetSubTexmap(ID_SS, tex);
          }
-
          // Self illumination
          if (texRef->HasTexture(GLOW_MAP)) {
             if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOW_MAP)))

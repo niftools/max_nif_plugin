@@ -20,6 +20,7 @@ LPCTSTR NifImportSection = TEXT("MaxNifImport");
 LPCTSTR SystemSection = TEXT("System");
 LPCTSTR BipedImportSection = TEXT("BipedImport");
 LPCTSTR AnimImportSection = TEXT("AnimationImport");
+LPCTSTR CollisionSection = TEXT("Collision");
 
 class IBipMaster;
 IBipMaster * (_cdecl * Max8CreateNewBiped)(float,float,class Point3 const &,int,int,int,int,int,int,int,int,int,int,int,int,float,int,int,int,int,int,int,int,int) = 0;
@@ -114,17 +115,19 @@ void NifImporter::LoadIniSettings()
       appSettings = &TheAppSettings.front();
    }
 
+   // General System level
    useBiped = GetIniValue<bool>(NifImportSection, "UseBiped", false);
    skeletonCheck = GetIniValue<string>(NifImportSection, "SkeletonCheck", "Bip*");
    showTextures = GetIniValue<bool>(NifImportSection, "ShowTextures", true);
-
    removeIllegalFaces = GetIniValue<bool>(NifImportSection, "RemoveIllegalFaces", true);
    removeDegenerateFaces = GetIniValue<bool>(NifImportSection, "RemoveDegenerateFaces", true);
    enableAutoSmooth = GetIniValue<bool>(NifImportSection, "EnableAutoSmooth", true);
    autoSmoothAngle = GetIniValue<float>(NifImportSection, "AutoSmoothAngle", 30.0f);
    flipUVTextures = GetIniValue<bool>(NifImportSection, "FlipUVTextures", true);
    enableSkinSupport = GetIniValue<bool>(NifImportSection, "EnableSkinSupport", true);
+   enableCollision = GetIniValue<bool>(NifImportSection, "EnableCollision", true);
 
+   // Biped
    importBones = GetIniValue<bool>(BipedImportSection, "ImportBones", true);
    bipedHeight = GetIniValue<float>(BipedImportSection, "BipedHeight", 131.90f);
    bipedAngle = GetIniValue<float>(BipedImportSection, "BipedAngle", 90.0f);
@@ -142,10 +145,14 @@ void NifImporter::LoadIniSettings()
    convertBillboardsToDummyNodes = GetIniValue<bool>(BipedImportSection, "ConvertBillboardsToDummyNodes", true);
    uncontrolledDummies = GetIniValue<bool>(BipedImportSection, "UncontrolledDummies", true);
 
+   // Animation
    replaceTCBRotationWithBezier = GetIniValue<bool>(AnimImportSection, "ReplaceTCBRotationWithBezier", true);
    enableAnimations = GetIniValue<bool>(AnimImportSection, "EnableAnimations", true);
    requireMultipleKeys = GetIniValue<bool>(AnimImportSection, "RequireMultipleKeys", true);
    applyOverallTransformToSkinAndBones = GetIniValue<bool>(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
+
+   // Collision
+   bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
 
    goToSkeletonBindPosition = false;
    // Override specific settings
@@ -219,8 +226,13 @@ bool NifImporter::DoImport()
          NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
          if (skelImport.isValid())
          {
+            // Enable Skeleton specific items
             skelImport.isBiped = true;
             skelImport.importBones = true;
+            // Disable undesirable skeleton items
+            skelImport.enableCollision = false;
+            skelImport.enableAnimations = false;
+
             skelImport.DoImport();
             if (!skelImport.useBiped && removeUnusedImportedBones)
                importedBones = GetNamesOfNodes(skelImport.nodes);

@@ -554,7 +554,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       vector<NiNodeRef> childNodes = DynamicCast<NiNode>(children);
 
       NiAVObject::CollisionType cType = node->GetCollision();
-      if (cType == NiAVObject::ctBoundingBox && children.empty() && name=="Bounding Box")
+      if (cType == NiAVObject::CT_BOUNDINGBOX && children.empty() && name=="Bounding Box")
          return;
 
       NiNodeRef parent = node->GetParent();
@@ -622,6 +622,12 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
             }
          }
       }
+      // Import UPB
+      if (bone) ImportUPB(bone, node);
+
+      // Import Havok Collision Data surrounding node
+      ImportCollision(node);
+
       if (bone && recurse)
       {
          ImportBones(childNodes);
@@ -634,4 +640,32 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
    catch( ... ) 
    {
    }
+}
+
+bool NifImporter::ImportUPB(INode *node, Niflib::NiNodeRef block)
+{
+   bool ok = false;
+   if (node && block)
+   {
+      list<NiStringExtraDataRef> strings = DynamicCast<NiStringExtraData>(block->GetExtraData());
+      for (list<NiStringExtraDataRef>::iterator itr = strings.begin(); itr != strings.end(); ++itr){
+         if (strmatch((*itr)->GetName(), "UserPropBuffer") || strmatch((*itr)->GetName(), "UPB")) {
+            char buffer[1048], *line = buffer;
+            istringstream istr((*itr)->GetData(), ios_base::out);
+            while (!istr.eof()) {
+               line[0] = 0;
+               istr.getline(buffer, _countof(buffer)-1);
+               if (LPTSTR equals = _tcschr(line, TEXT('='))){
+                  *equals++ = 0;
+                  Trim(line), Trim(equals);
+                  if (line[0] && equals[0]){
+                     node->SetUserPropString(TSTR(line), TSTR(equals));
+                     ok |= true;
+                  }
+               }
+            }
+         }
+      }
+   }
+   return ok;
 }

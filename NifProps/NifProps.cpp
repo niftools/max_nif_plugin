@@ -3,8 +3,8 @@
 #include <map>
 #include "NifProps.h"
 #include "NifStrings.h"
-#include "../NifPlugins.h"
-#include "../NifGui.h"
+#include "NifPlugins.h"
+#include "NifGui.h"
 
 using namespace std;
 
@@ -222,17 +222,26 @@ void NifProps::selectionChanged()
 	CheckDlgButton(mPanel, IDC_CHK_ISCOLL, isColl);
 	
 	int mtl, lyr, msys, qtype;
-	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel;
+	float mass, lindamp, angdamp, frict, resti, maxlinvel, maxangvel;
 	Vector3 center;
+
+   // Handle compatibility
+   npGetProp(nodeSel, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
+   if (mass != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(nodeSel, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
+   npGetProp(nodeSel, NP_HVK_FRICTION_OLD, frict, NP_DEFAULT_HVK_EMPTY);
+   if (frict != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(nodeSel, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
+   npGetProp(nodeSel, NP_HVK_RESTITUTION_OLD, resti, NP_DEFAULT_HVK_EMPTY);
+   if (resti != NP_DEFAULT_HVK_EMPTY)
+      npGetProp(nodeSel, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
 
 	npGetProp(nodeSel, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
 	npGetProp(nodeSel, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
 	npGetProp(nodeSel, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
 	npGetProp(nodeSel, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
-	npGetProp(nodeSel, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
 	npGetProp(nodeSel, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
 	npGetProp(nodeSel, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
-	npGetProp(nodeSel, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
 	npGetProp(nodeSel, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_FRICTION);
 	npGetProp(nodeSel, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
 	npGetProp(nodeSel, NP_HVK_CENTER, center);

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "stdmat.h"
+#include "AppSettings.h"
 
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 {
@@ -8,27 +9,37 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 	if (!bmTex)
 		return;
 
-	TSTR mapPath, p, f;
-	mapPath = bmTex->GetMapName();
-	SplitPathFile(mapPath, &p, &f);
-
 	NiTexturingPropertyRef texProp(DynamicCast<NiTexturingProperty>(CreateBlock("NiTexturingProperty")));
 	texProp->SetApplyMode(APPLY_MODULATE);
 	texProp->SetTextureCount(7);
 
 	TexDesc td;
 	td.source = DynamicCast<NiSourceTexture>(CreateBlock("NiSourceTexture"));
-	NiObjectRef unk_link(NULL);
-	TSTR newPath;
-	if (mTexPrefix != "")
-		newPath = TSTR(mTexPrefix.c_str()) + _T("\\") + f;
-	else
-		newPath = f;
-	
-	char tmp[MAX_PATH]="";
-	strncpy(tmp, (char*)newPath, newPath.Length());
 
-	td.source->SetExternalTexture(tmp, unk_link);
+   // Get file name and check if it matches the "app" settings in the ini file
+   TSTR mapPath;
+   mapPath = bmTex->GetMapName();
+
+   if (mAppSettings)
+   {
+      string newPath = mAppSettings->GetRelativeTexPath(string(mapPath), mTexPrefix);
+
+      NiObjectRef unk_link(NULL);
+      td.source->SetExternalTexture(newPath, unk_link);
+   }
+   else
+   {
+      TSTR p, f;
+      SplitPathFile(mapPath, &p, &f);
+	   TSTR newPath;
+	   if (mTexPrefix != "")
+		   newPath = TSTR(mTexPrefix.c_str()) + _T("\\") + f;
+	   else
+		   newPath = f;
+   	
+      NiObjectRef unk_link(NULL);
+	   td.source->SetExternalTexture(newPath.data(), unk_link);
+   }
 	texProp->SetTexture(BASE_MAP, td);
 
 	NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
@@ -52,13 +63,18 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
 		c = mtl->GetSpecular();
 		mtlProp->SetSpecularColor(Color3(c.r, c.g, c.b));
 
-		c = mtl->GetSelfIllumColor();
+      c = (mtl->GetSelfIllumColorOn()) ? mtl->GetSelfIllumColor() : Color(0,0,0);
 		mtlProp->SetEmissiveColor(Color3(c.r, c.g, c.b));
 
 		mtlProp->SetTransparency(1);
-		mtlProp->SetGlossiness(mtl->GetShininess());
+		mtlProp->SetGlossiness(mtl->GetShininess() * 100.0);
 		name = (char*)mtl->GetName();
 
+      if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
+      {
+         StdMat2 * smtl = (StdMat2*)mtl;
+         mtlProp->SetTransparency(smtl->GetOpacity(0));
+      }
 	} else
 	{
 		mtlProp->SetAmbientColor(Color3(0.588f, 0.588f, 0.588f));

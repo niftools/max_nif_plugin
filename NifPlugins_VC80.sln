@@ -1,0 +1,122 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifExport", "NifExport\NifExport_VC80.vcproj", "{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4} = {E29131BC-410F-4B9B-B48F-6EED5D3B68A4}
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E} = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifProps", "NifProps\NifProps_VC80.vcproj", "{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4} = {E29131BC-410F-4B9B-B48F-6EED5D3B68A4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifFurniture", "NifFurniture\NifFurniture_VC80.vcproj", "{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4} = {E29131BC-410F-4B9B-B48F-6EED5D3B68A4}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NIFlib", "..\niflib\niflib.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MaxNifImport", "NifImport\MaxNifImport_VC80.vcproj", "{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4} = {E29131BC-410F-4B9B-B48F-6EED5D3B68A4}
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E} = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifCommon", "NifCommon\NifCommon_VC80.vcproj", "{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50B67748-0DFB-45B0-BF1F-E80135EE3823}"
+	ProjectSection(SolutionItems) = preProject
+		MaxNifPlugins_Readme.txt = MaxNifPlugins_Readme.txt
+		MaxNifTools.ini = MaxNifTools.ini
+		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug - Max 6|Win32 = Debug - Max 6|Win32
+		Debug - Max 7|Win32 = Debug - Max 7|Win32
+		Debug - Max 8|Win32 = Debug - Max 8|Win32
+		Release - Max 6|Win32 = Release - Max 6|Win32
+		Release - Max 7|Win32 = Release - Max 7|Win32
+		Release - Max 8|Win32 = Release - Max 8|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6|Win32.ActiveCfg = Debug - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 6|Win32.Build.0 = Debug - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 7|Win32.ActiveCfg = Debug - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 7|Win32.Build.0 = Debug - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8|Win32.ActiveCfg = Debug - Max 8|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Debug - Max 8|Win32.Build.0 = Debug - Max 8|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6|Win32.ActiveCfg = Release - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 6|Win32.Build.0 = Release - Max 6|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7|Win32.ActiveCfg = Release - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 7|Win32.Build.0 = Release - Max 7|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8|Win32.ActiveCfg = Release - Max 8|Win32
+		{E7CB76AA-6113-46BA-8EBC-8AE1D2B81210}.Release - Max 8|Win32.Build.0 = Release - Max 8|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 6|Win32.ActiveCfg = Debug - Max 6|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 6|Win32.Build.0 = Debug - Max 6|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 7|Win32.ActiveCfg = Debug - Max 7|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 7|Win32.Build.0 = Debug - Max 7|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 8|Win32.ActiveCfg = Debug - Max 8|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Debug - Max 8|Win32.Build.0 = Debug - Max 8|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 6|Win32.ActiveCfg = Release - Max 6|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 6|Win32.Build.0 = Release - Max 6|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 7|Win32.ActiveCfg = Release - Max 7|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 7|Win32.Build.0 = Release - Max 7|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 8|Win32.ActiveCfg = Release - Max 8|Win32
+		{520EDC5D-6DCB-4D28-A858-7D5F5C7C7E9C}.Release - Max 8|Win32.Build.0 = Release - Max 8|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 6|Win32.ActiveCfg = Debug - Max 6|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 6|Win32.Build.0 = Debug - Max 6|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 7|Win32.ActiveCfg = Debug - Max 7|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 7|Win32.Build.0 = Debug - Max 7|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 8|Win32.ActiveCfg = Debug - Max 8|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Debug - Max 8|Win32.Build.0 = Debug - Max 8|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 6|Win32.ActiveCfg = Release - Max 6|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 6|Win32.Build.0 = Release - Max 6|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 7|Win32.ActiveCfg = Release - Max 7|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 7|Win32.Build.0 = Release - Max 7|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 8|Win32.ActiveCfg = Release - Max 8|Win32
+		{746EF66A-D67C-4D9A-9A0D-697952E9FFCD}.Release - Max 8|Win32.Build.0 = Release - Max 8|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 6|Win32.ActiveCfg = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 6|Win32.Build.0 = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 7|Win32.ActiveCfg = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 7|Win32.Build.0 = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 8|Win32.ActiveCfg = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 8|Win32.Build.0 = Debug - PCH|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 6|Win32.ActiveCfg = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 6|Win32.Build.0 = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 7|Win32.ActiveCfg = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 7|Win32.Build.0 = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 8|Win32.ActiveCfg = Release|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 8|Win32.Build.0 = Release|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 6|Win32.ActiveCfg = Debug - Max 6|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 6|Win32.Build.0 = Debug - Max 6|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 7|Win32.ActiveCfg = Debug - Max 7|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 7|Win32.Build.0 = Debug - Max 7|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 8|Win32.ActiveCfg = Debug - Max 8|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Debug - Max 8|Win32.Build.0 = Debug - Max 8|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 6|Win32.ActiveCfg = Release - Max 6|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 6|Win32.Build.0 = Release - Max 6|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 7|Win32.ActiveCfg = Release - Max 7|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 7|Win32.Build.0 = Release - Max 7|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 8|Win32.ActiveCfg = Release - Max 8|Win32
+		{283FC287-9AF1-4F34-9B74-2376FE3C2FCD}.Release - Max 8|Win32.Build.0 = Release - Max 8|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 6|Win32.ActiveCfg = Debug - Max 6|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 6|Win32.Build.0 = Debug - Max 6|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 7|Win32.ActiveCfg = Debug - Max 7|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 7|Win32.Build.0 = Debug - Max 7|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 8|Win32.ActiveCfg = Debug - Max 8|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Debug - Max 8|Win32.Build.0 = Debug - Max 8|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 6|Win32.ActiveCfg = Release - Max 6|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 6|Win32.Build.0 = Release - Max 6|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 7|Win32.ActiveCfg = Release - Max 7|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 7|Win32.Build.0 = Release - Max 7|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 8|Win32.ActiveCfg = Release - Max 8|Win32
+		{E29131BC-410F-4B9B-B48F-6EED5D3B68A4}.Release - Max 8|Win32.Build.0 = Release - Max 8|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,8 +1,13 @@
 #include "pch.h"
+#include "AppSettings.h"
+#include "niutils.h"
+#include  <io.h>
 
 using namespace Niflib;
 
 #define NifExport_CLASS_ID	Class_ID(0xa57ff0a4, 0xa0374ffb)
+
+static LPCTSTR NifExportSection = TEXT("MaxNifExport");
 
 class NifExport : public SceneExport 
 {
@@ -204,19 +209,51 @@ BOOL NifExport::SupportsOptions(int ext, DWORD options)
 
 int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
+   // read application settings
+   AppSettings::Initialize(i);
+
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   bool iniNameIsValid = (-1 != _taccess(iniName, 0));
+
+   // Set whether Config should use registry or not
+   Exporter::mUseRegistry = !iniNameIsValid || GetIniValue<bool>(NifExportSection, "UseRegistry", false, iniName);
 	// read config from registry
-	Exporter::readConfig();
+	Exporter::readConfig(i);
 	// read config from root node
 	Exporter::readConfig(i->GetRootNode());
+
+   // locate the "default" app setting
+   AppSettings *appSettings = NULL;
+   if (iniNameIsValid)
+   {
+      string fname = name;
+      // Locate which application to use. If Auto, find first app where this file appears in the root path list
+      string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
+      if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+         // Scan Root paths
+         for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
+            if ((*itr).IsFileInRootPaths(fname)) {
+               appSettings = &(*itr);
+               break;
+            }
+         }
+      } else {
+         appSettings = FindAppSetting(curapp);
+      }
+   }
+   if (appSettings == NULL && !TheAppSettings.empty()){
+      appSettings = &TheAppSettings.front();
+   }
 
 	if(!suppressPrompts)
 	{
 		if (DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), GetActiveWindow(), NifExportOptionsDlgProc, (LPARAM)this) != IDOK)
 			return true;
 
-
 		// write config to registry
-		Exporter::writeConfig();
+		Exporter::writeConfig(i);
 		// write config to root node
 		Exporter::writeConfig(i->GetRootNode());
 	}
@@ -224,10 +261,10 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 	try
 	{
 		Exporter::mSelectedOnly = (options&SCENE_EXPORT_SELECTED) != 0;
-		Exporter exp(i);
+		Exporter exp(i, appSettings);
 		
 		Ref<NiNode> root = DynamicCast<NiNode>(CreateBlock( "NiNode" ));
-		Exporter::Result result = exp.export(root, i->GetRootNode());
+		Exporter::Result result = exp.doExport(root, i->GetRootNode());
 
 		if (result!=Exporter::Ok)
 			throw exception("Unknown error.");

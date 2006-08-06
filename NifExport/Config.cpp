@@ -1,6 +1,10 @@
 #include "pch.h"
+#include "AppSettings.h"
+#include "niutils.h"
 
 #define REGPATH "Software\\NifTools\\MaxPlugins"
+
+static LPCTSTR NifExportSection = TEXT("MaxNifExport");
 
 void regSet(HKEY hKey, const char *value, float f);
 void regSet(HKEY hKey, const char *value, bool b);
@@ -17,22 +21,44 @@ void Exporter::writeConfig(INode *node)
 {
 }
 
-void Exporter::writeConfig()
+void Exporter::writeConfig(Interface *i)
 {
-    HKEY hKey;
-    if (RegCreateKey(HKEY_CURRENT_USER, REGPATH, &hKey) != ERROR_SUCCESS)
-		return;
+   if (mUseRegistry)
+   {
+      HKEY hKey;
+      if (RegCreateKey(HKEY_CURRENT_USER, REGPATH, &hKey) != ERROR_SUCCESS)
+         return;
 
-	regSet(hKey, "npx_ver", mVersion);
-	regSet(hKey, "npx_tristrips", mTriStrips);
-	regSet(hKey, "npx_hidden", mExportHidden);
-	regSet(hKey, "npx_furn", mExportFurn);
-	regSet(hKey, "npx_lights", mExportLights);
-	regSet(hKey, "npx_vcolors", mVertexColors);
-//	regSet(hKey, "npx_wthresh", mWeldThresh);
-	regSet(hKey, "npx_tprefix", mTexPrefix);
-	regSet(hKey, "npx_coll", mExportCollision);
-	regSet(hKey, "npx_remap", mRemapIndices);
+      regSet(hKey, "npx_ver", mVersion);
+      regSet(hKey, "npx_tristrips", mTriStrips);
+      regSet(hKey, "npx_hidden", mExportHidden);
+      regSet(hKey, "npx_furn", mExportFurn);
+      regSet(hKey, "npx_lights", mExportLights);
+      regSet(hKey, "npx_vcolors", mVertexColors);
+      //	regSet(hKey, "npx_wthresh", mWeldThresh);
+      regSet(hKey, "npx_tprefix", mTexPrefix);
+      regSet(hKey, "npx_coll", mExportCollision);
+      regSet(hKey, "npx_remap", mRemapIndices);
+
+      RegCloseKey(hKey);
+   }
+   else
+   {
+      TCHAR iniName[MAX_PATH];
+      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+      SetIniValue(NifExportSection, "Version", mVersion, iniName);
+      SetIniValue(NifExportSection, "GenerateStrips", mTriStrips, iniName);
+      SetIniValue(NifExportSection, "IncludeHidden", mExportHidden, iniName);
+      SetIniValue(NifExportSection, "FurnatureMarkers", mExportFurn, iniName);
+      SetIniValue(NifExportSection, "Lights", mExportLights, iniName);
+      SetIniValue(NifExportSection, "VertexColors", mVertexColors, iniName);
+      //	SetIniValue(NifExportSection, "WeldThresh", mWeldThresh, iniName);
+      SetIniValue(NifExportSection, "TexturePrefix", mTexPrefix, iniName);
+      SetIniValue(NifExportSection, "ExportCollision", mExportCollision, iniName);
+      SetIniValue(NifExportSection, "RemapIndices", mRemapIndices, iniName);
+   }
 }
 
 void Exporter::readConfig(INode *node)
@@ -40,23 +66,43 @@ void Exporter::readConfig(INode *node)
 
 }
 
-void Exporter::readConfig()
+void Exporter::readConfig(Interface *i)
 {
-    HKEY hKey;
-    if (RegCreateKey(HKEY_CURRENT_USER, REGPATH, &hKey) != ERROR_SUCCESS)
-		return;
+   if (mUseRegistry)
+   {
+      HKEY hKey;
+      if (RegCreateKey(HKEY_CURRENT_USER, REGPATH, &hKey) != ERROR_SUCCESS)
+         return;
 
-	DWORD ver;
-	regGet(hKey, "npx_ver", ver);
-	regGet(hKey, "npx_tristrips", mTriStrips);
-	regGet(hKey, "npx_hidden", mExportHidden);
-	regGet(hKey, "npx_furn", mExportFurn);
-	regGet(hKey, "npx_lights", mExportLights);
-	regGet(hKey, "npx_vcolors", mVertexColors);
-//	regGet(hKey, "npx_wthresh", mWeldThresh);
-	regGet(hKey, "npx_tprefix", mTexPrefix);
-	regGet(hKey, "npx_coll", mExportCollision);
-	regGet(hKey, "npx_remap", mRemapIndices);
+      DWORD ver;
+      regGet(hKey, "npx_ver", ver);
+      regGet(hKey, "npx_tristrips", mTriStrips);
+      regGet(hKey, "npx_hidden", mExportHidden);
+      regGet(hKey, "npx_furn", mExportFurn);
+      regGet(hKey, "npx_lights", mExportLights);
+      regGet(hKey, "npx_vcolors", mVertexColors);
+      //	regGet(hKey, "npx_wthresh", mWeldThresh);
+      regGet(hKey, "npx_tprefix", mTexPrefix);
+      regGet(hKey, "npx_coll", mExportCollision);
+      regGet(hKey, "npx_remap", mRemapIndices);
+   }
+   else
+   {
+      TCHAR iniName[MAX_PATH];
+      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+      mVersion = GetIniValue<int>(NifExportSection, "Version", 013, iniName);
+      mTriStrips = GetIniValue<bool>(NifExportSection, "GenerateStrips", true, iniName);
+      mExportHidden = GetIniValue<bool>(NifExportSection, "IncludeHidden", false, iniName);
+      mExportFurn = GetIniValue<bool>(NifExportSection, "FurnatureMarkers", true, iniName);
+      mExportLights = GetIniValue<bool>(NifExportSection, "Lights", false, iniName);
+      mVertexColors = GetIniValue<bool>(NifExportSection, "VertexColors", true, iniName);
+      //	mWeldThresh = GetIniValue<float>(NifExportSection, "WeldThresh", 0.1f, iniName);
+      mTexPrefix = GetIniValue<string>(NifExportSection, "TexturePrefix", "textures", iniName);
+      mExportCollision = GetIniValue<bool>(NifExportSection, "ExportCollision", true, iniName);
+      mRemapIndices = GetIniValue(NifExportSection, "RemapIndices", true, iniName);
+  }
 }
 
 

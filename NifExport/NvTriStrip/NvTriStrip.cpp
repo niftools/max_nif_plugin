@@ -301,7 +301,7 @@ bool GenerateStrips(const unsigned short* in_indices, const unsigned int in_numI
 		
 		//first, the strips
 		int startingLoc = 0;
-		for(size_t stripCtr = 0; stripCtr < numSeparateStrips; stripCtr++)
+   		for(size_t stripCtr = 0; stripCtr < numSeparateStrips; stripCtr++)
 		{
 			int stripLength = 0;
 

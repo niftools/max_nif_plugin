@@ -1,7 +1,7 @@
 #include "NifFurniture.h"
 #include "FurnitureMarkers.h"
-#include "../NifGUI.h"
-#include "../NifPlugins.h"
+#include "NifGUI.h"
+#include "NifPlugins.h"
 
 #define FurnitureMarker_CLASS_ID	Class_ID(0x5a38017d, 0x4006a661)
 
