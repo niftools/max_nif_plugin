@@ -312,6 +312,15 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
    if (ISkin *skin = (ISkin *) skinMod->GetInterface(I_SKIN)){
       ISkinImportData* iskinImport = (ISkinImportData*) skinMod->GetInterface(I_SKINIMPORTDATA);
 
+      // Set the num weights to 4.  Yes its in the nif but Shon doesn't like to expose those values 
+      //   and the value always seems to be 4 anyway.  I'd also this be more dynamic than hard coded numbers
+      //   but I cant figure out the correct values to pass the scripting engine from here so I'm giving up.
+      int numWeightsPerVertex = 4;
+      IParamBlock2 *params = skinMod->GetParamBlockByID(2/*advanced*/);
+      params->SetValue(0x7/*bone_Limit*/, 0, numWeightsPerVertex);
+      //RefTargetHandle advanced = skinMod->GetReference(3);
+      //setMAXScriptValue(advanced, "bone_Limit", 0, numWeightsPerVertex);
+
       Matrix3 m3 = TOMATRIX3(data->GetOverallTransform());
       Matrix3 im3 = Inverse(m3);
       iskinImport->SetSkinTm(tnode, m3, m3); // ???
