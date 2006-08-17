@@ -558,3 +558,60 @@ INode* FindINode(Interface *i, NiObjectNETRef node)
    }
    return NULL;
 }
+
+Matrix3 GetNodeLocalTM(INode *n, TimeValue t)
+{
+   Matrix3 m3 = n->GetNodeTM(t);
+   Matrix3 m3p = n->GetParentTM(t);
+   m3p.Invert();
+   return m3 * m3p;
+}
+
+// Locate a TriObject in an Object if it exists
+TriObject* GetTriObject(Object *o)
+{
+   if (o && o->CanConvertToType(triObjectClassID))
+      return (TriObject *)o->ConvertToType(0, triObjectClassID);
+   while (o->SuperClassID() == GEN_DERIVOB_CLASS_ID && o)
+   {
+      IDerivedObject* dobj = (IDerivedObject *)(o);
+      o = dobj->GetObjRef();
+      if (o && o->CanConvertToType(triObjectClassID))
+         return (TriObject *)o->ConvertToType(0, triObjectClassID);
+   }
+   return NULL;
+}
+
+// Get or Create the Skin Modifier
+Modifier *GetSkin(INode *node)
+{
+   Object* pObj = node->GetObjectRef();
+   if (!pObj) return NULL;
+   while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+   {
+      IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
+      int Idx = 0;
+      while (Idx < pDerObj->NumModifiers())
+      {
+         // Get the modifier. 
+         Modifier* mod = pDerObj->GetModifier(Idx);
+         if (mod->ClassID() == SKIN_CLASSID)
+         {
+            // is this the correct Physique Modifier based on index?
+            return mod;
+         }
+         Idx++;
+      }
+      pObj = pDerObj->GetObjRef();
+   }
+
+   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
+
+   //create a skin modifier and add it
+   Modifier *skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
+   dobj->SetAFlag(A_LOCK_TARGET);
+   dobj->AddModifier(skinMod);
+   dobj->ClearAFlag(A_LOCK_TARGET);
+   node->SetObjectRef(dobj);
+   return skinMod;
+}

@@ -310,7 +310,7 @@ bool KFMImporter::ImportAnimation()
 
                // Set initial conditions
                Point3 p = TOPOINT3(interp->GetTranslation());
-               Quat q = TOQUAT(interp->GetRotation());
+               Quat q = TOQUAT(interp->GetRotation(), true);
                float s = interp->GetScale();
                PosRotScaleNode(c, p, q, s, prsDefault, 0);
 
@@ -326,7 +326,7 @@ bool KFMImporter::ImportAnimation()
 
                // Set initial conditions
                Point3 p = TOPOINT3(interp->GetTranslation());
-               Quat q = TOQUAT(interp->GetRotation());
+               Quat q = TOQUAT(interp->GetRotation(), true);
                float s = interp->GetScale();
                PosRotScaleNode(c, p, q, s, prsDefault, 0);
 
@@ -349,7 +349,7 @@ bool KFMImporter::ImportAnimation()
                if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
                   // Set initial conditions
                   Point3 p = TOPOINT3(interp->GetTranslation());
-                  Quat q = TOQUAT(interp->GetRotation());
+                  Quat q = TOQUAT(interp->GetRotation(), true);
                   float s = interp->GetScale();
                   PosRotScaleNode(c, p, q, s, prsDefault, 0);
 

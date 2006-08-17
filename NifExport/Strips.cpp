@@ -70,8 +70,10 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 	}
 }
 
-void Exporter::strippify(TriStrips &strips, FaceGroup &grp)
+void Exporter::strippify(FaceGroup &grp)
 {
+   TriStrips &strips = grp.strips;
+   strips.clear();
 	unsigned short *data = (unsigned short *)malloc(grp.faces.size() * 3 * 2);
 
 	int i;

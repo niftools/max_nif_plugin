@@ -797,10 +797,6 @@
 				>
 			</File>
 		</Filter>
-		<File
-			RelativePath="..\MaxNifPlugins_Readme.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

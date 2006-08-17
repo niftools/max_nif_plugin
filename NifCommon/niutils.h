@@ -58,18 +58,19 @@ inline TCHAR *Trim(TCHAR*&p) {
 // Case insensitive string equivalence test for collections
 struct ltstr
 {
-   bool operator()(const TCHAR* s1, const TCHAR* s2) const
+   bool operator()(const char* s1, const char* s2) const
    { return _tcsicmp(s1, s2) < 0; }
 
-   bool operator()(const std::string& s1, const std::string& s2) const
-   { return s1.compare(s2) < 0; }
+   bool operator()(const string& s1, const string& s2) const
+   { return _tcsicmp(s1.c_str(), s2.c_str()) < 0; }
 
-   bool operator()(const std::string& s1, const TCHAR * s2) const
-   { return s1.compare(s2) < 0; }
+   bool operator()(const string& s1, const char * s2) const
+   { return _tcsicmp(s1.c_str(), s2) < 0; }
 
-   bool operator()(const TCHAR * s1, const std::string& s2) const
-   { return s2.compare(s1) >= 0; }
+   bool operator()(const char * s1, const string& s2) const
+   { return _tcsicmp(s1, s2.c_str()) >= 0; }
 };
+
 
 // Case insensitive string equivalence but numbers are sorted together
 struct NumericStringEquivalence
@@ -228,6 +229,7 @@ enum PosRotScale
 extern void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern void PosRotScaleNode(Control *c, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs = prsDefault, TimeValue t = 0);
+extern Matrix3 GetNodeLocalTM(INode *n, TimeValue t = 0);
 
 extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks, const string& name );
 extern std::vector<Niflib::NiNodeRef> SelectNodesByName( const vector<Niflib::NiNodeRef>& blocks, LPCTSTR match);
@@ -269,18 +271,13 @@ static inline Color TOCOLOR(const Niflib::Color3& c3) {
    return Color(c3.r, c3.g, c3.b);
 }
 
-static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = false){
-   Niflib::Vector3 pos; Niflib::Matrix33 rot; float scale;
-   tm.Decompose(pos, rot, scale);
-   Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
-   if (invert) m.Invert();
-   m.SetTrans(Point3(pos.x, pos.y, pos.z));
-   return m;
-}
-
 
 static inline Point3 TOPOINT3(const Niflib::Vector3& v){
    return Point3(v.x, v.y, v.z);
+}
+
+static inline Niflib::Vector3 TOVECTOR3(const Point3& v){
+   return Niflib::Vector3(v.x, v.y, v.z);
 }
 
 static inline Quat TOQUAT(const Niflib::Quaternion& q, bool inverse = false){
@@ -299,6 +296,22 @@ static inline AngAxis TOANGAXIS(const Niflib::Quaternion& q, bool inverse = fals
    return AngAxis(q.x, q.y, q.z, q.w);
 }
 
+static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = false){
+   Niflib::Vector3 pos; Niflib::Matrix33 rot; float scale;
+   tm.Decompose(pos, rot, scale);
+   Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
+   if (invert) m.Invert();
+   m.SetTrans(Point3(pos.x, pos.y, pos.z));
+   return m;
+}
+
+static inline Niflib::Matrix44 TOMATRIX4(const Matrix3 &tm, bool invert = false){
+   Niflib::Matrix33 m3(tm.GetRow(0)[0], tm.GetRow(0)[1], tm.GetRow(0)[2],
+                       tm.GetRow(1)[0], tm.GetRow(1)[1], tm.GetRow(1)[2],
+                       tm.GetRow(2)[0], tm.GetRow(2)[1], tm.GetRow(2)[2]);
+   Niflib::Matrix44 m4(TOVECTOR3(tm.GetTrans()), m3, 1.0f);
+   return m4;
+}
 
 template <typename U, typename T>
 inline Niflib::Ref<U> SelectFirstObjectOfType( vector<Niflib::Ref<T> > const & objs ) {
@@ -320,5 +333,8 @@ inline Niflib::Ref<U> SelectFirstObjectOfType( list<Niflib::Ref<T> > const & obj
 
 TSTR PrintMatrix3(Matrix3& m);
 TSTR PrintMatrix44(Niflib::Matrix44& m);
+
+extern Modifier *GetSkin(INode *node);
+extern TriObject* GetTriObject(Object *o);
 
 #endif // _NIUTILS_H_

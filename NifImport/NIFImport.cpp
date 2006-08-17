@@ -116,40 +116,41 @@ void NifImporter::LoadIniSettings()
    }
 
    // General System level
-   useBiped = GetIniValue<bool>(NifImportSection, "UseBiped", false);
+   useBiped = GetIniValue(NifImportSection, "UseBiped", false);
    skeletonCheck = GetIniValue<string>(NifImportSection, "SkeletonCheck", "Bip*");
-   showTextures = GetIniValue<bool>(NifImportSection, "ShowTextures", true);
-   removeIllegalFaces = GetIniValue<bool>(NifImportSection, "RemoveIllegalFaces", true);
-   removeDegenerateFaces = GetIniValue<bool>(NifImportSection, "RemoveDegenerateFaces", true);
-   enableAutoSmooth = GetIniValue<bool>(NifImportSection, "EnableAutoSmooth", true);
-   autoSmoothAngle = GetIniValue<float>(NifImportSection, "AutoSmoothAngle", 30.0f);
-   flipUVTextures = GetIniValue<bool>(NifImportSection, "FlipUVTextures", true);
-   enableSkinSupport = GetIniValue<bool>(NifImportSection, "EnableSkinSupport", true);
-   enableCollision = GetIniValue<bool>(NifImportSection, "EnableCollision", true);
+   showTextures = GetIniValue(NifImportSection, "ShowTextures", true);
+   removeIllegalFaces = GetIniValue(NifImportSection, "RemoveIllegalFaces", true);
+   removeDegenerateFaces = GetIniValue(NifImportSection, "RemoveDegenerateFaces", true);
+   enableAutoSmooth = GetIniValue(NifImportSection, "EnableAutoSmooth", true);
+   autoSmoothAngle = GetIniValue(NifImportSection, "AutoSmoothAngle", 30.0f);
+   flipUVTextures = GetIniValue(NifImportSection, "FlipUVTextures", true);
+   enableSkinSupport = GetIniValue(NifImportSection, "EnableSkinSupport", true);
+   enableCollision = GetIniValue(NifImportSection, "EnableCollision", true);
+   vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
 
    // Biped
-   importBones = GetIniValue<bool>(BipedImportSection, "ImportBones", true);
-   bipedHeight = GetIniValue<float>(BipedImportSection, "BipedHeight", 131.90f);
-   bipedAngle = GetIniValue<float>(BipedImportSection, "BipedAngle", 90.0f);
-   bipedAnkleAttach = GetIniValue<float>(BipedImportSection, "BipedAnkleAttach", 0.2f);
-   bipedTrianglePelvis = GetIniValue<bool>(BipedImportSection, "BipedTrianglePelvis", false);
-   removeUnusedImportedBones = GetIniValue<bool>(BipedImportSection, "RemoveUnusedImportedBones", false);
-   forceRotation = GetIniValue<bool>(BipedImportSection, "ForceRotation", true);
-   browseForSkeleton = GetIniValue<bool>(BipedImportSection, "BrowseForSkeleton", true);
+   importBones = GetIniValue(BipedImportSection, "ImportBones", true);
+   bipedHeight = GetIniValue(BipedImportSection, "BipedHeight", 131.90f);
+   bipedAngle = GetIniValue(BipedImportSection, "BipedAngle", 90.0f);
+   bipedAnkleAttach = GetIniValue(BipedImportSection, "BipedAnkleAttach", 0.2f);
+   bipedTrianglePelvis = GetIniValue(BipedImportSection, "BipedTrianglePelvis", false);
+   removeUnusedImportedBones = GetIniValue(BipedImportSection, "RemoveUnusedImportedBones", false);
+   forceRotation = GetIniValue(BipedImportSection, "ForceRotation", true);
+   browseForSkeleton = GetIniValue(BipedImportSection, "BrowseForSkeleton", true);
    defaultSkeletonName = GetIniValue<string>(BipedImportSection, "DefaultSkeletonName", "Skeleton.Nif");
-   minBoneWidth = GetIniValue<float>(BipedImportSection, "MinBoneWidth", 0.5f);
-   maxBoneWidth = GetIniValue<float>(BipedImportSection, "MaxBoneWidth", 3.0f);
-   boneWidthToLengthRatio = GetIniValue<float>(BipedImportSection, "BoneWidthToLengthRatio", 0.25f);
-   createNubsForBones = GetIniValue<bool>(BipedImportSection, "CreateNubsForBones", true);
+   minBoneWidth = GetIniValue(BipedImportSection, "MinBoneWidth", 0.5f);
+   maxBoneWidth = GetIniValue(BipedImportSection, "MaxBoneWidth", 3.0f);
+   boneWidthToLengthRatio = GetIniValue(BipedImportSection, "BoneWidthToLengthRatio", 0.25f);
+   createNubsForBones = GetIniValue(BipedImportSection, "CreateNubsForBones", true);
    dummyNodeMatches = TokenizeString(GetIniValue<string>(BipedImportSection, "DummyNodeMatches", "").c_str(), ";");
-   convertBillboardsToDummyNodes = GetIniValue<bool>(BipedImportSection, "ConvertBillboardsToDummyNodes", true);
-   uncontrolledDummies = GetIniValue<bool>(BipedImportSection, "UncontrolledDummies", true);
+   convertBillboardsToDummyNodes = GetIniValue(BipedImportSection, "ConvertBillboardsToDummyNodes", true);
+   uncontrolledDummies = GetIniValue(BipedImportSection, "UncontrolledDummies", true);
 
    // Animation
-   replaceTCBRotationWithBezier = GetIniValue<bool>(AnimImportSection, "ReplaceTCBRotationWithBezier", true);
-   enableAnimations = GetIniValue<bool>(AnimImportSection, "EnableAnimations", true);
-   requireMultipleKeys = GetIniValue<bool>(AnimImportSection, "RequireMultipleKeys", true);
-   applyOverallTransformToSkinAndBones = GetIniValue<bool>(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
+   replaceTCBRotationWithBezier = GetIniValue(AnimImportSection, "ReplaceTCBRotationWithBezier", true);
+   enableAnimations = GetIniValue(AnimImportSection, "EnableAnimations", true);
+   requireMultipleKeys = GetIniValue(AnimImportSection, "RequireMultipleKeys", true);
+   applyOverallTransformToSkinAndBones = GetIniValue(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
 
    // Collision
    bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
@@ -169,14 +170,14 @@ void NifImporter::LoadIniSettings()
 
 void NifImporter::SaveIniSettings()
 {
-   SetIniValue<bool>(NifImportSection, "UseBiped", useBiped);
-   SetIniValue<string>(NifImportSection, "Skeleton", skeleton);
-   SetIniValue<string>(NifImportSection, "SkeletonCheck", skeletonCheck);
+   //SetIniValue(NifImportSection, "UseBiped", useBiped);
+   //SetIniValue<string>(NifImportSection, "Skeleton", skeleton);
+   //SetIniValue<string>(NifImportSection, "SkeletonCheck", skeletonCheck);
 
-   SetIniValue<float>(BipedImportSection, "BipedHeight", bipedHeight);
-   SetIniValue<float>(BipedImportSection, "BipedAngle", bipedAngle);
-   SetIniValue<float>(BipedImportSection, "BipedAnkleAttach", bipedAnkleAttach);
-   SetIniValue<bool>(BipedImportSection, "BipedTrianglePelvis", bipedTrianglePelvis);
+   //SetIniValue<float>(BipedImportSection, "BipedHeight", bipedHeight);
+   //SetIniValue<float>(BipedImportSection, "BipedAngle", bipedAngle);
+   //SetIniValue<float>(BipedImportSection, "BipedAnkleAttach", bipedAnkleAttach);
+   //SetIniValue(BipedImportSection, "BipedTrianglePelvis", bipedTrianglePelvis);
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)

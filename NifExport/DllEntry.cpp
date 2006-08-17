@@ -1,9 +1,12 @@
 #include "pch.h"
+#include "niutils.h"
 
 extern ClassDesc2* GetNifExportDesc();
 
+static void InitializeLibSettings();
 HINSTANCE hInstance;
 int controlsInit = FALSE;
+int libVersion = VERSION_3DSMAX;
 
 // This function is called by Windows when the DLL is loaded.  This 
 // function may also be called many times during time critical operations
@@ -20,8 +23,29 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 		InitCustomControls(hInstance);	// Initialize MAX's custom controls
 		InitCommonControls();			// Initialize Win95 controls
 	}
-			
+   if (fdwReason == DLL_PROCESS_ATTACH)
+      InitializeLibSettings();
 	return (TRUE);
+}
+
+void InitializeLibSettings()
+{
+   Interface *gi = GetCOREInterface();
+   TCHAR iniName[MAX_PATH];
+   if (gi) {
+      LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
+      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   } else {
+      GetModuleFileName(NULL, iniName, _countof(iniName));
+      if (LPTSTR fname = PathFindFileName(iniName))
+         fname = NULL;
+      PathAddBackslash(iniName);
+      PathAppend(iniName, "plugcfg");
+      PathAppend(iniName, "MaxNifTools.ini");
+   }
+   libVersion = GetIniValue("MaxNifExport", "MaxSDKVersion", libVersion, iniName);
+   if (libVersion == 0)
+      libVersion = VERSION_3DSMAX;
 }
 
 // This function returns a string that describes the DLL and where the user
@@ -52,7 +76,7 @@ __declspec( dllexport ) ClassDesc* LibClassDesc(int i)
 // to catch obsolete DLLs.
 __declspec( dllexport ) ULONG LibVersion()
 {
-	return VERSION_3DSMAX;
+	return libVersion;
 }
 
 TCHAR *GetString(int id)

@@ -12,7 +12,9 @@ HISTORY:
 **********************************************************************/
 #include "stdafx.h"
 #include "MaxNifImport.h"
+#ifdef USE_BIPED
 #include <cs/BipedApi.h>
+#endif
 #include <obj/NiTriBasedGeom.h>
 #include <obj/NiTriBasedGeomData.h>
 #include <obj/NiTimeController.h>
@@ -486,6 +488,7 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
                setMAXScriptValue(o->GetReference(0), "width", 0, width);
                setMAXScriptValue(o->GetReference(0), "height", 0, width);
             }
+            n->BoneAsLine(1);
             n->ShowBone(2);
          }
          return result.n;

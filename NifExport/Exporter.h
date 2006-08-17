@@ -19,6 +19,15 @@ public:
 		Skip
 	};
 
+   // Callback for post-processing instructions
+   struct NiCallback
+   {
+      NiCallback() {};
+      virtual ~NiCallback() {};
+      virtual Result execute() = 0;
+   };
+
+
 	/* exporter version */
 	static int				mVersion;
 
@@ -33,7 +42,13 @@ public:
 	static bool				mVertexColors;
 	static float			mWeldThresh;
 	static bool				mExportCollision;
-	static bool				mRemapIndices;
+   static bool				mRemapIndices;
+   static bool				mExportExtraNodes;
+   static bool				mExportSkin;
+   static bool				mUserPropBuffer;
+   static bool          mFlattenHierarchy;
+   static bool          mRemoveUnreferencedBones;
+   static bool          mSortNodesToEnd;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -67,14 +82,20 @@ private:
 		Triangles			faces;
 		vector<TexCoord>	uvs;
 		vector<Color4>		vcolors;
+      vector<int>       vidx;
+      TriStrips         strips;
 	};
 
 	// maps face groups to material ID
 	typedef std::map<int, FaceGroup>	FaceGroups;	
-
+   typedef std::map<string, NiNodeRef>	NodeMap;	
+   typedef std::list<NiCallback*> CallbackList;
+   
 	Interface				*mI;
 	NiNodeRef				mNiRoot;
    AppSettings          *mAppSettings;
+   NodeMap              mNodeMap;
+   CallbackList         mPostExportCallbacks;
 
 	Result					exportCollision(NiNodeRef &root, INode *node);
 	Result					exportMeshes(NiNodeRef &root, INode *node);
@@ -89,7 +110,8 @@ private:
 	bool					equal(const Vector3 &a, const Point3 &b, float thresh);
 	BitmapTex				*getTexture(Mtl *mtl);
 	void					getTextureMatrix(Matrix3 &mat, Mtl *mtl);
-	NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
+   NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
+   NiNodeRef				getNode(const string& name);
 	// returns true if the node contains collision objects
 	bool					isCollisionGroup(INode *maxNode, bool root=true);
 	// returns true if the node contains meshes
@@ -97,19 +119,19 @@ private:
 
 	/* tristrips */
 	void					strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris);
-	void					strippify(TriStrips &strips, FaceGroup &grp);
+	void					strippify(FaceGroup &grp);
 	NiTriStripsDataRef		makeTriStripsData(const TriStrips &strips);
 
 	/* mesh export */
 	// adds a vertex to a face group if it doesn't exist yet. returns new or previous index into the
 	// vertex array.
-	int 					addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm);
+	int 					addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors);
 	// adds a face to a face group
-	void					addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm);
+	void					addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors);
 	// creates face groups from faces with same sub material id
-	bool					splitMesh(INode *node, Mesh *, FaceGroups &grps, TimeValue t);
+	bool					splitMesh(INode *node, Mesh *, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors);
 	// creates a NiTriStrips or NiTriShape hierarchy from a face group
-	bool					makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp);
+	NiTriBasedGeomRef makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp, bool exportStrips);
 	// splits mesh and converts it into nif blocks
 	Result					exportMesh(NiNodeRef &parent, INode *node, TimeValue t);
 
@@ -134,6 +156,15 @@ private:
 	bhkSphereRepShapeRef	makeBoxShape(Object *obj);
 	bhkSphereRepShapeRef	makeSphereShape(Object *obj);
 	bhkSphereRepShapeRef	makeCapsuleShape(Object *obj);
+
+   /* skin export */
+   bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);
+   bool exportSkin();
+
+   /* misc export */
+   bool exportUPB(NiNodeRef &root, INode *node);
+   bool removeUnreferencedBones(NiNodeRef node);
+   void sortNodes(NiNodeRef node);
 };
 
 #endif 

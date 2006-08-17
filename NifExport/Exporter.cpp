@@ -14,6 +14,12 @@ string Exporter::mTexPrefix="textures";
 bool Exporter::mExportCollision=true;
 bool Exporter::mRemapIndices=true;
 bool Exporter::mUseRegistry=false;
+bool Exporter::mExportExtraNodes=false;
+bool Exporter::mExportSkin=false;
+bool Exporter::mUserPropBuffer=false;
+bool Exporter::mFlattenHierarchy=false;
+bool Exporter::mRemoveUnreferencedBones=false;
+bool Exporter::mSortNodesToEnd=false;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)
@@ -22,32 +28,11 @@ Exporter::Exporter(Interface *i, AppSettings *appSettings)
 
 Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
-	BSXFlagsRef bsx = DynamicCast<BSXFlags>(CreateBlock("BSXFlags"));
+	BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 	bsx->SetName("BSX");
 	bsx->SetFlags(0x00000002);
    root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-
-   // Write the actual UPB sans any np_ prefixed strings
-   TSTR upb;
-   node->GetUserPropBuffer(upb);
-   if (!upb.isNull())
-   {
-      string line;
-      istringstream istr(string(upb), ios_base::out);
-      ostringstream ostr;
-      while (!istr.eof()) {
-         std::getline(istr, line);
-         if (!line.empty() && 0 != line.compare(0, 3, "np_"))
-            ostr << line << endl;
-      }
-      if (!ostr.str().empty())
-      {
-         NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
-         strings->SetName("UPB");
-         strings->SetData(ostr.str());
-         root->AddExtraData(DynamicCast<NiExtraData>(strings));
-      }
-   }
+   exportUPB(root, node);
 
 	mNiRoot = root;
 	
@@ -58,11 +43,22 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 		
 	if (mExportCollision)
 	{
-	
 		result = exportCollision(root, node);
 		if (result != Ok)
 			return result;
 	}
+   // handle post export callbacks (like skin)
+   for (CallbackList::iterator cb = mPostExportCallbacks.begin(); cb != mPostExportCallbacks.end(); cb = mPostExportCallbacks.erase(cb))
+   {
+      (*cb)->execute();
+      delete (*cb);
+   }
+   // Remove unreferenced Bones
+   if (mRemoveUnreferencedBones)
+      removeUnreferencedBones(mNiRoot);
+   if (mSortNodesToEnd)
+      sortNodes(mNiRoot);
+
 	return Ok;
 }
 

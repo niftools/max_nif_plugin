@@ -48,7 +48,6 @@ void Exporter::writeConfig(Interface *i)
       LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
       PathCombine(iniName, pluginDir, "MaxNifTools.ini");
 
-      SetIniValue(NifExportSection, "Version", mVersion, iniName);
       SetIniValue(NifExportSection, "GenerateStrips", mTriStrips, iniName);
       SetIniValue(NifExportSection, "IncludeHidden", mExportHidden, iniName);
       SetIniValue(NifExportSection, "FurnatureMarkers", mExportFurn, iniName);
@@ -92,7 +91,7 @@ void Exporter::readConfig(Interface *i)
       LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
       PathCombine(iniName, pluginDir, "MaxNifTools.ini");
 
-      mVersion = GetIniValue<int>(NifExportSection, "Version", 013, iniName);
+      //mVersion = GetIniValue<int>(NifExportSection, "Version", 013, iniName);
       mTriStrips = GetIniValue<bool>(NifExportSection, "GenerateStrips", true, iniName);
       mExportHidden = GetIniValue<bool>(NifExportSection, "IncludeHidden", false, iniName);
       mExportFurn = GetIniValue<bool>(NifExportSection, "FurnatureMarkers", true, iniName);
@@ -102,6 +101,13 @@ void Exporter::readConfig(Interface *i)
       mTexPrefix = GetIniValue<string>(NifExportSection, "TexturePrefix", "textures", iniName);
       mExportCollision = GetIniValue<bool>(NifExportSection, "ExportCollision", true, iniName);
       mRemapIndices = GetIniValue(NifExportSection, "RemapIndices", true, iniName);
+
+      mExportExtraNodes = GetIniValue(NifExportSection, "ExportExtraNodes", false, iniName);
+      mExportSkin = GetIniValue(NifExportSection, "ExportSkin", false, iniName);
+      mUserPropBuffer = GetIniValue(NifExportSection, "UserPropBuffer", false, iniName);
+      mFlattenHierarchy = GetIniValue(NifExportSection, "FlattenHierarchy", false, iniName);
+      mRemoveUnreferencedBones = GetIniValue(NifExportSection, "RemoveUnreferencedBones", false, iniName);
+      mSortNodesToEnd = GetIniValue(NifExportSection, "SortNodesToEnd", false, iniName);
   }
 }
 

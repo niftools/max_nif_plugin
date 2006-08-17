@@ -29,6 +29,7 @@ public:
    bool enableSkinSupport;
    bool goToSkeletonBindPosition;
    bool enableCollision;
+   int vertexColorMode;
 
    // Biped/Bones related settings
    bool importBones;
@@ -87,12 +88,13 @@ public:
 
    bool ImportUPB(INode *node, Niflib::NiNodeRef block);
 
-   void SetTrangles(Mesh& mesh, vector<Niflib::Triangle>& v, bool hasTexture);
+   void SetTrangles(Mesh& mesh, vector<Niflib::Triangle>& v);
    bool ImportMesh(Niflib::NiTriShapeRef triShape);
    bool ImportMesh(Niflib::NiTriStripsRef triStrips);
    bool ImportMaterialAndTextures(ImpNode *node, Niflib::NiAVObjectRef avObject);
    bool ImportTransform(ImpNode *node, Niflib::NiAVObjectRef avObject);
-   bool ImportMesh(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, bool hasTexture);
+   bool ImportMesh(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
+   bool ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
 
    bool ImportSkin(ImpNode *node, Niflib::NiTriBasedGeomRef triGeom);
    Texmap* CreateTexture(Niflib::TexDesc& desc);

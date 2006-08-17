@@ -88,10 +88,22 @@ bool Exporter::equal(const Vector3 &a, const Point3 &b, float thresh)
 		   (fabsf(a.z-b.z) <= thresh);
 }
 
+NiNodeRef Exporter::getNode(const string& name)
+{
+   NodeMap::iterator itr = mNodeMap.find(name);
+   if (itr != mNodeMap.end())
+      return (*itr).second;
+   NiNodeRef node = CreateNiObject<NiNode>();
+   node->SetName(name);
+   mNodeMap[name] = node;
+   return node;
+}
+
 NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 {
-	NiNodeRef node = DynamicCast<NiNode>(CreateBlock("NiNode"));
-	
+   string name = (char*)maxNode->GetName();
+   NiNodeRef node = getNode(name);
+
 	Matrix33 rot;
 	Vector3 trans;
 	TimeValue t = 0;
@@ -99,8 +111,8 @@ NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 	
 	node->SetLocalRotation(rot);
 	node->SetLocalTranslation(trans);
-	string name = (char*)maxNode->GetName();
-	node->SetName(name);
+
+   exportUPB(node, maxNode);
 
 	parent->AddChild(DynamicCast<NiAVObject>(node));
 	return node;
@@ -151,4 +163,92 @@ bool Exporter::isMeshGroup(INode *maxNode, bool root)
 	}
 
 	return false;
+}
+
+bool Exporter::exportUPB(NiNodeRef &root, INode *node)
+{
+   bool ok = false;
+   if (!mUserPropBuffer)
+      return ok;
+
+   // Write the actual UPB sans any np_ prefixed strings
+   TSTR upb;
+   node->GetUserPropBuffer(upb);
+   if (!upb.isNull())
+   {
+      string line;
+      istringstream istr(string(upb), ios_base::out);
+      ostringstream ostr;
+      while (!istr.eof()) {
+         std::getline(istr, line);
+         if (!line.empty() && 0 != line.compare(0, 3, "np_"))
+            ostr << line << endl;
+      }
+      if (!ostr.str().empty())
+      {
+         NiStringExtraDataRef strings = CreateNiObject<NiStringExtraData>();	
+         strings->SetName("UPB");
+         strings->SetData(ostr.str());
+         root->AddExtraData(DynamicCast<NiExtraData>(strings));
+         ok = true;
+      }
+   }
+   return ok;
+}
+
+
+bool Exporter::removeUnreferencedBones(NiNodeRef node)
+{
+   NiNodeRef parent = node->GetParent();
+   bool remove = (NULL != parent) && !node->IsSkinInfluence();
+   Matrix44 ntm = node->GetLocalTransform();
+   vector<NiAVObjectRef> children = node->GetChildren();
+   for (vector<NiAVObjectRef>::iterator itr = children.begin(); itr != children.end(); ++itr)
+   {
+      NiAVObjectRef& child = (*itr);
+      bool childRemove = false;
+      if (child->IsDerivedType(NiNode::TypeConst()))
+      {
+         childRemove = removeUnreferencedBones(StaticCast<NiNode>(child));
+      }
+      if (childRemove)
+      {
+         node->RemoveChild(child);
+      }
+      else if (remove) // Reparent abandoned nodes to root
+      {
+         Matrix44 tm = child->GetLocalTransform();
+         child->SetLocalTransform( ntm * tm );
+         node->RemoveChild(child);
+         mNiRoot->AddChild(child);
+      }
+   }
+   return remove;
+}
+
+struct SortNodeEquivalence
+{
+   inline bool operator()(const NiAVObjectRef& lhs, const NiAVObjectRef& rhs) const
+   {
+      if (!lhs) return !rhs;
+      if (!rhs) return true;
+      string ltype = lhs->GetType().GetTypeName();
+      string rtype = rhs->GetType().GetTypeName();
+      if (ltype == "NiNode")
+         return false;
+      if (rtype == "NiNode")
+         return true;
+      if (ltype == rtype)
+         return false;
+      return (ltype < rtype); 
+   }
+};
+
+void Exporter::sortNodes(NiNodeRef node)
+{
+   node->SortChildren(SortNodeEquivalence());
+
+   vector<NiNodeRef> children = DynamicCast<NiNode>(node->GetChildren());
+   for (vector<NiNodeRef>::iterator itr = children.begin(); itr != children.end(); ++itr)
+      sortNodes(*itr);
 }

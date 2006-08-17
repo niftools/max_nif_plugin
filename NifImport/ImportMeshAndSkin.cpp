@@ -12,57 +12,9 @@ HISTORY:
 **********************************************************************/
 #include "stdafx.h"
 #include "MaxNifImport.h"
+#include "istdplug.h"
 
 using namespace Niflib;
-
-// Locate a TriObject in an Object if it exists
-TriObject* GetTriObject(Object *o)
-{
-   if (o && o->CanConvertToType(triObjectClassID))
-      return (TriObject *)o->ConvertToType(0, triObjectClassID);
-   while (o->SuperClassID() == GEN_DERIVOB_CLASS_ID && o)
-   {
-      IDerivedObject* dobj = (IDerivedObject *)(o);
-      o = dobj->GetObjRef();
-      if (o && o->CanConvertToType(triObjectClassID))
-         return (TriObject *)o->ConvertToType(0, triObjectClassID);
-   }
-   return NULL;
-}
-
-// Get or Create the Skin Modifier
-Modifier *GetSkin(INode *node)
-{
-   Object* pObj = node->GetObjectRef();
-   if (!pObj) return NULL;
-   while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-   {
-      IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
-      int Idx = 0;
-      while (Idx < pDerObj->NumModifiers())
-      {
-         // Get the modifier. 
-         Modifier* mod = pDerObj->GetModifier(Idx);
-         if (mod->ClassID() == SKIN_CLASSID)
-         {
-            // is this the correct Physique Modifier based on index?
-            return mod;
-         }
-         Idx++;
-      }
-      pObj = pDerObj->GetObjRef();
-   }
-
-   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
-
-   //create a skin modifier and add it
-   Modifier *skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
-   dobj->SetAFlag(A_LOCK_TARGET);
-   dobj->AddModifier(skinMod);
-   dobj->ClearAFlag(A_LOCK_TARGET);
-   node->SetObjectRef(dobj);
-   return skinMod;
-}
 
 bool NifImporter::ImportTransform(ImpNode *node, NiAVObjectRef avObject)
 {
@@ -101,7 +53,7 @@ bool NifImporter::ImportMeshes(NiNodeRef node)
    return ok;
 }
 
-bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triGeom, NiTriBasedGeomDataRef triGeomData, bool hasTexture)
+bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triGeom, NiTriBasedGeomDataRef triGeomData, vector<Triangle>& tris)
 {
    Mesh& mesh = o->GetMesh();
 
@@ -148,36 +100,48 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
          mesh.setNormal(i, Point3(v.x, v.y, v.z));
       }
    }
-   // vertex coloring
-   {
-      bool hasAlpha = false;
-      vector<Color4> cv = triGeomData->GetColors();
-      mesh.setNumVertCol(cv.size());
-      for (int i=0; i<cv.size(); i++){
-         Color4& c = cv[i];
-         mesh.vertCol[i].Set(c.r, c.g, c.b);
-         hasAlpha |= (c.a != 0.0);
-      }
+
+   // Triangles and texture vertices
+   SetTrangles(mesh, tris);
+
+   ImportVertexColor(node, o, triGeom, triGeomData, tris);
+
+   ImportMaterialAndTextures(node, triGeom);
+
+   if (enableSkinSupport)
+      ImportSkin(node, triGeom);
+
+   i->AddNodeToScene(node);   
+
+   INode *inode = node->GetINode();
+   inode->EvalWorldState(0);
+
+   // attach child
+   if (INode *parent = GetNode(triGeom->GetParent()))
+      parent->AttachChild(inode, 1);
+
+   inode->Hide(triGeom->GetHidden() ? TRUE : FALSE);
+
+   if (enableAutoSmooth){
+      mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
    }
+
    return true;
 }
 
-void NifImporter::SetTrangles(Mesh& mesh, vector<Triangle>& v, bool hasTexture)
+void NifImporter::SetTrangles(Mesh& mesh, vector<Triangle>& v)
 {
    int n = v.size();
    mesh.setNumFaces(n);
-   //if (hasTexture)
-      mesh.setNumTVFaces(n);
+   mesh.setNumTVFaces(n);
    for (int i=0; i<n; ++i) {
       Triangle& t = v[i];
       Face& f = mesh.faces[i];
       f.setVerts(t.v1, t.v2, t.v3);
       f.Show();
       f.setEdgeVisFlags(EDGE_VIS, EDGE_VIS, EDGE_VIS);
-      //if (hasTexture) {
-         TVFace& tf = mesh.tvFace[i];
-         tf.setTVerts(t.v1, t.v2, t.v3);
-      //}
+      TVFace& tf = mesh.tvFace[i];
+      tf.setTVerts(t.v1, t.v2, t.v3);
    }
 }
 
@@ -195,37 +159,13 @@ bool NifImporter::ImportMesh(NiTriShapeRef triShape)
    INode *inode = node->GetINode();
 
    // Texture
-   bool hasTexture = ImportMaterialAndTextures(node, triShape);
    Mesh& mesh = triObject->GetMesh();
    NiTriShapeDataRef triShapeData = DynamicCast<NiTriShapeData>(triShape->GetData());
    if (triShapeData == NULL)
       return false;
 
-   ok |= ImportMesh(node, triObject, triShape, triShapeData, hasTexture);
-
-   // Triangles and texture vertices
-   if (ok)
-   {
-      vector<Triangle> v = triShapeData->GetTriangles();
-      SetTrangles(mesh, v, hasTexture);
-   }
-   if (enableSkinSupport)
-      ImportSkin(node, triShape);
-
-   i->AddNodeToScene(node);   
-
-   // attach child
-   if (INode *parent = GetNode(triShape->GetParent()))
-      parent->AttachChild(inode, 1);
-
-   inode->Hide(triShape->GetHidden() ? TRUE : FALSE);
-   
-   if (enableAutoSmooth){
-      if (TriObject *tri = GetTriObject(inode->GetObjectRef())){
-         tri->GetMesh().AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
-      }
-   }
-
+   vector<Triangle> tris = triShapeData->GetTriangles();
+   ok |= ImportMesh(node, triObject, triShape, triShapeData, tris);
    return ok;
 }
 
@@ -242,42 +182,163 @@ bool NifImporter::ImportMesh(NiTriStripsRef triStrips)
    node->SetName(name.c_str());
 
    // Texture
-   bool hasTexture = ImportMaterialAndTextures(node, triStrips);
-
    Mesh& mesh = triObject->GetMesh();
    NiTriStripsDataRef triStripsData = DynamicCast<NiTriStripsData>(triStrips->GetData());
    if (triStripsData == NULL)
       return false;
 
-   ok |= ImportMesh(node, triObject, triStrips, triStripsData, hasTexture);
-
-   // Triangles and texture vertices
-   if (ok)
-   {
-      vector<Triangle> v = triStripsData->GetTriangles();
-      SetTrangles(mesh, v, hasTexture);
-   }
-   if (enableSkinSupport)
-      ImportSkin(node, triStrips);
-
-   i->AddNodeToScene(node);   
-
-   // attach child
-   if (INode *parent = GetNode(triStrips->GetParent())) {
-      parent->AttachChild(inode, 0);
-   }
-
-   inode->Hide(triStrips->GetHidden() ? TRUE : FALSE);
-
-   // apply autosmooth after object creation for it to take hold
-   if (enableAutoSmooth){
-      if (TriObject *tri = GetTriObject(inode->GetObjectRef())){
-         tri->GetMesh().AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
-      }
-   }
-
+   vector<Triangle> tris = triStripsData->GetTriangles();
+   ok |= ImportMesh(node, triObject, triStrips, triStripsData, tris);
    return ok;
 }
+
+// vertex coloring
+bool NifImporter::ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Triangle>& tris)
+{
+   bool hasAlpha = false;
+   bool hasColor = false;
+   Mesh& mesh = o->GetMesh();
+
+   if (vertexColorMode == 1) // Bake into mesh (no Modifier)
+   {
+      vector<Color4> cv = triGeomData->GetColors();
+      int n = cv.size();
+      if (n > 0)
+      {
+         INode *tnode = node->GetINode();
+
+         vector<TVFace> vcFace;
+         int nt = tris.size();
+         vcFace.resize(nt);
+         mesh.setNumVCFaces(nt);
+         for (int i=0; i<nt; ++i) {
+            Triangle& t = tris[i];
+            TVFace& vcf = vcFace[i];
+            vcf.setTVerts(t.v1, t.v2, t.v3);
+            mesh.vcFace[i].setTVerts(t.v1, t.v2, t.v3);
+         }
+
+         vector<VertColor> vertColors, vertAlpha;
+         vertColors.resize(n);
+         vertAlpha.resize(n);
+         mesh.setNumVertCol(cv.size());
+         
+         for (int i=0; i<n; i++){
+            Color4& c = cv[i];
+            hasColor |= (c.r != 1.0f && c.g != 1.0f && c.b != 1.0f);
+            vertColors[i] = Color(c.r,c.g,c.b);
+
+            hasAlpha |= (c.a != 1.0f);
+            vertAlpha[i] = Color(c.a,c.a,c.a);
+         }
+
+         // Add the Vertex Paint Alpha modifier now
+         if (hasAlpha)
+         {
+            mesh.setMapSupport(MAP_ALPHA, TRUE);
+            mesh.setNumMapVerts(MAP_ALPHA, n, FALSE);
+            mesh.setNumMapFaces(MAP_ALPHA, nt, FALSE);
+            mesh.setVCDisplayData(MAP_ALPHA, 0, 0);
+            for (int i=0; i<nt; ++i)
+               mesh.vcFaceData[i] = vcFace[i];
+            for (int i=0; i<n; ++i)
+               mesh.vertColArray[i] = vertAlpha[i];
+         }
+         // Add the Vertex Paint Color modifier now
+         if (hasAlpha || hasColor)
+         {
+            mesh.setMapSupport(0, TRUE);
+            mesh.setNumMapVerts(0, n, TRUE);
+            mesh.setNumMapFaces(0, nt, FALSE);
+            mesh.setVCDisplayData(0, NULL, NULL);
+            for (int i=0; i<nt; ++i)
+               mesh.vcFaceData[i] = vcFace[i];
+            for (int i=0; i<n; ++i)
+               mesh.vertColArray[i] = vertColors[i];
+         }
+      }
+   }
+   else if (vertexColorMode == 2)
+   {
+      vector<Color4> cv = triGeomData->GetColors();
+      int n = cv.size();
+      if (n > 0)
+      {
+
+         INode *tnode = node->GetINode();
+
+         vector<Color> colorMap, alphaMap;
+         IVertexPaint::VertColorTab vertColors, vertAlpha;
+         vertColors.SetCount(n, TRUE);
+         vertAlpha.SetCount(n, TRUE);
+         colorMap.resize(n);
+         alphaMap.resize(n);
+         mesh.setNumVertCol(cv.size());
+
+         for (int i=0; i<n; i++){
+            Color4& c = cv[i];
+            mesh.vertCol[i].Set(c.r, c.g, c.b);
+
+            hasColor |= (c.r != 1.0f && c.g != 1.0f && c.b != 1.0f);
+            colorMap[i] = Color(c.r,c.g,c.b);
+            vertColors[i] = &colorMap[i];
+
+            hasAlpha |= (c.a != 1.0f);
+            alphaMap[i] = Color(c.a,c.a,c.a);
+            vertAlpha[i] = &alphaMap[i];
+         }
+         // Civ4 assumes that vcFace is filled in even if only alpha is given via color modifier
+         if (hasColor || hasAlpha)
+         {
+            int n = tris.size();
+            mesh.setNumVCFaces(n);
+            for (int i=0; i<n; ++i) {
+               Triangle& t = tris[i];
+               TVFace& vcf = mesh.vcFace[i];
+               vcf.setTVerts(t.v1, t.v2, t.v3);
+            }
+         }
+         // Add the Vertex Paint Color modifier now
+         if (hasColor)
+         {
+            IDerivedObject *dobj = CreateDerivedObject(tnode->GetObjectRef());
+            Modifier * mod = (Modifier*)CreateInstance(OSM_CLASS_ID, PAINTLAYERMOD_CLASS_ID);
+            dobj->AddModifier(mod);
+            tnode->SetObjectRef(dobj);
+            IVertexPaint* ivertexPaint = (IVertexPaint*)mod->GetInterface(IVERTEXPAINT_INTERFACE_ID);
+            ObjectState os = tnode->EvalWorldState(0);
+            IAssignVertexColors::Options o;
+            ivertexPaint->GetOptions(o);
+            o.mapChannel = 0;
+            o.mixVertColors = true;
+            ivertexPaint->SetOptions(o);
+            ivertexPaint->SetColors(tnode, vertColors);
+            //mod->DisableModInViews();
+            //mod->EnableModInViews();
+         }
+         // Add the Vertex Paint Alpha modifier now
+         if (hasAlpha)
+         {
+            IDerivedObject *dobj = CreateDerivedObject(tnode->GetObjectRef());
+            Modifier * mod = (Modifier*)CreateInstance(OSM_CLASS_ID, PAINTLAYERMOD_CLASS_ID);
+            dobj->AddModifier(mod);
+            tnode->SetObjectRef(dobj);
+            IVertexPaint* ivertexPaint = (IVertexPaint*)mod->GetInterface(IVERTEXPAINT_INTERFACE_ID);
+            ObjectState os = tnode->EvalWorldState(0);
+            IAssignVertexColors::Options o;
+            ivertexPaint->GetOptions(o);
+            o.mapChannel = -2;
+            o.mixVertColors = true;
+            ivertexPaint->SetOptions(o);
+            ivertexPaint->SetColors(tnode, vertAlpha);
+            //mod->DisableModInViews();
+            //mod->EnableModInViews();
+         }
+      }
+   }
+   return (hasAlpha || hasColor);
+}
+
 
 struct VertexHolder
 {

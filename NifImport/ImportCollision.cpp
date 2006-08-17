@@ -18,6 +18,7 @@ HISTORY:
 #include "obj\bhkShape.h"
 #include "obj\bhkSphereShape.h"
 #include "obj\bhkCapsuleShape.h"
+#include "obj\bhkConvexVerticesShape.h"
 #include "NifPlugins.h"
 
 using namespace Niflib;
@@ -39,8 +40,9 @@ struct CollisionImport
    bool ImportRigidBody(bhkRigidBodyRef rb, INode* node);
 
    bool ImportShape(bhkRigidBodyRef body, bhkShapeRef shape, INode* parent);
-   bool ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef shape, INode *parent);
-   bool ImportCapsule(bhkRigidBodyRef body, bhkCapsuleShapeRef shape, INode *parent);
+   INode* ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef shape, INode *parent);
+   INode* ImportCapsule(bhkRigidBodyRef body, bhkCapsuleShapeRef shape, INode *parent);
+   INode* ImportConvexVertices(bhkRigidBodyRef body, bhkConvexVerticesShapeRef shape, INode *parent);
 };
 
 bool NifImporter::ImportCollision(NiNodeRef node)
@@ -108,22 +110,46 @@ bool CollisionImport::ImportRigidBody(bhkRigidBodyRef body, INode* node)
    return true;
 }
 
-bool CollisionImport::ImportShape(bhkRigidBodyRef body, bhkShapeRef shape, INode* node)
+bool CollisionImport::ImportShape(bhkRigidBodyRef body, bhkShapeRef shape, INode* parent)
 {
+   INode *shapeNode = NULL;
    if (shape->IsDerivedType(bhkCapsuleShape::TypeConst()))
    {
-      return ImportCapsule(body, bhkCapsuleShapeRef(shape), node);
+      shapeNode = ImportCapsule(body, bhkCapsuleShapeRef(shape), parent);
    }
    else if (shape->IsDerivedType(bhkSphereShape::TypeConst()))
    {
-      return ImportSphere(body, bhkSphereShapeRef(shape), node);
+      shapeNode = ImportSphere(body, bhkSphereShapeRef(shape), parent);
+   }
+   else if (shape->IsDerivedType(bhkConvexVerticesShape::TypeConst()))
+   {
+      shapeNode = ImportConvexVertices(body, bhkConvexVerticesShapeRef(shape), parent);
+   }
+
+   // Now do common post processing for the node
+   if (shapeNode != NULL)
+   {
+      TSTR name = "bhk";
+      name.Append(parent->GetName());
+      shapeNode->SetName(name);
+
+      Point3 pos = TOPOINT3(body->GetTranslation()) * ni.bhkScaleFactor;
+      Quat rot = TOQUAT(body->GetRotation());
+      PosRotScaleNode(shapeNode, pos, rot, ni.bhkScaleFactor, prsDefault);
+
+      shapeNode->SetPrimaryVisibility(FALSE);
+      shapeNode->SetSecondaryVisibility(FALSE);
+      shapeNode->BoneAsLine(TRUE);
+      shapeNode->SetRenderable(FALSE);
+      shapeNode->XRayMtl(TRUE);
+      parent->AttachChild(shapeNode);
+      return true;
    }
    return false;
 }
 
-bool CollisionImport::ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef shape, INode *parent)
+INode* CollisionImport::ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef shape, INode *parent)
 {
-   bool ok = false;
    if (SimpleObject *ob = (SimpleObject *)ni.gi->CreateInstance(GEOMOBJECT_CLASS_ID, Class_ID(SPHERE_CLASS_ID, 0))) {
       float radius = shape->GetRadius();
 
@@ -131,34 +157,16 @@ bool CollisionImport::ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef shape
       setMAXScriptValue(t, "radius", 0, radius);
 
       if (INode *n = ni.gi->CreateObjectNode(ob)) {
-         TSTR name = "bhk";
-         name.Append(parent->GetName());
-         n->SetName(name);
-
          // Need to "Affect Pivot Only" and "Center to Object" first
          n->CenterPivot(0, FALSE);
-
-         Point3 pos = TOPOINT3(body->GetTranslation()) * ni.bhkScaleFactor;
-         Point3 center = TOPOINT3(body->GetCenter());
-         Quat rot = TOQUAT(body->GetRotation());
-         PosRotScaleNode(n, pos, rot, ni.bhkScaleFactor, prsDefault);
-
-         n->SetPrimaryVisibility(FALSE);
-         n->SetSecondaryVisibility(FALSE);
-         n->BoneAsLine(TRUE);
-         n->SetRenderable(FALSE);
-         n->XRayMtl(TRUE);
-
-         parent->AttachChild(n);
-         ok = true;
+         return n;
       }
    }
-   return ok;
+   return NULL;
 }
 
-bool CollisionImport::ImportCapsule(bhkRigidBodyRef body, bhkCapsuleShapeRef shape, INode *parent)
+INode* CollisionImport::ImportCapsule(bhkRigidBodyRef body, bhkCapsuleShapeRef shape, INode *parent)
 {
-   bool ok = false;
    if (SimpleObject *ob = (SimpleObject *)ni.gi->CreateInstance(GEOMOBJECT_CLASS_ID, SCUBA_CLASS_ID)) {
       float radius = shape->GetRadius();
       float radius1 = shape->GetRadius1();
@@ -169,42 +177,24 @@ bool CollisionImport::ImportCapsule(bhkRigidBodyRef body, bhkCapsuleShapeRef sha
       int heighttype = 1;
 
       RefTargetHandle t = ob->GetReference(0);
-
       IParamArray *params = ob->GetParamBlock();
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_RADIUS), 0, radius);
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height);
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_CENTERS), 0, heighttype);
 
-      //setMAXScriptValue(t, "radius", 0, radius);
-      //setMAXScriptValue(t, "height", 0, height);
-      //setMAXScriptValue(t, "heighttype", 0, heighttype);
-
       if (INode *n = ni.gi->CreateObjectNode(ob)) {
-         TSTR name = "bhk";
-         name.Append(parent->GetName());
-         n->SetName(name);
-
          // Need to "Affect Pivot Only" and "Center to Object" first
          //n->CenterPivot(0, FALSE);
 
-         Point3 pos = TOPOINT3(body->GetTranslation()) * ni.bhkScaleFactor;
-         Point3 center = TOPOINT3(body->GetCenter());
-         Quat rot = TOQUAT(body->GetRotation());
-         float ang[] = { 0.0f, TORAD(-90.0f), TORAD(180.0f) };
-         Quat q; EulerToQuat(ang, q);
-         rot *= q;
+         // Need to reposition the Capsule so that caps are rotated correctly for pts given
 
-         PosRotScaleNode(n, pos, rot, ni.bhkScaleFactor, prsDefault);
-
-         n->SetPrimaryVisibility(FALSE);
-         n->SetSecondaryVisibility(FALSE);
-         n->BoneAsLine(TRUE);
-         n->SetRenderable(FALSE);
-         n->XRayMtl(TRUE);
-
-         parent->AttachChild(n);
-         ok = true;
+         return n;
       }
    }
-   return ok;
+   return NULL;
+}
+
+INode* CollisionImport::ImportConvexVertices(bhkRigidBodyRef body, bhkConvexVerticesShapeRef shape, INode *parent)
+{
+   return NULL;
 }

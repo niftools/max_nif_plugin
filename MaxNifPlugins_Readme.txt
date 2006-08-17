@@ -27,6 +27,28 @@
 
     Change log
     ----------
+    
+      0.2
+      -----
+    o Importer
+      - Added Vertex Color modifier support
+      - Fixed issue with static animation import
+      - Fixed issue with skin vertex weight count import
+      
+    o Exporter
+      - Upgraded to Visual Studio 2005
+      - Dropped registry support in favor of INI file.
+      - Dropped Official Max6 support because I do not have SDK to compile it with (try the max 7 files).
+      - Fixed issue with importing glossiness setting on textures.
+      - Fixed issues with export of vertex color. Alpha map is now exported as part of the normal color map.
+      - No longer exports meshes associated with bone or biped nodes.
+      - No longer exports extra NiNode when exporting NiTriGeom-based objects (can be reset in ini file)
+      - Mass, Restitution(Ellasticity), and Friction now share values with Reactor(Havok)
+      - Modified UPB export to actually export the values in the UserPropBuffer not just a fixed list.
+      - Added Skin Modifier export
+      
+    o NifProps Utility
+      - Mass, Restitution(Ellasticity), and Friction now share values with Reactor(Havok)
 
       0.1.5
       -----
