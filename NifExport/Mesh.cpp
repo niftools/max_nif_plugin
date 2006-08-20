@@ -76,7 +76,12 @@ Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
       os.obj->GetClassName(objClass);
       SClass_ID oscid = os.obj->SuperClassID();
       Class_ID oncid = os.obj->ClassID();
-      if (os.obj && (os.obj->ClassID() == BONE_OBJ_CLASSID || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)))
+      if (  os.obj 
+         && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
+            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
+            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+            )
+         )
          newParent = makeNode(nodeParent, node, local);
 #ifdef USE_BIPED
       else if (os.obj && os.obj->node->ClassID() == BIPED_CLASS_ID)
@@ -440,7 +445,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
    si->boneList.resize(totalBones);
    si->boneMap.resize(totalBones);
    for (int i=0; i<totalBones; ++i) {
-      string name = skin->GetBoneName(i);
+      string name = skin->GetBone(i)->GetName();
       si->boneList[i] = getNode(name);
       si->boneMap[i] = i;
    }
@@ -482,10 +487,18 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
 
 Exporter::Result SkinInstance::execute()
 {
+   SkinWeight emptyWeight; emptyWeight.index = 0; emptyWeight.weight = 0.0f;
+   vector<SkinWeight> emptyweights; emptyweights.assign(4, emptyWeight);
+
    shape->BindSkin(boneList);
    uint bone = 0;
-   for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) 
-      shape->SetBoneWeights(bone, (*bitr));
+   for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
+      vector<SkinWeight> &weights = (*bitr);
+      if (!weights.empty())
+         shape->SetBoneWeights(bone, weights);
+      else
+         shape->SetBoneWeights(bone, emptyweights);
+   }
 
    NiSkinInstanceRef skin = shape->GetSkinInstance();
    NiSkinPartitionRef partition = CreateNiObject<NiSkinPartition>();
