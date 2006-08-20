@@ -66,6 +66,16 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 	{
 		case WM_INITDIALOG:
 			{
+            // Append file version to dialog
+            TSTR fileVersion = GetFileVersion(NULL);
+            if (!fileVersion.isNull()) {
+               char buffer[256];
+               GetWindowText(hWnd, buffer, _countof(buffer));
+               _tcscat(buffer, TEXT(" "));
+               _tcscat(buffer, fileVersion);
+               SetWindowText(hWnd, buffer);
+            }
+
 				imp = (NifExport *)lParam;
 				CenterWindow(hWnd,GetParent(hWnd));
 				CheckDlgButton(hWnd, IDC_CHK_STRIPS, Exporter::mTriStrips);
@@ -75,7 +85,23 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 				CheckDlgButton(hWnd, IDC_CHK_VCOLORS, Exporter::mVertexColors);
 				SetDlgItemText(hWnd, IDC_ED_TEXPREFIX, Exporter::mTexPrefix.c_str());
 				CheckDlgButton(hWnd, IDC_CHK_COLL, Exporter::mExportCollision);
-				CheckDlgButton(hWnd, IDC_CHK_REMAP, Exporter::mRemapIndices);
+            CheckDlgButton(hWnd, IDC_CHK_REMAP, Exporter::mRemapIndices);
+
+            CheckDlgButton(hWnd, IDC_CHK_EXTRA, Exporter::mExportExtraNodes);
+            CheckDlgButton(hWnd, IDC_CHK_SKIN, Exporter::mExportSkin);
+            CheckDlgButton(hWnd, IDC_CHK_UPB, Exporter::mUserPropBuffer);
+            CheckDlgButton(hWnd, IDC_CHK_HIER, Exporter::mFlattenHierarchy);
+            CheckDlgButton(hWnd, IDC_CHK_REM_BONES, Exporter::mRemoveUnreferencedBones);
+            CheckDlgButton(hWnd, IDC_CHK_SORTNODES, Exporter::mSortNodesToEnd);
+
+            string selection = Exporter::mGameName;
+            string version = Exporter::mNifVersion;
+            string userVer = FormatString("%d", Exporter::mNifUserVersion);
+            for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr)
+               SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_ADDSTRING, 0, LPARAM(itr->Name.c_str()));
+            SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_SELECTSTRING, WPARAM(-1), LPARAM(selection.c_str()));
+            SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
+            SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
 
 				TSTR tmp;
 				tmp.printf("%.4f", Exporter::mWeldThresh);
@@ -92,11 +118,23 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 		case WM_COMMAND:
 			if (HIWORD(wParam) == BN_CLICKED)
 			{
-				char tmp[MAX_PATH];
+				char tmp[MAX_PATH], *end;
 				bool close = false;
 				switch (LOWORD(wParam))
 				{
 					case IDOK:
+                  // Validity Check
+                  GetDlgItemText(hWnd, IDC_CB_VERSION, tmp, MAX_PATH);
+                  if (tmp[0] != 0)
+                  {
+                     int nifVersion = GetVersion(tmp);
+                     if (!IsVersionSupported(nifVersion))
+                     {
+                        MessageBox(hWnd, FormatString("Version '%s' is not a supported version.", tmp).c_str(), "NifExport", MB_OK|MB_ICONSTOP);
+                        return FALSE;
+                     }
+                  }
+
 						Exporter::mTriStrips = IsDlgButtonChecked(hWnd, IDC_CHK_STRIPS);
 						Exporter::mExportHidden = IsDlgButtonChecked(hWnd, IDC_CHK_HIDDEN);
 						Exporter::mExportFurn = IsDlgButtonChecked(hWnd, IDC_CHK_FURN);
@@ -104,12 +142,29 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 						Exporter::mVertexColors = IsDlgButtonChecked(hWnd, IDC_CHK_VCOLORS);
 						Exporter::mExportCollision = IsDlgButtonChecked(hWnd, IDC_CHK_COLL);
 						Exporter::mRemapIndices = IsDlgButtonChecked(hWnd, IDC_CHK_REMAP);
+
+                  Exporter::mExportExtraNodes = IsDlgButtonChecked(hWnd, IDC_CHK_EXTRA);
+                  Exporter::mExportSkin = IsDlgButtonChecked(hWnd, IDC_CHK_SKIN);
+                  Exporter::mUserPropBuffer = IsDlgButtonChecked(hWnd, IDC_CHK_UPB);
+                  Exporter::mFlattenHierarchy = IsDlgButtonChecked(hWnd, IDC_CHK_HIER);
+                  Exporter::mRemoveUnreferencedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES);
+                  Exporter::mSortNodesToEnd = IsDlgButtonChecked(hWnd, IDC_CHK_SORTNODES);
 							
 						GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
 						Exporter::mTexPrefix = tmp;
 
 						GetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp, MAX_PATH);
 						Exporter::mWeldThresh = atof(tmp);
+
+                  GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
+                  if (AppSettings *appSettings = FindAppSetting(tmp))
+                  {
+                     Exporter::mGameName = appSettings->Name;
+                     GetDlgItemText(hWnd, IDC_CB_VERSION, tmp, MAX_PATH);
+                     Exporter::mNifVersion = tmp;
+                     GetDlgItemText(hWnd, IDC_CB_USER_VERSION, tmp, MAX_PATH);
+                     Exporter::mNifUserVersion = strtol(tmp, &end, 0);
+                  }
 
 						EndDialog(hWnd, imp->mDlgResult=IDOK);
 						close = true;
@@ -124,8 +179,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 				if (close)
 					SendMessage(hWnd, WM_CLOSE, 0, 0);
 			}
-
-			if (HIWORD(wParam) == STN_CLICKED)
+         else if (HIWORD(wParam) == STN_CLICKED)
 			{
 				if (LOWORD(wParam) == IDC_LBL_LINK)
 				{
@@ -133,7 +187,21 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 						         NULL, NULL, SW_SHOWDEFAULT);
 				}
 			}
-
+         else if (HIWORD(wParam) == CBN_SELCHANGE)
+         {
+            if (LOWORD(wParam) == IDC_CB_GAME)
+            {
+               char tmp[MAX_PATH];
+               GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
+               if (AppSettings *appSettings = FindAppSetting(tmp))
+               {
+                  string version = appSettings->NiVersion;
+                  string userVer = FormatString("%d", appSettings->NiUserVersion);
+                  SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
+                  SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+               }
+            }
+         }
 			break;
 	}
 	return FALSE;
@@ -243,12 +311,15 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
          appSettings = FindAppSetting(curapp);
       }
    }
-   if (appSettings == NULL && !TheAppSettings.empty()){
+   if (appSettings == NULL && !TheAppSettings.empty())
       appSettings = &TheAppSettings.front();
-   }
 
 	if(!suppressPrompts)
 	{
+      Exporter::mGameName = appSettings->Name;
+      Exporter::mNifVersion = appSettings->NiVersion;
+      Exporter::mNifUserVersion = appSettings->NiUserVersion;
+
 		if (DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), GetActiveWindow(), NifExportOptionsDlgProc, (LPARAM)this) != IDOK)
 			return true;
 
@@ -256,10 +327,28 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 		Exporter::writeConfig(i);
 		// write config to root node
 		Exporter::writeConfig(i->GetRootNode());
+
+      // Update the current app version
+      appSettings = FindAppSetting(Exporter::mGameName);
+      if (appSettings == NULL && !TheAppSettings.empty())
+         appSettings = &TheAppSettings.front();
+      appSettings->NiVersion = Exporter::mNifVersion;
+      appSettings->NiUserVersion = Exporter::mNifUserVersion;
+      appSettings->WriteSettings(i);
 	}
 
 	try
 	{
+      int nifVersion = VER_20_0_0_5;
+      int nifUserVer = Exporter::mNifUserVersion;
+
+      if (!Exporter::mNifVersion.empty())
+      {
+         nifVersion = GetVersion(Exporter::mNifVersion);
+         if (!IsVersionSupported(nifVersion))
+            throw exception(FormatString("Version '%s' is not a supported version.").c_str());
+      }
+
 		Exporter::mSelectedOnly = (options&SCENE_EXPORT_SELECTED) != 0;
 		Exporter exp(i, appSettings);
 		
@@ -269,7 +358,7 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 		if (result!=Exporter::Ok)
 			throw exception("Unknown error.");
 
-		WriteNifTree(name, NiObjectRef(root), VER_20_0_0_5, 11);
+		WriteNifTree(name, NiObjectRef(root), nifVersion, nifUserVer);
 	}
 
 	catch (exception &e)

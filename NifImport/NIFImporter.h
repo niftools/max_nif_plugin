@@ -15,8 +15,10 @@ HISTORY:
 #define __NIFIMPORTER_H__
 
 #include "BaseImporter.h"
+#include "IniSection.h"
+
 // NIF Importer
-class NifImporter : public BaseImporter
+class NifImporter : public BaseImporter//, public IniFileSection
 {
 public:
    // Ini settings
@@ -30,6 +32,7 @@ public:
    bool goToSkeletonBindPosition;
    bool enableCollision;
    int vertexColorMode;
+   bool useCiv4Shader;
 
    // Biped/Bones related settings
    bool importBones;
@@ -77,6 +80,8 @@ public:
    void LoadIniSettings();
    void SaveIniSettings();
 
+   void ApplyAppSettings();
+
    bool HasSkeleton();
    bool IsBiped();
    void ImportBones(vector<Niflib::NiNodeRef>& bones);
@@ -92,6 +97,7 @@ public:
    bool ImportMesh(Niflib::NiTriShapeRef triShape);
    bool ImportMesh(Niflib::NiTriStripsRef triStrips);
    bool ImportMaterialAndTextures(ImpNode *node, Niflib::NiAVObjectRef avObject);
+   bool ImportCiv4Shader(ImpNode *node, Niflib::NiAVObjectRef avObject, StdMat2 *m);
    bool ImportTransform(ImpNode *node, Niflib::NiAVObjectRef avObject);
    bool ImportMesh(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
    bool ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
@@ -105,7 +111,9 @@ public:
    bool ImportCollision(Niflib::NiNodeRef node);
 
    INode *GetNode(Niflib::NiNodeRef node);
+   string GetSkeleton(AppSettings *appSettings);
 
+   bool ShowDialog();
    virtual bool DoImport();
 
    // Animation Helpers

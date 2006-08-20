@@ -234,12 +234,16 @@ struct SortNodeEquivalence
       if (!rhs) return true;
       string ltype = lhs->GetType().GetTypeName();
       string rtype = rhs->GetType().GetTypeName();
-      if (ltype == "NiNode")
-         return false;
-      if (rtype == "NiNode")
-         return true;
       if (ltype == rtype)
          return false;
+      if (ltype == "bhkCollisionObject")
+         return true;
+      if (rtype == "bhkCollisionObject")
+         return false;
+      if (ltype == "NiNode")
+         return false;
+      else if (rtype == "NiNode")
+         return true;
       return (ltype < rtype); 
    }
 };

@@ -13,7 +13,8 @@
 #include "istdplug.h"
 #include "iparamb2.h"
 #include "iparamm2.h"
-
+#include "objectParams.h"
+#undef ALPHA_NONE
 
 // niflib/Ref.h' header guard caused havok!
 // near & far 

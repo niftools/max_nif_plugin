@@ -64,44 +64,6 @@ class MaxNifImportClassDesc : public ClassDesc2 {
 static MaxNifImportClassDesc MaxNifImportDesc;
 ClassDesc2* GetMaxNifImportDesc() { return &MaxNifImportDesc; }
 
-BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
-	static NifImporter *imp = NULL;
-
-	switch(message) {
-		case WM_INITDIALOG:
-         {
-			   imp = (NifImporter *)lParam;
-			   CenterWindow(hWnd,GetParent(hWnd));
-
-            char buffer[33] = {0};
-            sprintf(buffer, "%f", imp->bipedHeight);
-            SetWindowText(GetDlgItem(hWnd, IDC_EDITHEIGHT), buffer);
-         }
-			return TRUE;
-
-		case WM_CLOSE:
-         {
-            char buffer[33] = {0}, *end = NULL;
-            GetWindowText(GetDlgItem(hWnd, IDC_EDITHEIGHT), buffer, 33);
-            imp->bipedHeight = strtod(buffer, &end);
-			   EndDialog(hWnd, 0);
-         }
-			return TRUE;
-
-      case WM_COMMAND : 
-         {
-            switch (wParam)
-            {
-            case IDCLOSE :
-               SendMessage(hWnd, WM_CLOSE, 0, 0);
-               return TRUE;
-            }
-         }
-         break;
-	}
-	return FALSE;
-}
-
 
 //--- MaxNifImport -------------------------------------------------------
 MaxNifImport::MaxNifImport()

@@ -32,7 +32,7 @@ inline Value* make_maxscript_value(const Color& rgb);
 inline Value* make_maxscript_value(LPCTSTR str);
 inline Value* make_maxscript_value(ReferenceTarget* rtarg);
 
-#if VERSION_3DSMAX <= ((MAX_RELEASE_R7<<16)+(15<<8)+0)
+#if VERSION_3DSMAX <= ((7000<<16)+(15<<8)+0) // Version 7
 inline void clear_error_source_data() {}
 #endif
 
@@ -317,7 +317,8 @@ inline float ConvertMAXScriptToC<float>::cvt(Value* val)
 
 inline Color ConvertMAXScriptToC<Color>::cvt(Value* val)
 {
-	return val->to_point3();
+	Point3 pt3 = val->to_point3();
+   return Color(pt3.x/255.0f, pt3.y/255.0f, pt3.z/255.0f);
 }
 
 inline LPTSTR ConvertMAXScriptToC<LPTSTR>::cvt(Value* val)

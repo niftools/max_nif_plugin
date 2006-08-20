@@ -696,10 +696,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\objectParams.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -786,6 +782,10 @@
 			</File>
 			<File
 				RelativePath=".\MaxNifImport.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NifDialog.cpp"
 				>
 			</File>
 			<File

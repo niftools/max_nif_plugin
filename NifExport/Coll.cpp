@@ -252,6 +252,9 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	// marked as collision?
 	bool coll = npIsCollision(node);
 
+   bool local = !mFlattenHierarchy;
+   NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
+
 	NiNodeRef newParent;
 	if (coll)
 	{
@@ -275,7 +278,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		body->SetRotation(q);
 		body->SetTranslation(Vector3(trans.x/7, trans.y/7, trans.z/7));
 */
-		newParent = makeNode(parent, node);
+		newParent = nodeParent; // always have collision one level up?
 
 		bhkSphereRepShapeRef shape = makeCollisionShape(node);
 		bhkRigidBodyRef body = makeCollisionBody(node);
@@ -283,18 +286,17 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 
 		bhkCollisionObjectRef co = DynamicCast<bhkCollisionObject>(CreateBlock("bhkCollisionObject"));
 		co->SetBody(DynamicCast<NiObject>(body));
+      
 		co->SetParent(newParent);
 
 		// link
 		newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
 
-	} else
-	if (isCollisionGroup(node))
-	{
-		newParent = makeNode(parent, node);
-	} else
-		newParent = parent;
-
+	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {
+		newParent = makeNode(nodeParent, node);
+   } else {
+		newParent = nodeParent;
+   }
 	for (int i=0; i<node->NumberOfChildren(); i++) 
 	{
 		Result result = exportCollision(newParent, node->GetChildNode(i));
@@ -315,13 +317,13 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 
    // Handle compatibility
    npGetProp(node, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
-   if (mass != NP_DEFAULT_HVK_EMPTY)
+   if (mass == NP_DEFAULT_HVK_EMPTY)
       npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
    npGetProp(node, NP_HVK_FRICTION_OLD, frict, NP_DEFAULT_HVK_EMPTY);
-   if (frict != NP_DEFAULT_HVK_EMPTY)
+   if (frict == NP_DEFAULT_HVK_EMPTY)
       npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
    npGetProp(node, NP_HVK_RESTITUTION_OLD, resti, NP_DEFAULT_HVK_EMPTY);
-   if (resti != NP_DEFAULT_HVK_EMPTY)
+   if (resti == NP_DEFAULT_HVK_EMPTY)
       npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
 
 	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
@@ -336,7 +338,7 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	npGetProp(node, NP_HVK_CENTER, center);
 
 	// setup body
-	bhkRigidBodyRef body = DynamicCast<bhkRigidBody>(CreateBlock("bhkRigidBody"));
+	bhkRigidBodyRef body = DynamicCast<bhkRigidBody>(CreateBlock("bhkRigidBodyT"));
 
 	body->SetLayer(lyr);
 	body->SetLayerCopy(lyr);
@@ -351,6 +353,8 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	body->SetMaxAngularVelocity(maxangvel);
 	body->SetPenetrationDepth(pendepth);
 	body->SetCenter(center);
+   QuaternionXYZW q; q.x = q.y = q.z = 0; q.w = 1.0f;
+   body->SetRotation(q);
 
 	return body;
 }
@@ -490,7 +494,6 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node)
 	shape->SetUnknownInts1(unknownInts1);
 */
 
-   ASSERT(!"TODO: Need to support this");
 /* Still not handled
 	vector<uint> unknownInts2;
 	unknownInts2.resize(1);

@@ -365,7 +365,7 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
    vector<NiNodeRef> nifBones = nifSkin->GetBones();
 
    //create a skin modifier and add it
-   Modifier *skinMod = GetSkin(tnode);
+   Modifier *skinMod = GetOrCreateSkin(tnode);
    TriObject *triObject = GetTriObject(tnode->GetObjectRef());
    Mesh& m = triObject->GetMesh();
 

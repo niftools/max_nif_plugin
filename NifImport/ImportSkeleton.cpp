@@ -611,10 +611,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          else if (bone = CreateBone(name, p, pp, zAxis))
          {
             PosRotScaleNode(bone, p, q, scale, prs);
-            if (isDummy)
-               bone->Hide(TRUE);
-            else
-               bone->Hide(node->GetHidden() ? TRUE : FALSE);
+            bone->Hide(node->GetHidden() ? TRUE : FALSE);
          }
          if (bone)
          {

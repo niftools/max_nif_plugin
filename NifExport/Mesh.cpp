@@ -251,7 +251,6 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
 	makeMaterial(av, mtl);
-	makeTexture(av, mtl);
 
 	parent->AddChild(DynamicCast<NiAVObject>(shape));
 
@@ -265,8 +264,10 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 	Point3 norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
 
 	Point3 uv;
-	if (mesh->tVerts && mesh->tvFace)
+   if (mesh->tVerts && mesh->tvFace) {
 		uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
+      uv.y += 1.0f;
+   }
 
    Color4 col(1.0f, 1.0f, 1.0f);
    if (mVertexColors && !vertColors.empty()){
@@ -282,7 +283,7 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 		if (equal(grp.verts[i], pt, mWeldThresh) &&
 			equal(grp.vnorms[i], norm, 0))
 		{
-			if (mesh->tvFace && (grp.uvs[i].u!=uv.x || grp.uvs[i].v!=uv.y))
+			if (mesh->tVerts && mesh->tvFace && (grp.uvs[i].u!=uv.x || grp.uvs[i].v!=uv.y))
 				continue;
 
 			if (mVertexColors && !vertColors.empty() &&

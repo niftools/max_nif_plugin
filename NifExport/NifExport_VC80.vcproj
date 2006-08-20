@@ -47,7 +47,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -153,7 +153,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\..\niflib;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
@@ -250,7 +250,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\..\niflib;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
@@ -349,7 +349,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -457,7 +457,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
@@ -563,7 +563,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot;"
+				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
 				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\..\niflib;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"

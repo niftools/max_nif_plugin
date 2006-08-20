@@ -70,12 +70,12 @@ std::string FormatString(const TCHAR* format,...)
 }
 
 // Tokenize a string using strtok and return it as a stringlist
-stringlist TokenizeString(LPCTSTR str, LPCTSTR delims)
+stringlist TokenizeString(LPCTSTR str, LPCTSTR delims, bool trim)
 {
    stringlist values;
    LPTSTR buf = STRDUPA(str);
    for (LPTSTR p = _tcstok(buf, delims); p && *p; p = _tcstok(NULL, delims)){
-      values.push_back(string(p));
+      values.push_back(string((trim) ? Trim(p) : p));
    }
    return values;
 }
@@ -583,6 +583,22 @@ TriObject* GetTriObject(Object *o)
 }
 
 // Get or Create the Skin Modifier
+Modifier *GetOrCreateSkin(INode *node)
+{
+   Modifier *skinMod = GetSkin(node);
+   if (skinMod)
+      return skinMod;   
+   
+   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
+   //create a skin modifier and add it
+   skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
+   dobj->SetAFlag(A_LOCK_TARGET);
+   dobj->AddModifier(skinMod);
+   dobj->ClearAFlag(A_LOCK_TARGET);
+   node->SetObjectRef(dobj);
+   return skinMod;
+}
+
 Modifier *GetSkin(INode *node)
 {
    Object* pObj = node->GetObjectRef();
@@ -604,14 +620,65 @@ Modifier *GetSkin(INode *node)
       }
       pObj = pDerObj->GetObjRef();
    }
+   return NULL;
+}
 
-   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
 
-   //create a skin modifier and add it
-   Modifier *skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
-   dobj->SetAFlag(A_LOCK_TARGET);
-   dobj->AddModifier(skinMod);
-   dobj->ClearAFlag(A_LOCK_TARGET);
-   node->SetObjectRef(dobj);
-   return skinMod;
+TSTR GetFileVersion(const char *fileName)
+{
+   TSTR retval;
+   char fileVersion[MAX_PATH];
+   if (fileName == NULL)
+   {
+      GetModuleFileName(hInstance, fileVersion, MAX_PATH);
+      fileName = fileVersion;
+   }
+   HMODULE ver = GetModuleHandle("version.dll");
+   if (!ver) ver = LoadLibrary("version.dll");
+   if (ver != NULL)
+   {
+      DWORD (APIENTRY *GetFileVersionInfoSize)(LPCTSTR, LPDWORD) = NULL;
+      BOOL (APIENTRY *GetFileVersionInfo)(LPCTSTR, DWORD, DWORD, LPVOID) = NULL;
+      BOOL (APIENTRY *VerQueryValue)(const LPVOID, LPTSTR, LPVOID *, PUINT) = NULL;
+      *(FARPROC*)&GetFileVersionInfoSize = GetProcAddress(ver, "GetFileVersionInfoSizeA");
+      *(FARPROC*)&GetFileVersionInfo = GetProcAddress(ver, "GetFileVersionInfoA");
+      *(FARPROC*)&VerQueryValue = GetProcAddress(ver, "VerQueryValueA");
+      if (GetFileVersionInfoSize && GetFileVersionInfo && VerQueryValue)
+      {
+         DWORD vLen = 0;
+         DWORD vSize = GetFileVersionInfoSize(fileName,&vLen);
+         if (vSize) 
+         {
+            LPVOID versionInfo = malloc(vSize+1);
+            if (GetFileVersionInfo(fileName,vLen,vSize,versionInfo))
+            {            
+               LPVOID version=NULL;
+               if (VerQueryValue(versionInfo,"\\VarFileInfo\\Translation",&version,(UINT *)&vLen) && vLen==4) 
+               {
+                  DWORD langD = *(DWORD*)version;
+                  sprintf(fileVersion, "\\StringFileInfo\\%02X%02X%02X%02X\\ProductVersion",
+                     (langD & 0xff00)>>8,langD & 0xff,(langD & 0xff000000)>>24, (langD & 0xff0000)>>16);            
+               }
+               else 
+               {
+                  sprintf(fileVersion, "\\StringFileInfo\\%04X04B0\\ProductVersion", GetUserDefaultLangID());
+               }
+               LPCTSTR value = NULL;
+               if (VerQueryValue(versionInfo,fileVersion,&version,(UINT *)&vLen))
+                  value = LPCTSTR(version);
+               else if (VerQueryValue(versionInfo,"\\StringFileInfo\\040904B0\\ProductVersion",&version,(UINT *)&vLen))
+                  value = LPCTSTR(version);
+               if (value != NULL)
+               {
+                  stringlist val = TokenizeString(value, ",", true);
+                  if (val.size() >= 4){
+                     retval = FormatText("%s.%s.%s.%s", val[0].c_str(), val[1].c_str(), val[2].c_str(), val[3].c_str());
+                  }
+               }
+               free(versionInfo);
+            }
+         }
+      }
+   }
+   return retval;
 }

@@ -42,9 +42,12 @@ public:
    NameValueCollection imgTable;
    stringlist dummyNodeMatches;
    int applyOverallTransformToSkinAndBones;
+   std::string NiVersion;
+   int NiUserVersion;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);
+   void WriteSettings(Interface *gi);
    std::string FindImage(const std::string& fname);
 
    // Check whether the given file is a child of the root paths

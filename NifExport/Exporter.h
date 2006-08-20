@@ -5,6 +5,7 @@ using namespace Niflib;
 
 class BitmapTex;
 class AppSettings;
+class StdMat2;
 
 class Exporter
 {
@@ -49,6 +50,9 @@ public:
    static bool          mFlattenHierarchy;
    static bool          mRemoveUnreferencedBones;
    static bool          mSortNodesToEnd;
+   static string        mGameName;
+   static string        mNifVersion;
+   static int           mNifUserVersion;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -108,7 +112,8 @@ private:
 	void					nodeTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
 	Point3					getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);
 	bool					equal(const Vector3 &a, const Point3 &b, float thresh);
-	BitmapTex				*getTexture(Mtl *mtl);
+   BitmapTex				*getTexture(Mtl *mtl);
+   BitmapTex				*getTexture(Mtl *mtl, int i);
 	void					getTextureMatrix(Matrix3 &mat, Mtl *mtl);
    NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
    NiNodeRef				getNode(const string& name);
@@ -138,8 +143,10 @@ private:
 	/* texture & material */
 	// creates NiTexturingProperty + NiSourceTexture
 	void					makeTexture(NiAVObjectRef &parent, Mtl *mtl);
+   bool              makeTextureDesc(BitmapTex *bmTex, Niflib::TexDesc &td);
 	// creates a NiMaterialProperty
 	void					makeMaterial(NiAVObjectRef &parent, Mtl *mtl);
+   bool              exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl);
 
 	/* havok & collision */
 	int						addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm);

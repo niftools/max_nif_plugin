@@ -72,7 +72,7 @@ void NifImporter::Initialize()
 
       hasSkeleton = HasSkeleton();
       isBiped = IsBiped();
-      skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";
+      skeleton = GetSkeleton(appSettings);
       importSkeleton = (appSettings != NULL) ? appSettings->useSkeleton : false;
       importSkeleton &= hasSkeleton;
 
@@ -87,6 +87,22 @@ void NifImporter::Initialize()
             skeleton = buffer;
       }
    }
+}
+
+string NifImporter::GetSkeleton(AppSettings *appSettings)
+{
+   string skeleton = (appSettings != NULL) ? appSettings->Skeleton : "";
+   // Guess that the skeleton is the same one in the current directory
+   if (importSkeleton && !defaultSkeletonName.empty()) {
+      TCHAR buffer[MAX_PATH];
+      GetFullPathName(name.c_str(), _countof(buffer), buffer, NULL);
+      PathRemoveFileSpec(buffer);
+      PathAddBackslash(buffer);
+      PathAppend(buffer, defaultSkeletonName.c_str());
+      if (-1 != _taccess(buffer, 0))
+         skeleton = buffer;
+   }
+   return skeleton;
 }
 
 void NifImporter::LoadIniSettings()
@@ -127,6 +143,7 @@ void NifImporter::LoadIniSettings()
    enableSkinSupport = GetIniValue(NifImportSection, "EnableSkinSupport", true);
    enableCollision = GetIniValue(NifImportSection, "EnableCollision", true);
    vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
+   useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -154,7 +171,10 @@ void NifImporter::LoadIniSettings()
 
    // Collision
    bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
-
+   ApplyAppSettings();
+}
+void NifImporter::ApplyAppSettings()
+{
    goToSkeletonBindPosition = false;
    // Override specific settings
    if (appSettings) {
@@ -170,14 +190,22 @@ void NifImporter::LoadIniSettings()
 
 void NifImporter::SaveIniSettings()
 {
-   //SetIniValue(NifImportSection, "UseBiped", useBiped);
-   //SetIniValue<string>(NifImportSection, "Skeleton", skeleton);
-   //SetIniValue<string>(NifImportSection, "SkeletonCheck", skeletonCheck);
+   SetIniValue(NifImportSection, "UseBiped", useBiped);
+   SetIniValue(NifImportSection, "EnableSkinSupport", enableSkinSupport);
+   SetIniValue(NifImportSection, "VertexColorMode", vertexColorMode);
+   SetIniValue(NifImportSection, "EnableCollision", enableCollision);
+   //SetIniValue(NifImportSection, "EnableFurniture", enableAnimations);
 
-   //SetIniValue<float>(BipedImportSection, "BipedHeight", bipedHeight);
-   //SetIniValue<float>(BipedImportSection, "BipedAngle", bipedAngle);
-   //SetIniValue<float>(BipedImportSection, "BipedAnkleAttach", bipedAnkleAttach);
-   //SetIniValue(BipedImportSection, "BipedTrianglePelvis", bipedTrianglePelvis);
+   SetIniValue(NifImportSection, "FlipUVTextures", flipUVTextures);
+   SetIniValue(NifImportSection, "ShowTextures", showTextures);
+   SetIniValue(NifImportSection, "EnableAutoSmooth", enableAutoSmooth);
+   SetIniValue(NifImportSection, "RemoveIllegalFaces", removeIllegalFaces);
+   SetIniValue(NifImportSection, "RemoveDegenerateFaces", removeDegenerateFaces);
+
+   SetIniValue(BipedImportSection, "ImportBones", importBones);
+   SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);
+
+   SetIniValue(AnimImportSection, "EnableAnimations", enableAnimations);
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
@@ -190,39 +218,48 @@ INode *NifImporter::GetNode(Niflib::NiNodeRef node)
 bool NifImporter::DoImport()
 {
    bool ok = true;
+   if (!suppressPrompts)
+   {
+      if (!ShowDialog())
+         return true;
+
+      ApplyAppSettings();
+      SaveIniSettings();
+   }
+
    vector<string> importedBones;
    if (!isBiped && importSkeleton && importBones)
    {
-      if (browseForSkeleton)
-      {
-         TCHAR filter[64], *pfilter=filter;
-         pfilter = _tcscpy(filter, shortDescription.c_str());
-         pfilter = _tcscat(pfilter, " (*.NIF)");
-         pfilter += strlen(pfilter);
-         *pfilter++ = '\0';
-         _tcscpy(pfilter, "*.NIF");
-         pfilter += strlen(pfilter);
-         *pfilter++ = '\0';
-         *pfilter++ = '\0';
+      //if (browseForSkeleton)
+      //{
+      //   TCHAR filter[64], *pfilter=filter;
+      //   pfilter = _tcscpy(filter, shortDescription.c_str());
+      //   pfilter = _tcscat(pfilter, " (*.NIF)");
+      //   pfilter += strlen(pfilter);
+      //   *pfilter++ = '\0';
+      //   _tcscpy(pfilter, "*.NIF");
+      //   pfilter += strlen(pfilter);
+      //   *pfilter++ = '\0';
+      //   *pfilter++ = '\0';
 
-         TCHAR filename[MAX_PATH];
-         GetFullPathName(skeleton.c_str(), _countof(filename), filename, NULL);
+      //   TCHAR filename[MAX_PATH];
+      //   GetFullPathName(skeleton.c_str(), _countof(filename), filename, NULL);
 
-         OPENFILENAME ofn;
-         memset(&ofn, 0, sizeof(ofn));
-         ofn.lStructSize = sizeof(ofn);
-         ofn.hwndOwner = gi->GetMAXHWnd();
-         ofn.lpstrFilter = filter;
-         ofn.lpstrFile = filename;
-         ofn.nMaxFile = _countof(filename);
-         ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
-         ofn.lpstrDefExt = TEXT("NIF");
-         ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
-         importSkeleton = GetOpenFileName(&ofn) ? true : false;
-         if (importSkeleton) {
-            skeleton = filename;
-         }
-      }
+      //   OPENFILENAME ofn;
+      //   memset(&ofn, 0, sizeof(ofn));
+      //   ofn.lStructSize = sizeof(ofn);
+      //   ofn.hwndOwner = gi->GetMAXHWnd();
+      //   ofn.lpstrFilter = filter;
+      //   ofn.lpstrFile = filename;
+      //   ofn.nMaxFile = _countof(filename);
+      //   ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
+      //   ofn.lpstrDefExt = TEXT("NIF");
+      //   ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
+      //   importSkeleton = GetOpenFileName(&ofn) ? true : false;
+      //   if (importSkeleton) {
+      //      skeleton = filename;
+      //   }
+      //}
       if (importSkeleton && !skeleton.empty()) {
          NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
          if (skelImport.isValid())
@@ -233,7 +270,7 @@ bool NifImporter::DoImport()
             // Disable undesirable skeleton items
             skelImport.enableCollision = false;
             skelImport.enableAnimations = false;
-
+            skelImport.suppressPrompts = true;
             skelImport.DoImport();
             if (!skelImport.useBiped && removeUnusedImportedBones)
                importedBones = GetNamesOfNodes(skelImport.nodes);

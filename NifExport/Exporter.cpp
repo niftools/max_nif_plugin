@@ -20,6 +20,9 @@ bool Exporter::mUserPropBuffer=false;
 bool Exporter::mFlattenHierarchy=false;
 bool Exporter::mRemoveUnreferencedBones=false;
 bool Exporter::mSortNodesToEnd=false;
+string Exporter::mGameName = "User";
+string Exporter::mNifVersion = "20.0.0.5";
+int Exporter::mNifUserVersion = 0;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)
@@ -28,11 +31,21 @@ Exporter::Exporter(Interface *i, AppSettings *appSettings)
 
 Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
+   //root->SetName("Scene Root");
+
 	BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 	bsx->SetName("BSX");
 	bsx->SetFlags(0x00000002);
    root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-   exportUPB(root, node);
+   bool ok = exportUPB(root, node);
+
+   if (!ok && Exporter::mExportCollision)
+   {
+      NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
+      strings->SetName("UPB");
+      strings->SetData("Ellasticity = 0.300000\r\nFriction = 0.300000\r\nUnyielding = 0\r\nProxy_Geometry = <None>\r\nUse_Display_Proxy = 0\r\nDisplay_Children = 1\r\nDisable_Collisions = 0\r\nInactive = 0\r\nDisplay_Proxy = <None>\r\nMass = 0.000000\r\nSimulation_Geometry = 2\r\nCollision_Groups = 589825\r\n");
+      root->AddExtraData(DynamicCast<NiExtraData>(strings));
+   }
 
 	mNiRoot = root;
 	

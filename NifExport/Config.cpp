@@ -57,6 +57,13 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "TexturePrefix", mTexPrefix, iniName);
       SetIniValue(NifExportSection, "ExportCollision", mExportCollision, iniName);
       SetIniValue(NifExportSection, "RemapIndices", mRemapIndices, iniName);
+
+      SetIniValue(NifExportSection, "ExportExtraNodes", mExportExtraNodes, iniName);
+      SetIniValue(NifExportSection, "ExportSkin", mExportSkin, iniName);
+      SetIniValue(NifExportSection, "UserPropBuffer", mUserPropBuffer, iniName);
+      SetIniValue(NifExportSection, "FlattenHierarchy", mFlattenHierarchy, iniName);
+      SetIniValue(NifExportSection, "RemoveUnreferencedBones", mRemoveUnreferencedBones, iniName);
+      SetIniValue(NifExportSection, "SortNodesToEnd", mSortNodesToEnd, iniName);
    }
 }
 

@@ -121,7 +121,7 @@ struct NumericStringEquivalence
 // Common collections that I use
 typedef std::map<std::string, std::string, ltstr> NameValueCollection;
 typedef std::pair<std::string, std::string> KeyValuePair;
-typedef std::list<std::string> stringlist;
+typedef std::vector<std::string> stringlist;
 
 extern int wildcmp(const TCHAR *wild, const TCHAR *string);
 extern int wildcmpi(const TCHAR *wild, const TCHAR *string);
@@ -209,7 +209,7 @@ inline void SetIniValue<TSTR>(LPCTSTR Section, LPCTSTR Setting, TSTR value, LPCT
 extern TSTR FormatText(const TCHAR* format,...);
 extern std::string FormatString(const TCHAR* format,...);
 
-extern stringlist TokenizeString(LPCTSTR str, LPCTSTR delims);
+extern stringlist TokenizeString(LPCTSTR str, LPCTSTR delims, bool trim=false);
 extern string GetIndirectValue(LPCSTR path);
 extern NameValueCollection ReadIniSection(LPCTSTR Section, LPCTSTR iniFileName );
 extern string ExpandQualifiers(const string& src, const NameValueCollection& map);
@@ -271,6 +271,9 @@ static inline Color TOCOLOR(const Niflib::Color3& c3) {
    return Color(c3.r, c3.g, c3.b);
 }
 
+static inline Niflib::Color3 TOCOLOR3(const Color& c3) {
+   return Niflib::Color3(c3.r, c3.g, c3.b);
+}
 
 static inline Point3 TOPOINT3(const Niflib::Vector3& v){
    return Point3(v.x, v.y, v.z);
@@ -334,7 +337,10 @@ inline Niflib::Ref<U> SelectFirstObjectOfType( list<Niflib::Ref<T> > const & obj
 TSTR PrintMatrix3(Matrix3& m);
 TSTR PrintMatrix44(Niflib::Matrix44& m);
 
+extern Modifier *GetOrCreateSkin(INode *node);
 extern Modifier *GetSkin(INode *node);
 extern TriObject* GetTriObject(Object *o);
+
+extern TSTR GetFileVersion(const char *fileName);
 
 #endif // _NIUTILS_H_

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <tchar.h>
 #include "AppSettings.h"
+#include "IniSection.h"
 
 AppSettingsMap TheAppSettings;
 
@@ -18,6 +19,7 @@ void AppSettings::Initialize(Interface *gi)
 
       string Applications = GetIniValue<string>("System", "KnownApplications", "", iniName);
       stringlist apps = TokenizeString(Applications.c_str(), ";");
+      apps.push_back(string("User")); // always ensure that user is present
       for (stringlist::iterator appstr=apps.begin(); appstr != apps.end(); ++appstr){
          AppSettings* setting = FindAppSetting(*appstr);
          if (NULL == setting){
@@ -46,6 +48,9 @@ void AppSettings::ReadSettings(string iniFile)
 
    std::swap(Environment, settings);
 
+   NiVersion = GetSetting<string>("NiVersion", "20.0.0.5");
+   NiUserVersion = GetSetting<int>("NiUserVersion", 0);
+
    rootPath = GetSetting<string>("RootPath");
    rootPaths = TokenizeString(GetSetting<string>("RootPaths").c_str(), ";");
    searchPaths = TokenizeString(GetSetting<string>("TextureSearchPaths").c_str(), ";");
@@ -60,6 +65,19 @@ void AppSettings::ReadSettings(string iniFile)
 
    dummyNodeMatches = TokenizeString(GetSetting<string>("DummyNodeMatches").c_str(), ";");
 }
+
+void AppSettings::WriteSettings(Interface *gi)
+{
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   if (-1 != _taccess(iniName, 0)) 
+   {
+      SetIniValue(Name.c_str(), "NiVersion", NiVersion.c_str(), iniName);
+      SetIniValue(Name.c_str(), "NiUserVersion", FormatString("%d", NiUserVersion).c_str(), iniName);
+   }
+}
+
 
 string AppSettings::FindImage(const string& fname){
    TCHAR buffer[MAX_PATH];

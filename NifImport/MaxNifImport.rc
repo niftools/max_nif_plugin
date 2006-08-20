@@ -26,14 +26,34 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_PANEL DIALOGEX 0, 0, 142, 59
+IDD_PANEL DIALOGEX 0, 0, 206, 158
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Import Nif"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    EDITTEXT        IDC_EDITHEIGHT,68,15,62,14,ES_AUTOHSCROLL
-    LTEXT           "&Height:",IDC_STATIC,16,18,49,8
-    PUSHBUTTON      "&Close",IDCLOSE,44,38,50,14
+    GROUPBOX        "Import:",IDC_STATIC,7,6,81,81
+    CONTROL         "&Skeleton",IDC_CHK_BONES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,16,67,10
+    CONTROL         "Skin Modifier",IDC_CHK_SKIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,27,67,10
+    CONTROL         "&Vertex Colors",IDC_CHK_VCOLORS,"Button",BS_AUTO3STATE | WS_TABSTOP,14,38,67,10
+    CONTROL         "Co&llision",IDC_CHK_COLL,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,62,67,10
+    CONTROL         "&Animation",IDC_CHK_ANIMATION,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,50,67,10
+    CONTROL         "Furniture &Markers",IDC_CHK_FURN,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,14,73,67,10
+    GROUPBOX        "Behaviors:",IDC_STATIC,94,6,101,81
+    CONTROL         "Flip UV",IDC_CHK_FLIP_UV,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,16,88,10
+    CONTROL         "&Render Textures in View",IDC_CHK_SHOW_TEX,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,27,88,10
+    CONTROL         "&Auto Smooth Mesh",IDC_CHK_AUTOSMOOTH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,38,88,11
+    CONTROL         "Remove Illegal Faces",IDC_CHK_ILLEGAL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,50,88,11
+    CONTROL         "Remove Unused Bones",IDC_CHK_REM_BONES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,102,62,88,10
+    CONTROL         "&Use Biped",IDC_CHK_BIPED,"Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,102,73,87,10
+    LTEXT           "Skeleton:",IDC_STC_SKELETON,7,107,31,8
+    EDITTEXT        IDC_ED_SKELETON,7,119,171,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BTN_BROWSE,180,119,19,13
+    LTEXT           "Game:",IDC_STATIC,7,93,31,8
+    COMBOBOX        IDC_CB_GAME,47,91,131,70,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "&Import",IDOK,5,137,34,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,45,137,33,14
+    LTEXT           "http://niftools.sourceforge.net",IDC_LBL_LINK,93,137,95,14,SS_NOTIFY | SS_CENTERIMAGE
 END
 
 
@@ -48,9 +68,9 @@ BEGIN
     IDD_PANEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 135
+        RIGHTMARGIN, 199
         TOPMARGIN, 7
-        BOTTOMMARGIN, 52
+        BOTTOMMARGIN, 151
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -88,8 +108,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,6,8
- PRODUCTVERSION 0,1,6,0
+ FILEVERSION 0,2,0,0
+ PRODUCTVERSION 0,2,0,0
  FILEFLAGSMASK 0x37L
 #ifdef _DEBUG
  FILEFLAGS 0x21L
@@ -105,12 +125,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "3ds Max Nif Importer"
-            VALUE "FileVersion", "0, 1, 6, 8"
+            VALUE "FileVersion", "0, 2, 0, 0"
             VALUE "InternalName", "MaxNifImport.dli"
             VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
             VALUE "OriginalFilename", "MaxNifImport.dli"
             VALUE "ProductName", "3ds Max Nif Importer"
-            VALUE "ProductVersion", "0, 1, 6, 0"
+            VALUE "ProductVersion", "0, 2, 0, 0"
             VALUE "SpecialBuild", "Alpha"
         END
     END

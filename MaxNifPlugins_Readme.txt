@@ -34,11 +34,15 @@
       - Added Vertex Color modifier support
       - Fixed issue with static animation import
       - Fixed issue with skin vertex weight count import
+      - Added support for more material/texture properties
+      - Added support for Civilization IV Shader, if installed
+        o holds much of the material data in nif compatible form
       
     o Exporter
       - Upgraded to Visual Studio 2005
       - Dropped registry support in favor of INI file.
-      - Dropped Official Max6 support because I do not have SDK to compile it with (try the max 7 files).
+      - Dropped Official Max6 support because I do not have Max 6 to compile it
+        o Try editing the MaxNifTools.ini and setting the MaxSDKVersion to 0x17700d00
       - Fixed issue with importing glossiness setting on textures.
       - Fixed issues with export of vertex color. Alpha map is now exported as part of the normal color map.
       - No longer exports meshes associated with bone or biped nodes.
@@ -46,6 +50,10 @@
       - Mass, Restitution(Ellasticity), and Friction now share values with Reactor(Havok)
       - Modified UPB export to actually export the values in the UserPropBuffer not just a fixed list.
       - Added Skin Modifier export
+      - Added support for more material/texture properties
+      - Added support for Civilization IV Shader, if installed
+        o holds much of the material data in nif compatible form
+      - Fixed issue with UV map needing to be flipped
       
     o NifProps Utility
       - Mass, Restitution(Ellasticity), and Friction now share values with Reactor(Havok)
