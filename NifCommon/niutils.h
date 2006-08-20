@@ -31,6 +31,7 @@ INFO: See Implementation for minimalist comments
 #include <color.h>
 
 // Niflib Headers
+#include <niflib.h>
 #include <obj\NiObject.h>
 #include <obj\NiAVObject.h>
 #include <obj\NiObjectNET.h>
@@ -342,5 +343,15 @@ extern Modifier *GetSkin(INode *node);
 extern TriObject* GetTriObject(Object *o);
 
 extern TSTR GetFileVersion(const char *fileName);
+
+inline Niflib::NiObjectRef CreateBlock(const char *name) {
+   return Niflib::CreateObject(name);
+}
+
+template<typename T>
+inline Niflib::Ref<T> CreateNiObject() {
+   return Niflib::StaticCast<T>(Niflib::CreateObject(T::TypeConst().GetTypeName()));
+}
+
 
 #endif // _NIUTILS_H_

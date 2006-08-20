@@ -45,4 +45,5 @@
 #include "Exporter.h"
 #include "NifExport.h"
 
+#include "niutils.h"
 #include <shlwapi.h>
