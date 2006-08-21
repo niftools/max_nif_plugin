@@ -1,4 +1,4 @@
-                        MaxPlugins 0.1.5
+                        MaxPlugins 0.2.1
                         ================
 
  
@@ -27,7 +27,12 @@
 
     Change log
     ----------
-    
+      0.2.1
+      -----
+    o Exporter
+      - Replace the Tri Stripper with a new version.
+        o The old version had some bugs which came when compiled with VS 2005.
+        
       0.2
       -----
     o Importer
@@ -44,11 +49,15 @@
       - Dropped Official Max6 support because I do not have Max 6 to compile it
         o Try editing the MaxNifTools.ini and setting the MaxSDKVersion to 0x17700d00
       - Fixed issue with importing glossiness setting on textures.
-      - Fixed issues with export of vertex color. Alpha map is now exported as part of the normal color map.
+      - Fixed issues with export of vertex color. Alpha map is now exported
+         as part of the normal color map.
       - No longer exports meshes associated with bone or biped nodes.
-      - No longer exports extra NiNode when exporting NiTriGeom-based objects (can be reset in ini file)
-      - Mass, Restitution(Ellasticity), and Friction now share values with Reactor(Havok)
-      - Modified UPB export to actually export the values in the UserPropBuffer not just a fixed list.
+      - No longer exports extra NiNode when exporting NiTriGeom-based objects 
+         (can be reset in ini file)
+      - Mass, Restitution(Ellasticity), and Friction now share values with 
+         Reactor(Havok)
+      - Modified UPB export to actually export the values in the UserPropBuffer 
+         not just a fixed list.
       - Added Skin Modifier export
       - Added support for more material/texture properties
       - Added support for Civilization IV Shader, if installed
@@ -78,7 +87,8 @@
       
     o Importer
      - Fixed alignment issues when importing Morrowind Armor nifs
-     - Added initial animation support (only for animations internal to nif, no kf file support yet)
+     - Added initial animation support (only for animations internal to nif, 
+        no kf file support yet)
      - Fixed numerous issues with bone system (biped is still broken)
      - Fixed issues with skin and doac nifs
       

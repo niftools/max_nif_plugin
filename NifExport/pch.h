@@ -38,6 +38,9 @@
 #include "obj/NiStringExtraData.h"
 #include "obj/bhkRigidBodyT.h"
 
+// undef macros for tristripper
+#undef max
+#undef min
 #include "NvTriStrip/NvTriStrip.h"
 #include "TriStripper/tri_stripper.h"
 

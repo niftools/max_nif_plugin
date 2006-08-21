@@ -138,13 +138,13 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,0,0
- PRODUCTVERSION 0,2,0,0
- FILEFLAGSMASK 0x37L
+ FILEVERSION 0,2,1,0
+ PRODUCTVERSION 0,2,1,0
+ FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
- FILEFLAGS 0x21L
+ FILEFLAGS 0x1L
 #else
- FILEFLAGS 0x20L
+ FILEFLAGS 0x0L
 #endif
  FILEOS 0x4L
  FILETYPE 0x2L
@@ -155,13 +155,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "3ds Max Nif Exporter"
-            VALUE "FileVersion", "0, 2, 0, 0"
+            VALUE "FileVersion", "0, 2, 1, 0"
             VALUE "InternalName", "NifExport.dle"
             VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
             VALUE "OriginalFilename", "NifExport.dle"
             VALUE "ProductName", "3ds Max Nif Exporter"
-            VALUE "ProductVersion", "0, 2, 0, 0"
-            VALUE "SpecialBuild", "Alpha"
+            VALUE "ProductVersion", "0, 2, 1, 0"
         END
     END
     BLOCK "VarFileInfo"

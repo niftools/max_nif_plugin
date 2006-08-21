@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Deutsch (Deutschland) resources
+// German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 #ifdef _WIN32
@@ -35,12 +35,12 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Deutsch (Deutschland) resources
+#endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Englisch (USA) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -77,99 +77,53 @@ IDD_PANEL DIALOGEX 0, 0, 107, 401
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    COMBOBOX        IDC_CB_MATERIAL,12,58,83,157,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Material",IDC_LBL_MATERIAL,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,50,83,8
-    COMBOBOX        IDC_CB_LAYER,12,82,83,171,CBS_DROPDOWNLIST | WS_DISABLED | 
-                    WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Layer",IDC_LBL_LAYER,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,74,83,8
+    COMBOBOX        IDC_CB_MATERIAL,12,58,83,157,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Material",IDC_LBL_MATERIAL,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,50,83,8
+    COMBOBOX        IDC_CB_LAYER,12,82,83,171,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Layer",IDC_LBL_LAYER,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,74,83,8
     GROUPBOX        "Havok",IDC_GRP_HAVOK,5,39,95,285,WS_DISABLED
     GROUPBOX        "Object",IDC_GRP_OBJECT,5,5,95,32
-    CONTROL         "Is Collision Mesh",IDC_CHK_ISCOLL,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,14,18,80,10
+    CONTROL         "Is Collision Mesh",IDC_CHK_ISCOLL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,18,80,10
     GROUPBOX        "Global",IDC_STATIC,5,329,95,65,WS_DISABLED
-    EDITTEXT        IDC_ED_BSXFLAGS,13,352,80,12,ES_AUTOHSCROLL | 
-                    WS_DISABLED
-    CONTROL         "BSXFlags",IDC_LBL_BSXFLAGS,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,13,340,80,8
-    EDITTEXT        IDC_ED_STRINGSEXTRA,13,374,80,12,ES_AUTOHSCROLL | 
-                    WS_DISABLED
-    CONTROL         "Strings Extra Data",IDC_LBL_STRINGSEXTRA,"Static",
-                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | 
-                    WS_GROUP,13,365,80,8
-    CONTROL         "Center",IDC_LBL_CENTER,"Static",SS_LEFTNOWORDWRAP | 
-                    SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,98,31,8
-    CONTROL         "Mass",IDC_LBL_MASS,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_DISABLED | WS_GROUP,12,124,28,8
-    CONTROL         "Friction",IDC_LBL_FRICTION,"Static",SS_LEFTNOWORDWRAP | 
-                    WS_DISABLED | WS_GROUP,42,124,28,8
-    LTEXT           "Resti-\r\ntution",IDC_LBL_RESTITUTION,70,124,24,15,
-                    WS_DISABLED
-    CONTROL         "Motion System",IDC_LBL_MOTION_SYSTEM,"Static",
-                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | 
-                    WS_GROUP,12,263,67,8
-    COMBOBOX        IDC_CB_MOTION_SYSTEM,12,273,83,74,CBS_DROPDOWNLIST | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "Quality Type",IDC_LBL_QUALITY_TYPE,"Static",
-                    SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | 
-                    WS_GROUP,12,289,43,8
-    COMBOBOX        IDC_CB_QUALITY_TYPE,12,298,83,63,CBS_DROPDOWN | 
-                    WS_DISABLED | WS_VSCROLL | WS_TABSTOP
-    CONTROL         "",IDC_ED_CENTER_X,"CustEdit",WS_DISABLED | WS_TABSTOP,
-                    12,109,20,10
-    CONTROL         "",IDC_SP_CENTER_X,"SpinnerControl",WS_DISABLED,30,109,7,
-                    10
-    CONTROL         "",IDC_ED_CENTER_Y,"CustEdit",WS_DISABLED | WS_TABSTOP,
-                    42,109,20,10
-    CONTROL         "",IDC_SP_CENTER_Y,"SpinnerControl",WS_DISABLED,60,109,7,
-                    10
-    CONTROL         "",IDC_ED_CENTER_Z,"CustEdit",WS_DISABLED | WS_TABSTOP,
-                    72,109,20,10
-    CONTROL         "",IDC_SP_CENTER_Z,"SpinnerControl",WS_DISABLED,92,109,7,
-                    10
-    CONTROL         "",IDC_ED_MASS,"CustEdit",WS_DISABLED | WS_TABSTOP,12,
-                    143,20,10
+    EDITTEXT        IDC_ED_BSXFLAGS,13,352,80,12,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "BSXFlags",IDC_LBL_BSXFLAGS,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,13,340,80,8
+    EDITTEXT        IDC_ED_STRINGSEXTRA,13,374,80,12,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         "Strings Extra Data",IDC_LBL_STRINGSEXTRA,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,13,365,80,8
+    CONTROL         "Center",IDC_LBL_CENTER,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,98,31,8
+    CONTROL         "Mass",IDC_LBL_MASS,"Static",SS_LEFTNOWORDWRAP | WS_DISABLED | WS_GROUP,12,124,28,8
+    CONTROL         "Friction",IDC_LBL_FRICTION,"Static",SS_LEFTNOWORDWRAP | WS_DISABLED | WS_GROUP,42,124,28,8
+    LTEXT           "Resti-\r\ntution",IDC_LBL_RESTITUTION,70,124,24,15,WS_DISABLED
+    CONTROL         "Motion System",IDC_LBL_MOTION_SYSTEM,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,263,67,8
+    COMBOBOX        IDC_CB_MOTION_SYSTEM,12,273,83,74,CBS_DROPDOWNLIST | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Quality Type",IDC_LBL_QUALITY_TYPE,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_DISABLED | WS_GROUP,12,289,43,8
+    COMBOBOX        IDC_CB_QUALITY_TYPE,12,298,83,63,CBS_DROPDOWN | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "",IDC_ED_CENTER_X,"CustEdit",WS_DISABLED | WS_TABSTOP,12,109,20,10
+    CONTROL         "",IDC_SP_CENTER_X,"SpinnerControl",WS_DISABLED,30,109,7,10
+    CONTROL         "",IDC_ED_CENTER_Y,"CustEdit",WS_DISABLED | WS_TABSTOP,42,109,20,10
+    CONTROL         "",IDC_SP_CENTER_Y,"SpinnerControl",WS_DISABLED,60,109,7,10
+    CONTROL         "",IDC_ED_CENTER_Z,"CustEdit",WS_DISABLED | WS_TABSTOP,72,109,20,10
+    CONTROL         "",IDC_SP_CENTER_Z,"SpinnerControl",WS_DISABLED,92,109,7,10
+    CONTROL         "",IDC_ED_MASS,"CustEdit",WS_DISABLED | WS_TABSTOP,12,143,20,10
     CONTROL         "",IDC_SP_MASS,"SpinnerControl",WS_DISABLED,30,143,7,10
-    CONTROL         "",IDC_ED_FRICTION,"CustEdit",WS_DISABLED | WS_TABSTOP,
-                    42,143,20,10
-    CONTROL         "",IDC_SP_FRICTION,"SpinnerControl",WS_DISABLED,60,143,7,
-                    10
-    CONTROL         "",IDC_ED_RESTITUTION,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,70,143,20,10
-    CONTROL         "",IDC_SP_RESTITUTION,"SpinnerControl",WS_DISABLED,90,
-                    143,7,10
-    LTEXT           "Linear\r\nDamping",IDC_LBL_LINEAR_DAMPING,12,159,30,17,
-                    WS_DISABLED
-    CONTROL         "",IDC_ED_LINEAR_DAMPING,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,12,178,35,10
-    CONTROL         "",IDC_SP_LINEAR_DAMPING,"SpinnerControl",WS_DISABLED,45,
-                    178,7,10
-    LTEXT           "Angular\r\nDamping",IDC_LBL_ANGULAR_DAMPING,55,159,45,
-                    17,WS_DISABLED
-    CONTROL         "",IDC_ED_ANGULAR_DAMPING,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,55,178,35,10
-    CONTROL         "",IDC_SP_ANGULAR_DAMPING,"SpinnerControl",WS_DISABLED,
-                    90,178,7,10
-    LTEXT           "Max. Linear\r\nVelocity",IDC_LBL_MAX_LINEAR_VELOCITY,12,
-                    194,40,16,WS_DISABLED
-    CONTROL         "",IDC_ED_MAX_LINEAR_VELOCITY,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,12,214,35,10
-    CONTROL         "",IDC_SP_MAX_LINEAR_VELOCITY,"SpinnerControl",
-                    WS_DISABLED,45,214,7,10
-    LTEXT           "Max. Angular\r\nVelocity",IDC_LBL_MAX_ANGULAR_VELOCITY,
-                    55,194,45,16,WS_DISABLED
-    CONTROL         "",IDC_ED_MAX_ANGULAR_VELOCITY,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,55,214,35,10
-    CONTROL         "",IDC_SP_MAX_ANGULAR_VELOCITY,"SpinnerControl",
-                    WS_DISABLED,90,214,7,10
-    LTEXT           "Penetration\r\nDepth",IDC_LBL_PENETRATION_DEPTH,12,229,
-                    40,16,WS_DISABLED
-    CONTROL         "",IDC_ED_PENETRATION_DEPTH,"CustEdit",WS_DISABLED | 
-                    WS_TABSTOP,12,249,35,10
-    CONTROL         "",IDC_SP_PENETRATION_DEPTH,"SpinnerControl",WS_DISABLED,
-                    45,249,7,10
+    CONTROL         "",IDC_ED_FRICTION,"CustEdit",WS_DISABLED | WS_TABSTOP,42,143,20,10
+    CONTROL         "",IDC_SP_FRICTION,"SpinnerControl",WS_DISABLED,60,143,7,10
+    CONTROL         "",IDC_ED_RESTITUTION,"CustEdit",WS_DISABLED | WS_TABSTOP,70,143,20,10
+    CONTROL         "",IDC_SP_RESTITUTION,"SpinnerControl",WS_DISABLED,90,143,7,10
+    LTEXT           "Linear\r\nDamping",IDC_LBL_LINEAR_DAMPING,12,159,30,17,WS_DISABLED
+    CONTROL         "",IDC_ED_LINEAR_DAMPING,"CustEdit",WS_DISABLED | WS_TABSTOP,12,178,35,10
+    CONTROL         "",IDC_SP_LINEAR_DAMPING,"SpinnerControl",WS_DISABLED,45,178,7,10
+    LTEXT           "Angular\r\nDamping",IDC_LBL_ANGULAR_DAMPING,55,159,45,17,WS_DISABLED
+    CONTROL         "",IDC_ED_ANGULAR_DAMPING,"CustEdit",WS_DISABLED | WS_TABSTOP,55,178,35,10
+    CONTROL         "",IDC_SP_ANGULAR_DAMPING,"SpinnerControl",WS_DISABLED,90,178,7,10
+    LTEXT           "Max. Linear\r\nVelocity",IDC_LBL_MAX_LINEAR_VELOCITY,12,194,40,16,WS_DISABLED
+    CONTROL         "",IDC_ED_MAX_LINEAR_VELOCITY,"CustEdit",WS_DISABLED | WS_TABSTOP,12,214,35,10
+    CONTROL         "",IDC_SP_MAX_LINEAR_VELOCITY,"SpinnerControl",WS_DISABLED,45,214,7,10
+    LTEXT           "Max. Angular\r\nVelocity",IDC_LBL_MAX_ANGULAR_VELOCITY,55,194,45,16,WS_DISABLED
+    CONTROL         "",IDC_ED_MAX_ANGULAR_VELOCITY,"CustEdit",WS_DISABLED | WS_TABSTOP,55,214,35,10
+    CONTROL         "",IDC_SP_MAX_ANGULAR_VELOCITY,"SpinnerControl",WS_DISABLED,90,214,7,10
+    LTEXT           "Penetration\r\nDepth",IDC_LBL_PENETRATION_DEPTH,12,229,40,16,WS_DISABLED
+    CONTROL         "",IDC_ED_PENETRATION_DEPTH,"CustEdit",WS_DISABLED | WS_TABSTOP,12,249,35,10
+    CONTROL         "",IDC_SP_PENETRATION_DEPTH,"SpinnerControl",WS_DISABLED,45,249,7,10
 END
 
 
@@ -384,6 +338,44 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,2,1,0
+ PRODUCTVERSION 0,2,1,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "3ds Max Nif Reactor Properites Plugin"
+            VALUE "FileVersion", "0, 2, 1, 0"
+            VALUE "InternalName", "NifProps.dlu"
+            VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
+            VALUE "OriginalFilename", "NifProps.dlu"
+            VALUE "ProductName", "3ds Max Nif Reactor Properites Plugin"
+            VALUE "ProductVersion", "0, 2, 1, 0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
@@ -396,7 +388,7 @@ BEGIN
     IDS_SPIN                "Spin"
 END
 
-#endif    // Englisch (USA) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

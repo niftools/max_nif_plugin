@@ -15,7 +15,7 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 	
 	tri_stripper stripper(idcs);
 
-	tri_stripper::primitives_vector groups;
+	primitive_vector groups;
 	stripper.Strip(&groups);
 
 	// triangles left over
@@ -23,22 +23,22 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 
 	for (i=0; i<groups.size(); i++)
 	{
-		if (groups[i].m_Type == tri_stripper::PT_Triangle_Strip)
+		if (groups[i].Type == TRIANGLE_STRIP)
 		{			
-			strips.push_back(TriStrip(groups[i].m_Indices.size()));
+			strips.push_back(TriStrip(groups[i].Indices.size()));
 			TriStrip &strip = strips.back();
 
-			for (int j=0; j<groups[i].m_Indices.size(); j++)
-				strip[j] = groups[i].m_Indices[j];
+			for (int j=0; j<groups[i].Indices.size(); j++)
+				strip[j] = groups[i].Indices[j];
 		} else
 		{
 			int size = stris.size();
-			stris.resize(size + groups[i].m_Indices.size()/3);
+			stris.resize(size + groups[i].Indices.size()/3);
 			for (int j=(size>0)?(size-1):0; j<stris.size(); j++)
 			{
-				stris[j][0] = groups[i].m_Indices[j*3+0];
-				stris[j][1] = groups[i].m_Indices[j*3+1];
-				stris[j][2] = groups[i].m_Indices[j*3+2];
+				stris[j][0] = groups[i].Indices[j*3+0];
+				stris[j][1] = groups[i].Indices[j*3+1];
+				stris[j][2] = groups[i].Indices[j*3+2];
 			}
 		}
 	}

@@ -1,8 +1,7 @@
-// tri_stripper.h: interface for the tri_stripper class.
-//
+
 //////////////////////////////////////////////////////////////////////
 //
-//  Copyright (C) 2002 Tanguy Fautré.
+//  Copyright (C) 2004 Tanguy Fautré.
 //
 //  This software is provided 'as-is', without any express or implied
 //  warranty.  In no event will the authors be held liable for any damages
@@ -21,60 +20,48 @@
 //  3. This notice may not be removed or altered from any source distribution.
 //
 //  Tanguy Fautré
-//  softdev@pandora.be
+//  softdev@telenet.be
 //
 //////////////////////////////////////////////////////////////////////
 //
 //							Tri Stripper
 //							************
 //
-// Current version: 1.00 Final (23/04/2003)
-//
-// Comment: Triangle stripper in O(n.log(n)).
+// Post TnL cache aware triangle stripifier in O(n.log(n)).
 //          
-//          Currently there are no protection against crazy values
-//          given via SetMinStripSize() and SetCacheSize().
-//          So be careful. (Min. strip size should be equal or greater
-//          than 2, cache size should be about 10 for GeForce 256/2
-//          and about 10-16 for GeForce 3/4.) 
-//          
-// History: - 1.00 FINAL  (23/04/2003) - Separated cache simulator into another class
-//                                     - Fixed English: "indice" -> "index"
-//                                     - Fixed one or two points for better compatibility
-//                                       with newer compilers (VC++ .NET 2003)
-//          - 1.00 BETA 5 (10/12/2002) - Fixed a bug in Stripify() that could sometimes
-//                                       cause it to go into an infinite loop.
-//                                       (thanks to Remy for the bug report)
-//          - 1.00 BETA 4 (18/11/2002) - Removed the dependency on OpenGL:
-//                                       modified gl_primitives to primitives,
-//                                       and gl_primitives_vector to primitives_vector;
-//                                       and added primitive_type.
-//                                       (thanks to Patrik for noticing this useless dependency)
-//          - 1.00 BETA 3 (18/11/2002) - Fixed a bug in LinkNeightboursTri() that could cause a crash
-//                                       (thanks to Nicolas for finding it)
-//          - 1.00 BETA 2 (16/11/2002) - Improved portability
-//          - 1.00 BETA 1 (27/10/2002) - First public release
+// History: see ChangeLog
 //
 //////////////////////////////////////////////////////////////////////
+// SVN: $Id: tri_stripper.h 86 2005-06-08 17:47:27Z gpsnoopy $
+//////////////////////////////////////////////////////////////////////
 
-#pragma once
+// Protection against old C habits
+#if defined(max)
+#error "'max' macro defined! It's against the C++ standard. Please use 'std::max' instead (undefine 'max' macro if it was defined in another library)."
+#endif
+
+// Protection against old C habits
+#if defined(min)
+#error "'min' macro defined! It's against the C++ standard. Please use 'std::min' instead (undefine 'min' macro if it was defined in another library)."
+#endif
+
+
+
+#ifndef TRI_STRIPPER_HEADER_GUARD_TRI_STRIPPER_H
+#define TRI_STRIPPER_HEADER_GUARD_TRI_STRIPPER_H
+
+#include "public_types.h"
+
+#include "detail/cache_simulator.h"
+#include "detail/graph_array.h"
+#include "detail/heap_array.h"
+#include "detail/types.h"
 
 
 
 
-#include "cache_simulator.h"
-
-
-
-
-// namespace triangle_stripper
 namespace triangle_stripper {
 
-
-
-
-#include "graph_array.h"
-#include "heap_array.h"
 
 
 
@@ -82,299 +69,114 @@ class tri_stripper
 {
 public:
 
-	// New Public types
-	typedef unsigned int index;
-	typedef std::vector<index> indices;
-
-	enum primitive_type {
-		PT_Triangles		= 0x0004,	// = GL_TRIANGLES
-		PT_Triangle_Strip	= 0x0005	// = GL_TRIANGLE_STRIP
-	};
-
-	struct primitives
-	{
-		indices			m_Indices;
-		primitive_type	m_Type;
-	};
-
-	typedef std::vector<primitives> primitives_vector;
-
-	struct triangles_indices_error { };
-
-
-	// constructor/initializer
 	tri_stripper(const indices & TriIndices);
-	
-	// Settings functions
-	void SetCacheSize(const size_t CacheSize = 16);			// = 0 will disable the cache optimizer
-	void SetMinStripSize(const size_t MinStripSize = 2);
 
-	// Stripper
-	void Strip(primitives_vector * out_pPrimitivesVector);	// throw triangles_indices_error();
+	void Strip(primitive_vector * out_pPrimitivesVector);
+
+	/* Stripifier Algorithm Settings */
+	
+	// Set the post-T&L cache size (0 disables the cache optimizer).
+	void SetCacheSize(size_t CacheSize = 10);
+
+	// Set the minimum size of a triangle strip (should be at least 2 triangles).
+	// The stripifier discard any candidate strips that does not satisfy the minimum size condition.
+	void SetMinStripSize(size_t MinStripSize = 2);
+
+	// Set the backward search mode in addition to the forward search mode.
+	// In forward mode, the candidate strips are build with the current candidate triangle being the first
+	// triangle of the strip. When the backward mode is enabled, the stripifier also tests candidate strips
+	// where the current candidate triangle is the last triangle of the strip.
+	// Enable this if you want better results at the expense of being slightly slower.
+	// Note: Do *NOT* use this when the cache optimizer is enabled; it only gives worse results.
+	void SetBackwardSearch(bool Enabled = false);
+	
+	// Set the cache simulator FIFO behavior (does nothing if the cache optimizer is disabled).
+	// When enabled, the cache is simulated as a simple FIFO structure. However, when
+	// disabled, indices that trigger cache hits are not pushed into the FIFO structure.
+	// This allows simulating some GPUs that do not duplicate cache entries (e.g. NV25 or greater).
+	void SetPushCacheHits(bool Enabled = true);
+
+	/* End Settings */
 
 private:
 
-	friend struct _cmp_tri_interface_lt;
+	typedef detail::graph_array<detail::triangle> triangle_graph;
+	typedef detail::heap_array<size_t, std::greater<size_t> > triangle_heap;
+	typedef std::vector<size_t> candidates;
+	typedef triangle_graph::node_iterator tri_iterator;
+	typedef triangle_graph::const_node_iterator const_tri_iterator;
+	typedef triangle_graph::out_arc_iterator link_iterator;
+	typedef triangle_graph::const_out_arc_iterator const_link_iterator;
 
-
-	class triangle
-	{
-	public:
-		triangle();
-		triangle(const index A, const index B, const index C);
-
-		void SetStripID(const size_t StripID);
-
-		index A() const;
-		index B() const;
-		index C() const;
-		size_t StripID() const;
-
-	private:
-		index m_A;
-		index m_B;
-		index m_C;
-		size_t m_StripID;
-	};
-
-
-	class triangle_edge
-	{
-	public:
-		triangle_edge(const index A, const index B, const size_t TriPos);
-
-		index A() const;
-		index B() const;
-		size_t TriPos() const;
-
-	private:
-		index m_A;
-		index m_B;
-		size_t m_TriPos;
-	};
-
-
-	class triangle_degree
-	{
-	public:
-		triangle_degree();
-		triangle_degree(const size_t TriPos, const size_t Degree);
-
-		size_t Degree() const;
-		size_t TriPos() const;
-
-		void SetDegree(const size_t Degree);
-
-	private:
-		size_t m_TriPos;
-		size_t m_Degree;
-	};
-
-
-	class triangle_strip
-	{
-	public:
-		enum start_order { ABC = 0, BCA = 1, CAB = 2 };
-
-		triangle_strip();
-		triangle_strip(size_t StartTriPos, start_order StartOrder, size_t Size);
-
-		size_t StartTriPos() const;
-		start_order StartOrder() const;
-		size_t Size() const;
-
-	private:
-		size_t		m_StartTriPos;
-		start_order	m_StartOrder;
-		size_t		m_Size;
-	};
-
-
-	struct _cmp_tri_interface_lt
-	{
-		bool operator() (const triangle_edge & a, const triangle_edge & b) const;
-	};
-
-
-	struct _cmp_tri_degree_gt
-	{
-		bool operator () (const triangle_degree & a, const triangle_degree & b) const;
-	};
-
-
-	typedef common_structures::graph_array<triangle, char> triangles_graph;
-	typedef common_structures::heap_array<triangle_degree, _cmp_tri_degree_gt> triangles_heap;
-	typedef std::vector<triangle_edge> triangle_edges;
-	typedef std::vector<size_t> triangle_indices;
-	typedef std::deque<index> indices_cache; 
-
-
-	void InitCache();
-	void InitTriGraph();
 	void InitTriHeap();
 	void Stripify();
 	void AddLeftTriangles();
+	void ResetStripIDs();
 
-	void LinkNeighboursTri(const triangle_edges & TriInterface, const triangle_edge Edge);
-	void MarkTriAsTaken(const size_t i);
+	detail::strip FindBestStrip();
+	detail::strip ExtendToStrip(size_t Start, detail::triangle_order Order);
+	detail::strip BackExtendToStrip(size_t Start, detail::triangle_order Order, bool ClockWise);
+	const_link_iterator LinkToNeighbour(const_tri_iterator Node, bool ClockWise, detail::triangle_order & Order, bool NotSimulation);
+	const_link_iterator BackLinkToNeighbour(const_tri_iterator Node, bool ClockWise, detail::triangle_order & Order);
+	void BuildStrip(const detail::strip Strip);
+	void MarkTriAsTaken(size_t i);
+	void AddIndex(index i, bool NotSimulation);
+	void BackAddIndex(index i);
+	void AddTriangle(const detail::triangle & Tri, detail::triangle_order Order, bool NotSimulation);
+	void BackAddTriangle(const detail::triangle & Tri, detail::triangle_order Order);
 
-	triangle_edge GetLatestEdge(const triangle & Triangle, const triangle_strip::start_order Order) const;
+	bool Cache() const;
+	size_t CacheSize() const;
 
-	triangle_strip FindBestStrip();
-	triangle_strip ExtendTriToStrip(const size_t StartTriPos, const triangle_strip::start_order StartOrder);
-	void BuildStrip(const triangle_strip TriStrip);
-	void AddIndex(const index i);
-	void AddIndexToCache(const index i, bool CacheHitCount = false);
-	void AddTriToCache(const triangle & Tri, const triangle_strip::start_order Order);
-	void AddTriToIndices(const triangle & Tri, const triangle_strip::start_order Order);
+	static detail::triangle_edge FirstEdge(const detail::triangle & Triangle, detail::triangle_order Order);
+	static detail::triangle_edge LastEdge(const detail::triangle & Triangle, detail::triangle_order Order);
 
-	const indices &		m_TriIndices;
-
-	size_t				m_MinStripSize;
-//	size_t				m_CacheSize;
-
-	primitives_vector	m_PrimitivesVector;
-	triangles_graph		m_Triangles;
-	triangles_heap		m_TriHeap;
-	triangle_indices	m_NextCandidates;
-	cache_simulator		m_Cache;
-//	indices_cache		m_IndicesCache;
-	size_t				m_StripID;
-//	size_t				m_CacheHits;
+	primitive_vector			m_PrimitivesVector;
+	triangle_graph				m_Triangles;
+	triangle_heap				m_TriHeap;
+	candidates					m_Candidates;
+	detail::cache_simulator		m_Cache;
+	detail::cache_simulator		m_BackCache;
+	size_t						m_StripID;
+	size_t						m_MinStripSize;
+	bool						m_BackwardSearch;
+	bool						m_FirstRun;
 };
 
 
 
 
+
 //////////////////////////////////////////////////////////////////////////
-// tri_stripper Inline functions
+// tri_stripper inline functions
 //////////////////////////////////////////////////////////////////////////
 
-inline tri_stripper::tri_stripper(const indices & TriIndices) : m_TriIndices(TriIndices) {
-	SetCacheSize();
-	SetMinStripSize();
-}
-
-
-inline void tri_stripper::SetCacheSize(const size_t CacheSize) {
-//	m_CacheSize = CacheSize;
+inline void tri_stripper::SetCacheSize(const size_t CacheSize)
+{
 	m_Cache.resize(CacheSize);
+	m_BackCache.resize(CacheSize);
 }
 
 
-inline void tri_stripper::SetMinStripSize(const size_t MinStripSize) {
-	m_MinStripSize = MinStripSize;
-}
-
-
-inline tri_stripper::triangle::triangle() { }
-
-
-inline tri_stripper::triangle::triangle(const index A, const index B, const index C) : m_A(A), m_B(B), m_C(C), m_StripID(0) { }
-
-
-inline void tri_stripper::triangle::SetStripID(const size_t StripID) {
-	m_StripID = StripID;
-}
-
-
-inline tri_stripper::index tri_stripper::triangle::A() const {
-	return m_A;
-}
-
-
-inline tri_stripper::index tri_stripper::triangle::B() const {
-	return m_B;
-}
-
-
-inline tri_stripper::index tri_stripper::triangle::C() const {
-	return m_C;
-}
-
-
-inline size_t tri_stripper::triangle::StripID() const {
-	return m_StripID;
-}
-
-
-inline tri_stripper::triangle_edge::triangle_edge(const index A, const index B, const size_t TriPos) : m_A(A), m_B(B), m_TriPos(TriPos) { }
-
-
-inline tri_stripper::index tri_stripper::triangle_edge::A() const {
-	return m_A;
-}
-
-
-inline tri_stripper::index tri_stripper::triangle_edge::B() const {
-	return m_B;
-}
-
-
-inline size_t tri_stripper::triangle_edge::TriPos() const {
-	return m_TriPos;
-}
-
-
-inline tri_stripper::triangle_degree::triangle_degree() { }
-
-
-inline tri_stripper::triangle_degree::triangle_degree(const size_t TriPos, const size_t Degree) : m_TriPos(TriPos), m_Degree(Degree) { }
-
-
-inline size_t tri_stripper::triangle_degree::Degree() const {
-	return m_Degree;
-}
-
-
-inline size_t tri_stripper::triangle_degree::TriPos() const {
-	return m_TriPos;
-}
-
-
-inline void tri_stripper::triangle_degree::SetDegree(const size_t Degree) {
-	m_Degree = Degree;
-}
-
-
-inline tri_stripper::triangle_strip::triangle_strip() : m_StartTriPos(0), m_StartOrder(ABC), m_Size(0) { }
-
-
-inline tri_stripper::triangle_strip::triangle_strip(const size_t StartTriPos, const start_order StartOrder, const size_t Size)
-	: m_StartTriPos(StartTriPos), m_StartOrder(StartOrder), m_Size(Size) { }
-
-
-inline size_t tri_stripper::triangle_strip::StartTriPos() const {
-	return m_StartTriPos;
-}
-
-
-inline tri_stripper::triangle_strip::start_order tri_stripper::triangle_strip::StartOrder() const {
-	return m_StartOrder;
-}
-
-
-inline size_t tri_stripper::triangle_strip::Size() const {
-	return m_Size;
-}
-
-
-inline bool tri_stripper::_cmp_tri_interface_lt::operator() (const triangle_edge & a, const triangle_edge & b) const {
-	const tri_stripper::index A1 = a.A();
-	const tri_stripper::index B1 = a.B();
-	const tri_stripper::index A2 = b.A();
-	const tri_stripper::index B2 = b.B();
-
-	if ((A1 < A2) || ((A1 == A2) && (B1 < B2)))
-		return true;
+inline void tri_stripper::SetMinStripSize(const size_t MinStripSize)
+{
+	if (MinStripSize < 2)
+		m_MinStripSize = 2;
 	else
-		return false;
+		m_MinStripSize = MinStripSize;
 }
 
 
-inline bool tri_stripper::_cmp_tri_degree_gt::operator () (const triangle_degree & a, const triangle_degree & b) const {
-	// the triangle with a smaller degree has more priority 
-	return a.Degree() > b.Degree();
+inline void tri_stripper::SetBackwardSearch(const bool Enabled)
+{
+	m_BackwardSearch = Enabled;
+}
+
+
+
+inline void tri_stripper::SetPushCacheHits(bool Enabled)
+{
+	m_Cache.push_cache_hits(Enabled);
 }
 
 
@@ -383,3 +185,6 @@ inline bool tri_stripper::_cmp_tri_degree_gt::operator () (const triangle_degree
 } // namespace triangle_stripper
 
 
+
+
+#endif // TRI_STRIPPER_HEADER_GUARD_TRI_STRIPPER_H
