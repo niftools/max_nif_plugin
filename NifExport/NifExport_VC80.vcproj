@@ -1000,23 +1000,27 @@
 				Name="TriStripper"
 				>
 				<File
-					RelativePath="TriStripper\cache_simulator.h"
+					RelativePath=".\TriStripper\detail\cache_simulator.h"
 					>
 				</File>
 				<File
-					RelativePath="TriStripper\graph_array.h"
+					RelativePath=".\TriStripper\detail\connectivity_graph.h"
 					>
 				</File>
 				<File
-					RelativePath="TriStripper\heap_array.h"
+					RelativePath=".\TriStripper\detail\graph_array.h"
 					>
 				</File>
 				<File
-					RelativePath=".\TriStripper\public_types.h"
+					RelativePath=".\TriStripper\detail\heap_array.h"
 					>
 				</File>
 				<File
-					RelativePath="TriStripper\tri_stripper.h"
+					RelativePath=".\TriStripper\detail\policy.h"
+					>
+				</File>
+				<File
+					RelativePath=".\TriStripper\detail\types.h"
 					>
 				</File>
 			</Filter>
