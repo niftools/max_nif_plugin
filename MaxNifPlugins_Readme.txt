@@ -32,6 +32,7 @@
     o Exporter
       - Replace the Tri Stripper with a new version.
         o The old version had some bugs which came when compiled with VS 2005.
+      - Fix issues with transforms on exporting with extra nodes and for collision meshes
         
       0.2
       -----

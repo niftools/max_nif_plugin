@@ -81,13 +81,11 @@ Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
             || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
             || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
             )
-         )
+            ) 
+      {
          newParent = makeNode(nodeParent, node, local);
-#ifdef USE_BIPED
-      else if (os.obj && os.obj->node->ClassID() == BIPED_CLASS_ID)
-         newParent = makeNode(nodeParent, node, local);
-#endif
-      else
+      } 
+      else 
       {
          newParent = (mExportExtraNodes) ? makeNode(nodeParent, node, local) : nodeParent;
 
@@ -180,14 +178,12 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		}
       bool exportStrips = mTriStrips;
 
-      // Disable strips if exporting skin nodes, for now
-      //if (exportStrips && mExportSkin && GetSkin(node) != NULL)
-      //   exportStrips = false;
-
-
-      Matrix33 rot; Vector3 trans;
-      nodeTransform(rot, trans, node, t, local);
-      Matrix44 tm(trans, rot, 1.0f);
+      Matrix44 tm = Matrix44::IDENTITY;
+      if (!mExportExtraNodes) {
+         Matrix33 rot; Vector3 trans;
+         nodeTransform(rot, trans, node, t, local);
+         tm = Matrix44(trans, rot, 1.0f);
+      }
 
       TSTR basename = node->NodeName();
       TSTR format = (!basename.isNull() && grps.size() > 1) ? "%s:%d" : "%s";
@@ -223,23 +219,15 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	NiTriBasedGeomRef shape;
 	NiTriBasedGeomDataRef data;
 
-	if (exportStrips)
-	{
-		NiTriStripsRef stripsShape = CreateNiObject<NiTriStrips>();
-		shape = DynamicCast<NiTriBasedGeom>(stripsShape);
-		strippify(grp);
-		NiTriStripsDataRef stripData = makeTriStripsData(grp.strips);
-		data = DynamicCast<NiTriBasedGeomData>(stripData);
-
-	} else
-	{
-		NiTriShapeRef tris = CreateNiObject<NiTriShape>();
-		NiTriShapeDataRef triData = CreateNiObject<NiTriShapeData>();
-		data = DynamicCast<NiTriBasedGeomData>(triData);
-		shape = DynamicCast<NiTriBasedGeom>(tris);
-		triData->SetTriangles(grp.faces);
+	if (exportStrips) {
+      shape = new NiTriStrips();
+      data = new NiTriStripsData();
+	} else {
+      shape = new NiTriShape();
+      data = new NiTriShapeData();
 	}
 
+   data->SetTriangles(grp.faces);
 	data->SetVertices(grp.verts);
 	data->SetNormals(grp.vnorms);
 
@@ -370,12 +358,6 @@ struct SkinInstance : public Exporter::NiCallback
 {  
    typedef vector<SkinWeight> SkinWeightList;
    typedef vector<SkinWeightList> BoneWeightList;
-   typedef vector<float> WeightList;
-   typedef vector<ushort> BoneList;
-   typedef vector<ushort> Strip;
-   typedef vector<Strip> Strips;
-   typedef vector<Triangle> Triangles;
-
 
    Exporter *owner;
    // Common Data
@@ -384,15 +366,6 @@ struct SkinInstance : public Exporter::NiCallback
 
    // Bone to weight map
    BoneWeightList boneWeights;
-
-   // Partition
-   int nWeightsPerVertex;
-   vector<WeightList> vertexWeights;
-   BoneList boneMap;
-   vector<ushort> vertexMap;
-   Strips strips;
-   vector<BoneList> boneIndexList;
-   Triangles triangles;
 
    SkinInstance(Exporter *Owner) : owner(Owner) {}
    virtual ~SkinInstance() {}
@@ -429,44 +402,21 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
    mPostExportCallbacks.push_back(si);
 
    si->shape = shape;
-   for (TriStrips::iterator strip = grp.strips.begin(); strip != grp.strips.end(); ++strip)
-      si->strips.push_back(*strip);
-
-   // Get number of weights per vertex
-   int nWeightsPerVertex = 4;
-   Interval ivalid;
-   IParamBlock2 *params = mod->GetParamBlockByID(2/*advanced*/);
-   params->GetValue(0x7/*bone_Limit*/, 0, nWeightsPerVertex, ivalid);
-   si->nWeightsPerVertex = nWeightsPerVertex;
 
    // Get bone references (may not actually exist in proper structure at this time)
    int totalBones = skin->GetNumBones();
    si->boneWeights.resize(totalBones);
    si->boneList.resize(totalBones);
-   si->boneMap.resize(totalBones);
    for (int i=0; i<totalBones; ++i) {
       string name = skin->GetBone(i)->GetName();
       si->boneList[i] = getNode(name);
-      si->boneMap[i] = i;
    }
 
    vector<int>& vidx = grp.vidx;
-   vector<Vector3>& verts = grp.verts;
    int nv = vidx.size();
-   si->vertexMap.resize(nv);
-   si->vertexWeights.resize(nv);
-   si->boneIndexList.resize(nv);
-
    for (int i=0; i<nv; ++i)
    {
-      SkinInstance::WeightList& vertexWeights = si->vertexWeights[i];
-      SkinInstance::BoneList& boneIndexList = si->boneIndexList[i];
-      vertexWeights.assign(nWeightsPerVertex, 0.0f);
-      boneIndexList.resize(nWeightsPerVertex, 0);
-      si->vertexMap[i] = i;
-
       int vi = vidx[i];
-      Vector3& vert = verts[i];
       int nbones = skinData->GetNumAssignedBones(vi);
       for (int j=0; j<nbones; ++j)
       {
@@ -477,9 +427,6 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
 
          SkinInstance::SkinWeightList& weights = si->boneWeights[boneIndex];
          weights.push_back(sw);
-
-         boneIndexList[j] = boneIndex;
-         vertexWeights[j] = sw.weight;
       }         
    }
    return true;
@@ -499,29 +446,7 @@ Exporter::Result SkinInstance::execute()
       else
          shape->SetBoneWeights(bone, emptyweights);
    }
-
-   NiSkinInstanceRef skin = shape->GetSkinInstance();
-   NiSkinPartitionRef partition = CreateNiObject<NiSkinPartition>();
-   partition->SetNumPartitions(1);
-   partition->SetWeightsPerVertex(0, nWeightsPerVertex);
-   partition->SetBoneMap(0, boneMap);
-   partition->SetNumVertices(0, ushort(vertexMap.size()) );
-   partition->SetVertexMap(0, vertexMap);
-   partition->EnableVertexWeights(0, true);
-   for (int i=0; i<vertexWeights.size(); ++i) {
-      partition->SetVertexWeights(0, i, vertexWeights[i]);
-   }
-   //partition->SetTriangles()
-   partition->SetStripCount(0, ushort(strips.size()) );
-   for (int i=0; i<strips.size(); ++i) {
-      partition->SetStrip(0, i, strips[i]);
-   }
-   partition->EnableVertexBoneIndices(0, true);
-   for (int i=0; i<boneIndexList.size(); ++i) {
-      partition->SetVertexBoneIndices(0, i, boneIndexList[i]);
-   }
-
-   skin->SetSkinPartition(partition);
+   shape->GenHardwareSkinInfo();
 
    return Exporter::Ok;
 }

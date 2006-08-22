@@ -294,6 +294,18 @@ static inline Quat TOQUAT(const Niflib::QuaternionXYZW& q, bool inverse = false)
    return (inverse) ? qt.Inverse() : qt;
 }
 
+static inline Niflib::QuaternionXYZW TOQUATXYZW(const Niflib::Quaternion& q){
+   Niflib::QuaternionXYZW qt;
+   qt.x = q.x; qt.y = q.y; qt.z = q.z; qt.w = q.w;
+   return qt;
+}
+
+static inline Niflib::QuaternionXYZW TOQUATXYZW(const Quat& q){
+   Niflib::QuaternionXYZW qt;
+   qt.x = q.x; qt.y = q.y; qt.z = q.z; qt.w = q.w;
+   return qt;
+}
+
 static inline AngAxis TOANGAXIS(const Niflib::Quaternion& q, bool inverse = false){
    Quat qt(q.x, q.y, q.z, q.w);
    if (inverse) qt.Invert();

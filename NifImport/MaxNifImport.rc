@@ -108,8 +108,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,1,0
- PRODUCTVERSION 0,2,1,0
+ FILEVERSION 0,2,2,0
+ PRODUCTVERSION 0,2,2,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -125,12 +125,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "3ds Max Nif Importer"
-            VALUE "FileVersion", "0, 2, 1, 0"
+            VALUE "FileVersion", "0, 2, 2, 0"
             VALUE "InternalName", "MaxNifImport.dli"
             VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
             VALUE "OriginalFilename", "MaxNifImport.dli"
             VALUE "ProductName", "3ds Max Nif Importer"
-            VALUE "ProductVersion", "0, 2, 1, 0"
+            VALUE "ProductVersion", "0, 2, 2, 0"
         END
     END
     BLOCK "VarFileInfo"

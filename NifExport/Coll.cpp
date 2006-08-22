@@ -284,6 +284,13 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		bhkRigidBodyRef body = makeCollisionBody(node);
 		body->SetShape(DynamicCast<bhkShape>(shape));
 
+      QuaternionXYZW q;
+      Vector3 trans;
+      TimeValue t = 0;
+      nodeTransform(q, trans, node, t, false);
+      body->SetRotation(q);
+      body->SetTranslation(trans / 7.0f);
+
 		bhkCollisionObjectRef co = DynamicCast<bhkCollisionObject>(CreateBlock("bhkCollisionObject"));
 		co->SetBody(DynamicCast<NiObject>(body));
       
