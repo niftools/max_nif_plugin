@@ -13,6 +13,7 @@ HISTORY:
 #include "stdafx.h"
 #include "MaxNifImport.h"
 #include "istdplug.h"
+#include "MeshNormalSpec.h"
 
 using namespace Niflib;
 
@@ -84,29 +85,63 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
          }
       }
    }
+   // Triangles and texture vertices
+   SetTrangles(mesh, tris);
+
+   // Normals
+   {
+      mesh.checkNormals(TRUE);
+      vector<Vector3> n = triGeomData->GetNormals();
+      if (n.size() > 0)
+      {
+         bool needNormals = false;
+         for (int i=0; i<n.size(); i++){
+            Vector3 v = n[i];
+            Point3 norm(v.x, v.y, v.z);
+            if (norm != mesh.getNormal(i)) {
+               needNormals = true;
+               break;
+            }
+         }
+         if (needNormals)
+         {
+            mesh.SpecifyNormals();
+            MeshNormalSpec *specNorms = mesh.GetSpecifiedNormals ();
+            if (NULL != specNorms)
+            {
+               specNorms->ClearAndFree();
+               specNorms->SetNumFaces(tris.size());
+               specNorms->SetNumNormals(n.size());
+
+               Point3* norms = specNorms->GetNormalArray();
+               for (int i=0; i<n.size(); i++){
+                  Vector3 v = n[i];
+                  norms[i] = Point3(v.x, v.y, v.z);
+               }
+               MeshNormalFace* pFaces = specNorms->GetFaceArray();
+               for (int i=0; i<tris.size(); i++){
+                  Triangle& tri = tris[i];
+                  pFaces[i].SpecifyNormalID(0, tri.v1);
+                  pFaces[i].SpecifyNormalID(1, tri.v2);
+                  pFaces[i].SpecifyNormalID(2, tri.v3);
+               }
+               specNorms->SetAllExplicit(true);
+               specNorms->CheckNormals();
+            }
+         }
+      }
+   }
+
+   ImportVertexColor(node, o, triGeom, triGeomData, tris);
+
+   ImportMaterialAndTextures(node, triGeom);
+
    if (removeDegenerateFaces)
       mesh.RemoveDegenerateFaces();
    if (removeIllegalFaces)
       mesh.RemoveIllegalFaces();
    if (enableAutoSmooth)
       mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
-
-   // Normals
-   {
-      mesh.checkNormals(TRUE);
-      vector<Vector3> n = triGeomData->GetNormals();
-      for (int i=0; i<n.size(); i++){
-         Vector3 v = n[i];
-         mesh.setNormal(i, Point3(v.x, v.y, v.z));
-      }
-   }
-
-   // Triangles and texture vertices
-   SetTrangles(mesh, tris);
-
-   ImportVertexColor(node, o, triGeom, triGeomData, tris);
-
-   ImportMaterialAndTextures(node, triGeom);
 
    if (enableSkinSupport)
       ImportSkin(node, triGeom);

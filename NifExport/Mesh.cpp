@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "niutils.h"
 #include "iskin.h"
+#include "MeshNormalSpec.h"
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
@@ -164,8 +165,13 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
       }
       if (!hasvc) vertColors.clear();
    }
-
-	mesh->buildNormals();
+   
+   MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
+   if (NULL != specNorms) {
+      specNorms->CheckNormals();
+   } else {
+      mesh->checkNormals(TRUE);
+   }
 
 	Result result = Ok;
 	while (1)
@@ -254,7 +260,13 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 {
    int vidx = mesh->faces[ face ].v[ vi ];
 	Point3 pt = mesh->verts[ vidx ];
-	Point3 norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
+   Point3 norm;
+
+   MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
+   if (NULL != specNorms)
+      norm = specNorms->GetNormal(face, vi);
+   else
+      norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
 
 	Point3 uv;
    if (mesh->tVerts && mesh->tvFace) {

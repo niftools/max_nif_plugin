@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.1
+                        MaxPlugins 0.2.2
                         ================
 
  
@@ -27,6 +27,14 @@
 
     Change log
     ----------
+      0.2.1
+      -----
+    o Exporter
+      - Fix Export of Normal values
+      
+    o Importer
+      - Fix Import of Normal values
+      
       0.2.1
       -----
     o Exporter
