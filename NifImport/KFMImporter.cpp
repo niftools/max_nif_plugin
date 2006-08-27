@@ -81,6 +81,12 @@ bool KFMImporter::DoImport()
          BaseClass::DoImport();
       }
    }
+
+   if (clearAnimation)
+   {
+      ClearAnimation(gi->GetRootNode());
+   }
+
    return ImportAnimation();
    //return BaseClass::DoImport();
 }

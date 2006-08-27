@@ -327,7 +327,9 @@ void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 {
    Point3 p = m3.GetTrans();
    Quat q = m3;
-   PosRotScaleNode(n, p, q, 1.0f, prs, t);
+   Matrix3 stm = m3 * Inverse(m3);
+   float s = (sqrt(stm.GetRow(0)[0]) + sqrt(stm.GetRow(1)[1]) + sqrt(stm.GetRow(1)[1])) / 3.0f;
+   PosRotScaleNode(n, p, q, s, prs, t);
 }
 
 // Set Position and Rotation on a standard controller will need to handle bipeds

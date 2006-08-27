@@ -35,209 +35,7 @@ enum {
    IPOS_W_REF	=	3,
 };
 
-const float FramesPerSecond = 30.0f;
-const float FramesIncrement = 1.0f/30.0f;
-
-const int TicksPerFrame = GetTicksPerFrame();
-
-inline TimeValue TimeToFrame(float t) {
-   return TimeValue(t * FramesPerSecond * TicksPerFrame);
-}
-
-typedef Key<float> FloatKey;
-typedef Key<Quaternion> QuatKey;
-typedef Key<Vector3> Vector3Key;
-
-
-template<typename T, typename U>
-inline T MapKey(U& key, float time);
-
-
-template <typename T, typename U>
-inline T& InitLinKey(T& rKey, U& key, float time)
-{
-   rKey.time = TimeToFrame(time + key.time);
-   rKey.flags = 0;
-   return rKey;
-}
-template<>
-inline ILinFloatKey MapKey<ILinFloatKey,FloatKey>(FloatKey& key, float time)
-{
-   ILinFloatKey rKey;
-   rKey.val = key.data;
-   return InitLinKey(rKey, key, time);
-}
-
-template<>
-inline ILinRotKey MapKey<ILinRotKey, QuatKey>(QuatKey& key, float time)
-{
-   ILinRotKey rKey;
-   rKey.val = TOQUAT(key.data, true);
-   return InitLinKey(rKey, key, time);
-}
-
-template<>
-inline ILinScaleKey MapKey<ILinScaleKey, FloatKey>(FloatKey& key, float time)
-{
-   ILinScaleKey rKey;
-   rKey.val.s.Set(key.data, key.data, key.data);
-   rKey.val.q.Identity();
-   return InitLinKey(rKey, key, time);
-}
-
-template<>
-inline ILinPoint3Key MapKey<ILinPoint3Key, Vector3Key>(Vector3Key& key, float time)
-{
-   ILinPoint3Key rKey;
-   rKey.val = TOPOINT3(key.data);
-   return InitLinKey(rKey, key, time);
-}
-
-
-template <typename T, typename U>
-inline T& InitBezKey(T& rKey, U& key, float time)
-{
-   rKey.time = TimeToFrame(time + key.time);
-   rKey.flags = 0;
-   SetInTanType(rKey.flags,BEZKEY_FLAT);
-   SetOutTanType(rKey.flags,BEZKEY_FLAT);
-   return rKey;
-}
-template<>
-inline IBezFloatKey MapKey<IBezFloatKey, FloatKey>(FloatKey& key, float time)
-{
-   IBezFloatKey rKey;
-   rKey.val = key.data;
-   rKey.intan = key.forward_tangent;
-   rKey.outtan = key.backward_tangent;
-   return InitBezKey(rKey, key, time);
-}
-
-template<>
-inline IBezPoint3Key MapKey<IBezPoint3Key, Vector3Key>(Vector3Key& key, float time)
-{
-   IBezPoint3Key rKey;
-   rKey.val = TOPOINT3(key.data);
-   rKey.intan = TOPOINT3(key.forward_tangent);
-   rKey.outtan = TOPOINT3(key.backward_tangent);
-   return InitBezKey(rKey, key, time);
-}
-
-
-template<>
-inline IBezQuatKey MapKey<IBezQuatKey, QuatKey>(QuatKey& key, float time)
-{
-   IBezQuatKey rKey;
-   rKey.val = TOQUAT(key.data, true);
-   return InitBezKey(rKey, key, time);
-}
-
-template<>
-inline IBezScaleKey MapKey<IBezScaleKey, FloatKey>(FloatKey& key, float time)
-{
-   IBezScaleKey rKey;
-   rKey.val.s.Set(key.data, key.data, key.data);
-   rKey.val.q.Identity();
-   return InitBezKey(rKey, key, time);
-}
-
-template <typename T, typename U>
-inline T& InitTCBKey(T& rKey, U& key, float time)
-{
-   rKey.time = TimeToFrame(time + key.time);
-   rKey.tens = key.tension;
-   rKey.cont = key.continuity;
-   rKey.bias = key.bias;
-   rKey.easeIn = 0.0f;
-   rKey.easeOut = 0.0f;
-   return rKey;
-}
-
-template<>
-inline ITCBFloatKey MapKey<ITCBFloatKey, FloatKey>(FloatKey& key, float time)
-{
-   ITCBFloatKey rKey;
-   rKey.val = key.data;
-   return InitTCBKey(rKey, key, time);
-}
-
-template<>
-inline ITCBRotKey MapKey<ITCBRotKey, QuatKey>(QuatKey& key, float time)
-{
-   ITCBRotKey rKey;
-   rKey.val = TOQUAT(key.data, true);
-   InitTCBKey(rKey, key, time);
-   rKey.flags = TCBKEY_QUATVALID;
-   return rKey;
-}
-
-template<>
-inline ITCBPoint3Key MapKey<ITCBPoint3Key, Vector3Key>(Vector3Key& key, float time)
-{
-   ITCBPoint3Key rKey;
-   rKey.val = TOPOINT3(key.data);
-   return InitTCBKey(rKey, key, time);
-}
-
-template<>
-inline ITCBScaleKey MapKey<ITCBScaleKey, FloatKey>(FloatKey& key, float time)
-{
-   ITCBScaleKey rKey;
-   rKey.val.s.Set(key.data, key.data, key.data);
-   rKey.val.q.Identity();
-   return InitTCBKey(rKey, key, time);
-}
-
-template<typename T, typename U>
-inline void SetKeys(Control *subCtrl, vector<U>& keys, float time)
-{
-   if (subCtrl && !keys.empty()){
-      if (IKeyControl *ikeys = GetKeyControlInterface(subCtrl)){
-         ikeys->SetNumKeys(keys.size());
-         for (int i=0,n=keys.size(); i<n; ++i) {
-            ikeys->SetKey(i, &MapKey<T>(keys[i], time));
-         }
-      }
-   }
-}
-
-enum V3T
-{
-   V3T_X, V3T_Y, V3T_Z
-};
-inline float GetValue(Vector3& value, V3T type)
-{
-   switch (type) {
-   case V3T_X: return value.x;
-   case V3T_Y: return value.y;
-   case V3T_Z: return value.z;
-   }
-   return 0.0f;
-}
-
-FloatKey& CopyKey( FloatKey& dst, Vector3Key& src, V3T type)
-{
-   dst.time = src.time;
-   dst.bias = src.bias;
-   dst.continuity = src.continuity;
-   dst.tension = src.tension;
-   dst.backward_tangent = GetValue(src.backward_tangent, type);
-   dst.forward_tangent = GetValue(src.forward_tangent, type);
-   dst.data = GetValue(src.data, type);
-   return dst;
-}
-
-void SplitKeys(vector<Vector3Key>&keys, vector<FloatKey>&xkeys, vector<FloatKey>&ykeys, vector<FloatKey>&zkeys)
-{
-   int n = keys.size();
-   xkeys.resize(n), ykeys.resize(n), zkeys.resize(n);
-   for (int i=0,n=keys.size(); i<n; ++i) {
-      Vector3Key& key = keys[i];
-      CopyKey(xkeys[i], key, V3T_X), CopyKey(ykeys[i], key, V3T_Y), CopyKey(zkeys[i], key, V3T_Z);
-   }
-}
-
-typedef Key<string> KeyTextValue;
+#include "AnimKey.h"
 
 struct AnimationImport
 {
@@ -257,6 +55,9 @@ struct AnimationImport
    Control* MakeScale(Control *tmCont, Class_ID clsid);
 
    Control* GetTMController(const string& name);
+   Matrix3 GetTM(const string& name, TimeValue t = 0);
+
+   bool GetTransformData(ControllerLink& lnk, string name, NiKeyframeDataRef& outData, Point3& p, Quat& q, float& s);
 };
 
 bool NifImporter::ImportAnimation()
@@ -272,6 +73,54 @@ bool NifImporter::ImportAnimation()
    return ai.AddValues(DynamicCast<NiObjectNET>(rootNode->GetChildren()));
 }
 
+static vector<ControllerLink>::iterator FindLink(string name, vector<ControllerLink>& links)
+{
+   for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); )
+   {
+      string target = (*lnk).targetName;
+      if (target.empty()) {
+         NiStringPaletteRef strings = lnk->stringPalette;
+         target = strings->GetSubStr((*lnk).nodeNameOffset);
+      }
+      if (target == name) {
+         return lnk;
+      }
+   }
+   return links.end();
+}
+
+static void ClearAnimation(Control *c)
+{
+   if (c != NULL)
+   {
+      if (c->IsColorController())
+         return;
+
+      if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+         ikeys->SetNumKeys(0);
+      }
+      ClearAnimation(c->GetWController());
+      ClearAnimation(c->GetXController());
+      ClearAnimation(c->GetYController());
+      ClearAnimation(c->GetZController());
+      ClearAnimation(c->GetRotationController());
+      ClearAnimation(c->GetPositionController());
+      ClearAnimation(c->GetScaleController());
+   }
+}
+
+void NifImporter::ClearAnimation(INode *node)
+{
+   if (node != NULL)
+   {
+      node->DeleteKeys(TRACK_DOALL);
+      ::ClearAnimation(node->GetTMController());
+      for (int i=0, n=node->NumberOfChildren(); i<n; ++i){
+         ClearAnimation(node->GetChildNode(i));
+      }
+   }
+}
+
 bool KFMImporter::ImportAnimation()
 {
    bool ok = false;
@@ -280,7 +129,7 @@ bool KFMImporter::ImportAnimation()
 
    AnimationImport ai(*this);
 
-   float time = FramesIncrement;
+   float time = 0.0f;
    for(vector<NiControllerSequenceRef>::iterator itr = kf.begin(); itr != kf.end(); ++itr){
 
       float minTime = 1e+35f;
@@ -288,8 +137,9 @@ bool KFMImporter::ImportAnimation()
 
       NiControllerSequenceRef cntr = (*itr);
       vector<ControllerLink> links = cntr->GetControllerData();
-      for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk){
 
+      for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk)
+      {
          string name = (*lnk).targetName;
          if (name.empty()) {
             NiStringPaletteRef strings = lnk->stringPalette;
@@ -298,6 +148,12 @@ bool KFMImporter::ImportAnimation()
          if (name.empty())
             continue;
 
+         // I realize this is not the best way to do this but it works for some files
+         if (mergeNonAccum && wildmatch("* NonAccum", name)) 
+         {
+            name = name.substr(0, name.length() - 9);
+         }
+
          Control *c = ai.GetTMController(name);
          if (NULL == c)
             continue;
@@ -305,78 +161,95 @@ bool KFMImporter::ImportAnimation()
          float start = cntr->GetStartTime();
          float stop = cntr->GetStopTime();
          float total = (stop - start);
-         if ((*lnk).interpolator){
-            if (NiTransformInterpolatorRef interp = (*lnk).interpolator) {
 
-               // Set initial conditions
-               Point3 p = TOPOINT3(interp->GetTranslation());
-               Quat q = TOQUAT(interp->GetRotation(), true);
-               float s = interp->GetScale();
-               PosRotScaleNode(c, p, q, s, prsDefault, 0);
-
-               if (NiTransformDataRef data = interp->GetData()){
-                  if (ai.AddValues(c, data, time)) {
-                     minTime = min(minTime, start);
-                     maxTime = max(maxTime, stop);
-                     ok = true;
-                  }
-               }
-            } else if (NiBSplineCompTransformInterpolatorRef interp = (*lnk).interpolator) {
-               int npoints = total * 60.0f;
-
-               // Set initial conditions
-               Point3 p = TOPOINT3(interp->GetTranslation());
-               Quat q = TOQUAT(interp->GetRotation(), true);
-               float s = interp->GetScale();
-               PosRotScaleNode(c, p, q, s, prsDefault, 0);
-
-               NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
-               data->SetRotateType(QUADRATIC_KEY);
-               data->SetTranslateType(QUADRATIC_KEY);
-               data->SetScaleType(QUADRATIC_KEY);
-               data->SetTranslateKeys( interp->SampleTranslateKeys(npoints, 4) );
-               data->SetQuatRotateKeys( interp->SampleQuatRotateKeys(npoints, 4) );
-               data->SetScaleKeys( interp->SampleScaleKeys(npoints, 4) );
-
-               if (ai.AddValues(c, data, time)) {
-                  minTime = min(minTime, start);
-                  maxTime = max(maxTime, stop);
-                  ok = true;
-               }
-            }
-         } else if ((*lnk).controller) {
-            if (NiTransformControllerRef tc = DynamicCast<NiTransformController>((*lnk).controller)) {
-               if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
-                  // Set initial conditions
-                  Point3 p = TOPOINT3(interp->GetTranslation());
-                  Quat q = TOQUAT(interp->GetRotation(), true);
-                  float s = interp->GetScale();
-                  PosRotScaleNode(c, p, q, s, prsDefault, 0);
-
-                  if (NiTransformDataRef data = interp->GetData()){
-                     if (ai.AddValues(c, data, time)) {
-                        minTime = min(minTime, start);
-                        maxTime = max(maxTime, stop);
-                        ok = true;
-                     }
-                  }
-               }
-            } else if (NiKeyframeControllerRef kfc = DynamicCast<NiKeyframeController>((*lnk).controller)) {
-               if (NiKeyframeDataRef data = kfc->GetData()) {
-                  if (ai.AddValues(c, data, time)) {
-                     minTime = min(minTime, start);
-                     maxTime = max(maxTime, stop);
-                     ok = true;
-                  }
-               }
+         NiKeyframeDataRef data;
+         Point3 p; Quat q; float s;
+         if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
+            PosRotScaleNode(c, p, q, s, prsDefault, 0);
+            if (ai.AddValues(c, data, time)) {
+               minTime = min(minTime, start);
+               maxTime = max(maxTime, stop);
+               ok = true;
             }
          }
       }
       if (maxTime > minTime && maxTime > 0.0f)
          time += (maxTime-minTime) + FramesIncrement;
    }
+
+   if (time != 0.0f)
+   {
+      Interval range(0, TimeToFrame(time));
+      gi->SetAnimRange(range);
+   }
+
    return ok;
 }
+
+bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyframeDataRef& outData, Point3& p, Quat& q, float& s)
+{
+   Control *c = GetTMController(name);
+   if (NULL == c)
+      return false;
+
+   if (lnk.interpolator){
+      if (NiTransformInterpolatorRef interp = lnk.interpolator) {
+         if (NiTransformDataRef data = interp->GetData()){
+            outData = StaticCast<NiKeyframeData>(data);
+
+            // Set initial conditions
+            p = TOPOINT3(interp->GetTranslation());
+            q = TOQUAT(interp->GetRotation(), true);
+            s = interp->GetScale();
+            return true;
+         }
+      } else if (NiBSplineCompTransformInterpolatorRef interp = lnk.interpolator) {
+         int npoints = interp->GetNumControlPt();
+
+         if (npoints > 3)
+         {
+            NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
+            data->SetRotateType(QUADRATIC_KEY);
+            data->SetTranslateType(QUADRATIC_KEY);
+            data->SetScaleType(QUADRATIC_KEY);
+            data->SetTranslateKeys( interp->SampleTranslateKeys(npoints, 3) );
+            data->SetQuatRotateKeys( interp->SampleQuatRotateKeys(npoints, 3) );
+            data->SetScaleKeys( interp->SampleScaleKeys(npoints, 3) );
+
+            outData = data;
+
+            p = TOPOINT3(interp->GetTranslation());
+            q = TOQUAT(interp->GetRotation(), true);
+            s = interp->GetScale();
+            return true;
+         }
+      }
+   } else if (lnk.controller) {
+      if (NiTransformControllerRef tc = DynamicCast<NiTransformController>(lnk.controller)) {
+         if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
+            if (NiTransformDataRef data = interp->GetData()){
+               outData = StaticCast<NiKeyframeData>(data);
+
+               p = TOPOINT3(interp->GetTranslation());
+               q = TOQUAT(interp->GetRotation(), true);
+               s = interp->GetScale();
+               return true;
+            }
+         }
+      } else if (NiKeyframeControllerRef kfc = DynamicCast<NiKeyframeController>(lnk.controller)) {
+         if (NiKeyframeDataRef data = kfc->GetData()) {
+            outData = data;
+            // values will not be used in transforms
+            p = Point3(FloatNegINF, FloatNegINF, FloatNegINF);
+            q = Quat(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
+            s = FloatNegINF;
+            return true;
+         }
+      }
+   }
+   return false;
+}
+
 
 Control *AnimationImport::GetTMController(const string& name)
 {
@@ -397,6 +270,15 @@ Control *AnimationImport::GetTMController(const string& name)
 #endif
 
    return c;
+}
+
+Matrix3 AnimationImport::GetTM(const string& name, TimeValue t)
+{
+   INode *n = ni.gi->GetINodeByName(name.c_str());
+   if (NULL == n)
+      return Matrix3(true);
+
+   return n->GetObjTMAfterWSM(t);
 }
 
 vector<KeyTextValue> AnimationImport::BuildKeyValues(NiObjectNETRef nref)
@@ -470,9 +352,9 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
          SplitKeys(posKeys, xkeys, ykeys, zkeys);
-         SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
-         SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
-         SetKeys<ILinFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
+         MergeKeys<ILinFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
+         MergeKeys<ILinFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
+         MergeKeys<ILinFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
       }
       break;
 
@@ -481,9 +363,9 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
          SplitKeys(posKeys, xkeys, ykeys, zkeys);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
       }
       break;
 
@@ -491,9 +373,9 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
       if (Control *subCtrl = MakePositionXYZ(c, Class_ID(TCBINTERP_FLOAT_CLASS_ID,0))) {
          vector<FloatKey> xkeys, ykeys, zkeys;
          SplitKeys(posKeys, xkeys, ykeys, zkeys);
-         SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
-         SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
-         SetKeys<ITCBFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
+         MergeKeys<ITCBFloatKey, FloatKey>(subCtrl->GetXController(), xkeys, time);
+         MergeKeys<ITCBFloatKey, FloatKey>(subCtrl->GetYController(), ykeys, time);
+         MergeKeys<ITCBFloatKey, FloatKey>(subCtrl->GetZController(), zkeys, time);
       }
       break;
    }
@@ -503,21 +385,21 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    {
    case LINEAR_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(LININTERP_ROTATION_CLASS_ID,0), Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<ILinRotKey, QuatKey>(subCtrl, quatKeys, time);
+         MergeKeys<ILinRotKey, QuatKey>(subCtrl, quatKeys, time);
       }
       break;
 
    case QUADRATIC_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
+         MergeKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
       }
       break;
 
    case XYZ_ROTATION_KEY:
       if (Control *subCtrl = MakeRotation(c, Class_ID(EULER_CONTROL_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xKeys, time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), yKeys, time);
-         SetKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zKeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetXController(), xKeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetYController(), yKeys, time);
+         MergeKeys<IBezFloatKey, FloatKey>(subCtrl->GetZController(), zKeys, time);
       }
       break;
 
@@ -525,11 +407,11 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
       if (ni.replaceTCBRotationWithBezier) {
          // TCB simply is not working for me.  Better off with Bezier as a workaround
          if (Control *subCtrl = MakeRotation(c, Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID,0), Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
-            SetKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
+            MergeKeys<IBezQuatKey, QuatKey>(subCtrl, quatKeys, time);
          }
       } else {
          if (Control *subCtrl = MakeRotation(c, Class_ID(TCBINTERP_ROTATION_CLASS_ID,0), Class_ID(TCBINTERP_FLOAT_CLASS_ID,0))) {
-            SetKeys<ITCBRotKey, QuatKey>(subCtrl, quatKeys, time);
+            MergeKeys<ITCBRotKey, QuatKey>(subCtrl, quatKeys, time);
          }
       }
       break;
@@ -539,18 +421,18 @@ bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
    {
    case LINEAR_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(LININTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<ILinScaleKey, FloatKey>(subCtrl, sclKeys, time);
+         MergeKeys<ILinScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    case QUADRATIC_KEY:
    case XYZ_ROTATION_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(HYBRIDINTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<IBezScaleKey, FloatKey>(subCtrl, sclKeys, time);
+         MergeKeys<IBezScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    case TBC_KEY:
       if (Control *subCtrl = MakeScale(c, Class_ID(TCBINTERP_SCALE_CLASS_ID,0))) {
-         SetKeys<ITCBScaleKey, FloatKey>(subCtrl, sclKeys, time);
+         MergeKeys<ITCBScaleKey, FloatKey>(subCtrl, sclKeys, time);
       }
       break;
    }

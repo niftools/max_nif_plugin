@@ -231,12 +231,12 @@ const TCHAR *NifExport::Ext(int n)
 
 const TCHAR *NifExport::LongDesc()
 {
-	return _T("Gambryo File");
+	return _T("Gamebryo File");
 }
 	
 const TCHAR *NifExport::ShortDesc() 
 {			
-	return _T("Gambryo File");
+	return _T("Gamebryo File");
 }
 
 const TCHAR *NifExport::AuthorName()

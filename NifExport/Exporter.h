@@ -73,8 +73,7 @@ public:
 	// reads config from registry
 	static void				readConfig(Interface *i);
 
-private:
-
+public:
 	typedef vector<unsigned short> TriStrip;
 	typedef	list<TriStrip> TriStrips;
 	typedef vector<Triangle> Triangles;
@@ -167,6 +166,9 @@ private:
    /* skin export */
    bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);
    bool exportSkin();
+
+   /* animation export */
+   bool doAnimExport();
 
    /* misc export */
    bool exportUPB(NiNodeRef &root, INode *node);

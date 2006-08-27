@@ -31,5 +31,10 @@ void KFImporter::ReadBlocks()
 
 bool KFImporter::DoImport()
 {
+   if (clearAnimation)
+   {
+      ClearAnimation(gi->GetRootNode());
+   }
+
    return ImportAnimation();
 }

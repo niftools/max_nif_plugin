@@ -33,6 +33,7 @@ public:
    bool enableCollision;
    int vertexColorMode;
    bool useCiv4Shader;
+   bool mergeNonAccum;
 
    // Biped/Bones related settings
    bool importBones;
@@ -63,6 +64,7 @@ public:
    bool enableAnimations;
    bool requireMultipleKeys;
    bool applyOverallTransformToSkinAndBones;
+   bool clearAnimation;
 
    // Collision settings
    float bhkScaleFactor;
@@ -118,6 +120,8 @@ public:
 
    // Animation Helpers
    bool ImportAnimation();
+   void ClearAnimation(INode *node);
+
 
    protected: 
       NifImporter();

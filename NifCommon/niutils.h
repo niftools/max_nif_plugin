@@ -230,6 +230,7 @@ enum PosRotScale
 extern void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern void PosRotScaleNode(Control *c, Point3 p, Quat& q, float s, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs = prsDefault, TimeValue t = 0);
+extern void PosRotScaleNode(Control *c, Matrix3& m3, PosRotScale prs = prsDefault, TimeValue t = 0);
 extern Matrix3 GetNodeLocalTM(INode *n, TimeValue t = 0);
 
 extern Niflib::NiNodeRef FindNodeByName( const vector<Niflib::NiNodeRef>& blocks, const string& name );
@@ -286,12 +287,16 @@ static inline Niflib::Vector3 TOVECTOR3(const Point3& v){
 
 static inline Quat TOQUAT(const Niflib::Quaternion& q, bool inverse = false){
    Quat qt(q.x, q.y, q.z, q.w);
-   return (inverse) ? qt.Inverse() : qt;
+   return (inverse && q.w != FloatNegINF) ? qt.Inverse() : qt;
 }
 
 static inline Quat TOQUAT(const Niflib::QuaternionXYZW& q, bool inverse = false){
    Quat qt(q.x, q.y, q.z, q.w);
-   return (inverse) ? qt.Inverse() : qt;
+   return (inverse && q.w != FloatNegINF) ? qt.Inverse() : qt;
+}
+
+static inline Niflib::Quaternion TOQUAT(const Quat& q, bool inverse = false){
+   return (inverse && q.w != FloatNegINF) ? TOQUAT(q.Inverse(), false) : Niflib::Quaternion(q.w, q.x, q.y, q.z);
 }
 
 static inline Niflib::QuaternionXYZW TOQUATXYZW(const Niflib::Quaternion& q){
@@ -308,7 +313,7 @@ static inline Niflib::QuaternionXYZW TOQUATXYZW(const Quat& q){
 
 static inline AngAxis TOANGAXIS(const Niflib::Quaternion& q, bool inverse = false){
    Quat qt(q.x, q.y, q.z, q.w);
-   if (inverse) qt.Invert();
+   if (inverse && q.w != FloatNegINF) qt.Invert();
    return AngAxis(q.x, q.y, q.z, q.w);
 }
 

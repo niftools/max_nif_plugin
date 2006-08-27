@@ -553,6 +553,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          BuildControllerRefList(node, ctrlCount);
 
       string name = node->GetName();
+
       vector<NiAVObjectRef> children = node->GetChildren();
       vector<NiNodeRef> childNodes = DynamicCast<NiNode>(children);
 
@@ -560,10 +561,25 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       if (cType == NiAVObject::CT_BOUNDINGBOX && children.empty() && name=="Bounding Box")
          return;
 
+      // Do all node manipulations here
       NiNodeRef parent = node->GetParent();
+      Matrix44 m4 = node->GetWorldTransform();
+      float len = node->GetLocalTranslation().Magnitude();
+
+      // Remove NonAccum nodes and merge into primary bone
+      if (mergeNonAccum && wildmatch("* NonAccum", name) && parent)
+      {
+         string realname = name.substr(0, name.length() - 9);
+         if (strmatch(realname, parent->GetName()))
+         {
+            Matrix44 tm = parent->GetLocalTransform() * node->GetLocalTransform();
+            name = realname;
+            len += tm.GetTranslation().Magnitude();
+            parent = parent->GetParent();
+         }
+      }
 
       PosRotScale prs = prsDefault;
-      Matrix44 m4 = node->GetWorldTransform();
       Vector3 pos; Matrix33 rot; float scale;
       m4.Decompose(pos, rot, scale);
 
@@ -584,7 +600,6 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       }
       else if (parent)
       {
-         float len = node->GetLocalTranslation().Magnitude();
          ppos = pos + Vector3(len/3.0f, 0.0f, 0.0f);
       }
       Point3 pp(ppos.x, ppos.y, ppos.z);
@@ -617,7 +632,11 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          {
             if (parent)
             {
-               if (INode *pn = gi->GetINodeByName(parent->GetName().c_str()))
+               string parentname = parent->GetName();
+               if (mergeNonAccum && wildmatch("* NonAccum", parentname)) {
+                  parentname = parentname.substr(0, parentname.length() - 9);
+               }
+               if (INode *pn = gi->GetINodeByName(parentname.c_str()))
                   pn->AttachChild(bone, 1);
             }
          }

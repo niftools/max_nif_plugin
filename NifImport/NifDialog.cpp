@@ -51,6 +51,8 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             CheckDlgButton(hWnd, IDC_CHK_AUTOSMOOTH, imp->enableAutoSmooth);
             CheckDlgButton(hWnd, IDC_CHK_ILLEGAL, imp->removeIllegalFaces);
             CheckDlgButton(hWnd, IDC_CHK_REM_BONES, imp->removeUnusedImportedBones);
+            CheckDlgButton(hWnd, IDC_CHK_CLEARANIM, imp->clearAnimation);
+            
             CheckDlgButton(hWnd, IDC_CHK_BIPED, imp->useBiped);
             
             string selection = (imp->appSettings) ? imp->appSettings->Name : "User";
@@ -99,6 +101,7 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
                   imp->removeDegenerateFaces =
                   imp->removeIllegalFaces = IsDlgButtonChecked(hWnd, IDC_CHK_ILLEGAL) ? true : false;
                   imp->removeUnusedImportedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES) ? true : false;
+                  imp->clearAnimation = IsDlgButtonChecked(hWnd, IDC_CHK_CLEARANIM) ? true : false;
                   imp->useBiped = IsDlgButtonChecked(hWnd, IDC_CHK_BIPED) ? true : false;
 
                   GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);

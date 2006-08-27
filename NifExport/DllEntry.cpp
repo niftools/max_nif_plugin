@@ -2,6 +2,7 @@
 #include "niutils.h"
 
 extern ClassDesc2* GetNifExportDesc();
+extern ClassDesc2* GetKfExportDesc();
 
 static void InitializeLibSettings();
 HINSTANCE hInstance;
@@ -59,7 +60,11 @@ __declspec( dllexport ) const TCHAR* LibDescription()
 //TODO: Must change this number when adding a new class
 __declspec( dllexport ) int LibNumberClasses()
 {
-	return 1;
+#if _DEBUG
+	return 2;
+#else
+   return 1;
+#endif
 }
 
 // This function returns the number of plug-in classes this DLL
@@ -67,6 +72,7 @@ __declspec( dllexport ) ClassDesc* LibClassDesc(int i)
 {
 	switch(i) {
 		case 0: return GetNifExportDesc();
+      case 1: return GetKfExportDesc();
 		default: return 0;
 	}
 }

@@ -18,8 +18,8 @@
     Additional Notes
     ----------------
         
-    Set the layer value to "NonCollidable", if you want to be able to walk through 
-    your objects, while still being able to activate them.
+    Set the layer value to "NonCollidable", if you want to be able to walk
+     through your objects, while still being able to activate them.
 
     If your collision mesh comes out deformed, go to the utilities tab, 
     choose "Reset XForm" and click "Reset Selected". This should fix it.
@@ -27,20 +27,24 @@
 
     Change log
     ----------
-      0.2.1
+      0.2.2
       -----
     o Exporter
       - Fix Export of Normal values
       
     o Importer
       - Fix Import of Normal values
+      - Change Import of Bones to merge NonAccum nodes with parent
+      - Change Import of Animation to merge NonAccum nodes with parent node 
+      - Add Option to Clear Animation on Import
       
       0.2.1
       -----
     o Exporter
       - Replace the Tri Stripper with a new version.
         o The old version had some bugs which came when compiled with VS 2005.
-      - Fix issues with transforms on exporting with extra nodes and for collision meshes
+      - Fix issues with transforms on exporting with extra nodes and for 
+         collision meshes
         
       0.2
       -----
@@ -55,8 +59,6 @@
     o Exporter
       - Upgraded to Visual Studio 2005
       - Dropped registry support in favor of INI file.
-      - Dropped Official Max6 support because I do not have Max 6 to compile it
-        o Try editing the MaxNifTools.ini and setting the MaxSDKVersion to 0x17700d00
       - Fixed issue with importing glossiness setting on textures.
       - Fixed issues with export of vertex color. Alpha map is now exported
          as part of the normal color map.

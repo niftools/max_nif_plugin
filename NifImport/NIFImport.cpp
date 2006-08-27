@@ -144,6 +144,7 @@ void NifImporter::LoadIniSettings()
    enableCollision = GetIniValue(NifImportSection, "EnableCollision", true);
    vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
    useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
+   mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -168,6 +169,7 @@ void NifImporter::LoadIniSettings()
    enableAnimations = GetIniValue(AnimImportSection, "EnableAnimations", true);
    requireMultipleKeys = GetIniValue(AnimImportSection, "RequireMultipleKeys", true);
    applyOverallTransformToSkinAndBones = GetIniValue(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
+   clearAnimation = GetIniValue(AnimImportSection, "ClearAnimation", true);
 
    // Collision
    bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
@@ -203,9 +205,10 @@ void NifImporter::SaveIniSettings()
    SetIniValue(NifImportSection, "RemoveDegenerateFaces", removeDegenerateFaces);
 
    SetIniValue(BipedImportSection, "ImportBones", importBones);
-   SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);
+   SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);  
 
    SetIniValue(AnimImportSection, "EnableAnimations", enableAnimations);
+   SetIniValue(BipedImportSection, "ClearAnimation", clearAnimation);
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
@@ -321,6 +324,10 @@ bool NifImporter::DoImport()
       }
    }
 
+   if (clearAnimation)
+   {
+      ClearAnimation(gi->GetRootNode());
+   }
 
    // Kick of animation import
    ImportAnimation();
