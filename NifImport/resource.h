@@ -30,7 +30,7 @@
 #define IDC_CHK_ILLEGAL                 1020
 #define IDC_STC_SKELETON                1021
 #define IDC_CHK_REM_BONES               1022
-
+#define IDC_CHK_CLEARANIM               1023
 
 // Next default values for new objects
 // 
