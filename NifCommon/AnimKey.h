@@ -94,10 +94,11 @@ template<typename T> void MergeKey(IKeyControl *keys, T& key)
 {
    for (int i=0, n=keys->GetNumKeys(); i<n; ++i)
    {
-      T tmp; keys->GetKey(i, &tmp);
-      if (tmp.time == key.time) {
-         MergeKey(tmp, key);
-         keys->SetKey(i, &tmp);
+      AnyKey buf; T *tmp = reinterpret_cast<T*>((IKey*)buf);
+      keys->GetKey(i, tmp);
+      if (tmp->time == key.time) {
+         MergeKey<T>(*(T*)tmp, key);
+         keys->SetKey(i, tmp);
          return;
       }
    }
@@ -125,9 +126,9 @@ inline void GetKeys(Control *subCtrl, vector<T>& keys, float time)
       int n = ikeys->GetKeySize();
       keys.reserve(n);
       for (int i=0; i<n; ++i){
-         U key;
-         ikeys->GetKey(i, &key);
-         keys.push_back( MapKey<T>(key, time) );
+         AnyKey buf; U *key = reinterpret_cast<U*>((IKey*)buf);
+         ikeys->GetKey(i, key);
+         keys.push_back( MapKey<T>(*key, time) );
       }
    }
 }

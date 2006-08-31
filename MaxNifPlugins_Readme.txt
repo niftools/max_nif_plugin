@@ -27,6 +27,15 @@
 
     Change log
     ----------
+      0.2.3
+      -----
+    o Exporter
+      - Fix issue when exporting a mesh with a skin modifier that had bones
+         that were not used.
+      
+    o Importer
+      - Alter code to create Camera nodes when name begins with Camera.
+    
       0.2.2
       -----
     o Exporter

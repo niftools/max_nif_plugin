@@ -441,24 +441,33 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
          weights.push_back(sw);
       }         
    }
+
+   // remove unused bones
+   vector<NiNodeRef>::iterator bitr = si->boneList.begin();
+   SkinInstance::BoneWeightList::iterator switr = si->boneWeights.begin();
+   for (int i=0; i<totalBones; ++i) {
+      vector<SkinWeight> &weights = (*switr);
+      if (weights.empty())
+      {
+         bitr = si->boneList.erase(bitr);
+         switr = si->boneWeights.erase(switr);
+      }
+      else
+      {
+         ++bitr, ++switr;
+      }      
+   }
+
    return true;
 }
 
 Exporter::Result SkinInstance::execute()
 {
-   SkinWeight emptyWeight; emptyWeight.index = 0; emptyWeight.weight = 0.0f;
-   vector<SkinWeight> emptyweights; emptyweights.assign(4, emptyWeight);
-
    shape->BindSkin(boneList);
    uint bone = 0;
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
-      vector<SkinWeight> &weights = (*bitr);
-      if (!weights.empty())
-         shape->SetBoneWeights(bone, weights);
-      else
-         shape->SetBoneWeights(bone, emptyweights);
+      shape->SetBoneWeights(bone, (*bitr));
    }
    shape->GenHardwareSkinInfo();
-
    return Exporter::Ok;
 }

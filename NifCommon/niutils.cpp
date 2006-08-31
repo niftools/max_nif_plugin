@@ -343,6 +343,10 @@ void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, Time
          ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
          ||(c->ClassID() == FOOTPRINT_CLASS_ID))
       {
+         if (prs & prsRot && q.w == FloatNegINF) prs = PosRotScale(prs & ~prsRot);
+         if (prs & prsPos && p.x == FloatNegINF) prs = PosRotScale(prs & ~prsPos);
+         if (prs & prsScale && s == FloatNegINF) prs = PosRotScale(prs & ~prsScale);
+
          ScaleValue sv(Point3(s,s,s));
          // Get the Biped Export Interface from the controller 
          //IBipedExport *BipIface = (IBipedExport *) c->GetInterface(I_BIPINTERFACE);
@@ -353,12 +357,10 @@ void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, Time
             BipIface->SetBipedRotation(q, t, n, 0/*???*/);
          if (prs & prsPos)
             BipIface->SetBipedPosition(p, t, n);
+         return;
       }
-      else
 #endif
-      {
-         PosRotScaleNode(c, p, q, s, prs, t);
-      }
+      PosRotScaleNode(c, p, q, s, prs, t);
    }
 }
 

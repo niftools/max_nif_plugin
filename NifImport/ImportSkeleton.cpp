@@ -521,6 +521,22 @@ INode *NifImporter::CreateHelper(const string& name, Point3 startPos)
    return  NULL;
 }
 
+INode *NifImporter::CreateCamera(const string& name)
+{
+   if (GenCamera *ob = (GenCamera *)gi->CreateInstance(CAMERA_CLASS_ID, Class_ID(SIMPLE_CAM_CLASS_ID,0))) {
+      ob->Enable(1);
+      ob->NewCamera(0);
+      ob->SetFOV(0, TORAD(75.0f));
+      if (INode *n = gi->CreateObjectNode(ob)) {
+         n->Hide(TRUE);
+         n->SetName(const_cast<TCHAR*>(name.c_str()));
+         n->BoneAsLine(1);
+         return n;
+      }
+   }
+   return NULL;
+}
+
 void NifImporter::ImportBones(vector<NiNodeRef>& bones)
 {
    for (vector<NiNodeRef>::iterator itr = bones.begin(), end = bones.end(); itr != end; ++itr){
@@ -621,7 +637,12 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
                      || (!dummyNodeMatches.empty() && wildmatch(dummyNodeMatches, name))
                      || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TypeConst()))
                       );
-         if (isDummy && createNubsForBones)
+         if (wildmatch("Camera*", name)) {
+            if (bone = CreateCamera(name)) {
+               PosRotScaleNode(bone, p, q, scale, prs);
+               bone->Hide(node->GetHidden() ? TRUE : FALSE);
+            }
+         }else if (isDummy && createNubsForBones)
             bone = CreateHelper(name, p);
          else if (bone = CreateBone(name, p, pp, zAxis))
          {

@@ -108,6 +108,7 @@ public:
    Texmap* CreateTexture(Niflib::TexDesc& desc);
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);
+   INode *CreateCamera(const string& name);
 
    // Primary Collision entry point.  Tests for bhk objects
    bool ImportCollision(Niflib::NiNodeRef node);

@@ -33,12 +33,15 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
    //root->SetName("Scene Root");
 
-	BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-	bsx->SetName("BSX");
-	bsx->SetFlags(0x00000002);
-   root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-   bool ok = exportUPB(root, node);
+   if (mExportCollision)
+   {
+	   BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+	   bsx->SetName("BSX");
+	   bsx->SetFlags(0x00000002);
+      root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+   }
 
+   bool ok = exportUPB(root, node);
    if (!ok && Exporter::mExportCollision)
    {
       NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	

@@ -48,6 +48,7 @@ struct AnimationImport
    bool AddValues(vector<NiObjectNETRef>& nodes);
 
    bool AddValues(Control *c, NiKeyframeDataRef data, float time);
+   bool AddBiped(Control *c, NiKeyframeDataRef data, float time);
 
    Control* MakePosition(Control *tmCont, Class_ID clsid);
    Control* MakePositionXYZ(Control *tmCont, Class_ID clsid);
@@ -99,13 +100,27 @@ static void ClearAnimation(Control *c)
       if (IKeyControl *ikeys = GetKeyControlInterface(c)){
          ikeys->SetNumKeys(0);
       }
-      ClearAnimation(c->GetWController());
-      ClearAnimation(c->GetXController());
-      ClearAnimation(c->GetYController());
-      ClearAnimation(c->GetZController());
-      ClearAnimation(c->GetRotationController());
-      ClearAnimation(c->GetPositionController());
-      ClearAnimation(c->GetScaleController());
+      if (Control *sc = c->GetWController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetXController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetYController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetZController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetRotationController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetPositionController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
+      if (Control *sc = c->GetScaleController()) { 
+         if (sc != c) ClearAnimation(sc); 
+      }
    }
 }
 
@@ -158,6 +173,8 @@ bool KFMImporter::ImportAnimation()
          if (NULL == c)
             continue;
 
+         INode *n = gi->GetINodeByName(name.c_str());
+
          float start = cntr->GetStartTime();
          float stop = cntr->GetStopTime();
          float total = (stop - start);
@@ -165,7 +182,7 @@ bool KFMImporter::ImportAnimation()
          NiKeyframeDataRef data;
          Point3 p; Quat q; float s;
          if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-            PosRotScaleNode(c, p, q, s, prsDefault, 0);
+            PosRotScaleNode(n, p, q, s, prsDefault, 0);
             if (ai.AddValues(c, data, time)) {
                minTime = min(minTime, start);
                maxTime = max(maxTime, stop);
@@ -261,14 +278,6 @@ Control *AnimationImport::GetTMController(const string& name)
    if (NULL == c)
       return NULL;
 
-#ifdef USE_BIPED
-   // ignore bipeds for now.
-   if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
-      ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
-      ||(c->ClassID() == FOOTPRINT_CLASS_ID))
-      return NULL;
-#endif
-
    return c;
 }
 
@@ -325,6 +334,16 @@ bool AnimationImport::AddValues(NiObjectNETRef nref)
 
 bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
 {
+#ifdef USE_BIPED
+   // Bipeds are special.  And will crash if you dont treat them with care
+   if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
+      ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
+      ||(c->ClassID() == FOOTPRINT_CLASS_ID))
+   {
+      return AddBiped(c, data, time);
+   }
+#endif
+
    vector<Vector3Key> posKeys = data->GetTranslateKeys();
    vector<QuatKey> quatKeys = data->GetQuatRotateKeys();
    vector<FloatKey> sclKeys = data->GetScaleKeys();
@@ -524,3 +543,11 @@ Control* AnimationImport::MakePositionXYZ(Control *tmCont, Class_ID clsid)
    }
    return NULL;
 }
+
+
+#ifdef USE_BIPED
+bool AnimationImport::AddBiped(Control *c, NiKeyframeDataRef data, float time)
+{
+   return false;
+}
+#endif
