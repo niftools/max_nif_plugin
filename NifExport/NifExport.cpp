@@ -93,6 +93,9 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
             CheckDlgButton(hWnd, IDC_CHK_HIER, Exporter::mFlattenHierarchy);
             CheckDlgButton(hWnd, IDC_CHK_REM_BONES, Exporter::mRemoveUnreferencedBones);
             CheckDlgButton(hWnd, IDC_CHK_SORTNODES, Exporter::mSortNodesToEnd);
+            CheckDlgButton(hWnd, IDC_CHK_SKEL_ONLY, Exporter::mSkeletonOnly);
+            CheckDlgButton(hWnd, IDC_CHK_CAMERA, Exporter::mExportCameras);
+            CheckDlgButton(hWnd, IDC_CHK_BONE_COLL, Exporter::mGenerateBoneCollision);
 
             string selection = Exporter::mGameName;
             string version = Exporter::mNifVersion;
@@ -149,6 +152,9 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
                   Exporter::mFlattenHierarchy = IsDlgButtonChecked(hWnd, IDC_CHK_HIER);
                   Exporter::mRemoveUnreferencedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES);
                   Exporter::mSortNodesToEnd = IsDlgButtonChecked(hWnd, IDC_CHK_SORTNODES);
+                  Exporter::mSkeletonOnly = IsDlgButtonChecked(hWnd, IDC_CHK_SKEL_ONLY);
+                  Exporter::mExportCameras = IsDlgButtonChecked(hWnd, IDC_CHK_CAMERA);
+                  Exporter::mGenerateBoneCollision = IsDlgButtonChecked(hWnd, IDC_CHK_BONE_COLL);
 							
 						GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
 						Exporter::mTexPrefix = tmp;
@@ -183,7 +189,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 			{
 				if (LOWORD(wParam) == IDC_LBL_LINK)
 				{
-					ShellExecute(hWnd, "open", "http://niftools.sourceforge.net",
+					ShellExecute(hWnd, "open", "http://www.niftools.org",
 						         NULL, NULL, SW_SHOWDEFAULT);
 				}
 			}
@@ -246,17 +252,17 @@ const TCHAR *NifExport::AuthorName()
 
 const TCHAR *NifExport::CopyrightMessage() 
 {	
-	return _T("http://niftools.sourceforge.net");
+	return _T("http://www.niftools.org");
 }
 
 const TCHAR *NifExport::OtherMessage1() 
 {		
-	return _T("http://niftools.sourceforge.net");
+	return _T("http://www.niftools.org");
 }
 
 const TCHAR *NifExport::OtherMessage2() 
 {		
-	return _T("http://niftools.sourceforge.net");
+	return _T("http://www.niftools.org");
 }
 
 unsigned int NifExport::Version()

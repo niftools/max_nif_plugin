@@ -62,7 +62,7 @@ bool AnimationExport::doExport()
    seq->SetStartTime(0.0f);
    seq->SetStopTime(0.0f);
    seq->SetFrequency(1.0f);
-   seq->SetCycleType( NiControllerSequence::CYCLE_CLAMP );
+   seq->SetCycleType( CYCLE_CLAMP );
    seq->SetTargetName("Bip01");
    
    return true;

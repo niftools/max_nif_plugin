@@ -74,8 +74,9 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
    // uv texture info
    {
       int nUVSet = triGeomData->GetUVSetCount();
-      int n = 0;
-      for (int j=0; j<nUVSet; j++){
+      int n = 0, j = 0;
+      //for (int j=0; j<nUVSet; j++){
+      if (nUVSet > 0) {
          vector<TexCoord> texCoords = triGeomData->GetUVSet(j);
          n = texCoords.size();
          mesh.setNumTVerts(n, FALSE);
@@ -414,28 +415,33 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
       int numWeightsPerVertex = 4;
       IParamBlock2 *params = skinMod->GetParamBlockByID(2/*advanced*/);
       params->SetValue(0x7/*bone_Limit*/, 0, numWeightsPerVertex);
+
+      // Can get some truly bizarre animations without this in MAX with Civ4 Leaderheads
+      BOOL ignore = TRUE;
+      params->SetValue(0xE/*ignoreBoneScale*/, 0, ignore);
+
       //RefTargetHandle advanced = skinMod->GetReference(3);
       //setMAXScriptValue(advanced, "bone_Limit", 0, numWeightsPerVertex);
 
+      Matrix3 geom = TOMATRIX3(triGeom->GetLocalTransform());
       Matrix3 m3 = TOMATRIX3(data->GetOverallTransform());
       Matrix3 im3 = Inverse(m3);
-      iskinImport->SetSkinTm(tnode, m3, m3); // ???
+      Matrix3 nm3 = im3 * geom;
+      iskinImport->SetSkinTm(tnode, nm3, nm3); // ???
       // Create Bone List
       Tab<INode*> bones;
       for (size_t i=0; i<nifBones.size(); ++i){
          NiNodeRef bone = nifBones[i];
-         Matrix3 b3 = TOMATRIX3(data->GetBoneTransform(i));
-         Matrix3 ib3 = Inverse(b3);
 
          string name = bone->GetName();
          if (INode *boneRef = gi->GetINodeByName(name.c_str())) {
             bones.Append(1, &boneRef);
             iskinImport->AddBoneEx(boneRef, TRUE);
 
-            // Set Bone Transform
-            Matrix3 tm = ib3;
-            if (applyOverallTransformToSkinAndBones)
-               ib3 *= im3;
+            //// Set Bone Transform
+            Matrix3 b3 = TOMATRIX3(data->GetBoneTransform(i));
+            Matrix3 ib3 = Inverse(b3);
+            ib3 *= geom;
             iskinImport->SetBoneTm(boneRef, ib3, ib3);
          }
       }

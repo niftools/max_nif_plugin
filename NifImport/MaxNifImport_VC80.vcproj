@@ -692,10 +692,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\KFImporter.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
@@ -729,6 +725,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ImportLights.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ImportMeshAndSkin.cpp"
 				>
 			</File>
@@ -741,7 +741,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\KfDialog.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\KFImporter.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\KFImporter.h"
 				>
 			</File>
 			<File

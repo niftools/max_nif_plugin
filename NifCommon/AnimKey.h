@@ -33,7 +33,7 @@ inline float FrameToTime(TimeValue t) {
 typedef Key<float> FloatKey;
 typedef Key<Quaternion> QuatKey;
 typedef Key<Vector3> Vector3Key;
-
+typedef Key<string> StringKey;
 
 template<typename T, typename U> T MapKey(U& key, float time);
 

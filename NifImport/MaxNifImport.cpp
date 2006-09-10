@@ -92,11 +92,7 @@ MaxNifImport::~MaxNifImport()
 
 int MaxNifImport::ExtCount()
 {
-#ifdef USE_UNSUPPORTED_CODE
 	return 3;
-#else
-   return 2;
-#endif
 }
 
 const TCHAR *MaxNifImport::Ext(int n)

@@ -8,6 +8,8 @@
 #define IDS_PARAMS                      4
 #define IDS_SPIN                        5
 #define IDD_PANEL                       101
+#define IDD_NIF_PANEL                   101
+#define IDD_KF_PANEL                    102
 #define IDC_CLOSEBUTTON                 1000
 #define IDC_DOSTUFF                     1000
 #define IDC_EDITHEIGHT                  1001
@@ -18,6 +20,7 @@
 #define IDC_CHK_FURN                    1005
 #define IDC_ED_SKELETON                 1006
 #define IDC_CHK_BIPED                   1007
+#define IDC_CHK_LIGHTS                  1008
 #define IDC_CHK_COLL                    1010
 #define IDC_LBL_LINK                    1011
 #define IDC_CHK_VCOLORS                 1012
@@ -31,6 +34,9 @@
 #define IDC_STC_SKELETON                1021
 #define IDC_CHK_REM_BONES               1022
 #define IDC_CHK_CLEARANIM               1023
+#define IDC_CHK_KEYNOTES                1024
+#define IDC_CHK_CAMERA                  1025
+#define IDC_CHK_TIMETAGS                1026
 
 // Next default values for new objects
 // 

@@ -121,14 +121,14 @@ int Exporter::addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const P
 }
 
 void Exporter::addFace(Triangles &tris, vector<Vector3> &verts, vector<Vector3> &vnorms, 
-			 int face, const int vi[3], Mesh *mesh)
+			 int face, const int vi[3], Mesh *mesh, Matrix3& tm)
 {
 	Triangle tri;
 	for (int i=0; i<3; i++)
 	{
-		tri[i] = addVertex(verts, vnorms,
-			               mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ], 
-						   getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi[i] ])));
+      Point3 pt = VectorTransform(mesh->verts[ mesh->faces[ face ].v[ vi[i] ] ], tm);
+      Point3 norm = VectorTransform(getVertexNormal(mesh, face, mesh->getRVertPtr(mesh->faces[ face ].v[ vi[i] ])), tm);
+		tri[i] = addVertex(verts, vnorms, pt, norm);
 	}
 	tris.push_back(tri);
 }
@@ -258,40 +258,22 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	NiNodeRef newParent;
 	if (coll)
 	{
-/*		NiNodeRef n = DynamicCast<NiNode>(CreateBlock("NiNode"));
-		parent->AddChild(DynamicCast<NiAVObject>(n));
-
-		Matrix33 rot;
-		Vector3 trans;
-		TimeValue t = 0;
-		nodeTransform(rot, trans, node, t);
-		n->SetLocalRotation(rot);
-		n->SetLocalTranslation(trans);
-		string name = (char*)node->GetName();
-		n->SetName(name);
-
-
-/*		Vector3 trans;
-		QuaternionXYZW q;
-		TimeValue t = 0;
-		nodeTransform(q, trans, node, t, false);
-		body->SetRotation(q);
-		body->SetTranslation(Vector3(trans.x/7, trans.y/7, trans.z/7));
-*/
 		newParent = nodeParent; // always have collision one level up?
 
-		bhkSphereRepShapeRef shape = makeCollisionShape(node);
+      TimeValue t = 0;
+      Matrix3 tm = getTransform(node, t, local);
+      Matrix44 rm4 = TOMATRIX4(tm, false);
+      Vector3 trans; Matrix33 rm; float scale;
+      rm4.Decompose(trans, rm, scale);
+      QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
+
+		bhkSphereRepShapeRef shape = makeCollisionShape(node, tm);
 		bhkRigidBodyRef body = makeCollisionBody(node);
 		body->SetShape(DynamicCast<bhkShape>(shape));
-
-      QuaternionXYZW q;
-      Vector3 trans;
-      TimeValue t = 0;
-      nodeTransform(q, trans, node, t, false);
       body->SetRotation(q);
       body->SetTranslation(trans / 7.0f);
 
-		bhkCollisionObjectRef co = DynamicCast<bhkCollisionObject>(CreateBlock("bhkCollisionObject"));
+		bhkCollisionObjectRef co = new bhkCollisionObject();
 		co->SetBody(DynamicCast<NiObject>(body));
       
 		co->SetParent(newParent);
@@ -347,10 +329,10 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	// setup body
 	bhkRigidBodyRef body = DynamicCast<bhkRigidBody>(CreateBlock("bhkRigidBodyT"));
 
-	body->SetLayer(lyr);
-	body->SetLayerCopy(lyr);
-	body->SetMotionSystem(msys);
-	body->SetQualityType(qtype);
+	body->SetLayer(OblivionLayer(lyr));
+	body->SetLayerCopy(OblivionLayer(lyr));
+	body->SetMotionSystem(MotionSystem(msys));
+	body->SetQualityType(MotionQuality(qtype));
 	body->SetMass(mass);
 	body->SetLinearDamping(lindamp);
 	body->SetAngularDamping(angdamp);
@@ -366,36 +348,37 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	return body;
 }
 
-bhkSphereRepShapeRef Exporter::makeCollisionShape(INode *node)
+bhkSphereRepShapeRef Exporter::makeCollisionShape(INode *node, const Matrix3& tm)
 {
 	bhkSphereRepShapeRef shape;
 	
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t); 
 	if (os.obj->ClassID() == SCUBA_CLASS_ID)
-		shape = makeCapsuleShape(os.obj);
+		shape = makeCapsuleShape(os.obj, tm);
 	else
 	if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
-		shape = makeBoxShape(os.obj);
+		shape = makeBoxShape(os.obj, tm);
 	else
 	if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
-		shape = makeSphereShape(os.obj);
+		shape = makeSphereShape(os.obj, tm);
 	else
 	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
-		shape = makeTriStripsShape(node);
+		shape = makeTriStripsShape(node, tm);
 
 	if (shape)
 	{
 		int mtl;
 		npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
-		shape->SetMaterial(mtl);
+		shape->SetMaterial(HavokMaterial(mtl));
 	}
 
 	return shape;
 }
 
-bhkSphereRepShapeRef Exporter::makeBoxShape(Object *obj)
+bhkSphereRepShapeRef Exporter::makeBoxShape(Object *obj, const Matrix3& tm)
 {
+   Point3 scale = GetScale(tm);
 	float length = 0;
 	float height = 0;
 	float width = 0; 
@@ -404,26 +387,32 @@ bhkSphereRepShapeRef Exporter::makeBoxShape(Object *obj)
 	params->GetValue(obj->GetParamBlockIndex(BOXOBJ_HEIGHT), 0, height, FOREVER);
 	params->GetValue(obj->GetParamBlockIndex(BOXOBJ_WIDTH), 0, width, FOREVER);
 
-	bhkBoxShapeRef box = DynamicCast<bhkBoxShape>(CreateBlock("bhkBoxShape"));
-	box->SetDimensions(Vector3(width, height, length));
+	bhkBoxShapeRef box = new bhkBoxShape();
+	box->SetDimensions(Vector3(width * scale[0], height * scale[1], length * scale[2]));
 
 	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(box));
 }
 
-bhkSphereRepShapeRef Exporter::makeSphereShape(Object *obj)
+bhkSphereRepShapeRef Exporter::makeSphereShape(Object *obj, const Matrix3& tm)
 {
+   Point3 scale = GetScale(tm);
+   float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+
 	float radius = 0;
 	IParamArray *params = obj->GetParamBlock();
 	params->GetValue(obj->GetParamBlockIndex(SPHERE_RADIUS), 0, radius, FOREVER);
 
-	bhkSphereShapeRef sphere = DynamicCast<bhkSphereShape>(CreateBlock("bhkSphereShape"));
-	sphere->SetRadius(radius);
+	bhkSphereShapeRef sphere = new bhkSphereShape();
+	sphere->SetRadius(radius * s);
 
 	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(sphere));
 }
 
-bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj)
+bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj, const Matrix3& tm)
 {
+   Point3 scale = GetScale(tm);
+   float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+
 	float radius = 0;
 	float height = 0;
 	IParamArray *params = obj->GetParamBlock();
@@ -435,10 +424,12 @@ bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj)
 	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(capsule));
 }
 
-bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node)
+bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm)
 {
 	TimeValue t = 0;
-	Matrix3 tm = node->GetObjTMAfterWSM(t);
+   Matrix3 sm = ScaleMatrix( GetScale(tm) );
+   
+	//Matrix3 tm = node->GetObjTMAfterWSM(t);
 
 	// Order of the vertices. Get 'em counter clockwise if the objects is
 	// negatively scaled.
@@ -470,7 +461,7 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node)
 	Triangles		tris;
 
 	for (int i=0; i<mesh->getNumFaces(); i++)
-		addFace(tris, verts, vnorms, i, vi, mesh);
+		addFace(tris, verts, vnorms, i, vi, mesh, sm);
 
 	TriStrips strips;
 	strippify(strips, verts, vnorms, tris);
@@ -482,30 +473,7 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node)
 	bhkNiTriStripsShapeRef shape = DynamicCast<bhkNiTriStripsShape>(CreateBlock("bhkNiTriStripsShape"));
 	shape->SetNumStripsData(1);
 	shape->SetStripsData(0, data);
-/*
-	array<float, 2> unknownFloats1;
-	uint i1 = 0x3DCCCCCD;
-	uint i2 = 0x004ABE60;
-	unknownFloats1[0] = *((float*)&i1);
-	unknownFloats1[1] = *((float*)&i2);
-	shape->SetUnknownFloats1(unknownFloats1);
 
-	array<float, 3> unknownFloats2;
-	unknownFloats2[0] = 1;
-	unknownFloats2[1] = 1;
-	unknownFloats2[2] = 1;
-	shape->SetUnknownFloats2(unknownFloats2);
-*/
-/*	array<uint, 5> unknownInts1;
-	unknownInts1[4] = 1;
-	shape->SetUnknownInts1(unknownInts1);
-*/
-
-/* Still not handled
-	vector<uint> unknownInts2;
-	unknownInts2.resize(1);
-	shape->SetUnknownInts2(unknownInts2);
-*/
 	if (tri != os.obj)
 		tri->DeleteMe();
 

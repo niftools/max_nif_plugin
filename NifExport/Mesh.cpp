@@ -8,112 +8,12 @@
 #include "obj/NiSkinInstance.h"
 #include "obj/NiSkinData.h"
 #include "obj/NiSkinPartition.h"
-/*
-
-void FPUtility::GetAlphaVal(void)
-{
-	if(ip->GetSelNodeCount()<1)return;
-	INode *node = ip->GetSelNode(0);
-	if(!node)return;
- 	ObjectState os = node->EvalWorldState(0);
-	Object *obj = os.obj;
-	BOOL delMesh = false;
-
-	if (obj && obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) { 
-		TriObject * tri = NULL;
-		tri = (TriObject *) obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-		if (obj != tri) 
-			delMesh = true; // we own the copy
-		if (tri) 
-		{
-			Mesh * mesh = &(tri->GetMesh());
-			MeshDelta md(*mesh);
-			BOOL support = mesh->mapSupport(MAP_ALPHA);
-			if(support)
-			{
-				UVVert *alpha = mesh->mapVerts(MAP_ALPHA);
-				for(int i=0;igetNumVerts();i++)
-				{
-					float a = alpha[i].x;
-				}
-			}
-
-		}
-
-		if (delMesh)
-			delete tri;
-	}
-}
-				
-*/
-
-
-Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
-{
-	bool coll = npIsCollision(node);
-	if (coll ||	(node->IsHidden() && !mExportHidden && !coll) || (mSelectedOnly && !node->Selected()))
-		return Skip;
-
-   bool local = !mFlattenHierarchy;
-   NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
-
-	NiNodeRef newParent;
-	TimeValue t = 0;
-	ObjectState os = node->EvalWorldState(t); 
-
-   // Always skip bones and bipeds
-   SClass_ID scid = node->SuperClassID();
-   Class_ID ncid = node->ClassID();
-   TSTR nodeName = node->GetName();
-   TSTR nodeClass; node->GetClassName(nodeClass);
-
-   // For some unusual reason, bones named Helper are converted to Meshes and 
-   //   lose their Bone properties except a new node named Bone seem to show up
-   if (node->IsBoneShowing() || strmatch(nodeName, "Bone"))
-      newParent = makeNode(nodeParent, node, local);
-   else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
-	{
-      TSTR objClass;
-      os.obj->GetClassName(objClass);
-      SClass_ID oscid = os.obj->SuperClassID();
-      Class_ID oncid = os.obj->ClassID();
-      if (  os.obj 
-         && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
-            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
-            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
-            )
-            ) 
-      {
-         newParent = makeNode(nodeParent, node, local);
-      } 
-      else 
-      {
-         newParent = (mExportExtraNodes) ? makeNode(nodeParent, node, local) : nodeParent;
-
-         Result result;
-         result = exportMesh(newParent, node, t);
-         if (result != Ok)
-            return result;
-      }
-	} 
-   else if (isMeshGroup(node) && local) // only create node if local
-	{
-		newParent = makeNode(parent, node, local);
-
-	} 
-   else
-		newParent = parent;
-
-	for (int i=0; i<node->NumberOfChildren(); i++) 
-	{
-		Result result = exportMeshes(newParent, node->GetChildNode(i));
-		if (result!=Ok && result!=Skip)
-			return result;
-	}
-
-	return Ok;
-}
-
+#include "obj/NiBSBoneLODController.h"
+#include "obj/NiTransformController.h"
+#include "obj/bhkBlendController.h"
+#include "obj/bhkBlendCollisionObject.h"
+#include "obj/bhkSphereShape.h"
+#include "obj/bhkCapsuleShape.h"
 
 Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
 {	
@@ -126,6 +26,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		return Error;
 
 	Mesh *mesh = &tri->GetMesh();
+
 
    // Note that calling setVCDisplayData will clear things like normals so we set this up first
    vector<Color4> vertColors;
@@ -169,6 +70,8 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
    MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
    if (NULL != specNorms) {
       specNorms->CheckNormals();
+      if (specNorms->GetNumNormals() == 0)
+         mesh->checkNormals(TRUE);
    } else {
       mesh->checkNormals(TRUE);
    }
@@ -205,6 +108,9 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 				result = Error;
 				break;
 			}
+
+         if (node->IsHidden())
+            shape->SetHidden(true);
 
          shape->SetName(name);
          shape->SetLocalTransform(tm);
@@ -263,7 +169,7 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
    Point3 norm;
 
    MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
-   if (NULL != specNorms)
+   if (NULL != specNorms && specNorms->GetNumNormals() != 0)
       norm = specNorms->GetNormal(face, vi);
    else
       norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
@@ -470,4 +376,201 @@ Exporter::Result SkinInstance::execute()
    }
    shape->GenHardwareSkinInfo();
    return Exporter::Ok;
+}
+
+static void InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef parent)
+{
+   ctrl->SetFrequency(1.0f);
+   ctrl->SetStartTime(FloatINF);
+   ctrl->SetStopTime(FloatNegINF);
+   ctrl->SetPhase(0.0f);
+   ctrl->SetFlags(0x0C);
+   ctrl->SetTarget( parent );
+   parent->AddController(DynamicCast<NiTimeController>(ctrl));
+}
+
+static void FillBoneController(Exporter* exporter, NiBSBoneLODControllerRef boneCtrl, INode *node)
+{
+   for (int i=0; i<node->NumberOfChildren(); i++) 
+   {
+      INode * child = node->GetChildNode(i);
+      FillBoneController(exporter, boneCtrl, child);
+
+      TSTR upb;
+      child->GetUserPropBuffer(upb);
+      if (!upb.isNull())
+      {
+         // Check for bonelod and add bones to bone controller
+         stringlist tokens = TokenizeString(upb.data(), "\r\n", true);
+         for (stringlist::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
+            string& line = (*itr);
+            if (wildmatch("*#", line)) { // ends with #
+               stringlist bonelod = TokenizeString(line.c_str(), "#", true);
+               for (stringlist::iterator token = bonelod.begin(); token != bonelod.end(); ++token) {
+                  if (  wildmatch("??BoneLOD", (*token).c_str())) {
+                     if (++token == bonelod.end()) 
+                        break;
+                     if (strmatch("Bone", (*token).c_str())) {
+                        if (++token == bonelod.end()) 
+                           break;
+                        int group = 0;
+                        std::stringstream str (*token);
+                        str >> group;
+                        boneCtrl->AddNodeToGroup(group, exporter->getNode(child->GetName()));
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+void InitializeRigidBody(bhkRigidBodyRef body, INode *node)
+{
+   float value;
+   if (node->GetUserPropFloat("Mass", value))
+      body->SetMass(value);
+   if (node->GetUserPropFloat("Ellasticity", value))
+      body->SetRestitution(value);
+   if (node->GetUserPropFloat("Friction", value))
+      body->SetFriction(value);
+   if (node->GetUserPropFloat("Unyielding", value))
+      body->SetFriction(value);
+
+   body->SetLayer(OblivionLayer(OL_BIPED|0x200));
+   body->SetLayerCopy(OblivionLayer(OL_BIPED|0x200));
+
+   Matrix3 tm = node->GetObjTMAfterWSM(0);
+   body->SetRotation( TOQUATXYZW(Quat(tm)) );
+   body->SetTranslation( TOVECTOR3(tm.GetTrans() / 7.0f) );
+}
+
+NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
+{
+   bool local = !mFlattenHierarchy;
+   NiNodeRef newParent = makeNode(parent, node, local);
+
+   // Special Skeleton Only handling routines
+   if (mSkeletonOnly)
+   {
+      InitializeTimeController(new NiTransformController(), newParent);
+
+      bool isBoneRoot = false;
+      if (mIsBethesda)
+      {
+         // Check for Bone Root
+         TSTR upb;
+         node->GetUserPropBuffer(upb);
+         stringlist tokens = TokenizeString(upb.data(), "\r\n", true);
+         for (stringlist::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
+            string& line = (*itr);
+            if (wildmatch("*#", line)) { // ends with #
+               stringlist bonelod = TokenizeString(line.c_str(), "#", true);
+               for (stringlist::iterator token = bonelod.begin(); token != bonelod.end(); ++token) {
+                  if (wildmatch("??BoneLOD", (*token).c_str())) {
+                     if (++token == bonelod.end()) 
+                        break;
+                     if (strmatch("BoneRoot", (*token).c_str())) {
+                        isBoneRoot = true;
+                        NiBSBoneLODControllerRef boneCtrl = new NiBSBoneLODController();
+                        InitializeTimeController(boneCtrl, newParent);
+                        FillBoneController(this, boneCtrl, node);
+                        break;
+                     }
+                  }
+               }
+            }
+         }
+         
+         if (!isBoneRoot)
+            InitializeTimeController(new bhkBlendController(), newParent);
+
+         if (mGenerateBoneCollision)
+         {
+            Matrix3 tm = node->GetObjTMAfterWSM(0);
+
+            bhkShapeRef shape;
+            int nc = node->NumberOfChildren();
+            if (nc == 0) {
+               // Nothing
+            } else if (nc == 1) {
+               // Capsule
+               INode *child = node->GetChildNode(0);
+               Matrix3 ctm = Inverse(tm) * child->GetObjTMAfterWSM(0);
+               float len = ctm.GetTrans().Length();
+               float boxLen = mBoundingBox.Width().Length();
+               float ratio = len / boxLen;
+               if ( ratio < 0.05 ) {
+                  // do nothing
+               } else if ( ratio < 0.15 ) {
+                  // Perpendicular Capsule
+                  Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
+                  Matrix3 rtm = tm * RotateXMatrix( TORAD(90) );
+                  rtm.SetTranslate(center);
+
+                  Point3 pt1 = VectorTransform( Point3(len, 0.0f, 0.0f), rtm );
+                  Point3 pt2 = VectorTransform( Point3(-len, 0.0f, 0.0f), rtm );
+                  float radius = len / 7.0f / 2.0f ;
+
+                  bhkCapsuleShapeRef capsule = new bhkCapsuleShape();
+                  capsule->SetRadius( radius );
+                  capsule->SetRadius1( radius );
+                  capsule->SetRadius2( radius );
+                  capsule->SetFirstPoint( TOVECTOR3(pt1 / 7.0f) );
+                  capsule->SetSecondPoint( TOVECTOR3(pt2 / 7.0f) );
+                  capsule->SetMaterial(HAV_MAT_SKIN);
+
+                  shape = StaticCast<bhkShape>(capsule);
+               } else {
+                  // Normal Capsule
+                  Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
+               }
+            } else {
+               // Sphere
+               float radius = 0.0f;
+               CalcBoundingSphere(node,tm.GetTrans(), radius, 0);
+
+               bhkSphereShapeRef sphere = new bhkSphereShape();
+               sphere->SetRadius(radius / 7.0f);
+               sphere->SetMaterial(HAV_MAT_SKIN);
+               shape = StaticCast<bhkShape>(sphere);
+            }
+
+            if (shape)
+            {
+               bhkBlendCollisionObjectRef blendObj = new bhkBlendCollisionObject();
+               bhkRigidBodyRef body = new bhkRigidBody();
+
+               InitializeRigidBody(body, node);
+               body->SetMotionSystem(MotionSystem(6));
+               body->SetQualityType(MO_QUAL_KEYFRAMED);
+               body->SetShape( StaticCast<bhkShape>(shape) );
+               blendObj->SetBody( StaticCast<NiObject>(body) );
+               newParent->SetCollisionObject( StaticCast<NiCollisionObject>(blendObj) );
+            }
+         }
+      }
+
+
+      if (wildmatch("Bip??", node->GetName()))
+      {
+         NiNodeRef accumNode = new NiNode();
+         accumNode->SetName(FormatString("%s NonAccum", node->GetName()));
+         accumNode->SetLocalTransform(Matrix44::IDENTITY);
+         newParent->AddChild(DynamicCast<NiAVObject>(accumNode));
+
+         // Transfer 
+         if (mIsBethesda) {
+            InitializeTimeController(new bhkBlendController(), accumNode);
+            accumNode->SetCollisionObject(newParent->GetCollisionObject());
+            newParent->SetCollisionObject( NiCollisionObjectRef() );
+         }
+         InitializeTimeController(new NiTransformController(), accumNode);
+         
+         newParent = accumNode;
+      }
+   }
+
+   return newParent;
 }

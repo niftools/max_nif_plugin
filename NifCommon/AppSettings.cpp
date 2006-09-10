@@ -62,6 +62,7 @@ void AppSettings::ReadSettings(string iniFile)
    goToSkeletonBindPosition = GetSetting<bool>("GoToSkeletonBindPosition", goToSkeletonBindPosition);
    disableCreateNubsForBones = GetSetting<bool>("DisableCreateNubsForBones", disableCreateNubsForBones);
    applyOverallTransformToSkinAndBones = GetSetting<int>("ApplyOverallTransformToSkinAndBones", -1);
+   textureUseFullPath = GetSetting<bool>("TextureUseFullPath", textureUseFullPath);
 
    dummyNodeMatches = TokenizeString(GetSetting<string>("DummyNodeMatches").c_str(), ";");
 }
@@ -144,6 +145,11 @@ bool AppSettings::IsFileInRootPaths(const std::string& fname)
 std::string AppSettings::GetRelativeTexPath(const std::string& fname, const std::string& prefix)
 {
    TCHAR buffer[MAX_PATH];
+   if (textureUseFullPath)
+   {
+      GetFullPathName(fname.c_str(), _countof(buffer), buffer, NULL);
+      return string(buffer);
+   }
    if (!PathIsRelative(fname.c_str())) 
    {
       TCHAR root[MAX_PATH];

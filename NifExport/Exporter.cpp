@@ -2,6 +2,9 @@
 #include "AppSettings.h"
 #include "niutils.h"
 
+#include "obj/BSXFlags.h"
+#include "obj/BSBound.h"
+
 int Exporter::mVersion=013;
 bool Exporter::mSelectedOnly=false;
 bool Exporter::mTriStrips=true;
@@ -23,39 +26,60 @@ bool Exporter::mSortNodesToEnd=false;
 string Exporter::mGameName = "User";
 string Exporter::mNifVersion = "20.0.0.5";
 int Exporter::mNifUserVersion = 0;
+bool Exporter::mSkeletonOnly=false;
+bool Exporter::mExportCameras=false;
+bool Exporter::mGenerateBoneCollision=false;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)
 {
 }
 
+
 Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
    //root->SetName("Scene Root");
 
-   if (mExportCollision)
+   int nifVersion = GetVersion(Exporter::mNifVersion);
+   mIsBethesda = (nifVersion == VER_20_0_0_5 || nifVersion == VER_20_0_0_4) && (Exporter::mNifUserVersion == 11);
+
+   CalcBoundingBox(node, mBoundingBox);
+
+   if (mSkeletonOnly && mIsBethesda)
+   {
+      BSBoundRef bsb = CreateNiObject<BSBound>();
+      bsb->SetName("BBX");    
+      bsb->SetCenter( TOVECTOR3(mBoundingBox.Center()) );
+      bsb->SetDimensions( TOVECTOR3(mBoundingBox.Width() / 2.0f) );
+      root->AddExtraData(DynamicCast<NiExtraData>(bsb));
+
+      BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+      bsx->SetName("BSX");
+      bsx->SetFlags( 0x00000007 );
+      root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+   }
+   else if (mExportCollision && mIsBethesda)
    {
 	   BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 	   bsx->SetName("BSX");
-	   bsx->SetFlags(0x00000002);
+	   bsx->SetFlags( 0x00000002 );
       root->AddExtraData(DynamicCast<NiExtraData>(bsx));
    }
 
    bool ok = exportUPB(root, node);
-   if (!ok && Exporter::mExportCollision)
-   {
-      NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
-      strings->SetName("UPB");
-      strings->SetData("Ellasticity = 0.300000\r\nFriction = 0.300000\r\nUnyielding = 0\r\nProxy_Geometry = <None>\r\nUse_Display_Proxy = 0\r\nDisplay_Children = 1\r\nDisable_Collisions = 0\r\nInactive = 0\r\nDisplay_Proxy = <None>\r\nMass = 0.000000\r\nSimulation_Geometry = 2\r\nCollision_Groups = 589825\r\n");
-      root->AddExtraData(DynamicCast<NiExtraData>(strings));
-   }
+   //if (!ok && Exporter::mExportCollision)
+   //{
+   //   NiStringExtraDataRef strings = DynamicCast<NiStringExtraData>(CreateBlock("NiStringExtraData"));	
+   //   strings->SetName("UPB");
+   //   strings->SetData("Ellasticity = 0.300000\r\nFriction = 0.300000\r\nUnyielding = 0\r\nProxy_Geometry = <None>\r\nUse_Display_Proxy = 0\r\nDisplay_Children = 1\r\nDisable_Collisions = 0\r\nInactive = 0\r\nDisplay_Proxy = <None>\r\nMass = 0.000000\r\nSimulation_Geometry = 2\r\nCollision_Groups = 589825\r\n");
+   //   root->AddExtraData(DynamicCast<NiExtraData>(strings));
+   //}
 
 	mNiRoot = root;
 	
-	Result result;
-	result = exportMeshes(root, node);
-	if (result != Ok)
-		return result;
+	Result result = exportNodes(root, node);
+   if (result != Ok)
+      return result;
 		
 	if (mExportCollision)
 	{
@@ -78,122 +102,75 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 	return Ok;
 }
 
-#if 0
-
-Exporter::Result Exporter::exportMeshes(NiNodeRef &parent, INode *node)
+// Primary recursive decent routine
+Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 {
-	bool coll = npIsCollision(node);
-	if ((coll && !mExportCollision) ||
-		(node->IsHidden() && !mExportHidden && !coll) ||
-		(mSelectedOnly && !node->Selected()))
-		return Skip;
+   bool coll = npIsCollision(node);
+   if (coll ||	(node->IsHidden() && !mExportHidden && !coll) || (mSelectedOnly && !node->Selected()))
+      return Skip;
 
-	TimeValue t = 0;
-	NiNodeRef prevParent = parent;
-	if (!coll && node->IsGroupHead())
-	{
-		NiNodeRef n = DynamicCast<NiNode>(CreateBlock("NiNode"));
-		Matrix33 rot;
-		Vector3 trans;
-		nodeTransform(rot, trans, node, t);
-		n->SetLocalRotation(rot);
-		n->SetLocalTranslation(trans);
-		string name = (char*)node->GetName();
-		n->SetName(name);
+   bool local = !mFlattenHierarchy;
+   NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
 
-		parent->AddChild(DynamicCast<NiAVObject>(n));
-		parent = n;
-	}
+   NiNodeRef newParent;
+   TimeValue t = 0;
+   ObjectState os = node->EvalWorldState(t); 
 
-	Result result;
+   // Always skip bones and bipeds
+   SClass_ID scid = node->SuperClassID();
+   Class_ID ncid = node->ClassID();
+   TSTR nodeName = node->GetName();
+   TSTR nodeClass; node->GetClassName(nodeClass);
 
-	ObjectState os = node->EvalWorldState(t); 
-	if (os.obj) 
-	{
-		// We look at the super class ID to determine the type of the object.
-		switch(os.obj->SuperClassID()) 
-		{
-			case GEOMOBJECT_CLASS_ID: 
-/*				if (os.obj->ClassID() == SCUBA_CLASS_ID)
-				{
-					float radius = 0;
-					float height = 0;
-					IParamArray *params = os.obj->GetParamBlock();
-					params->GetValue(os.obj->GetParamBlockIndex(CAPSULE_RADIUS), 0, radius, FOREVER);
-					params->GetValue(os.obj->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height, FOREVER);
+   // For some unusual reason, bones named Helper are converted to Meshes and 
+   //   lose their Bone properties except a new node named Bone seem to show up
+   if (node->IsBoneShowing())
+      newParent = exportBone(nodeParent, node);
+   else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
+   {
+      TSTR objClass;
+      os.obj->GetClassName(objClass);
+      SClass_ID oscid = os.obj->SuperClassID();
+      Class_ID oncid = os.obj->ClassID();
+      if (  os.obj 
+         && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
+            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
+            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+            )
+         ) 
+      {
+         newParent = exportBone(nodeParent, node);
+      } 
+      else if (!mSkeletonOnly)
+      {
+         newParent = (mExportExtraNodes) ? makeNode(nodeParent, node, local) : nodeParent;
 
-					int foo=1+2;
-				} else
-				if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
-				{
-					float length = 0;
-					float height = 0;
-					float width = 0; 
+         Result result;
+         result = exportMesh(newParent, node, t);
+         if (result != Ok)
+            return result;
+      }
+   }
+   else if (mExportCameras && os.obj && os.obj->SuperClassID()==CAMERA_CLASS_ID)
+   {
+      newParent = makeNode(nodeParent, node, local);
+   }
+   else if (mExportLights && os.obj && os.obj->SuperClassID()==LIGHT_CLASS_ID)
+   {
+      return exportLight(nodeParent, node, (GenLight*)os.obj);
+   }
+   else if (isMeshGroup(node) && local) // only create node if local
+   {
+      newParent = makeNode(parent, node, local);
+   } 
+   else
+      newParent = parent;
 
-					IParamArray *params = os.obj->GetParamBlock();
-					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_LENGTH), 0, length, FOREVER);
-					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_HEIGHT), 0, height, FOREVER);
-					params->GetValue(os.obj->GetParamBlockIndex(BOXOBJ_WIDTH), 0, width, FOREVER);
-
-					int foo=1+2;
-
-				} else
-				if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
-				{
-					float radius = 0;
-
-					IParamArray *params = os.obj->GetParamBlock();
-					params->GetValue(os.obj->GetParamBlockIndex(SPHERE_RADIUS), 0, radius, FOREVER);
-
-					int foo=1+2;
-
-				} else
-				{
-*/
-					if (!coll)
-					{
-
-						result = exportMesh(parent, node, t);
-						if (result != Ok)
-							return result;
-					} /*else
-					{
-
-						if (!makeCollisionHierarchy(mNiRoot, node, t))
-							return Error;
-					}
-				}
-*/
-				break;
-/*
-			case CAMERA_CLASS_ID:
-				if (GetIncludeObjCamera()) ExportCameraObject(node, indentLevel); 
-				break;
-			case LIGHT_CLASS_ID:
-				if (GetIncludeObjLight()) ExportLightObject(node, indentLevel); 
-				break;
-			case SHAPE_CLASS_ID:
-				if (GetIncludeObjShape()) ExportShapeObject(node, indentLevel); 
-				break;
-			case HELPER_CLASS_ID:
-				if (GetIncludeObjHelper()) ExportHelperObject(node, indentLevel); 
-				break;
-			}
-*/
-		}
-	}
-
-	for (int i=0; i<node->NumberOfChildren(); i++) 
-	{
-		Result result = exportMeshes(parent, node->GetChildNode(i));
-		if (result!=Ok && result!=Skip)
-			return result;
-	}
-
-	if (node->IsGroupHead())
-		parent = prevParent;
-
-	return Ok;
+   for (int i=0; i<node->NumberOfChildren(); i++) 
+   {
+      Result result = exportNodes(newParent, node->GetChildNode(i));
+      if (result!=Ok && result!=Skip)
+         return result;
+   }
+   return Ok;
 }
-
-#endif

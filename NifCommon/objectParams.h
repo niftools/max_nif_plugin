@@ -249,6 +249,7 @@ inline bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* c
 	return rval;
 }
 
+
 // These helpers are used to convert C++ values to
 // their MAXScript value. Maxscript uses different
 // methods to handle the conversion, and these helpers

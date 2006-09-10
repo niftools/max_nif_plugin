@@ -22,3 +22,4 @@
 #include <shlwapi.h>
 
 #include "MaxNifImport.h"
+#include "MAX_MemDirect.h"

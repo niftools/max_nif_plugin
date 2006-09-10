@@ -69,6 +69,110 @@ std::string FormatString(const TCHAR* format,...)
    return text;
 }
 
+
+// routine for parsing white space separated lines.  Handled like command line parameters w.r.t quotes.
+static void parse_line (
+                        const char *start,
+                        char **argv,
+                        char *args,
+                        int *numargs,
+                        int *numchars
+                        )
+{
+   const char NULCHAR    = '\0';
+   const char SPACECHAR  = ' ';
+   const char TABCHAR    = '\t';
+   const char RETURNCHAR = '\r';
+   const char LINEFEEDCHAR = '\n';
+   const char DQUOTECHAR = '\"';
+   const char SLASHCHAR  = '\\';
+   const char *p;
+   int inquote;                    /* 1 = inside quotes */
+   int copychar;                   /* 1 = copy char to *args */
+   unsigned numslash;              /* num of backslashes seen */
+
+   *numchars = 0;
+   *numargs = 0;                   /* the program name at least */
+
+   p = start;
+
+   inquote = 0;
+
+   /* loop on each argument */
+   for(;;) 
+   {
+      if ( *p ) { while (*p == SPACECHAR || *p == TABCHAR || *p == RETURNCHAR || *p == LINEFEEDCHAR) ++p; }
+
+      if (*p == NULCHAR) break; /* end of args */
+
+      /* scan an argument */
+      if (argv)
+         *argv++ = args;     /* store ptr to arg */
+      ++*numargs;
+
+      /* loop through scanning one argument */
+      for (;;) 
+      {
+         copychar = 1;
+         /* Rules: 2N backslashes + " ==> N backslashes and begin/end quote
+         2N+1 backslashes + " ==> N backslashes + literal "
+         N backslashes ==> N backslashes */
+         numslash = 0;
+         while (*p == SLASHCHAR) 
+         {
+            /* count number of backslashes for use below */
+            ++p;
+            ++numslash;
+         }
+         if (*p == DQUOTECHAR) 
+         {
+            /* if 2N backslashes before, start/end quote, otherwise copy literally */
+            if (numslash % 2 == 0) {
+               if (inquote) {
+                  if (p[1] == DQUOTECHAR)
+                     p++;    /* Double quote inside quoted string */
+                  else        /* skip first quote char and copy second */
+                     copychar = 0;
+               } else
+                  copychar = 0;       /* don't copy quote */
+
+               inquote = !inquote;
+            }
+            numslash /= 2;          /* divide numslash by two */
+         }
+
+         /* copy slashes */
+         while (numslash--) {
+            if (args)
+               *args++ = SLASHCHAR;
+            ++*numchars;
+         }
+
+         /* if at end of arg, break loop */
+         if (*p == NULCHAR || (!inquote && (*p == SPACECHAR || *p == TABCHAR || *p == RETURNCHAR || *p == LINEFEEDCHAR)))
+            break;
+
+         /* copy character into argument */
+         if (copychar) 
+         {
+            if (args)
+               *args++ = *p;
+            ++*numchars;
+         }
+         ++p;
+      }
+
+      /* null-terminate the argument */
+      if (args)
+         *args++ = NULCHAR;          /* terminate string */
+      ++*numchars;
+   }
+   /* We put one last argument in -- a null ptr */
+   if (argv)
+      *argv++ = NULL;
+   ++*numargs;
+}
+
 // Tokenize a string using strtok and return it as a stringlist
 stringlist TokenizeString(LPCTSTR str, LPCTSTR delims, bool trim)
 {
@@ -78,6 +182,32 @@ stringlist TokenizeString(LPCTSTR str, LPCTSTR delims, bool trim)
       values.push_back(string((trim) ? Trim(p) : p));
    }
    return values;
+}
+
+// Tokenize a string using strtok and return it as a stringlist
+stringlist TokenizeCommandLine(LPCTSTR str, bool trim)
+{
+   stringlist values;
+   int nargs = 0, nchars = 0;
+   parse_line( str, NULL, NULL, &nargs, &nchars);
+   char **largv = (char **)_alloca(nargs * sizeof(TCHAR *) + nchars * sizeof(TCHAR));
+   parse_line( str, largv, ((TCHAR*)largv) + nargs * sizeof(TCHAR*), &nargs, &nchars);
+   for (int i=0; i<nargs; ++i) {
+      LPTSTR p = largv[i];
+      if (p == NULL) continue;
+      values.push_back(string((trim) ? Trim(p) : p));
+   }
+   return values;
+}
+
+string JoinCommandLine(stringlist args)
+{
+   std::stringstream str;
+   for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+      if (itr != args.begin()) str << ' ';
+      str << (*itr);
+   }
+   return str.str();
 }
 
 // Parse and ini file section and return the results as s NameValueCollection.
@@ -302,6 +432,11 @@ int wildcmpi(const TCHAR *wild, const TCHAR *string) {
    return !*wild;
 }
 
+bool wildmatch(const TCHAR* match, const TCHAR* value)
+{
+   return (wildcmpi(match, value)) ? true : false;
+}
+
 bool wildmatch(const string& match, const std::string& value) 
 {
    return (wildcmpi(match.c_str(), value.c_str())) ? true : false;
@@ -323,6 +458,58 @@ void RenameNode(Interface *gi, LPCTSTR SrcName, LPCTSTR DstName)
    if (node != NULL) node->SetName(const_cast<LPTSTR>(DstName));
 }
 
+Point3 TOEULER(const Matrix3 &m)
+{
+   Point3 rv(0.0f, 0.0f, 0.0f);
+   if ( m.GetRow(2)[0] < 1.0 )
+   {
+      if ( m.GetRow(2)[0] > - 1.0 )
+      {
+         rv[2] = atan2( - m.GetRow(1)[0], m.GetRow(0)[0] );
+         rv[1] = asin( m.GetRow(2)[0] );
+         rv[0] = atan2( - m.GetRow(2)[1], m.GetRow(2)[2] );
+      }
+      else
+      {
+         rv[2] = - atan2( - m.GetRow(1)[2], m.GetRow(1)[1] );
+         rv[1] = - PI / 2;
+         rv[0] = 0.0;
+      }
+   }
+   else
+   {
+      rv[2] = atan2( m.GetRow(1)[2], m.GetRow(1)[1] );
+      rv[1] = PI / 2;
+      rv[0] = 0.0;
+   }
+   return rv;
+}
+
+inline Point3 TODEG(const Point3& p){
+   return Point3(TODEG(p[0]), TODEG(p[1]), TODEG(p[2]));
+}
+
+inline Point3 TORAD(const Point3& p){
+   return Point3(TORAD(p[0]), TORAD(p[1]), TORAD(p[2]));
+}
+
+inline TSTR TOSTRING(const Point3& p) {
+   return FormatText("[%g,%g,%g]", p[0], p[1], p[2]);
+}
+
+inline TSTR TOSTRING(float p) {
+   return FormatText("%g", p);
+}
+
+inline TSTR TOSTRING(const Matrix3& m) {
+   return TOSTRING( TODEG( TOEULER(m) ) );
+}
+
+inline TSTR TOSTRING(const Quat& q) {
+   Matrix3 m; q.MakeMatrix(m);
+   return TOSTRING( m );
+}
+
 void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 {
    Point3 p = m3.GetTrans();
@@ -337,16 +524,15 @@ void PosRotScaleNode(INode *n, Matrix3& m3, PosRotScale prs, TimeValue t)
 void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, TimeValue t)
 {
    if (Control *c = n->GetTMController()) {
+      if (prs & prsRot && q.w == FloatNegINF) prs = PosRotScale(prs & ~prsRot);
+      if (prs & prsPos && p.x == FloatNegINF) prs = PosRotScale(prs & ~prsPos);
+      if (prs & prsScale && s == FloatNegINF) prs = PosRotScale(prs & ~prsScale);
 #ifdef USE_BIPED
       // Bipeds are special.  And will crash if you dont treat them with care
       if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
          ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
          ||(c->ClassID() == FOOTPRINT_CLASS_ID))
       {
-         if (prs & prsRot && q.w == FloatNegINF) prs = PosRotScale(prs & ~prsRot);
-         if (prs & prsPos && p.x == FloatNegINF) prs = PosRotScale(prs & ~prsPos);
-         if (prs & prsScale && s == FloatNegINF) prs = PosRotScale(prs & ~prsScale);
-
          ScaleValue sv(Point3(s,s,s));
          // Get the Biped Export Interface from the controller 
          //IBipedExport *BipIface = (IBipedExport *) c->GetInterface(I_BIPINTERFACE);
@@ -361,6 +547,14 @@ void PosRotScaleNode(INode *n, Point3 p, Quat& q, float s, PosRotScale prs, Time
       }
 #endif
       PosRotScaleNode(c, p, q, s, prs, t);
+
+//#ifdef _DEBUG
+//      static TSTR sEmpty = "<Empty>";
+//      TSTR spos = (prs & prsPos) ? TOSTRING(p) : sEmpty;
+//      TSTR srot = (prs & prsRot) ? TOSTRING(q) : sEmpty;
+//      TSTR sscl = (prs & prsScale) ? TOSTRING(s) : sEmpty;
+//      OutputDebugString(FormatText("Transform(%s, %s, %s, %s)\n", n->GetName(), spos.data(), srot.data(), sscl.data()));
+//#endif
    }
 }
 
@@ -685,4 +879,61 @@ TSTR GetFileVersion(const char *fileName)
       }
    }
    return retval;
+}
+
+// Calculate bounding sphere using minimum-volume axis-align bounding box.  Its fast but not a very good fit.
+void CalcAxisAlignedSphere(const vector<Vector3>& vertices, Vector3& center, float& radius)
+{
+   //--Calculate center & radius--//
+
+   //Set lows and highs to first vertex
+   Vector3 lows = vertices[ 0 ];
+   Vector3 highs = vertices[ 0 ];
+
+   //Iterate through the vertices, adjusting the stored values
+   //if a vertex with lower or higher values is found
+   for ( unsigned int i = 0; i < vertices.size(); ++i ) {
+      const Vector3 & v = vertices[ i ];
+
+      if ( v.x > highs.x ) highs.x = v.x;
+      else if ( v.x < lows.x ) lows.x = v.x;
+
+      if ( v.y > highs.y ) highs.y = v.y;
+      else if ( v.y < lows.y ) lows.y = v.y;
+
+      if ( v.z > highs.z ) highs.z = v.z;
+      else if ( v.z < lows.z ) lows.z = v.z;
+   }
+
+   //Now we know the extent of the shape, so the center will be the average
+   //of the lows and highs
+   center = (highs + lows) / 2.0f;
+
+   //The radius will be the largest distance from the center
+   Vector3 diff;
+   float dist2(0.0f), maxdist2(0.0f);
+   for ( unsigned int i = 0; i < vertices.size(); ++i ) {
+      const Vector3 & v = vertices[ i ];
+
+      diff = center - v;
+      dist2 = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
+      if ( dist2 > maxdist2 ) maxdist2 = dist2;
+   };
+   radius = sqrt(maxdist2);
+}
+
+// Calculate bounding sphere using average position of the points.  Better fit but slower.
+void CalcCenteredSphere(const vector<Vector3>& vertices, Vector3& center, float& radius)
+{
+   size_t nv = vertices.size();
+   Vector3 sum;
+   for (size_t i=0; i<nv; ++i)
+      sum += vertices[ i ];
+   center = sum / float(nv);
+   radius = 0.0f;
+   for (size_t i=0; i<nv; ++i){
+      Vector3 diff = vertices[ i ] - center;
+      float mag = diff.Magnitude();
+      radius = max(radius, mag);
+   }
 }

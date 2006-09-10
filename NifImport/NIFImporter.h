@@ -34,6 +34,8 @@ public:
    int vertexColorMode;
    bool useCiv4Shader;
    bool mergeNonAccum;
+   bool enableLights;
+   bool enableCameras;
 
    // Biped/Bones related settings
    bool importBones;
@@ -65,6 +67,8 @@ public:
    bool requireMultipleKeys;
    bool applyOverallTransformToSkinAndBones;
    bool clearAnimation;
+   bool addNoteTracks;
+   bool addTimeTags;
 
    // Collision settings
    float bhkScaleFactor;
@@ -79,8 +83,8 @@ public:
    void BuildNodes();
 
    // Ini File related routines
-   void LoadIniSettings();
-   void SaveIniSettings();
+   virtual void LoadIniSettings();
+   virtual void SaveIniSettings();
 
    void ApplyAppSettings();
 
@@ -110,6 +114,9 @@ public:
    INode *CreateHelper(const string& name, Point3 startPos);
    INode *CreateCamera(const string& name);
 
+   bool ImportLights(Niflib::NiNodeRef node);
+   bool ImportLights(vector<Niflib::NiLightRef> lights);
+
    // Primary Collision entry point.  Tests for bhk objects
    bool ImportCollision(Niflib::NiNodeRef node);
 
@@ -121,6 +128,7 @@ public:
 
    // Animation Helpers
    bool ImportAnimation();
+   void ClearAnimation();
    void ClearAnimation(INode *node);
 
 

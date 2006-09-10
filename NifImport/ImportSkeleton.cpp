@@ -638,9 +638,11 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
                      || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TypeConst()))
                       );
          if (wildmatch("Camera*", name)) {
-            if (bone = CreateCamera(name)) {
-               PosRotScaleNode(bone, p, q, scale, prs);
-               bone->Hide(node->GetHidden() ? TRUE : FALSE);
+            if (enableCameras) {
+               if (bone = CreateCamera(name)) {
+                  PosRotScaleNode(bone, p, q, scale, prs);
+                  bone->Hide(node->GetHidden() ? TRUE : FALSE);
+               }
             }
          }else if (isDummy && createNubsForBones)
             bone = CreateHelper(name, p);
@@ -690,10 +692,11 @@ bool NifImporter::ImportUPB(INode *node, Niflib::NiNodeRef block)
       list<NiStringExtraDataRef> strings = DynamicCast<NiStringExtraData>(block->GetExtraData());
       for (list<NiStringExtraDataRef>::iterator itr = strings.begin(); itr != strings.end(); ++itr){
          if (strmatch((*itr)->GetName(), "UserPropBuffer") || strmatch((*itr)->GetName(), "UPB")) {
-            char buffer[1048], *line = buffer;
+            char buffer[1048];
             istringstream istr((*itr)->GetData(), ios_base::out);
             while (!istr.eof()) {
-               line[0] = 0;
+               char *line = buffer;
+               buffer[0] = 0;
                istr.getline(buffer, _countof(buffer)-1);
                if (LPTSTR equals = _tcschr(line, TEXT('='))){
                   *equals++ = 0;
@@ -701,6 +704,18 @@ bool NifImporter::ImportUPB(INode *node, Niflib::NiNodeRef block)
                   if (line[0] && equals[0]){
                      node->SetUserPropString(TSTR(line), TSTR(equals));
                      ok |= true;
+                  }
+               } else {
+                  Trim(line);
+                  int len = strlen(line);
+                  // Handle bethesda special values?
+                  if (len > 0 && line[len-1] == '#'){
+                     TSTR buf, value;
+                     node->GetUserPropBuffer(buf);
+                     value.append(line).append("\r\n").append(buf);
+                     if (wildmatch("BSBoneLOD#*", value))
+                        value[0] = 'N', value[1] = 'i'; // Use NIBoneLOD to be compatible with Civ4 code
+                     node->SetUserPropBuffer(value);
                   }
                }
             }

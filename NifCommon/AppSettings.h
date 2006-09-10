@@ -25,6 +25,7 @@ public:
       , useSkeleton(false)
       , goToSkeletonBindPosition(true)
       , disableCreateNubsForBones(false)
+      , textureUseFullPath(false)
    {}
 
    std::string Name;
@@ -38,6 +39,7 @@ public:
    bool useSkeleton;
    bool goToSkeletonBindPosition;
    bool disableCreateNubsForBones;
+   bool textureUseFullPath;
    NameValueCollection Environment;
    NameValueCollection imgTable;
    stringlist dummyNodeMatches;

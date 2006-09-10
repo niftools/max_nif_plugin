@@ -1,4 +1,9 @@
 #include "pch.h"
+#include <obj/NiLight.h>
+#include <obj/NiAmbientLight.h>
+#include <obj/NiPointLight.h>
+#include <obj/NiDirectionalLight.h>
+#include <obj/NiSpotLight.h>
 
 bool Exporter::TMNegParity(const Matrix3 &m)
 {
@@ -56,15 +61,21 @@ void Exporter::convertMatrix(Matrix33 &dst, const Matrix3 &src)
 			r2.x, r2.y, r2.z);
 }
 
+Matrix3 Exporter::getTransform(INode *node, TimeValue t, bool local)
+{
+   Matrix3 tm = node->GetObjTMAfterWSM(t);
+   if (local)
+   {
+      Matrix3 pm = node->GetParentTM(t);
+      pm.Invert();
+      tm *= pm;
+   }
+   return tm;
+}
+
 void Exporter::nodeTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local)
 {
-	Matrix3 tm = node->GetObjTMAfterWSM(t);
-	if (local)
-	{
-		Matrix3 pm = node->GetParentTM(t);
-		pm.Invert();
-		tm *= pm;
-	}
+	Matrix3 tm = getTransform(node, t, local);
 	convertMatrix(rot, tm);
 	trans.Set(tm.GetTrans().x, tm.GetTrans().y, tm.GetTrans().z);
 }
@@ -256,3 +267,148 @@ void Exporter::sortNodes(NiNodeRef node)
    for (vector<NiNodeRef>::iterator itr = children.begin(); itr != children.end(); ++itr)
       sortNodes(*itr);
 }
+
+
+Exporter::Result Exporter::exportLight(NiNodeRef parent, INode *node, GenLight* light)
+{
+   TimeValue t = 0;
+   NiLightRef niLight;
+   switch (light->Type())
+   {
+   case OMNI_LIGHT:
+      {
+         if (light->GetAmbientOnly())
+         {
+            niLight = new NiAmbientLight();
+         }
+         else
+         {
+            NiPointLightRef pointLight = new NiPointLight();
+            float atten = light->GetAtten(t, ATTEN_START);
+            switch (light->GetDecayType())
+            {
+            case 0: pointLight->SetConstantAttenuation(1.0f); break;
+            case 1: pointLight->SetLinearAttenuation( atten / 4.0f ); break;
+            case 2: pointLight->SetQuadraticAttenuation( sqrt(atten / 4.0f) ); break;
+            }
+            niLight = StaticCast<NiLight>(pointLight);
+         }
+     }
+      break;
+   case TSPOT_LIGHT:
+   case FSPOT_LIGHT:
+      niLight = new NiSpotLight();
+      break;
+   case DIR_LIGHT:
+   case TDIR_LIGHT:
+      niLight = new NiDirectionalLight();
+      break;
+   }
+   if (niLight == NULL)
+      return Skip;
+
+   niLight->SetName(node->GetName());
+
+   Matrix3 tm = getTransform(node, t, !mFlattenHierarchy);
+   niLight->SetLocalTransform( TOMATRIX4(tm, false) );
+
+   niLight->SetDimmer( light->GetIntensity(0) );
+   Color3 rgbcolor = TOCOLOR3( light->GetRGBColor(0) );
+   if (light->GetAmbientOnly())
+   {
+      niLight->SetDiffuseColor(Color3(0,0,0));
+      niLight->SetSpecularColor(Color3(0,0,0));
+      niLight->SetAmbientColor(rgbcolor);
+   }
+   else
+   {
+      niLight->SetDiffuseColor(rgbcolor);
+      niLight->SetSpecularColor(rgbcolor);
+      niLight->SetAmbientColor(Color3(0,0,0));
+   }
+   parent->AddChild( DynamicCast<NiAVObject>(niLight) );
+   return Ok;
+}
+
+void Exporter::CalcBoundingBox(INode *node, Box3& box, int all)
+{
+   if (NULL == node) 
+      return;
+
+   Matrix3 tm = node->GetObjTMAfterWSM(0);
+   if (node->IsBoneShowing()) {
+      box.IncludePoints(&tm.GetTrans(), 1, NULL);
+   } else {
+      if (Object *o = node->GetObjectRef()) {
+         if (o->SuperClassID()==GEOMOBJECT_CLASS_ID) {
+            if (  o->ClassID() == BONE_OBJ_CLASSID 
+               || o->ClassID() == Class_ID(BONE_CLASS_ID,0)
+               || o->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+               )
+            {
+               box.IncludePoints(&tm.GetTrans(), 1, NULL);
+            }
+            else
+            {
+               Box3 local;
+               o->GetLocalBoundBox(0, node, mI->GetActiveViewport(), local);
+               box.IncludePoints(&local.Min(), 1, NULL);
+               box.IncludePoints(&local.Max(), 1, NULL);
+            }
+         }
+         else if (mExportCameras && o->SuperClassID()==CAMERA_CLASS_ID)
+         {
+            box.IncludePoints(&tm.GetTrans(), 1, NULL);
+         }
+      }
+   }
+   if (all < 0)
+      return;
+
+   all = (all>0 ? all : -1);
+   for (int i=0; i<node->NumberOfChildren(); i++) {
+      CalcBoundingBox(node->GetChildNode(i), box, all );
+   }
+}
+
+void Exporter::CalcBoundingSphere(INode *node, Point3 center, float& radius, int all)
+{
+   if (NULL == node) 
+      return;
+
+   Matrix3 tm = node->GetObjTMAfterWSM(0);
+   Point3 pt = (tm.GetTrans() - center);
+   float len = pt.Length();
+
+   if (node->IsBoneShowing()) {
+      radius = max(len, radius);
+   } else {
+      if (Object *o = node->GetObjectRef()) {
+         if (o->SuperClassID()==GEOMOBJECT_CLASS_ID) {
+            if (  o->ClassID() == BONE_OBJ_CLASSID 
+               || o->ClassID() == Class_ID(BONE_CLASS_ID,0)
+               || o->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+               )
+            {
+               radius = max(len, radius);
+            }
+            else
+            {
+               radius = max(len, radius);
+            }
+         }
+         else if (mExportCameras && o->SuperClassID()==CAMERA_CLASS_ID)
+         {
+            radius = max(len, radius);
+         }
+      }
+   }
+   if (all < 0)
+      return;
+
+   all = (all>0 ? all : -1);
+   for (int i=0; i<node->NumberOfChildren(); i++) {
+      CalcBoundingSphere(node->GetChildNode(i), center, radius, all );
+   }
+}
+

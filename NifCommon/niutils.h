@@ -140,6 +140,7 @@ inline bool strmatch(const TCHAR* lhs, const TCHAR* rhs) {
    return (0 == _tcsicmp(lhs, rhs));
 }
 
+bool wildmatch(const TCHAR* match, const TCHAR* value);
 bool wildmatch(const string& match, const std::string& value);
 bool wildmatch(const stringlist& matches, const std::string& value);
 
@@ -211,6 +212,9 @@ extern TSTR FormatText(const TCHAR* format,...);
 extern std::string FormatString(const TCHAR* format,...);
 
 extern stringlist TokenizeString(LPCTSTR str, LPCTSTR delims, bool trim=false);
+extern stringlist TokenizeCommandLine(LPCTSTR str, bool trim);
+extern string JoinCommandLine(stringlist args);
+
 extern string GetIndirectValue(LPCSTR path);
 extern NameValueCollection ReadIniSection(LPCTSTR Section, LPCTSTR iniFileName );
 extern string ExpandQualifiers(const string& src, const NameValueCollection& map);
@@ -277,6 +281,14 @@ static inline Niflib::Color3 TOCOLOR3(const Color& c3) {
    return Niflib::Color3(c3.r, c3.g, c3.b);
 }
 
+static inline Niflib::Color3 TOCOLOR3(const Point3& c3) {
+   return Niflib::Color3(c3.x, c3.y, c3.z);
+}
+
+static inline Point3 TOPOINT3(const Niflib::Color3& c3){
+   return Point3(c3.r, c3.g, c3.b);
+}
+
 static inline Point3 TOPOINT3(const Niflib::Vector3& v){
    return Point3(v.x, v.y, v.z);
 }
@@ -322,6 +334,7 @@ static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = false)
    tm.Decompose(pos, rot, scale);
    Matrix3 m(rot.rows[0].data, rot.rows[1].data, rot.rows[2].data, Point3());
    if (invert) m.Invert();
+   m.Scale(Point3(scale, scale, scale));
    m.SetTrans(Point3(pos.x, pos.y, pos.z));
    return m;
 }
@@ -332,6 +345,10 @@ static inline Niflib::Matrix44 TOMATRIX4(const Matrix3 &tm, bool invert = false)
                        tm.GetRow(2)[0], tm.GetRow(2)[1], tm.GetRow(2)[2]);
    Niflib::Matrix44 m4(TOVECTOR3(tm.GetTrans()), m3, 1.0f);
    return m4;
+}
+
+static inline Point3 GetScale(const Matrix3& mtx){
+   return Point3( fabs(mtx.GetRow(0)[0]), fabs(mtx.GetRow(1)[1]), fabs(mtx.GetRow(2)[2]) );
 }
 
 template <typename U, typename T>
@@ -369,6 +386,5 @@ template<typename T>
 inline Niflib::Ref<T> CreateNiObject() {
    return Niflib::StaticCast<T>(Niflib::CreateObject(T::TypeConst().GetTypeName()));
 }
-
 
 #endif // _NIUTILS_H_

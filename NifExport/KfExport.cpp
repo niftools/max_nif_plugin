@@ -110,17 +110,17 @@ const TCHAR *KfExport::AuthorName()
 
 const TCHAR *KfExport::CopyrightMessage() 
 {	
-   return _T("http://niftools.sourceforge.net");
+   return _T("http://www.niftools.org");
 }
 
 const TCHAR *KfExport::OtherMessage1() 
 {		
-   return _T("http://niftools.sourceforge.net");
+   return _T("http://www.niftools.org");
 }
 
 const TCHAR *KfExport::OtherMessage2() 
 {		
-   return _T("http://niftools.sourceforge.net");
+   return _T("http://www.niftools.org");
 }
 
 unsigned int KfExport::Version()

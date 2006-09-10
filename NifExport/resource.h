@@ -31,8 +31,11 @@
 #define IDC_CHK_UPB                     1020
 #define IDC_CHK_HIER                    1021
 #define IDC_CHK_REM_BONES               1022
-#define IDC_CHECK7                      1023
 #define IDC_CHK_SORTNODES               1023
+#define IDC_CHK_SKEL_ONLY               1024
+#define IDC_CHK_CAMERA                  1025
+#define IDC_CHK_SKEL_ONLY2              1026
+#define IDC_CHK_BONE_COLL               1026
 #define IDC_COLOR                       1456
 #define IDC_EDIT                        1490
 #define IDC_SPIN                        1496
@@ -43,7 +46,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1024
+#define _APS_NEXT_CONTROL_VALUE         1025
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -4,6 +4,8 @@
 #include "gen/ControllerLink.h"
 using namespace Niflib;
 
+extern LPCTSTR AnimImportSection;
+
 KFMImporter::KFMImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts)
    : BaseClass()
 {
@@ -29,7 +31,6 @@ void KFMImporter::ReadBlocks()
          TCHAR buffer[MAX_PATH];
          GetFullPathName(name.c_str(), MAX_PATH, buffer, NULL);
          PathRemoveFileSpec(buffer);
-#ifdef USE_UNSUPPORTED_CODE
          string nif_filename = path + '\\' + kfm.nif_filename;
          if (_taccess(nif_filename.c_str(), 0) != -1)
             root = ReadNifTree(nif_filename);
@@ -55,7 +56,6 @@ void KFMImporter::ReadBlocks()
                }
             }
          }
-#endif
       }
    }
    catch (std::exception&)
@@ -68,6 +68,15 @@ void KFMImporter::ReadBlocks()
 
 bool KFMImporter::DoImport()
 {
+   bool ok = true;
+   if (!suppressPrompts)
+   {
+      if (!ShowDialog())
+         return true;
+      ApplyAppSettings();
+      SaveIniSettings();
+   }
+
    // might check if blocks exist and if not go ahead and import nif.
    if (root)
    {
@@ -82,11 +91,14 @@ bool KFMImporter::DoImport()
       }
    }
 
-   if (clearAnimation)
-   {
-      ClearAnimation(gi->GetRootNode());
-   }
-
+   ClearAnimation();
    return ImportAnimation();
    //return BaseClass::DoImport();
+}
+
+void KFMImporter::SaveIniSettings()
+{
+   SetIniValue(AnimImportSection, "ClearAnimation", clearAnimation);
+   SetIniValue(AnimImportSection, "AddNoteTracks", addNoteTracks);
+   SetIniValue(AnimImportSection, "AddTimeTags", addTimeTags);
 }

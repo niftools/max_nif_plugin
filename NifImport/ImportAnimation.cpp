@@ -11,10 +11,13 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "stdafx.h"
+#include <IFrameTagManager.h>
+#include <notetrck.h>
 #include "MaxNifImport.h"
 #include "NIFImporter.h"
 #include "KFMImporter.h"
 #include "KFImporter.h"
+#include "AnimKey.h"
 #include <obj/NiInterpolator.h>
 #include <obj/NiTransformInterpolator.h>
 #include <obj/NiTransformData.h>
@@ -35,7 +38,12 @@ enum {
    IPOS_W_REF	=	3,
 };
 
-#include "AnimKey.h"
+void* operator new(size_t size, NoteKey* stub )
+{ return MAX_new(size); }
+
+void operator delete(void* memblock, NoteKey* stub )
+{ return MAX_delete(memblock); }
+
 
 struct AnimationImport
 {
@@ -135,6 +143,138 @@ void NifImporter::ClearAnimation(INode *node)
       }
    }
 }
+void NifImporter::ClearAnimation()
+{
+   if (clearAnimation)
+   {
+      if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+
+         int n = tagMgr->GetTagCount();
+         for (int i=n-1; i>=0; --i){
+            tagMgr->DeleteTag( tagMgr->GetTagID(i) );
+         }
+      }
+      ClearAnimation(gi->GetRootNode());
+   }
+}
+
+FPValue GetScriptedProperty( FPValue& thing, TCHAR* propName ) {
+   init_thread_locals();
+   push_alloc_frame();
+   two_value_locals( thingValue, propNameValue );
+   save_current_frames();
+   trace_back_active = FALSE;
+
+   FPValue retVal( TYPE_INT, 0 );
+   BOOL isUndefined = ((thing.type==TYPE_VALUE) && (thing.v==&undefined));
+   if( (thing.i!=0) && (!isUndefined) ) try { //Safe handling for NULL
+      vl.thingValue = InterfaceFunction::FPValue_to_val( thing );
+      vl.propNameValue = Name::intern( propName );
+      vl.thingValue = vl.thingValue->get_property( &vl.propNameValue, 1 );
+      vl.thingValue->to_fpvalue( retVal );
+   }
+   catch ( ... ) {
+      clear_error_source_data();
+      restore_current_frames();
+      MAXScript_signals = 0;
+      if (progress_bar_up)
+         MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+   }
+   pop_value_locals();
+   pop_alloc_frame();
+   return retVal;
+}
+
+Value* GetFunction( Value* thing, TCHAR* funcName ) {
+   init_thread_locals();
+   push_alloc_frame();
+   one_value_local( funcNameValue );
+   save_current_frames();
+   trace_back_active = FALSE;
+
+   Value* retval = NULL;
+   if( (thing!=0) ) try { //Safe handling for NULL
+      vl.funcNameValue = Name::intern( funcName );
+      retval = thing->get_property( &vl.funcNameValue, 1 );
+   }
+   catch ( ... ) {
+      clear_error_source_data();
+      restore_current_frames();
+      MAXScript_signals = 0;
+      if (progress_bar_up)
+         MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+   }
+   pop_value_locals();
+   pop_alloc_frame();
+   return retval;
+}
+
+static FPValue myAddNewNoteKey(Value* noteTrack, int frame)
+{
+   // Magic initialization stuff for maxscript.
+   static bool script_initialized = false;
+   if (!script_initialized) {
+      init_MAXScript();
+      script_initialized = TRUE;
+   }
+   init_thread_locals();
+   push_alloc_frame();
+   five_value_locals(name, fn, track, frame, result);
+   save_current_frames();
+   trace_back_active = FALSE;
+
+   FPValue retVal( TYPE_INT, 0 );
+   try	{
+      // Create the name of the maxscript function we want.
+      // and look it up in the global names
+      vl.name = Name::intern(_T("addNewNoteKey"));
+      vl.fn = globals->get(vl.name);
+
+      // For some reason we get a global thunk back, so lets
+      // check the cell which should point to the function.
+      // Just in case if it points to another global thunk
+      // try it again.
+      while (vl.fn != NULL && is_globalthunk(vl.fn))
+         vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
+      while (vl.fn != NULL && is_constglobalthunk(vl.fn))
+         vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
+
+      // Now we should have a MAXScriptFunction, which we can
+      // call to do the actual conversion. If we didn't
+      // get a MAXScriptFunction, we can't convert.
+      if (vl.fn != NULL && vl.fn->_is_function()) {
+         Value* args[4];
+
+         // Ok. convertToArchMat takes one parameter, the material
+         // and an optional keyword paramter, replace, which tells
+         // convertToArchMat whether to replace all reference to
+         // the old material by the new one.
+         args[0] = vl.track = noteTrack;	// The original material
+         args[1] = Integer::intern(frame);
+         args[2] = &keyarg_marker;						// Separates keyword params from mandatory
+
+         // Call the funtion and save the result.
+         vl.result = vl.fn->apply(args, 2);
+
+         // If the result isn't NULL, try to convert it to a material.
+         // If the convesion fails, an exception will be thrown.
+         if (vl.result != NULL)
+            vl.result->to_fpvalue(retVal);
+      }
+   } catch (...) {
+      clear_error_source_data();
+      restore_current_frames();
+      MAXScript_signals = 0;
+      if (progress_bar_up)
+         MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+   }
+
+   // Magic Max Script stuff to clear the frame and locals.
+   pop_value_locals();
+   pop_alloc_frame();
+
+   return retVal;
+}
 
 bool KFMImporter::ImportAnimation()
 {
@@ -151,8 +291,89 @@ bool KFMImporter::ImportAnimation()
       float maxTime = 0.0f;
 
       NiControllerSequenceRef cntr = (*itr);
+      float start = cntr->GetStartTime();
+      float stop = cntr->GetStopTime();
+      float total = (stop - start);
+
       vector<ControllerLink> links = cntr->GetControllerData();
 
+      NiTextKeyExtraDataRef textKeyData = cntr->GetTextKeyExtraData();
+      vector<StringKey> textKeys = textKeyData->GetKeys();
+      if (!textKeys.empty()) {
+
+         if (addNoteTracks) {
+            string target = cntr->GetTargetName();
+            if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
+
+               TSTR script;
+               script += 
+               "fn getActorManager obj = (\n"
+               "   local nt = undefined\n"
+               "   n = numNoteTracks obj\n"
+               "   for i = 1 to n do (\n"
+               "      local nt = getNoteTrack obj i\n"
+               "      if (nt.name == \"ActorManager\") then ( return nt )\n"
+               "   )\n"
+               "   nt = notetrack \"ActorManager\"\n"
+               "   addNoteTrack obj nt\n"
+               "   return nt\n"
+               ")\n"
+               "fn addNoteKey nt frame tag = (\n"
+               "   local Key = addNewNoteKey nt.keys frame\n"
+               "   Key.value = tag\n"
+               ")\n";
+
+               script += FormatText("nt = getActorManager $'%s'\n", target.c_str());
+               
+               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+                  TimeValue t = TimeToFrame(time + (*itr).time) + 1;
+
+                  if (wildmatch("start*", (*itr).data)){
+                     stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
+                     if (args.empty()) continue;
+                     bool hasName = false;
+                     bool hasLoop = false;
+                     CycleType ct = cntr->GetCycleType();
+                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                        if (strmatch("-name", *itr)) {
+                           if (++itr == args.end()) break;                       
+                           hasName = true;
+                        } else if (strmatch("-loop", *itr)) {
+                           hasLoop = true;
+                        }
+                     }
+                     if (!hasName) {
+                        string name = cntr->GetName();
+                        if (name.empty())
+                           name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
+                        args.push_back("-name");
+                        args.push_back(name);
+                     }
+                     if (!hasLoop && ct == CYCLE_LOOP) {
+                        args.push_back("-loop");
+                     }
+                     
+                     string line = JoinCommandLine(args);
+                     script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, line.c_str());
+                  } else {
+                     script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, (*itr).data.c_str());
+                  }
+
+                  //NoteKey *key = new NoteKey(TimeToFrame(time + (*itr).time), (*itr).data.c_str(), 0);
+                  //nt->keys.Append(1, &key);
+               }
+               ExecuteMAXScriptScript(script, TRUE, NULL);
+            }
+         }
+
+         if (addTimeTags) {
+            if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+                  tagMgr->CreateNewTag(const_cast<TCHAR*>((*itr).data.c_str()), TimeToFrame(time + (*itr).time), 0, FALSE);
+               }
+            }
+         }
+      }
       for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk)
       {
          string name = (*lnk).targetName;
@@ -174,10 +395,6 @@ bool KFMImporter::ImportAnimation()
             continue;
 
          INode *n = gi->GetINodeByName(name.c_str());
-
-         float start = cntr->GetStartTime();
-         float stop = cntr->GetStopTime();
-         float total = (stop - start);
 
          NiKeyframeDataRef data;
          Point3 p; Quat q; float s;

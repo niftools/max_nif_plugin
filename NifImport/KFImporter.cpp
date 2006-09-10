@@ -31,10 +31,14 @@ void KFImporter::ReadBlocks()
 
 bool KFImporter::DoImport()
 {
-   if (clearAnimation)
+   if (!suppressPrompts)
    {
-      ClearAnimation(gi->GetRootNode());
+      if (!ShowDialog())
+         return true;
+      ApplyAppSettings();
+      SaveIniSettings();
    }
 
+   ClearAnimation();
    return ImportAnimation();
 }

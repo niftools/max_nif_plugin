@@ -17,7 +17,7 @@ HISTORY:
 
 using namespace Niflib;
 
-BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
+static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
    static NifImporter *imp = NULL;
    static DWORD dlgRes = IDCANCEL; 
 
@@ -44,6 +44,9 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             CheckDlgButton(hWnd, IDC_CHK_VCOLORS, imp->vertexColorMode);
             CheckDlgButton(hWnd, IDC_CHK_COLL, imp->enableCollision);
             CheckDlgButton(hWnd, IDC_CHK_ANIMATION, imp->enableAnimations);
+            CheckDlgButton(hWnd, IDC_CHK_LIGHTS, imp->enableLights);
+            CheckDlgButton(hWnd, IDC_CHK_CAMERA, imp->enableCameras);
+            
             //CheckDlgButton(hWnd, IDC_CHK_FURN, imp->);
 
             CheckDlgButton(hWnd, IDC_CHK_FLIP_UV, imp->flipUVTextures);
@@ -92,6 +95,8 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
                   imp->enableSkinSupport = IsDlgButtonChecked(hWnd, IDC_CHK_SKIN) ? true : false;
                   imp->vertexColorMode = (int)IsDlgButtonChecked(hWnd, IDC_CHK_VCOLORS);
                   imp->enableCollision = IsDlgButtonChecked(hWnd, IDC_CHK_COLL) ? true : false;
+                  imp->enableCameras = IsDlgButtonChecked(hWnd, IDC_CHK_CAMERA) ? true : false;
+                  imp->enableLights = IsDlgButtonChecked(hWnd, IDC_CHK_LIGHTS) ? true : false;
                   imp->enableAnimations = IsDlgButtonChecked(hWnd, IDC_CHK_ANIMATION) ? true : false;
                   //IsDlgButtonChecked(hWnd, IDC_CHK_FURN, imp->);
 
@@ -155,8 +160,7 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             {
                if (LOWORD(wParam) == IDC_LBL_LINK)
                {
-                  ShellExecute(hWnd, "open", "http://niftools.sourceforge.net",
-                     NULL, NULL, SW_SHOWDEFAULT);
+                  ShellExecute(hWnd, "open", "http://www.niftools.org", NULL, NULL, SW_SHOWDEFAULT);
                }
             }
             else if (HIWORD(wParam) == CBN_SELCHANGE)
@@ -186,5 +190,5 @@ BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 
 bool NifImporter::ShowDialog()
 {
-   return (IDOK == DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), GetActiveWindow(), MaxNifImportOptionsDlgProc, (LPARAM)this));
+   return (IDOK == DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_NIF_PANEL), GetActiveWindow(), MaxNifImportOptionsDlgProc, (LPARAM)this));
 }

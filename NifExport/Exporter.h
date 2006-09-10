@@ -53,6 +53,9 @@ public:
    static string        mGameName;
    static string        mNifVersion;
    static int           mNifUserVersion;
+   static bool				mSkeletonOnly;
+   static bool				mExportCameras;
+   static bool          mGenerateBoneCollision;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -99,9 +102,11 @@ public:
    AppSettings          *mAppSettings;
    NodeMap              mNodeMap;
    CallbackList         mPostExportCallbacks;
+   bool                 mIsBethesda;
+   Box3                 mBoundingBox;
 
+   Result					exportNodes(NiNodeRef &root, INode *node);
 	Result					exportCollision(NiNodeRef &root, INode *node);
-	Result					exportMeshes(NiNodeRef &root, INode *node);
 
 	/* utility functions */
 	Mtl						*getMaterial(INode *node, int subMtl);
@@ -109,6 +114,7 @@ public:
 	void					convertMatrix(Matrix33 &dst, const Matrix3 &src);
 	void					nodeTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
 	void					nodeTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
+   Matrix3              getTransform(INode *node, TimeValue t, bool local=true);
 	Point3					getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);
 	bool					equal(const Vector3 &a, const Point3 &b, float thresh);
    BitmapTex				*getTexture(Mtl *mtl);
@@ -120,6 +126,8 @@ public:
 	bool					isCollisionGroup(INode *maxNode, bool root=true);
 	// returns true if the node contains meshes
 	bool					isMeshGroup(INode *maxNode, bool root=true);
+   void              CalcBoundingBox(INode *node, Box3& box, int all=1);
+   void              CalcBoundingSphere(INode *node, Point3 center, float& radius, int all=1);
 
 	/* tristrips */
 	void					strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris);
@@ -150,18 +158,18 @@ public:
 	/* havok & collision */
 	int						addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm);
 	void					addFace(Triangles &tris, vector<Vector3> &verts, vector<Vector3> &vnorms, 
-								int face, const int vi[3], Mesh *mesh);
+								int face, const int vi[3], Mesh *mesh, Matrix3& tm);
 	bool					makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue t);
 	
 	/* creates a bhkRigidBody */
 	bhkRigidBodyRef			makeCollisionBody(INode *node);
 	/* creates a collision shape from a node */
-	bhkSphereRepShapeRef	makeCollisionShape(INode *node);
+   bhkSphereRepShapeRef	makeCollisionShape(INode *node, const Matrix3& tm = Matrix3::Identity);
 
-	bhkSphereRepShapeRef	makeTriStripsShape(INode *node);
-	bhkSphereRepShapeRef	makeBoxShape(Object *obj);
-	bhkSphereRepShapeRef	makeSphereShape(Object *obj);
-	bhkSphereRepShapeRef	makeCapsuleShape(Object *obj);
+	bhkSphereRepShapeRef	makeTriStripsShape(INode *node, const Matrix3& tm);
+	bhkSphereRepShapeRef	makeBoxShape(Object *obj, const Matrix3& tm);
+	bhkSphereRepShapeRef	makeSphereShape(Object *obj, const Matrix3& tm);
+	bhkSphereRepShapeRef	makeCapsuleShape(Object *obj, const Matrix3& tm);
 
    /* skin export */
    bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);
@@ -174,6 +182,8 @@ public:
    bool exportUPB(NiNodeRef &root, INode *node);
    bool removeUnreferencedBones(NiNodeRef node);
    void sortNodes(NiNodeRef node);
+   NiNodeRef exportBone(NiNodeRef parent, INode *node);
+   Result exportLight(NiNodeRef root, INode *node, GenLight* light);
 };
 
 #endif 

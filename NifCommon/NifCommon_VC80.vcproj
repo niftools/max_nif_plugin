@@ -517,6 +517,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MAX_Mem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MAX_MemDirect.h"
+				>
+			</File>
+			<File
 				RelativePath=".\NifGui.h"
 				>
 			</File>

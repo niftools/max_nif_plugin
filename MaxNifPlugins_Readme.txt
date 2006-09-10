@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.2
+                        MaxPlugins 0.2.3
                         ================
 
  
@@ -32,9 +32,18 @@
     o Exporter
       - Fix issue when exporting a mesh with a skin modifier that had bones
          that were not used.
+      - Fix bug with normals introduced in 0.2.2 when fixing previous problem
+      - Changed code to scale the mesh so that Reset XForm is not required
+      - Added support for Bone LOD code.  Works with Civ4 Bone LOD Manager.
+      - Added support for Lights and Cameras
       
     o Importer
       - Alter code to create Camera nodes when name begins with Camera.
+      - Initial pass at Lights
+      - Fixed issues with skin modifier on Civ4 Units and Leaderheads
+      - Added support for Bone LOD code.  Works with Civ4 Bone LOD Manager.
+      - Added support for Lights and Cameras
+      - Fixed issues with Textures with muliple UV Sets      
     
       0.2.2
       -----

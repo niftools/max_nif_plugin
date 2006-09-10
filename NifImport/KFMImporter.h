@@ -33,7 +33,9 @@ public:
 
    // Implemented in ImportAnimation.cpp
    virtual bool ImportAnimation();
+   virtual void SaveIniSettings();
 
+   bool ShowDialog();
 
    std::vector<Niflib::NiControllerSequenceRef> kf;
 };

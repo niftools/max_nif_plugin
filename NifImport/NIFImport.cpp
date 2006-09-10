@@ -142,6 +142,8 @@ void NifImporter::LoadIniSettings()
    flipUVTextures = GetIniValue(NifImportSection, "FlipUVTextures", true);
    enableSkinSupport = GetIniValue(NifImportSection, "EnableSkinSupport", true);
    enableCollision = GetIniValue(NifImportSection, "EnableCollision", true);
+   enableLights = GetIniValue(NifImportSection, "Lights", false);
+   enableCameras = GetIniValue(NifImportSection, "Cameras", false);
    vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
    useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
    mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
@@ -170,6 +172,8 @@ void NifImporter::LoadIniSettings()
    requireMultipleKeys = GetIniValue(AnimImportSection, "RequireMultipleKeys", true);
    applyOverallTransformToSkinAndBones = GetIniValue(AnimImportSection, "ApplyOverallTransformToSkinAndBones", true);
    clearAnimation = GetIniValue(AnimImportSection, "ClearAnimation", true);
+   addNoteTracks = GetIniValue(AnimImportSection, "AddNoteTracks", true);
+   addTimeTags = GetIniValue(AnimImportSection, "AddTimeTags", true);
 
    // Collision
    bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
@@ -196,6 +200,9 @@ void NifImporter::SaveIniSettings()
    SetIniValue(NifImportSection, "EnableSkinSupport", enableSkinSupport);
    SetIniValue(NifImportSection, "VertexColorMode", vertexColorMode);
    SetIniValue(NifImportSection, "EnableCollision", enableCollision);
+   SetIniValue(NifImportSection, "Lights", enableLights);
+   SetIniValue(NifImportSection, "Cameras", enableCameras);
+   
    //SetIniValue(NifImportSection, "EnableFurniture", enableAnimations);
 
    SetIniValue(NifImportSection, "FlipUVTextures", flipUVTextures);
@@ -208,7 +215,7 @@ void NifImporter::SaveIniSettings()
    SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);  
 
    SetIniValue(AnimImportSection, "EnableAnimations", enableAnimations);
-   SetIniValue(BipedImportSection, "ClearAnimation", clearAnimation);
+   SetIniValue(AnimImportSection, "ClearAnimation", clearAnimation);
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
@@ -233,36 +240,6 @@ bool NifImporter::DoImport()
    vector<string> importedBones;
    if (!isBiped && importSkeleton && importBones)
    {
-      //if (browseForSkeleton)
-      //{
-      //   TCHAR filter[64], *pfilter=filter;
-      //   pfilter = _tcscpy(filter, shortDescription.c_str());
-      //   pfilter = _tcscat(pfilter, " (*.NIF)");
-      //   pfilter += strlen(pfilter);
-      //   *pfilter++ = '\0';
-      //   _tcscpy(pfilter, "*.NIF");
-      //   pfilter += strlen(pfilter);
-      //   *pfilter++ = '\0';
-      //   *pfilter++ = '\0';
-
-      //   TCHAR filename[MAX_PATH];
-      //   GetFullPathName(skeleton.c_str(), _countof(filename), filename, NULL);
-
-      //   OPENFILENAME ofn;
-      //   memset(&ofn, 0, sizeof(ofn));
-      //   ofn.lStructSize = sizeof(ofn);
-      //   ofn.hwndOwner = gi->GetMAXHWnd();
-      //   ofn.lpstrFilter = filter;
-      //   ofn.lpstrFile = filename;
-      //   ofn.nMaxFile = _countof(filename);
-      //   ofn.lpstrTitle = TEXT("Browse for Skeleton NIF...");
-      //   ofn.lpstrDefExt = TEXT("NIF");
-      //   ofn.Flags = OFN_HIDEREADONLY|OFN_EXPLORER|OFN_FILEMUSTEXIST|OFN_NOCHANGEDIR|OFN_PATHMUSTEXIST;
-      //   importSkeleton = GetOpenFileName(&ofn) ? true : false;
-      //   if (importSkeleton) {
-      //      skeleton = filename;
-      //   }
-      //}
       if (importSkeleton && !skeleton.empty()) {
          NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
          if (skelImport.isValid())
@@ -296,6 +273,11 @@ bool NifImporter::DoImport()
                ImportBones(rootNode);
          }
 
+
+         if (enableLights){
+            ok = ImportLights(rootNode);
+         }
+
          ok = ImportMeshes(rootNode);
 
          if (importSkeleton && removeUnusedImportedBones){
@@ -324,12 +306,7 @@ bool NifImporter::DoImport()
       }
    }
 
-   if (clearAnimation)
-   {
-      ClearAnimation(gi->GetRootNode());
-   }
-
-   // Kick of animation import
+   ClearAnimation();
    ImportAnimation();
    return true;
 }

@@ -64,6 +64,10 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "FlattenHierarchy", mFlattenHierarchy, iniName);
       SetIniValue(NifExportSection, "RemoveUnreferencedBones", mRemoveUnreferencedBones, iniName);
       SetIniValue(NifExportSection, "SortNodesToEnd", mSortNodesToEnd, iniName);
+      SetIniValue(NifExportSection, "SkeletonOnly", mSkeletonOnly, iniName);
+      SetIniValue(NifExportSection, "Cameras", mExportCameras, iniName);
+      SetIniValue(NifExportSection, "GenerateBoneCollision", mGenerateBoneCollision, iniName);
+      
    }
 }
 
@@ -115,6 +119,10 @@ void Exporter::readConfig(Interface *i)
       mFlattenHierarchy = GetIniValue(NifExportSection, "FlattenHierarchy", false, iniName);
       mRemoveUnreferencedBones = GetIniValue(NifExportSection, "RemoveUnreferencedBones", false, iniName);
       mSortNodesToEnd = GetIniValue(NifExportSection, "SortNodesToEnd", false, iniName);
+      mSkeletonOnly = GetIniValue(NifExportSection, "SkeletonOnly", false, iniName);
+      mExportCameras = GetIniValue(NifExportSection, "Cameras", false, iniName);
+      mGenerateBoneCollision = GetIniValue(NifExportSection, "GenerateBoneCollision", false, iniName);
+      
   }
 }
 
