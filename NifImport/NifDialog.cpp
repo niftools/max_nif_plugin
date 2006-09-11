@@ -57,6 +57,8 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
             CheckDlgButton(hWnd, IDC_CHK_CLEARANIM, imp->clearAnimation);
             
             CheckDlgButton(hWnd, IDC_CHK_BIPED, imp->useBiped);
+            CheckDlgButton(hWnd, IDC_CHK_UPB, !imp->importUPB);
+            
             
             string selection = (imp->appSettings) ? imp->appSettings->Name : "User";
             for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr)
@@ -108,6 +110,7 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                   imp->removeUnusedImportedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES) ? true : false;
                   imp->clearAnimation = IsDlgButtonChecked(hWnd, IDC_CHK_CLEARANIM) ? true : false;
                   imp->useBiped = IsDlgButtonChecked(hWnd, IDC_CHK_BIPED) ? true : false;
+                  imp->importUPB = IsDlgButtonChecked(hWnd, IDC_CHK_UPB) ? false : true;
 
                   GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
                   if (AppSettings *appSettings = FindAppSetting(tmp)) {

@@ -204,19 +204,15 @@ int MaxNifImport::DoImport(const TCHAR *filename,ImpInterface *i, Interface *gi,
          ok = importer.DoImport();
       }
    }
-   catch( exception & e ) 
+   catch (exception &e)
    {
-      e=e;
-      ok = false;
+      MessageBox(NULL, e.what(), "Import Error", MB_OK);
+      return TRUE;
    }
-   catch( exception * e ) 
+   catch (...)
    {
-      e=e;
-      ok = false;
-   }
-   catch( ... ) 
-   {
-      ok = false;
+      MessageBox(NULL, "Unknown error.", "Import Error", MB_OK);
+      return TRUE;
    }
    return ok ? TRUE : FALSE;
 }

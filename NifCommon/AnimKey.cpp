@@ -131,6 +131,30 @@ FloatKey MapKey<FloatKey, ILinFloatKey>(ILinFloatKey& key, float time)
    return InitFromLinKey(rKey, key, time);
 }
 
+template<>
+Vector3Key MapKey<Vector3Key, ILinPoint3Key>(ILinPoint3Key& key, float time)
+{
+   Vector3Key rKey;
+   rKey.data = TOVECTOR3(key.val);
+   return InitFromLinKey(rKey, key, time);
+}
+
+template<>
+QuatKey MapKey<QuatKey, ILinRotKey>(ILinRotKey& key, float time)
+{
+   QuatKey rKey;
+   rKey.data = TOQUAT(key.val, true);
+   return InitFromLinKey(rKey, key, time);
+}
+
+template<>
+FloatKey MapKey<FloatKey, ILinScaleKey>(ILinScaleKey& key, float time)
+{
+   FloatKey rKey;
+   rKey.data = (key.val[0] + key.val[1] + key.val[2]) / 3.0f;
+   return InitFromLinKey(rKey, key, time);
+}
+
 
 // Specialized Bezier/Hybrid mappings
 
@@ -154,7 +178,6 @@ IBezPoint3Key MapKey<IBezPoint3Key, Vector3Key>(Vector3Key& key, float time)
    return InitBezKey(rKey, key, time);
 }
 
-
 template<>
 IBezQuatKey MapKey<IBezQuatKey, QuatKey>(QuatKey& key, float time)
 {
@@ -172,7 +195,7 @@ IBezScaleKey MapKey<IBezScaleKey, FloatKey>(FloatKey& key, float time)
    return InitBezKey(rKey, key, time);
 }
 
-// Specialized Linear Mappings
+// Specialized Bezier/Hybrid Mappings
 
 template<>
 FloatKey MapKey<FloatKey, IBezFloatKey>(IBezFloatKey& key, float time)
@@ -183,6 +206,37 @@ FloatKey MapKey<FloatKey, IBezFloatKey>(IBezFloatKey& key, float time)
    rKey.backward_tangent = key.outtan;
    return InitFromBezKey(rKey, key, time);
 }
+
+template<>
+Vector3Key MapKey<Vector3Key, IBezPoint3Key>(IBezPoint3Key& key, float time)
+{
+   Vector3Key rKey;
+   rKey.data = TOVECTOR3(key.val);
+   rKey.forward_tangent = TOVECTOR3(key.intan);
+   rKey.backward_tangent = TOVECTOR3(key.outtan);
+   return InitFromBezKey(rKey, key, time);
+}
+
+template<>
+QuatKey MapKey<QuatKey, IBezQuatKey>(IBezQuatKey& key, float time)
+{
+   QuatKey rKey;
+   rKey.data = TOQUAT(key.val, true);
+   //rKey.forward_tangent = TOQUAT(key.intan, true);
+   //rKey.backward_tangent = TOQUAT(key.outtan, true);
+   return InitFromBezKey(rKey, key, time);
+}
+
+template<>
+FloatKey MapKey<FloatKey, IBezScaleKey>(IBezScaleKey& key, float time)
+{
+   FloatKey rKey;
+   rKey.data = Average(key.val.s);
+   rKey.forward_tangent = Average(key.intan);
+   rKey.backward_tangent = Average(key.outtan);
+   return InitFromBezKey(rKey, key, time);
+}
+
 
 // Specialized TCB Mappings
 
@@ -228,6 +282,32 @@ FloatKey MapKey<FloatKey, ITCBFloatKey>(ITCBFloatKey& key, float time)
    rKey.data = key.val;
    return InitFromTCBKey(rKey, key, time);
 }
+
+template<>
+Vector3Key MapKey<Vector3Key, ITCBPoint3Key>(ITCBPoint3Key& key, float time)
+{
+   Vector3Key rKey;
+   rKey.data = TOVECTOR3(key.val);
+   return InitFromTCBKey(rKey, key, time);
+}
+
+template<>
+QuatKey MapKey<QuatKey, ITCBRotKey>(ITCBRotKey& key, float time)
+{
+   QuatKey rKey;
+   rKey.data = TOQUAT(key.val, true);
+   return InitFromTCBKey(rKey, key, time);
+}
+
+template<>
+FloatKey MapKey<FloatKey, ITCBScaleKey>(ITCBScaleKey& key, float time)
+{
+   FloatKey rKey;
+   rKey.data = Average(key.val.s);
+   return InitFromTCBKey(rKey, key, time);
+}
+
+// Merge Keys
 
 template<> void MergeKey<ILinRotKey>(ILinRotKey& lhs, ILinRotKey& rhs) {
    lhs.val *= rhs.val;

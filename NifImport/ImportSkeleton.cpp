@@ -686,6 +686,9 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
 
 bool NifImporter::ImportUPB(INode *node, Niflib::NiNodeRef block)
 {
+   if (!importUPB)
+      return false;
+
    bool ok = false;
    if (node && block)
    {

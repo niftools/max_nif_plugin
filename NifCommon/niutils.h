@@ -351,6 +351,14 @@ static inline Point3 GetScale(const Matrix3& mtx){
    return Point3( fabs(mtx.GetRow(0)[0]), fabs(mtx.GetRow(1)[1]), fabs(mtx.GetRow(2)[2]) );
 }
 
+static inline float Average(const Point3& val) {
+   return (val[0] + val[1] + val[2]) / 3.0f;
+}
+
+static inline float Average(const Niflib::Vector3& val) {
+   return (val.x + val.y + val.z) / 3.0f;
+}
+
 template <typename U, typename T>
 inline Niflib::Ref<U> SelectFirstObjectOfType( vector<Niflib::Ref<T> > const & objs ) {
    for (vector<Niflib::Ref<T> >::const_iterator itr = objs.begin(), end = objs.end(); itr != end; ++itr) {

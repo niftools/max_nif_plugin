@@ -27,11 +27,13 @@ public:
 
 	void			selectionChanged();
 
-	BOOL			dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+   BOOL			dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+   BOOL			dlgAnimProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
 		
-	HWND			mPanel;
+   HWND			mPanel;
+   HWND			mAnimPanel;
 	IUtil			*mIU;
 	Interface		*mIP;
 	INode			*mNode;
@@ -44,7 +46,7 @@ private:
 	NpComboBox		mCbMotionSystem;
 	NpComboBox		mCbQualityType;
 
-	void enableGUI(BOOL object, BOOL hvk);		
+	void enableGUI(BOOL object, BOOL hvk, BOOL anim);		
 };
 
 static NifProps plugin;
@@ -74,7 +76,12 @@ ClassDesc2* GetNifPropsDesc() { return &NifPropsDesc; }
 
 static BOOL CALLBACK NifPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	return plugin.dlgProc(hWnd, msg, wParam, lParam);
+   return plugin.dlgProc(hWnd, msg, wParam, lParam);
+}
+
+static BOOL CALLBACK NifAnimPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+   return plugin.dlgAnimProc(hWnd, msg, wParam, lParam);
 }
 
 
@@ -86,6 +93,7 @@ NifProps::NifProps()
 	mIU = NULL;
 	mIP = NULL;	
 	mPanel = NULL;
+   mAnimPanel = NULL;
 }
 
 NifProps::~NifProps()
@@ -163,6 +171,17 @@ void NifProps::BeginEditParams(Interface *ip, IUtil *iu)
 		str++;
 	}
 
+   
+   //mAnimPanel = ip->AddRollupPage(
+   //   hInstance,
+   //   MAKEINTRESOURCE(IDD_ANIM_PANEL),
+   //   NifAnimPropsDlgProc,
+   //   GetString(IDS_ANIM_PARAMS),
+   //   0);
+
+   mSpins[IDC_SP_ANIM_PRIORITY] = 
+      SetupFloatSpinner(mPanel, IDC_SP_ANIM_PRIORITY, IDC_ED_ANIM_PRIORITY, 0, 255, 25, .1f);
+
 	selectionChanged();
 }
 	
@@ -179,7 +198,7 @@ void NifProps::EndEditParams(Interface *ip,IUtil *iu)
 	mNode = NULL;
 }
 
-void NifProps::enableGUI(BOOL obj, BOOL hvk)
+void NifProps::enableGUI(BOOL obj, BOOL hvk, BOOL anim)
 {
 	EnableWindow(GetDlgItem(mPanel, IDC_GRP_OBJECT), obj);
 	EnableWindow(GetDlgItem(mPanel, IDC_CHK_ISCOLL), obj);
@@ -190,8 +209,11 @@ void NifProps::enableGUI(BOOL obj, BOOL hvk)
 	EnableWindow(GetDlgItem(mPanel, IDC_LBL_LAYER), hvk);
 	EnableWindow(GetDlgItem(mPanel, IDC_CB_LAYER), hvk);
 */
-	for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
-		EnableWindow(GetDlgItem(mPanel, i), hvk);
+   for (int i=IDC_HVK_BEGIN; i<=IDC_HVK_END; i++)
+      EnableWindow(GetDlgItem(mPanel, i), hvk);
+
+   for (int i=IDC_ANIM_BEGIN; i<=IDC_ANIM_END; i++)
+      EnableWindow(GetDlgItem(mPanel, i), anim);
 }
 
 void NifProps::SelectionSetChanged(Interface *ip, IUtil *iu)
@@ -205,7 +227,7 @@ void NifProps::selectionChanged()
 	if (numSel <= 0)
 	{
 		mNode = NULL;
-		enableGUI(false, false);
+		enableGUI(false, false, false);
 		return;
 	}
 
@@ -213,7 +235,7 @@ void NifProps::selectionChanged()
 	INode *nodeSel = mIP->GetSelNode(0);
 	bool isColl = npIsCollision(nodeSel);
 
-	enableGUI(singleSel, singleSel && isColl);
+	enableGUI(singleSel, singleSel && isColl, true);
 	mNode = singleSel?nodeSel:NULL;		
 	
 	if (!singleSel)
@@ -262,6 +284,9 @@ void NifProps::selectionChanged()
 	mSpins[IDC_SP_MAX_LINEAR_VELOCITY]->SetValue(maxlinvel, TRUE);
 	mSpins[IDC_SP_MAX_ANGULAR_VELOCITY]->SetValue(maxangvel, TRUE);
 
+   float priority;
+   npGetProp(nodeSel, NP_ANM_PRI, priority, NP_DEFAULT_ANM_PRI);
+   mSpins[IDC_SP_ANIM_PRIORITY]->SetValue(priority, TRUE);
 
 }
 
@@ -383,6 +408,12 @@ BOOL NifProps::dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				case IDC_SP_PENETRATION_DEPTH:
 					npSetProp(mNode, NP_HVK_PENETRATION_DEPTH, mSpins[IDC_SP_PENETRATION_DEPTH]->GetFVal());
 					break;
+
+            case IDC_SP_ANIM_PRIORITY:
+               for (int i=0, n=mIP->GetSelNodeCount(); i<n; ++i) {
+                  npSetProp(mIP->GetSelNode(i), NP_ANM_PRI, mSpins[IDC_SP_ANIM_PRIORITY]->GetFVal());
+               }
+               break;
 			}
 			break;
 

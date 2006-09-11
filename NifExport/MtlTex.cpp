@@ -136,16 +136,16 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
          if (smtl->SupportsShaders()) {
             if (Shader *s = smtl->GetShader()) {
                if (smtl->GetWire()){
-                  NiWireframePropertyRef wireProp = CreateNiObject<NiWireframeProperty>();
+                  NiWireframePropertyRef wireProp = new NiWireframeProperty();
                   wireProp->SetFlags(1);
                   parent->AddProperty(wireProp);
                }
                if (smtl->GetTwoSided()){
-                  NiStencilPropertyRef stencil = CreateNiObject<NiStencilProperty>();
-                  stencil->SetStencilFunction(4);
+                  NiStencilPropertyRef stencil = new NiStencilProperty();
+                  stencil->SetStencilFunction(TEST_GREATER);
                   stencil->SetStencilEnabled(false);
-                  stencil->SetPassAction(3);
-                  stencil->SetDrawMode(3);
+                  stencil->SetPassAction(ACTION_INCREMENT);
+                  stencil->SetDrawMode(DRAW_BOTH);
                   parent->AddProperty(stencil);
                }
                if (smtl->IsFaceted()) {
@@ -343,10 +343,10 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
                }
                if (smtl->GetTwoSided()){
                   NiStencilPropertyRef stencil = CreateNiObject<NiStencilProperty>();
-                  stencil->SetStencilFunction(4);
+                  stencil->SetStencilFunction(TEST_GREATER);
                   stencil->SetStencilEnabled(false);
-                  stencil->SetPassAction(3);
-                  stencil->SetDrawMode(3);
+                  stencil->SetPassAction(ACTION_INCREMENT);
+                  stencil->SetDrawMode(DRAW_BOTH);
                   parent->AddProperty(stencil);
                }
                if (smtl->IsFaceted()) {

@@ -147,6 +147,7 @@ void NifImporter::LoadIniSettings()
    vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
    useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
    mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
+   importUPB = GetIniValue(NifImportSection, "ImportUPB", true);
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -210,6 +211,7 @@ void NifImporter::SaveIniSettings()
    SetIniValue(NifImportSection, "EnableAutoSmooth", enableAutoSmooth);
    SetIniValue(NifImportSection, "RemoveIllegalFaces", removeIllegalFaces);
    SetIniValue(NifImportSection, "RemoveDegenerateFaces", removeDegenerateFaces);
+   SetIniValue(NifImportSection, "ImportUPB", importUPB);
 
    SetIniValue(BipedImportSection, "ImportBones", importBones);
    SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);  

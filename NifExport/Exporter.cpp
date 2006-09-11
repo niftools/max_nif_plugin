@@ -29,6 +29,8 @@ int Exporter::mNifUserVersion = 0;
 bool Exporter::mSkeletonOnly=false;
 bool Exporter::mExportCameras=false;
 bool Exporter::mGenerateBoneCollision=false;
+bool Exporter::mExportTransforms=true;
+float Exporter::mDefaultPriority=0.0f;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)

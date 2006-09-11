@@ -39,6 +39,8 @@ using Niflib::Vector3;
 
 #define NP_FRN_POS							_T("np_frn_pos")
 
+#define NP_ANM_PRI							_T("np_anm_pri")
+
 /* default values */
 #define NP_DEFAULT_HVK_MATERIAL				9
 #define NP_DEFAULT_HVK_LAYER				1
@@ -49,6 +51,8 @@ using Niflib::Vector3;
 #define NP_DEFAULT_HVK_PENETRATION_DEPTH	0.15f
 #define NP_DEFAULT_HVK_MOTION_SYSTEM		7
 #define NP_DEFAULT_HVK_QUALITY_TYPE			1
+
+#define NP_DEFAULT_ANM_PRI	0.0f
 
 #define NP_DEFAULT_FRN_MARKER_TYPE			NP_FRN_SLEEP_LEFT
 

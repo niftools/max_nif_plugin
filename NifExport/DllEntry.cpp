@@ -60,11 +60,7 @@ __declspec( dllexport ) const TCHAR* LibDescription()
 //TODO: Must change this number when adding a new class
 __declspec( dllexport ) int LibNumberClasses()
 {
-#if _DEBUG
-	return 2;
-#else
-   return 1;
-#endif
+   return 2;
 }
 
 // This function returns the number of plug-in classes this DLL

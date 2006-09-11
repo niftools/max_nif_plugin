@@ -18,6 +18,7 @@ HISTORY:
 #include "KFMImporter.h"
 #include "KFImporter.h"
 #include "AnimKey.h"
+#include "NifPlugins.h"
 #include <obj/NiInterpolator.h>
 #include <obj/NiTransformInterpolator.h>
 #include <obj/NiTransformData.h>
@@ -136,11 +137,20 @@ void NifImporter::ClearAnimation(INode *node)
 {
    if (node != NULL)
    {
+      if (node->HasNoteTracks()){
+         for (int i = node->NumNoteTracks()-1; i>=0; --i ){
+            if (NoteTrack *nt = node->GetNoteTrack(i))
+               node->DeleteNoteTrack(nt, TRUE);
+         }
+      }
       node->DeleteKeys(TRACK_DOALL);
       ::ClearAnimation(node->GetTMController());
       for (int i=0, n=node->NumberOfChildren(); i<n; ++i){
          ClearAnimation(node->GetChildNode(i));
       }
+
+      // Clear animation priority
+      node->SetUserPropFloat(NP_ANM_PRI, 0.0f);
    }
 }
 void NifImporter::ClearAnimation()
@@ -304,7 +314,48 @@ bool KFMImporter::ImportAnimation()
          if (addNoteTracks) {
             string target = cntr->GetTargetName();
             if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
+#if 1
+               DefNoteTrack* nt = (DefNoteTrack*)NewDefaultNoteTrack();
+               n->AddNoteTrack(nt);
 
+               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+                  TimeValue t = TimeToFrame(time + (*itr).time);
+
+                  if (wildmatch("start*", (*itr).data)){
+                     stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
+                     if (args.empty()) continue;
+                     bool hasName = false;
+                     bool hasLoop = false;
+                     CycleType ct = cntr->GetCycleType();
+                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                        if (strmatch("-name", *itr)) {
+                           if (++itr == args.end()) break;                       
+                           hasName = true;
+                        } else if (strmatch("-loop", *itr)) {
+                           hasLoop = true;
+                        }
+                     }
+                     if (!hasName) {
+                        string name = cntr->GetName();
+                        if (name.empty())
+                           name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
+                        args.push_back("-name");
+                        args.push_back(name);
+                     }
+                     if (!hasLoop && ct == CYCLE_LOOP) {
+                        args.push_back("-loop");
+                     }
+
+                     string line = JoinCommandLine(args);
+                     NoteKey *key = new NoteKey(t, line.c_str(), 0);
+                     nt->keys.Append(1, &key);
+                  } else {
+                     NoteKey *key = new NoteKey(t, (*itr).data.c_str(), 0);
+                     nt->keys.Append(1, &key);
+                  }
+               }
+
+#else
                TSTR script;
                script += 
                "fn getActorManager obj = (\n"
@@ -326,7 +377,7 @@ bool KFMImporter::ImportAnimation()
                script += FormatText("nt = getActorManager $'%s'\n", target.c_str());
                
                for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
-                  TimeValue t = TimeToFrame(time + (*itr).time) + 1;
+                  TimeValue t = TimeToFrame(time + (*itr).time);
 
                   if (wildmatch("start*", (*itr).data)){
                      stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
@@ -363,6 +414,7 @@ bool KFMImporter::ImportAnimation()
                   //nt->keys.Append(1, &key);
                }
                ExecuteMAXScriptScript(script, TRUE, NULL);
+#endif
             }
          }
 
@@ -395,6 +447,10 @@ bool KFMImporter::ImportAnimation()
             continue;
 
          INode *n = gi->GetINodeByName(name.c_str());
+
+         if ((*lnk).priority_ != 0.0f) {
+            npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
+         }
 
          NiKeyframeDataRef data;
          Point3 p; Quat q; float s;

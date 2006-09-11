@@ -11,6 +11,9 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "pch.h"
+#include <IFrameTagManager.h>
+#include <notetrck.h>
+
 #include "NifExport.h"
 #include "AnimKey.h"
 
@@ -39,33 +42,135 @@ struct AnimationExport
 {
    AnimationExport(Exporter& parent) : ne(parent) {}
 
-   bool doExport();
-   bool exportController(INode *node, NiControllerSequenceRef seq);
+   INode * findTrackedNode(INode *root);
+
+   bool doExport(NiControllerSequenceRef seq);
+   bool exportController(INode *node);
    Control *GetTMController(INode* node);
 
    Exporter &ne;
+   Interval range;
+   NiControllerSequenceRef seq;
 };
 
-bool Exporter::doAnimExport()
+Exporter::Result Exporter::doAnimExport(NiControllerSequenceRef root)
 {
    AnimationExport animExporter(*this);
-   return animExporter.doExport();
 
-   return true;
+   return animExporter.doExport(root) ? Exporter::Ok : Exporter::Abort ;
 }
 //NiControllerSequenceRef makeSequence(TimeValue start, TimeValue end);
 
-bool AnimationExport::doExport()
+INode * AnimationExport::findTrackedNode(INode *node)
 {
-   INode *root = ne.mI->GetRootNode();
-   NiControllerSequenceRef seq = new NiControllerSequence();
-   seq->SetStartTime(0.0f);
-   seq->SetStopTime(0.0f);
+   // locate START in note track before assuming all is well
+   if (node->HasNoteTracks()) {
+      for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
+         if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+            if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+               DefNoteTrack *defNT = (DefNoteTrack *)nt;
+               if ( defNT->NumKeys() > 0 ) {
+                  for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
+                     NoteKey* key = defNT->keys[j];
+                     if (wildmatch("start*", key->note)) {
+                        return node;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+   for (int i=0; i < node->NumberOfChildren(); ++i ){
+      if ( INode *root = findTrackedNode( node->GetChildNode(i) ) ) {
+         return root;
+      }
+   }
+   return NULL;
+}
+
+bool AnimationExport::doExport(NiControllerSequenceRef seq)
+{
+   INode *node = findTrackedNode(ne.mI->GetRootNode());
+   if (node == NULL)
+      throw runtime_error("No Actor Roots have been selected in the Animation Manager. Cannot continue.");
+
+   this->seq = seq;
+
+   vector<StringKey> textKeys;
+
+   this->range.SetInstant(0);
+
+   seq->SetStartTime(FloatINF);
+   seq->SetStopTime(FloatINF);
    seq->SetFrequency(1.0f);
    seq->SetCycleType( CYCLE_CLAMP );
-   seq->SetTargetName("Bip01");
-   
-   return true;
+   seq->SetTargetName( node->GetName() );
+
+   NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+   seq->SetTextKey(textKeyData);
+
+   // Populate Text keys and Sequence information from note tracks
+   for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
+      if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+         if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+            DefNoteTrack *defNT = (DefNoteTrack *)nt;
+            if ( defNT->NumKeys() > 0 ) {
+               bool stop = false;
+               for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
+                  NoteKey* key = defNT->keys[j];
+
+                  if (wildmatch("start*", key->note)) {
+                     stringlist args = TokenizeCommandLine(key->note, true);
+                     if (args.empty()) continue;
+
+                     seq->SetStartTime(0.0f);
+                     range.SetStart( key->time );
+                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                        if (strmatch("-name", *itr)) {
+                           if (++itr == args.end()) break;
+                           seq->SetName(*itr);
+                        } else if (strmatch("-loop", *itr)) {
+                           seq->SetCycleType(CYCLE_LOOP);
+                        }
+                     }
+                  } else if ( wildmatch("end*", key->note) ) {
+                     range.SetEnd( key->time );
+                     seq->SetStopTime( FrameToTime( range.Duration()-1 ) );
+                     stop = true;
+                  }
+                  StringKey strkey;
+                  strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
+                  strkey.data = key->note;
+                  textKeys.push_back(strkey);
+               }
+            }
+         }
+      }
+   }
+   textKeyData->SetKeys(textKeys);
+
+   // Now let the fun begin.
+
+   bool ok = exportController(node);
+
+   // Handle NonAccum
+   if (ok)
+   {
+      NiNodeRef ninode = new NiNode();
+      ninode->SetName(FormatString("%s NonAccum", node->GetName()));
+
+      NiTransformControllerRef control = new NiTransformController();
+      NiTransformInterpolatorRef interp = new NiTransformInterpolator();
+      ninode->AddController(StaticCast<NiTimeController>(control));
+      control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+
+      interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
+      interp->SetScale( 1.0f );
+      interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
+      seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
+   }
+   return ok;
 }
 
 
@@ -87,175 +192,255 @@ Control *AnimationExport::GetTMController(INode *n)
 }
 
 
-bool AnimationExport::exportController(INode *node, NiControllerSequenceRef seq)
+bool AnimationExport::exportController(INode *node)
 {
    bool ok = true;
-   int nKeys = node->NumKeys();
-   if (nKeys >= 0)
+   bool skip = false;
+
+   // Primary recursive decent routine
+
+   ObjectState os = node->EvalWorldState(range.Start()); 
+
+   if (!Exporter::mExportCameras && os.obj && os.obj->SuperClassID()==CAMERA_CLASS_ID)
    {
-      float timeOffset = 0.0f;
-      NiKeyframeDataRef data = new NiKeyframeData();
+      skip = true;
+   }
+   else if (!Exporter::mExportLights && os.obj && os.obj->SuperClassID()==LIGHT_CLASS_ID)
+   {
+      skip = true;
+   }
+
+   if (!skip && Exporter::mExportTransforms)
+   {
+      float timeOffset = -FrameToTime(range.Start());
       if (Control *tmCont = GetTMController(node))
       {
-         if (Control *c = tmCont->GetPositionController()) 
-         {
-            // separate xyz
-            if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
-            { 
-               KeyType kType = QUADRATIC_KEY;
-               vector<FloatKey> xkeys, ykeys, zkeys;
+         Interval validity; validity.SetEmpty();
+         Matrix3 tm = node->GetObjTMAfterWSM(range.Start());
+         Matrix3 pm = Inverse(node->GetParentTM(range.Start()));
+         tm *= pm;
 
-               if (Control *x = c->GetXController()){
-                  if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-                     kType = LINEAR_KEY;
-                     GetKeys<FloatKey, ILinFloatKey>(x, xkeys, timeOffset);
-                  } else if (x->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-                     kType = QUADRATIC_KEY;
-                     GetKeys<FloatKey, IBezFloatKey>(x, xkeys, timeOffset);
-                  } else if (x->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-                     kType = TBC_KEY;
-                     GetKeys<FloatKey, ITCBFloatKey>(x, xkeys, timeOffset);
-                  } else {
-                     kType = QUADRATIC_KEY;
-                     GetKeys<FloatKey, IBezFloatKey>(x, xkeys, timeOffset);
-                  }
-               }
-               if (Control *y = c->GetYController()){
-                  if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, ILinFloatKey>(y, ykeys, timeOffset);
-                  } else if (y->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, IBezFloatKey>(y, ykeys, timeOffset);
-                  } else if (y->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, ITCBFloatKey>(y, ykeys, timeOffset);
-                  } else {
-                     GetKeys<FloatKey, IBezFloatKey>(y, ykeys, timeOffset);
-                  }
-               }
-               if (Control *z = c->GetZController()){
-                  if (z->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, ILinFloatKey>(z, zkeys, timeOffset);
-                  } else if (z->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-                  } else if (z->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-                     GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, timeOffset);
-                  } else {
-                     GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-                  }
-               }
-               vector<Vector3Key> keys;
-               JoinKeys(keys, xkeys, ykeys, zkeys);
-               data->SetTranslateType(kType);
-               data->SetTranslateKeys(keys);
+         NiNodeRef ninode = new NiNode();
+         ninode->SetName(node->GetName());
 
-            } else {
-               //if (c->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-               //   data->SetRotateType(LINEAR_KEY);
-               //   GetKeys<FloatKey, ILinFloatKey>(z, zkeys, timeOffset);
-               //} else if (c->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-               //   data->SetZRotateType(QUADRATIC_KEY);
-               //   GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-               //} else if (c->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-               //   data->SetZRotateType(TBC_KEY);
-               //   GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, timeOffset);
-               //} else {
-               //   data->SetZRotateType(QUADRATIC_KEY);
-               //   GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-               //}
-            }
-         }
+         //Vector3 trans(FloatNegINF, FloatNegINF, FloatNegINF);
+         //Quaternion rot(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
+         Vector3 trans = TOVECTOR3(tm.GetTrans());
+         Quaternion rot = TOQUAT( Quat(tm), true );
+         float scale = FloatNegINF;
+         bool keepData = false;
 
-         //// rotations
-         //if (Control *c = tmCont->GetPositionController()) 
+         NiTransformControllerRef control = new NiTransformController();
+         NiTransformInterpolatorRef interp = new NiTransformInterpolator();
+         ninode->AddController(StaticCast<NiTimeController>(control));
+         control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+
+         //if (validity.InInterval(range))
          //{
-         //   // separate xyz
-         //   if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
-         //   { 
-         //      if (Control *x = c->GetXController()){
-         //         if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetXRotateType(LINEAR_KEY);
-         //            GetKeys<FloatKey, ILinFloatKey>(x, xkeys, timeOffset);
-         //         } else if (x->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetXRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(x, xkeys, timeOffset);
-         //         } else if (x->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetXRotateType(TBC_KEY);
-         //            GetKeys<FloatKey, ITCBFloatKey>(x, xkeys, timeOffset);
-         //         } else {
-         //            data->SetXRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(x, xkeys, timeOffset);
-         //         }
-         //         data->SetXRotateKeys(xkeys);
-         //      }
-         //      if (Control *y = c->GetYController()){
-         //         KeyType kType = LINEAR_KEY;
-         //         vector<FloatKey> ykeys;
-         //         if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetYRotateType(LINEAR_KEY);
-         //            GetKeys<FloatKey, ILinFloatKey>(y, ykeys, timeOffset);
-         //         } else if (y->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetYRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(y, ykeys, timeOffset);
-         //         } else if (y->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetYRotateType(TBC_KEY);
-         //            GetKeys<FloatKey, ITCBFloatKey>(y, ykeys, timeOffset);
-         //         } else {
-         //            data->SetYRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(y, ykeys, timeOffset);
-         //         }
-         //         data->SetYRotateKeys(ykeys);
-         //      }
-         //      if (Control *z = c->GetZController()){
-         //         KeyType kType = LINEAR_KEY;
-         //         vector<FloatKey> zkeys;
-         //         if (z->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetZRotateType(LINEAR_KEY);
-         //            GetKeys<FloatKey, ILinFloatKey>(z, zkeys, timeOffset);
-         //         } else if (z->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetZRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-         //         } else if (z->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-         //            data->SetZRotateType(TBC_KEY);
-         //            GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, timeOffset);
-         //         } else {
-         //            data->SetZRotateType(QUADRATIC_KEY);
-         //            GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-         //         }
-         //         data->SetZRotateKeys(zkeys);
-         //      }
-         //   } else {
-         //      if (c->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-         //         data->SetRotateType(LINEAR_KEY);
-         //         GetKeys<FloatKey, ILinFloatKey>(z, zkeys, timeOffset);
-         //      } else if (c->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-         //         data->SetZRotateType(QUADRATIC_KEY);
-         //         GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-         //      } else if (c->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-         //         data->SetZRotateType(TBC_KEY);
-         //         GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, timeOffset);
-         //      } else {
-         //         data->SetZRotateType(QUADRATIC_KEY);
-         //         GetKeys<FloatKey, IBezFloatKey>(z, zkeys, timeOffset);
-         //      }
-         //   }
+         //   // Valid for entire interval.  i.e. no changes
+         //   interp->SetTranslation( TOVECTOR3(tm.GetTrans()) );
+         //   interp->SetScale( Average(GetScale(tm)) );
+         //   interp->SetRotation( TOQUAT( Quat(tm) ) );
+         //   seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control));
          //}
+         //else
+         {
+            NiTransformDataRef data = new NiTransformData();
 
+            if (Control *c = tmCont->GetPositionController()) 
+            {
+               int nkeys = 0;
+               // separate xyz
+               if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
+               { 
+                  KeyType kType = QUADRATIC_KEY;
+                  vector<FloatKey> xkeys, ykeys, zkeys;
+                  if (Control *x = c->GetXController()){
+                     if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        kType = LINEAR_KEY;
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(x, xkeys, range);
+                     } else if (x->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        kType = QUADRATIC_KEY;
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(x, xkeys, range);
+                     } else if (x->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        kType = TBC_KEY;
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(x, xkeys, range);
+                     } else {
+                        kType = QUADRATIC_KEY;
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(x, xkeys, range);
+                     }
+                  }
+                  if (Control *y = c->GetYController()){
+                     if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(y, ykeys, range);
+                     } else if (y->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(y, ykeys, range);
+                     } else if (y->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(y, ykeys, range);
+                     } else {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(y, ykeys, range);
+                     }
+                  }
+                  if (Control *z = c->GetZController()){
+                     if (z->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(z, zkeys, range);
+                     } else if (z->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(z, zkeys, range);
+                     } else if (z->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, range);
+                     } else {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(z, zkeys, range);
+                     }
+                  }
+                  vector<Vector3Key> keys;
+                  JoinKeys(keys, xkeys, ykeys, zkeys);
+                  data->SetTranslateType(kType);
+                  data->SetTranslateKeys(keys);
+               } else {
+                  vector<Vector3Key> keys;
+                  if (c->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                     data->SetTranslateType(LINEAR_KEY);
+                     nkeys += GetKeys<Vector3Key, ILinPoint3Key>(c, keys, range);
+                  } else if (c->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                     data->SetTranslateType(QUADRATIC_KEY);
+                     nkeys += GetKeys<Vector3Key, IBezPoint3Key>(c, keys, range);
+                  } else if (c->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                     data->SetTranslateType(TBC_KEY);
+                     nkeys += GetKeys<Vector3Key, ITCBPoint3Key>(c, keys, range);
+                  } else {
+                     data->SetTranslateType(QUADRATIC_KEY);
+                     nkeys += GetKeys<Vector3Key, IBezPoint3Key>(c, keys, range);
+                  }
+                  data->SetTranslateKeys(keys);
+               }
+               if (nkeys != 0) { // if no changes set the base transform
+                  keepData = true;
+                  //trans = TOVECTOR3(tm.GetTrans());
+               }
+            }
+
+            // Rotations
+            if (Control *c = tmCont->GetRotationController()) 
+            {
+               int nkeys = 0;
+               if (c->ClassID() == Class_ID(LININTERP_ROTATION_CLASS_ID,0)) {
+                  vector<QuatKey> keys;
+                  data->SetRotateType(LINEAR_KEY);
+                  nkeys += GetKeys<QuatKey, ILinRotKey>(c, keys, range);
+                  data->SetQuatRotateKeys(keys);
+               } else if (c->ClassID() == Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID,0)) {
+                  vector<QuatKey> keys;
+                  data->SetRotateType(QUADRATIC_KEY);
+                  nkeys += GetKeys<QuatKey, IBezQuatKey>(c, keys, range);
+                  data->SetQuatRotateKeys(keys);
+               } else if (c->ClassID() == Class_ID(EULER_CONTROL_CLASS_ID,0)) {
+                  if (Control *x = c->GetXController()){
+                     vector<FloatKey> keys;
+                     if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(x, keys, range);
+                        data->SetXRotateType(LINEAR_KEY);
+                     } else if (x->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(x, keys, range);
+                        data->SetXRotateType(QUADRATIC_KEY);
+                     } else if (x->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(x, keys, range);
+                        data->SetXRotateType(TBC_KEY);
+                     } else {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(x, keys, range);
+                        data->SetXRotateType(QUADRATIC_KEY);
+                     }
+                     data->SetXRotateKeys(keys);
+                  }
+                  if (Control *y = c->GetXController()) {
+                     vector<FloatKey> keys;
+                     if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(y, keys, range);
+                        data->SetYRotateType(LINEAR_KEY);
+                     } else if (y->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(y, keys, range);
+                        data->SetYRotateType(QUADRATIC_KEY);
+                     } else if (y->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(y, keys, range);
+                        data->SetYRotateType(TBC_KEY);
+                     } else {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(y, keys, range);
+                        data->SetYRotateType(QUADRATIC_KEY);
+                     }
+                     data->SetYRotateKeys(keys);
+                  }
+                  if (Control *z = c->GetZController()) {
+                     vector<FloatKey> keys;
+                     if (z->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ILinFloatKey>(z, keys, range);
+                        data->SetZRotateType(LINEAR_KEY);
+                     } else if (z->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(z, keys, range);
+                        data->SetZRotateType(QUADRATIC_KEY);
+                     } else if (z->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+                        nkeys += GetKeys<FloatKey, ITCBFloatKey>(z, keys, range);
+                        data->SetZRotateType(TBC_KEY);
+                     } else {
+                        nkeys += GetKeys<FloatKey, IBezFloatKey>(z, keys, range);
+                        data->SetZRotateType(QUADRATIC_KEY);
+                     }
+                     data->SetZRotateKeys(keys);
+                  }
+               } else if (c->ClassID() == Class_ID(TCBINTERP_ROTATION_CLASS_ID,0)) {
+                  vector<QuatKey> keys;
+                  data->SetRotateType(TBC_KEY);
+                  nkeys += GetKeys<QuatKey, ITCBRotKey>(c, keys, range);
+                  data->SetQuatRotateKeys(keys);
+               }
+               if (nkeys != 0) { // if no changes set the base transform
+                  keepData = true;
+                  //rot = TOQUAT( Quat(tm) );
+               }
+            }
+
+            // Scale
+            if (Control *c = tmCont->GetScaleController()) 
+            {
+               int nkeys = 0;
+               if (c->ClassID() == Class_ID(LININTERP_SCALE_CLASS_ID,0)) {
+                  vector<FloatKey> keys;
+                  data->SetScaleType(LINEAR_KEY);
+                  nkeys += GetKeys<FloatKey, ILinFloatKey>(c, keys, range);
+                  data->SetScaleKeys(keys);
+               } else if (c->ClassID() == Class_ID(HYBRIDINTERP_SCALE_CLASS_ID,0)) {
+                  vector<FloatKey> keys;
+                  data->SetScaleType(QUADRATIC_KEY);
+                  nkeys += GetKeys<FloatKey, IBezFloatKey>(c, keys, range);
+                  data->SetScaleKeys(keys);
+               } else if (c->ClassID() == Class_ID(TCBINTERP_SCALE_CLASS_ID,0)) {
+                  vector<FloatKey> keys;
+                  data->SetScaleType(TBC_KEY);
+                  nkeys += GetKeys<FloatKey, ITCBFloatKey>(c, keys, range);
+                  data->SetScaleKeys(keys);
+               }
+               if (nkeys != 0) { // if no changes set the base transform
+                  keepData = true;
+                  //scale = Average(GetScale(tm));
+               }           
+            }
+            // only add transform data object if data actually is present
+            if (keepData) {
+               interp->SetData(data);
+            }
+            interp->SetTranslation(trans);
+            interp->SetScale(scale);
+            interp->SetRotation(rot);
+
+            // Get Priority from node
+            float priority;
+            npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
+            seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), priority);
+         }
       }
-      //Class_ID c->ClassID()
-      //if (Control *subCtrl = MakePositionXYZ(c, Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
-      
-      //NiKeyframeDataRef data = new NiKeyframeData();
-      //NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
-      //data->SetRotateType(QUADRATIC_KEY);
-      //data->SetTranslateType(QUADRATIC_KEY);
-      //data->SetScaleType(QUADRATIC_KEY);
-      //data->SetTranslateKeys( interp->SampleTranslateKeys(npoints, 4) );
-      //data->SetQuatRotateKeys( interp->SampleQuatRotateKeys(npoints, 4) );
-      //data->SetScaleKeys( interp->SampleScaleKeys(npoints, 4) );
    }
    for (int i=0, n=node->NumberOfChildren(); ok && i<n; ++i)
    {
       INode *child = node->GetChildNode(i);
-      ok |= exportController(child, seq);
+      ok |= exportController(child);
    }
    return ok;
 }

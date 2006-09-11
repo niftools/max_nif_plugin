@@ -7,7 +7,7 @@ using namespace Niflib;
 
 #define NifExport_CLASS_ID	Class_ID(0xa57ff0a4, 0xa0374ffb)
 
-static LPCTSTR NifExportSection = TEXT("MaxNifExport");
+LPCTSTR NifExportSection = TEXT("MaxNifExport");
 
 class NifExport : public SceneExport 
 {
@@ -41,7 +41,7 @@ class NifExportClassDesc : public ClassDesc2
 	public:
 	int 			IsPublic() { return TRUE; }
 	void			*Create(BOOL loading = FALSE) { return new NifExport(); }
-	const TCHAR		*ClassName() { return GetString(IDS_CLASS_NAME); }
+	const TCHAR		*ClassName() { return GetString(IDS_NIF_CLASS_NAME); }
 	SClass_ID		SuperClassID() { return SCENE_EXPORT_CLASS_ID; }
 	Class_ID		ClassID() { return NifExport_CLASS_ID; }
 	const TCHAR		*Category() { return GetString(IDS_CATEGORY); }
@@ -283,68 +283,69 @@ BOOL NifExport::SupportsOptions(int ext, DWORD options)
 
 int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
-   // read application settings
-   AppSettings::Initialize(i);
-
-   TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
-   bool iniNameIsValid = (-1 != _taccess(iniName, 0));
-
-   // Set whether Config should use registry or not
-   Exporter::mUseRegistry = !iniNameIsValid || GetIniValue<bool>(NifExportSection, "UseRegistry", false, iniName);
-	// read config from registry
-	Exporter::readConfig(i);
-	// read config from root node
-	Exporter::readConfig(i->GetRootNode());
-
-   // locate the "default" app setting
-   AppSettings *appSettings = NULL;
-   if (iniNameIsValid)
-   {
-      string fname = name;
-      // Locate which application to use. If Auto, find first app where this file appears in the root path list
-      string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
-      if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
-         // Scan Root paths
-         for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
-            if ((*itr).IsFileInRootPaths(fname)) {
-               appSettings = &(*itr);
-               break;
-            }
-         }
-      } else {
-         appSettings = FindAppSetting(curapp);
-      }
-   }
-   if (appSettings == NULL && !TheAppSettings.empty())
-      appSettings = &TheAppSettings.front();
-
-	if(!suppressPrompts)
+	try
 	{
+      // read application settings
+      AppSettings::Initialize(i);
+
+      TCHAR iniName[MAX_PATH];
+      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+      bool iniNameIsValid = (-1 != _taccess(iniName, 0));
+
+      // Set whether Config should use registry or not
+      Exporter::mUseRegistry = !iniNameIsValid || GetIniValue<bool>(NifExportSection, "UseRegistry", false, iniName);
+      // read config from registry
+      Exporter::readConfig(i);
+      // read config from root node
+      Exporter::readConfig(i->GetRootNode());
+
+      // locate the "default" app setting
+      AppSettings *appSettings = NULL;
+      if (iniNameIsValid)
+      {
+         string fname = name;
+         // Locate which application to use. If Auto, find first app where this file appears in the root path list
+         string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
+         if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+            // Scan Root paths
+            for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
+               if ((*itr).IsFileInRootPaths(fname)) {
+                  appSettings = &(*itr);
+                  break;
+               }
+            }
+         } else {
+            appSettings = FindAppSetting(curapp);
+         }
+      }
+      if (appSettings == NULL && !TheAppSettings.empty())
+         appSettings = &TheAppSettings.front();
+
       Exporter::mGameName = appSettings->Name;
       Exporter::mNifVersion = appSettings->NiVersion;
       Exporter::mNifUserVersion = appSettings->NiUserVersion;
 
-		if (DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_PANEL), GetActiveWindow(), NifExportOptionsDlgProc, (LPARAM)this) != IDOK)
-			return true;
+      if(!suppressPrompts)
+      {
+         if (DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_NIF_PANEL), GetActiveWindow(), NifExportOptionsDlgProc, (LPARAM)this) != IDOK)
+            return true;
 
-		// write config to registry
-		Exporter::writeConfig(i);
-		// write config to root node
-		Exporter::writeConfig(i->GetRootNode());
+         // write config to registry
+         Exporter::writeConfig(i);
+         // write config to root node
+         Exporter::writeConfig(i->GetRootNode());
 
-      // Update the current app version
-      appSettings = FindAppSetting(Exporter::mGameName);
-      if (appSettings == NULL && !TheAppSettings.empty())
-         appSettings = &TheAppSettings.front();
-      appSettings->NiVersion = Exporter::mNifVersion;
-      appSettings->NiUserVersion = Exporter::mNifUserVersion;
-      appSettings->WriteSettings(i);
-	}
+         // Update the current app version
+         appSettings = FindAppSetting(Exporter::mGameName);
+         if (appSettings == NULL && !TheAppSettings.empty())
+            appSettings = &TheAppSettings.front();
+         appSettings->NiVersion = Exporter::mNifVersion;
+         appSettings->NiUserVersion = Exporter::mNifUserVersion;
+         appSettings->WriteSettings(i);
+      }
 
-	try
-	{
+
       int nifVersion = VER_20_0_0_5;
       int nifUserVer = Exporter::mNifUserVersion;
 

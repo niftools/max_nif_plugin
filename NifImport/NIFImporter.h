@@ -36,6 +36,7 @@ public:
    bool mergeNonAccum;
    bool enableLights;
    bool enableCameras;
+   bool importUPB;
 
    // Biped/Bones related settings
    bool importBones;

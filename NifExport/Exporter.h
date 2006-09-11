@@ -57,6 +57,9 @@ public:
    static bool				mExportCameras;
    static bool          mGenerateBoneCollision;
 
+   static bool          mExportTransforms;
+   static float         mDefaultPriority;
+
 	Exporter(Interface *i, AppSettings *appSettings);
 
 	Result					doExport(NiNodeRef &root, INode *node);
@@ -70,11 +73,15 @@ public:
 	static void				writeConfig(INode *node);
 	// writes config to registry
 	static void				writeConfig(Interface *i);
+   // writes config to registry
+   static void				writeKfConfig(Interface *i);
 
 	// reads config from root node
 	static void				readConfig(INode *node);
 	// reads config from registry
 	static void				readConfig(Interface *i);
+   // reads config from registry
+   static void				readKfConfig(Interface *i);
 
 public:
 	typedef vector<unsigned short> TriStrip;
@@ -176,7 +183,7 @@ public:
    bool exportSkin();
 
    /* animation export */
-   bool doAnimExport();
+   Result doAnimExport(Ref<NiControllerSequence> root);
 
    /* misc export */
    bool exportUPB(NiNodeRef &root, INode *node);

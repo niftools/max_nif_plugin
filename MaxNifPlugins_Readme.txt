@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.3
+                        MaxPlugins 0.2.4
                         ================
 
  
@@ -27,6 +27,23 @@
 
     Change log
     ----------
+      0.2.4
+      -----
+    o Exporter
+      - Add animation export.
+      
+    o Importer
+      - Add option to ignore UPB buffers.  
+        * Useful in preventing LOD Bone warnings from the Civ4 Exporter
+      - Fixed problem with Animation Note Tracks not being cleared
+      - Fixed issue with BSpline animation when too much data was present
+        * Specifically the Civ4 Leaderheads now import animation very well
+      - Import Animation Priority into user prop buffer
+        
+    o NifProps Utility
+      - Added Animation Priority
+      - Removed unused Globals
+    
       0.2.3
       -----
     o Exporter

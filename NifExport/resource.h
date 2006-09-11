@@ -5,9 +5,13 @@
 #define IDS_LIBDESCRIPTION              1
 #define IDS_CATEGORY                    2
 #define IDS_CLASS_NAME                  3
+#define IDS_NIF_CLASS_NAME              3
 #define IDS_PARAMS                      4
 #define IDS_SPIN                        5
+#define IDS_KF_CLASS_NAME               6
 #define IDD_PANEL                       101
+#define IDD_NIF_PANEL                   101
+#define IDD_KF_PANEL                    102
 #define IDC_CLOSEBUTTON                 1000
 #define IDC_DOSTUFF                     1000
 #define IDC_CHK_HIDDEN                  1003
@@ -18,8 +22,10 @@
 #define IDC_ED_WELDTHRESH               1008
 #define IDC_LBL_WELDTHRESH              1009
 #define IDC_CHK_COLL                    1010
+#define IDC_ED_PRIORITY                 1010
 #define IDC_LBL_LINK                    1011
 #define IDC_CHK_VCOLORS                 1012
+#define IDC_LBL_PRIORITY                1012
 #define IDC_CHK_REMAP                   1013
 #define IDC_CB_GAME                     1014
 #define IDC_CB_VERSION                  1015
@@ -36,6 +42,8 @@
 #define IDC_CHK_CAMERA                  1025
 #define IDC_CHK_SKEL_ONLY2              1026
 #define IDC_CHK_BONE_COLL               1026
+#define IDC_CHK_TRANSFORMS              1026
+#define IDC_EDIT1                       1027
 #define IDC_COLOR                       1456
 #define IDC_EDIT                        1490
 #define IDC_SPIN                        1496
@@ -46,7 +54,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1025
+#define _APS_NEXT_CONTROL_VALUE         1028
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

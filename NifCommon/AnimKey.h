@@ -120,17 +120,38 @@ inline void SetKeys(Control *subCtrl, vector<U>& keys, float time)
 }
 
 template<typename T, typename U>
-inline void GetKeys(Control *subCtrl, vector<T>& keys, float time)
+inline int GetKeys(Control *subCtrl, vector<T>& keys, float time)
 {
    if (IKeyControl *ikeys = GetKeyControlInterface(subCtrl)){
-      int n = ikeys->GetKeySize();
+      int n = ikeys->GetNumKeys();
       keys.reserve(n);
       for (int i=0; i<n; ++i){
          AnyKey buf; U *key = reinterpret_cast<U*>((IKey*)buf);
          ikeys->GetKey(i, key);
          keys.push_back( MapKey<T>(*key, time) );
       }
+      return keys.size();
    }
+   return 0;
+}
+
+template<typename T, typename U>
+inline int GetKeys(Control *subCtrl, vector<T>& keys, Interval range)
+{
+   if (IKeyControl *ikeys = GetKeyControlInterface(subCtrl)){
+      float timeOffset = -FrameToTime(range.Start());
+      int n = ikeys->GetNumKeys();
+      keys.reserve(n);
+      for (int i=0; i<n; ++i){
+         AnyKey buf; U *key = reinterpret_cast<U*>((IKey*)buf);
+         ikeys->GetKey(i, key);
+         if (range.InInterval(key->time)) {
+            keys.push_back( MapKey<T>(*key, timeOffset) );
+         }
+      }
+      return keys.size();
+   }
+   return 0;
 }
 
 template<typename T, typename U>

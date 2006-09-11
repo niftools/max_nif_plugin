@@ -5,6 +5,7 @@
 #define REGPATH "Software\\NifTools\\MaxPlugins"
 
 static LPCTSTR NifExportSection = TEXT("MaxNifExport");
+static LPCTSTR KfExportSection = TEXT("KfExport");
 
 void regSet(HKEY hKey, const char *value, float f);
 void regSet(HKEY hKey, const char *value, bool b);
@@ -124,6 +125,33 @@ void Exporter::readConfig(Interface *i)
       mGenerateBoneCollision = GetIniValue(NifExportSection, "GenerateBoneCollision", false, iniName);
       
   }
+}
+
+
+void Exporter::readKfConfig(Interface *i)
+{
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+   mExportHidden = GetIniValue(KfExportSection, "IncludeHidden", false, iniName);
+   mExportLights = GetIniValue(KfExportSection, "Lights", false, iniName);
+   mExportCameras = GetIniValue(KfExportSection, "Cameras", false, iniName);
+   mExportTransforms = GetIniValue(KfExportSection, "Transforms", true, iniName);
+   mDefaultPriority = GetIniValue<float>(KfExportSection, "Priority", 0.0f, iniName);
+}
+
+void Exporter::writeKfConfig(Interface *i)
+{
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+   SetIniValue(KfExportSection, "IncludeHidden", mExportHidden, iniName);
+   SetIniValue(KfExportSection, "Lights", mExportLights, iniName);
+   SetIniValue(KfExportSection, "Cameras", mExportCameras, iniName);
+   SetIniValue(KfExportSection, "Transforms", mExportTransforms, iniName);
+   SetIniValue<float>(KfExportSection, "Priority", mDefaultPriority, iniName);
 }
 
 

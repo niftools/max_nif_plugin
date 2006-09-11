@@ -21,6 +21,7 @@
 #define IDC_ED_SKELETON                 1006
 #define IDC_CHK_BIPED                   1007
 #define IDC_CHK_LIGHTS                  1008
+#define IDC_CHK_UPB                     1009
 #define IDC_CHK_COLL                    1010
 #define IDC_LBL_LINK                    1011
 #define IDC_CHK_VCOLORS                 1012

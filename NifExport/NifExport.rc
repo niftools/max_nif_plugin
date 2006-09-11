@@ -73,7 +73,32 @@ END
 // Dialog
 //
 
-IDD_PANEL DIALOGEX 0, 0, 205, 203
+IDD_KF_PANEL DIALOGEX 0, 0, 205, 130
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Export KF"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    GROUPBOX        "Export:",IDC_STATIC,7,7,81,66
+    CONTROL         "&Hidden Nodes",IDC_CHK_HIDDEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,17,67,10
+    CONTROL         "Transforms",IDC_CHK_TRANSFORMS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,31,67,10
+    CONTROL         "&Lights",IDC_CHK_LIGHTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,44,67,10
+    CONTROL         "Cameras",IDC_CHK_CAMERA,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,58,67,10
+    GROUPBOX        "Behaviors:",IDC_STATIC,94,7,104,66
+    LTEXT           "Priority:",IDC_LBL_PRIORITY,104,24,37,8
+    EDITTEXT        IDC_ED_PRIORITY,145,22,39,12,ES_AUTOHSCROLL
+    LTEXT           "Game",IDC_STATIC,7,78,66,8
+    COMBOBOX        IDC_CB_GAME,7,89,105,70,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Version",IDC_STATIC,117,78,39,8
+    EDITTEXT        IDC_CB_VERSION,117,89,45,12,ES_AUTOHSCROLL
+    LTEXT           "User",IDC_STATIC,167,78,25,8
+    EDITTEXT        IDC_CB_USER_VERSION,167,89,30,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Export",IDOK,5,109,34,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,45,109,33,14
+    LTEXT           "http://www.niftools.org",IDC_LBL_LINK,103,109,95,14,SS_NOTIFY | SS_CENTERIMAGE
+END
+
+IDD_NIF_PANEL DIALOGEX 0, 0, 205, 203
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_TOOLWINDOW
 CAPTION "Export Nif"
@@ -122,7 +147,15 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO 
 BEGIN
-    IDD_PANEL, DIALOG
+    IDD_KF_PANEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 198
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 123
+    END
+
+    IDD_NIF_PANEL, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 198
@@ -139,8 +172,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,3,0
- PRODUCTVERSION 0,2,3,0
+ FILEVERSION 0,2,4,0
+ PRODUCTVERSION 0,2,4,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -156,12 +189,12 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "3ds Max Nif Exporter"
-            VALUE "FileVersion", "0, 2, 3, 0"
+            VALUE "FileVersion", "0, 2, 4, 0"
             VALUE "InternalName", "NifExport.dle"
             VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
             VALUE "OriginalFilename", "NifExport.dle"
             VALUE "ProductName", "3ds Max Nif Exporter"
-            VALUE "ProductVersion", "0, 2, 3, 0"
+            VALUE "ProductVersion", "0, 2, 4, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -178,9 +211,10 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CLASS_NAME          "Nif Exporter"
+    IDS_NIF_CLASS_NAME      "Niftools NIF Exporter"
     IDS_PARAMS              "Parameters"
     IDS_SPIN                "Spin"
+    IDS_KF_CLASS_NAME       "Niftools KF Exporter"
 END
 
 #endif    // English (U.S.) resources
