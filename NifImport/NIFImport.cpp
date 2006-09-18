@@ -117,6 +117,7 @@ void NifImporter::LoadIniSettings()
    appSettings = NULL;
    string curapp = GetIniValue<string>(NifImportSection, "CurrentApp", "AUTO");
    if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+      autoDetect = true;
       // Scan Root paths
       for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
          if ((*itr).IsFileInRootPaths(this->name)) {
@@ -125,6 +126,7 @@ void NifImporter::LoadIniSettings()
          }
       }
    } else {
+      autoDetect = false;
       appSettings = FindAppSetting(curapp);
    }
    if (appSettings == NULL && !TheAppSettings.empty()){
@@ -148,6 +150,7 @@ void NifImporter::LoadIniSettings()
    useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
    mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
    importUPB = GetIniValue(NifImportSection, "ImportUPB", true);
+   ignoreRootNode = GetIniValue(NifImportSection, "IgnoreRootNode", true);
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -212,12 +215,17 @@ void NifImporter::SaveIniSettings()
    SetIniValue(NifImportSection, "RemoveIllegalFaces", removeIllegalFaces);
    SetIniValue(NifImportSection, "RemoveDegenerateFaces", removeDegenerateFaces);
    SetIniValue(NifImportSection, "ImportUPB", importUPB);
+   SetIniValue(NifImportSection, "IgnoreRootNode", ignoreRootNode);
 
    SetIniValue(BipedImportSection, "ImportBones", importBones);
    SetIniValue(BipedImportSection, "RemoveUnusedImportedBones", removeUnusedImportedBones);  
 
    SetIniValue(AnimImportSection, "EnableAnimations", enableAnimations);
    SetIniValue(AnimImportSection, "ClearAnimation", clearAnimation);
+   SetIniValue(AnimImportSection, "AddNoteTracks", addNoteTracks);
+   SetIniValue(AnimImportSection, "AddTimeTags", addTimeTags);
+
+   SetIniValue<string>(NifImportSection, "CurrentApp", autoDetect ? "AUTO" : appSettings->Name );
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
@@ -269,7 +277,7 @@ bool NifImporter::DoImport()
          NiNodeRef rootNode = root;
 
          if (importBones) {
-            if (strmatch(rootNode->GetName(), "Scene Root"))
+            if (ignoreRootNode || strmatch(rootNode->GetName(), "Scene Root"))
                ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
             else
                ImportBones(rootNode);

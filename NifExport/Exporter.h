@@ -1,11 +1,18 @@
 #ifndef __EXPORTER_H__
 #define __EXPORTER_H__
 
+namespace Niflib
+{
+   class NiTimeController;
+   class NiControllerManager;
+   class NiControllerSequence;
+}
 using namespace Niflib;
 
 class BitmapTex;
 class AppSettings;
 class StdMat2;
+
 
 class Exporter
 {
@@ -19,6 +26,17 @@ public:
 		Abort,
 		Skip
 	};
+
+   enum ExportType
+   {
+      NIF_WO_ANIM  = 0,
+      NIF_WO_KF    = 1,
+      SINGLE_KF_WITH_NIF = 2,
+      SINGLE_KF_WO_NIF = 3,
+      MULTI_KF_WITH_NIF = 4,
+      MULTI_KF_WO_NIF = 5,
+      NIF_WITH_MGR = 6,
+   };
 
    // Callback for post-processing instructions
    struct NiCallback
@@ -52,13 +70,20 @@ public:
    static bool          mSortNodesToEnd;
    static string        mGameName;
    static string        mNifVersion;
+   static int           mNifVersionInt;
    static int           mNifUserVersion;
    static bool				mSkeletonOnly;
    static bool				mExportCameras;
    static bool          mGenerateBoneCollision;
-
    static bool          mExportTransforms;
    static float         mDefaultPriority;
+   static ExportType    mExportType;
+   static bool          mMultiplePartitions;
+   static int           mBonesPerVertex;
+   static int           mBonesPerPartition;
+   static bool          mUseTimeTags;
+   static bool          mAutoDetect;
+   static bool          mAllowAccum;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -103,6 +128,7 @@ public:
 	typedef std::map<int, FaceGroup>	FaceGroups;	
    typedef std::map<string, NiNodeRef>	NodeMap;	
    typedef std::list<NiCallback*> CallbackList;
+   typedef std::list<Ref<NiNode> > NodeList;
    
 	Interface				*mI;
 	NiNodeRef				mNiRoot;
@@ -111,6 +137,7 @@ public:
    CallbackList         mPostExportCallbacks;
    bool                 mIsBethesda;
    Box3                 mBoundingBox;
+   NodeList             mAnimationRoots;
 
    Result					exportNodes(NiNodeRef &root, INode *node);
 	Result					exportCollision(NiNodeRef &root, INode *node);
@@ -184,6 +211,11 @@ public:
 
    /* animation export */
    Result doAnimExport(Ref<NiControllerSequence> root);
+   Result doAnimExport(Ref<NiControllerManager> ctrl, INode *node);
+   bool isNodeTracked(INode *node);
+   bool isNodeKeyed(INode *node);
+   Ref<NiTimeController> CreateController(INode *node, Interval range);
+   static void InitializeTimeController(Ref<NiTimeController> ctrl, NiNodeRef parent);
 
    /* misc export */
    bool exportUPB(NiNodeRef &root, INode *node);
@@ -191,6 +223,9 @@ public:
    void sortNodes(NiNodeRef node);
    NiNodeRef exportBone(NiNodeRef parent, INode *node);
    Result exportLight(NiNodeRef root, INode *node, GenLight* light);
+   void getChildNodes(INode *node, vector<NiNodeRef>&list);
+
+   NiNodeRef createAccumNode(NiNodeRef parent, INode *node);
 };
 
 #endif 

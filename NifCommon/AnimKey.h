@@ -70,6 +70,11 @@ template<> QuatKey MapKey<QuatKey, ITCBRotKey>(ITCBRotKey& key, float time);
 template<> FloatKey MapKey<FloatKey, ITCBScaleKey>(ITCBScaleKey& key, float time);
 template<> Vector3Key MapKey<Vector3Key, ITCBPoint3Key>(ITCBPoint3Key& key, float time);
 
+// Interpolated Keys
+template<typename T> T InterpKey(Control *subCtrl, TimeValue time, float timeOff);
+template<> FloatKey InterpKey<FloatKey>(Control *subCtrl, TimeValue time, float timeOff);
+template<> QuatKey InterpKey<QuatKey>(Control *subCtrl, TimeValue time, float timeOff);
+template<> Vector3Key InterpKey<Vector3Key>(Control *subCtrl, TimeValue time, float timeOff);
 
 template<typename T> void MergeKey(T& lhs, T& rhs) {
    lhs.val += rhs.val;
@@ -142,12 +147,19 @@ inline int GetKeys(Control *subCtrl, vector<T>& keys, Interval range)
       float timeOffset = -FrameToTime(range.Start());
       int n = ikeys->GetNumKeys();
       keys.reserve(n);
+      bool hasStart = false, hasEnd = false;
       for (int i=0; i<n; ++i){
          AnyKey buf; U *key = reinterpret_cast<U*>((IKey*)buf);
          ikeys->GetKey(i, key);
          if (range.InInterval(key->time)) {
+            hasStart |= (range.Start() == key->time);
+            hasEnd   |= (range.End() == key->time);
             keys.push_back( MapKey<T>(*key, timeOffset) );
          }
+      }
+      if (keys.size() > 0) {
+         if (!hasStart) keys.insert(keys.begin(), InterpKey<T>(subCtrl, range.Start(), timeOffset) );
+         if (!hasEnd) keys.push_back(InterpKey<T>(subCtrl, range.End(), timeOffset) );
       }
       return keys.size();
    }

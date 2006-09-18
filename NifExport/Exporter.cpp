@@ -25,12 +25,20 @@ bool Exporter::mRemoveUnreferencedBones=false;
 bool Exporter::mSortNodesToEnd=false;
 string Exporter::mGameName = "User";
 string Exporter::mNifVersion = "20.0.0.5";
+int Exporter::mNifVersionInt = VER_20_0_0_5;
 int Exporter::mNifUserVersion = 0;
 bool Exporter::mSkeletonOnly=false;
 bool Exporter::mExportCameras=false;
 bool Exporter::mGenerateBoneCollision=false;
 bool Exporter::mExportTransforms=true;
 float Exporter::mDefaultPriority=0.0f;
+Exporter::ExportType Exporter::mExportType = NIF_WO_ANIM;
+bool Exporter::mMultiplePartitions=false;
+int Exporter::mBonesPerVertex = 4;
+int Exporter::mBonesPerPartition = 20;
+bool Exporter::mUseTimeTags = false;
+bool Exporter::mAutoDetect = true;
+bool Exporter::mAllowAccum = true;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)
@@ -44,6 +52,10 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 
    int nifVersion = GetVersion(Exporter::mNifVersion);
    mIsBethesda = (nifVersion == VER_20_0_0_5 || nifVersion == VER_20_0_0_4) && (Exporter::mNifUserVersion == 11);
+
+   if (mUseTimeTags && nifVersion >= VER_20_0_0_4) {
+      throw runtime_error("Time tag sequences are not supported for version 20.0.0.4 or higher.");
+   }
 
    CalcBoundingBox(node, mBoundingBox);
 
@@ -145,10 +157,17 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
       } 
       else if (!mSkeletonOnly)
       {
-         newParent = (mExportExtraNodes) ? makeNode(nodeParent, node, local) : nodeParent;
-
-         Result result;
-         result = exportMesh(newParent, node, t);
+         if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+            // Create Node + Accum if has Start Track
+            newParent = createAccumNode( makeNode(nodeParent, node, local) , node);
+         } else if ( mExportExtraNodes || (mExportType != NIF_WO_ANIM && isNodeKeyed(node) ) ) {
+            // Create node if using Extra Nodes or if exporting with anim and node has key values
+            newParent = makeNode(nodeParent, node, local);
+         } else {
+            // Else dont create a node
+            newParent = nodeParent;
+         }
+         Result result = exportMesh(newParent, node, t);
          if (result != Ok)
             return result;
       }

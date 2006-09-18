@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.4
+                        MaxPlugins 0.2.5
                         ================
 
  
@@ -27,6 +27,22 @@
 
     Change log
     ----------
+      0.2.5
+      -----
+    o Exporter
+      - Rewrote animation export dialogs and procedures to write files
+        similar to Civilation exporter.
+      - Removed seperate *.kf and merged with *.nif like Civ4
+      - Fixed issues with NiStencilProperty (via niflib) for Morrowind
+      - Add option to optionally export accum nodes
+      - Add options for exporting skin partition in different ways
+      - Expose the Auto detect parameter to allow game to be saved
+      
+    o Importer
+      - Add option to ignore root
+      - Expose the Time Tag and Key Note params on nif dialog
+      - Expose the Auto detect parameter to allow game to be saved
+        
       0.2.4
       -----
     o Exporter

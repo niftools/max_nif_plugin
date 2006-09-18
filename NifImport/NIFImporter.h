@@ -17,6 +17,11 @@ HISTORY:
 #include "BaseImporter.h"
 #include "IniSection.h"
 
+namespace Niflib
+{
+   class NiTextKeyExtraData;
+}
+
 // NIF Importer
 class NifImporter : public BaseImporter//, public IniFileSection
 {
@@ -61,6 +66,8 @@ public:
    stringlist dummyNodeMatches;
    bool convertBillboardsToDummyNodes;
    bool uncontrolledDummies;
+   bool ignoreRootNode;
+   bool autoDetect;
 
    // Animation related Settings
    bool replaceTCBRotationWithBezier;
@@ -131,6 +138,7 @@ public:
    bool ImportAnimation();
    void ClearAnimation();
    void ClearAnimation(INode *node);
+   bool AddNoteTracks(float time, string name, string target, Niflib::Ref<Niflib::NiTextKeyExtraData> textKeyData, bool loop);
 
 
    protected: 

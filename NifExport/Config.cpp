@@ -68,6 +68,17 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "SkeletonOnly", mSkeletonOnly, iniName);
       SetIniValue(NifExportSection, "Cameras", mExportCameras, iniName);
       SetIniValue(NifExportSection, "GenerateBoneCollision", mGenerateBoneCollision, iniName);
+
+      SetIniValue(NifExportSection, "ExportTransforms", mExportTransforms, iniName);
+      SetIniValue<int>(NifExportSection, "ExportType", mExportType, iniName);     
+      SetIniValue<float>(KfExportSection, "Priority", mDefaultPriority, iniName);
+
+      SetIniValue(NifExportSection, "MultiplePartitions", mMultiplePartitions, iniName);
+      SetIniValue<int>(NifExportSection, "BonesPerVertex", mBonesPerVertex, iniName);     
+      SetIniValue<int>(KfExportSection, "BonesPerPartition", mBonesPerPartition, iniName);
+      SetIniValue(NifExportSection, "UseTimeTags", mUseTimeTags, iniName);
+
+      SetIniValue(NifExportSection, "AllowAccum", mAllowAccum, iniName);
       
    }
 }
@@ -123,7 +134,17 @@ void Exporter::readConfig(Interface *i)
       mSkeletonOnly = GetIniValue(NifExportSection, "SkeletonOnly", false, iniName);
       mExportCameras = GetIniValue(NifExportSection, "Cameras", false, iniName);
       mGenerateBoneCollision = GetIniValue(NifExportSection, "GenerateBoneCollision", false, iniName);
-      
+
+      mExportTransforms = GetIniValue(KfExportSection, "Transforms", true, iniName);
+      mDefaultPriority = GetIniValue<float>(KfExportSection, "Priority", 0.0f, iniName);
+      mExportType = ExportType(GetIniValue<int>(NifExportSection, "ExportType", NIF_WO_ANIM, iniName));
+
+      mMultiplePartitions = GetIniValue(NifExportSection, "MultiplePartitions", false, iniName);
+      mBonesPerVertex = GetIniValue<int>(NifExportSection, "BonesPerVertex", 4, iniName);     
+      mBonesPerPartition = GetIniValue<int>(KfExportSection, "BonesPerPartition", 20, iniName);
+
+      mUseTimeTags = GetIniValue(NifExportSection, "UseTimeTags", false, iniName);
+      mAllowAccum = GetIniValue(NifExportSection, "AllowAccum", true, iniName);
   }
 }
 

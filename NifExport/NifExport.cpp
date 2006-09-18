@@ -2,6 +2,9 @@
 #include "AppSettings.h"
 #include "niutils.h"
 #include  <io.h>
+#include "obj/NiControllerManager.h"
+#include "obj/NiTimeController.h"
+#include "obj/NiControllerSequence.h"
 
 using namespace Niflib;
 
@@ -15,6 +18,8 @@ public:
 		
 	static HWND		hParams;
 	int				mDlgResult;
+   TSTR iniFileName;
+   TSTR shortDescription;
 		
 	int				ExtCount();					// Number of extensions supported
 	const TCHAR		*Ext(int n);					// Extension #n (i.e. "3DS")
@@ -55,7 +60,7 @@ class NifExportClassDesc : public ClassDesc2
 static NifExportClassDesc NifExportDesc;
 ClassDesc2* GetNifExportDesc() { return &NifExportDesc; }
 
-
+extern list<NiObjectRef> GetAllObjectsByType( NiObjectRef const & root, const Type & type );
 
 
 
@@ -88,14 +93,13 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
             CheckDlgButton(hWnd, IDC_CHK_REMAP, Exporter::mRemapIndices);
 
             CheckDlgButton(hWnd, IDC_CHK_EXTRA, Exporter::mExportExtraNodes);
-            CheckDlgButton(hWnd, IDC_CHK_SKIN, Exporter::mExportSkin);
             CheckDlgButton(hWnd, IDC_CHK_UPB, Exporter::mUserPropBuffer);
             CheckDlgButton(hWnd, IDC_CHK_HIER, Exporter::mFlattenHierarchy);
             CheckDlgButton(hWnd, IDC_CHK_REM_BONES, Exporter::mRemoveUnreferencedBones);
             CheckDlgButton(hWnd, IDC_CHK_SORTNODES, Exporter::mSortNodesToEnd);
             CheckDlgButton(hWnd, IDC_CHK_SKEL_ONLY, Exporter::mSkeletonOnly);
             CheckDlgButton(hWnd, IDC_CHK_CAMERA, Exporter::mExportCameras);
-            CheckDlgButton(hWnd, IDC_CHK_BONE_COLL, Exporter::mGenerateBoneCollision);
+            CheckDlgButton(hWnd, IDC_CHK_BONE_COLL, Exporter::mGenerateBoneCollision);            
 
             string selection = Exporter::mGameName;
             string version = Exporter::mNifVersion;
@@ -105,6 +109,30 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
             SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_SELECTSTRING, WPARAM(-1), LPARAM(selection.c_str()));
             SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
             SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+            CheckDlgButton(hWnd, IDC_CHK_AUTO_DETECT, Exporter::mAutoDetect);
+
+            // Populate Type options
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::NIF_WO_ANIM, LPARAM("NIF w/o Anim"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::NIF_WO_KF, LPARAM("NIF with Anim"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::SINGLE_KF_WITH_NIF, LPARAM("Single KF with NIF"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::SINGLE_KF_WO_NIF, LPARAM("Single KF w/o NIF"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::MULTI_KF_WITH_NIF, LPARAM("Multi KF with NIF"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::MULTI_KF_WO_NIF, LPARAM("Multi KF w/o NIF"));
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_ADDSTRING, Exporter::NIF_WITH_MGR, LPARAM("NIF w/ Manager"));
+            
+            SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_SETCURSEL, WPARAM(Exporter::mExportType), 0);
+
+            CheckDlgButton(hWnd, IDC_CHK_TRANSFORMS2, Exporter::mExportTransforms);
+            SetDlgItemText(hWnd, IDC_ED_PRIORITY2, FormatText("%.1f", Exporter::mDefaultPriority));
+            CheckDlgButton(hWnd, IDC_CHK_USE_TIME_TAGS, Exporter::mUseTimeTags);           
+
+            // Skin
+            CheckDlgButton(hWnd, IDC_CHK_SKIN, Exporter::mExportSkin);
+            CheckDlgButton(hWnd, IDC_CHK_SKINPART, Exporter::mMultiplePartitions);
+            SetDlgItemText(hWnd, IDC_ED_BONES_PART, FormatText("%d", Exporter::mBonesPerPartition));
+            SetDlgItemText(hWnd, IDC_ED_BONES_VERTEX, FormatText("%d", Exporter::mBonesPerVertex));
+
+            CheckDlgButton(hWnd, IDC_CHK_ALLOW_ACCUM, Exporter::mAllowAccum);
 
 				TSTR tmp;
 				tmp.printf("%.4f", Exporter::mWeldThresh);
@@ -147,7 +175,6 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 						Exporter::mRemapIndices = IsDlgButtonChecked(hWnd, IDC_CHK_REMAP);
 
                   Exporter::mExportExtraNodes = IsDlgButtonChecked(hWnd, IDC_CHK_EXTRA);
-                  Exporter::mExportSkin = IsDlgButtonChecked(hWnd, IDC_CHK_SKIN);
                   Exporter::mUserPropBuffer = IsDlgButtonChecked(hWnd, IDC_CHK_UPB);
                   Exporter::mFlattenHierarchy = IsDlgButtonChecked(hWnd, IDC_CHK_HIER);
                   Exporter::mRemoveUnreferencedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES);
@@ -155,12 +182,29 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
                   Exporter::mSkeletonOnly = IsDlgButtonChecked(hWnd, IDC_CHK_SKEL_ONLY);
                   Exporter::mExportCameras = IsDlgButtonChecked(hWnd, IDC_CHK_CAMERA);
                   Exporter::mGenerateBoneCollision = IsDlgButtonChecked(hWnd, IDC_CHK_BONE_COLL);
-							
+
+                  Exporter::mExportTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_TRANSFORMS2);
+                  Exporter::mUseTimeTags = IsDlgButtonChecked(hWnd, IDC_CHK_USE_TIME_TAGS);           
+
+                  Exporter::mExportType = Exporter::ExportType(SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_GETCURSEL, 0, 0));
+                  GetDlgItemText(hWnd, IDC_ED_PRIORITY2, tmp, MAX_PATH);
+                  Exporter::mDefaultPriority = atof(tmp);
+
 						GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
 						Exporter::mTexPrefix = tmp;
 
 						GetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp, MAX_PATH);
 						Exporter::mWeldThresh = atof(tmp);
+
+                  Exporter::mAllowAccum = IsDlgButtonChecked(hWnd, IDC_CHK_ALLOW_ACCUM);
+
+                  // Skin
+                  Exporter::mExportSkin = IsDlgButtonChecked(hWnd, IDC_CHK_SKIN);
+                  Exporter::mMultiplePartitions = IsDlgButtonChecked(hWnd, IDC_CHK_SKINPART);
+                  GetDlgItemText(hWnd, IDC_ED_BONES_PART, tmp, MAX_PATH);
+                  Exporter::mBonesPerPartition = atoi(tmp);
+                  GetDlgItemText(hWnd, IDC_ED_BONES_VERTEX, tmp, MAX_PATH);
+                  Exporter::mBonesPerVertex = atoi(tmp);
 
                   GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
                   if (AppSettings *appSettings = FindAppSetting(tmp))
@@ -171,6 +215,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
                      GetDlgItemText(hWnd, IDC_CB_USER_VERSION, tmp, MAX_PATH);
                      Exporter::mNifUserVersion = strtol(tmp, &end, 0);
                   }
+                  Exporter::mAutoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT);
 
 						EndDialog(hWnd, imp->mDlgResult=IDOK);
 						close = true;
@@ -217,7 +262,21 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 //--- NifExport -------------------------------------------------------
 NifExport::NifExport()
 {
-
+   Interface *gi = GetCOREInterface();
+   TCHAR iniName[MAX_PATH];
+   if (gi) {
+      LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
+      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   } else {
+      GetModuleFileName(NULL, iniName, _countof(iniName));
+      if (LPTSTR fname = PathFindFileName(iniName))
+         fname = NULL;
+      PathAddBackslash(iniName);
+      PathAppend(iniName, "plugcfg");
+      PathAppend(iniName, "MaxNifTools.ini");
+   }
+   iniFileName = iniName;
+   shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
 }
 
 NifExport::~NifExport() 
@@ -227,12 +286,17 @@ NifExport::~NifExport()
 
 int NifExport::ExtCount()
 {
-	return 1;
+	return 2;
 }
 
 const TCHAR *NifExport::Ext(int n)
 {		
-	return _T("nif");
+   switch (n)
+   {
+   case 0: return _T("KF");
+   case 1: return _T("NIF");
+   }
+	return NULL;
 }
 
 const TCHAR *NifExport::LongDesc()
@@ -242,7 +306,7 @@ const TCHAR *NifExport::LongDesc()
 	
 const TCHAR *NifExport::ShortDesc() 
 {			
-	return _T("Gamebryo File");
+	return shortDescription;
 }
 
 const TCHAR *NifExport::AuthorName()
@@ -285,6 +349,10 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 {
 	try
 	{
+      TCHAR path[MAX_PATH];
+      GetFullPathName(name, MAX_PATH, path, NULL);
+      PathRenameExtension(path, ".nif");
+
       // read application settings
       AppSettings::Initialize(i);
 
@@ -304,10 +372,11 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
       AppSettings *appSettings = NULL;
       if (iniNameIsValid)
       {
-         string fname = name;
+         string fname = path;
          // Locate which application to use. If Auto, find first app where this file appears in the root path list
          string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
          if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+            Exporter::mAutoDetect = true;
             // Scan Root paths
             for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
                if ((*itr).IsFileInRootPaths(fname)) {
@@ -316,6 +385,7 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
                }
             }
          } else {
+            Exporter::mAutoDetect = false;
             appSettings = FindAppSetting(curapp);
          }
       }
@@ -340,11 +410,17 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
          appSettings = FindAppSetting(Exporter::mGameName);
          if (appSettings == NULL && !TheAppSettings.empty())
             appSettings = &TheAppSettings.front();
+
+         if (Exporter::mAutoDetect){
+            SetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
+         } else {
+            SetIniValue<string>(NifExportSection, "CurrentApp", appSettings->Name, iniName);
+         }
+
          appSettings->NiVersion = Exporter::mNifVersion;
          appSettings->NiUserVersion = Exporter::mNifUserVersion;
          appSettings->WriteSettings(i);
       }
-
 
       int nifVersion = VER_20_0_0_5;
       int nifUserVer = Exporter::mNifUserVersion;
@@ -354,6 +430,17 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
          nifVersion = GetVersion(Exporter::mNifVersion);
          if (!IsVersionSupported(nifVersion))
             throw exception(FormatString("Version '%s' is not a supported version.").c_str());
+      }
+      Exporter::mNifVersionInt = nifVersion;
+
+      Exporter::ExportType exportType = Exporter::mExportType;
+
+      // Hack so MW exports cleaner. Basically write tree without NiControllerManager
+      if (  nifVersion <= VER_10_0_1_0 
+         && (Exporter::mExportType != Exporter::NIF_WO_ANIM && Exporter::mExportType != Exporter::NIF_WITH_MGR)
+         )
+      {
+         Exporter::mExportType = Exporter::NIF_WO_KF;
       }
 
 		Exporter::mSelectedOnly = (options&SCENE_EXPORT_SELECTED) != 0;
@@ -365,7 +452,67 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 		if (result!=Exporter::Ok)
 			throw exception("Unknown error.");
 
-		WriteNifTree(name, NiObjectRef(root), nifVersion, nifUserVer);
+      if (exportType == Exporter::NIF_WO_ANIM || exportType == Exporter::NIF_WITH_MGR)
+      {
+         WriteNifTree(path, NiObjectRef(root), nifVersion, nifUserVer);
+      }
+      else 
+      {
+         Niflib::ExportOptions export_type = EXPORT_NIF;
+         switch (exportType) {
+            case Exporter::SINGLE_KF_WITH_NIF: export_type = EXPORT_NIF_KF;       break;
+            case Exporter::SINGLE_KF_WO_NIF:   export_type = EXPORT_KF;           break;
+            case Exporter::MULTI_KF_WITH_NIF:  export_type = EXPORT_NIF_KF_MULTI; break;
+            case Exporter::MULTI_KF_WO_NIF:    export_type = EXPORT_KF_MULTI;     break;
+         }
+
+         Niflib::NifGame game = KF_MW;
+         if (nifVersion <= VER_4_0_0_2) {
+            game = KF_MW;
+         } else if (nifVersion <= VER_20_0_0_4) {
+            game = KF_DAOC;
+         } else {
+            game = KF_CIV4;
+         }
+
+         // 
+         //if (nifVersion <= VER_10_0_1_0) {
+
+         //   // Now search and locate newer timeframe controllers and convert to keyframecontrollers
+         //   list<NiObjectRef> mgrs = GetAllObjectsByType( root, NiControllerManager::TypeConst() );
+         //   for ( list<NiObjectRef>::iterator it = mgrs.begin(); it != mgrs.end(); ++it) {
+         //      if (NiControllerManagerRef mgr = DynamicCast<NiControllerManager>(*it)) {
+         //         NiObjectNETRef target = mgr->GetTarget();
+         //         target->RemoveController( StaticCast<NiTimeController>(mgr) );
+         //         vector<NiControllerSequenceRef> seqs = mgr->GetControllerSequences();
+         //         for (vector<NiControllerSequenceRef>::iterator itr = seqs.begin(); itr != seqs.end(); ++itr) {
+         //            NiControllerSequenceRef seq = (*itr);
+         //            MergeNifTrees(DynamicCast<NiNode>(target), seq, nifVersion, nifUserVer);
+         //         }
+         //      }
+         //   }
+         //}
+
+         WriteFileGroup(path, StaticCast<NiObject>(root), nifVersion, nifUserVer, export_type, game);
+/*
+         for (NodeList::iterator itr = mAnimationRoots.begin(); itr != mAnimationRoots.end(); ++itr){
+            list<NiTimeControllerRef> ctlrs = (*itr)->GetControllers();
+            if ( NiControllerManagerRef mgr = SelectFirstObjectOfType<NiControllerManager>( ctlrs ) ) {
+               (*itr)->RemoveController( mgr );
+
+               vector<NiControllerSequenceRef> seqs = mgr->GetControllerSequences();
+               WriteNifTree()
+            }
+         }
+
+         if (mExportType == SINGLE_KF_WITH_NIF || mExportType == MULTI_KF_WITH_NIF)
+         {
+            GetFullPathName(name, MAX_PATH, path, NULL);
+            PathRenameExtension(path, ".nif");
+            WriteNifTree(path, NiObjectRef(root), nifVersion, nifUserVer);
+         }
+*/
+      }
 	}
 
 	catch (exception &e)

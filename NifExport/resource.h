@@ -33,6 +33,7 @@
 #define IDC_CB_USER_VERSION             1016
 #define IDC_CHK_SKIN                    1017
 #define IDC_CHK_ANIMATION               1018
+#define IDC_LBL_PRIORITY2               1018
 #define IDC_CHK_EXTRA                   1019
 #define IDC_CHK_UPB                     1020
 #define IDC_CHK_HIER                    1021
@@ -43,7 +44,21 @@
 #define IDC_CHK_SKEL_ONLY2              1026
 #define IDC_CHK_BONE_COLL               1026
 #define IDC_CHK_TRANSFORMS              1026
-#define IDC_EDIT1                       1027
+#define IDC_CHK_TRANSFORMS2             1027
+#define IDC_GRP_ANIMATION               1028
+#define IDC_ED_PRIORITY2                1029
+#define IDC_CBO_ACCUM                   1030
+#define IDC_CHK_USE_TIME_TAGS           1030
+#define IDC_CBO_ANIM_TYPE               1031
+#define IDC_CHECK1                      1032
+#define IDC_CHK_AUTO_DETECT             1032
+#define IDC_CHK_SORTNODES2              1033
+#define IDC_CHK_ALLOW_ACCUM             1033
+#define IDC_LBL_BONES_VERTEX            1034
+#define IDC_ED_BONES_VERTEX             1035
+#define IDC_LBL_BONES_PART              1036
+#define IDC_ED_BONES_PART               1037
+#define IDC_CHK_SKINPART                1038
 #define IDC_COLOR                       1456
 #define IDC_EDIT                        1490
 #define IDC_SPIN                        1496
@@ -52,9 +67,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        102
+#define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1028
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -27,7 +27,10 @@
 #define IDC_CHK_VCOLORS                 1012
 #define IDC_CHK_SHOW_TEX                1013
 #define IDC_CB_GAME                     1014
+#define IDC_CHK_IGNORE_ROOT             1015
 #define IDC_CB_USER_VERSION             1016
+#define IDC_CHK_LIGHTS2                 1016
+#define IDC_CHK_AUTO_DETECT             1016
 #define IDC_CHK_SKIN                    1017
 #define IDC_CHK_ANIMATION               1018
 #define IDC_CHK_AUTOSMOOTH              1019

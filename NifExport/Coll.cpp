@@ -463,9 +463,10 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm
 	for (int i=0; i<mesh->getNumFaces(); i++)
 		addFace(tris, verts, vnorms, i, vi, mesh, sm);
 
-	TriStrips strips;
-	strippify(strips, verts, vnorms, tris);
-	NiTriStripsDataRef data = makeTriStripsData(strips);
+	//TriStrips strips;
+	//strippify(strips, verts, vnorms, tris);
+	//NiTriStripsDataRef data = makeTriStripsData(strips);
+   NiTriStripsDataRef data = new NiTriStripsData(tris, false);
 	data->SetVertices(verts);
 	data->SetNormals(vnorms);
 

@@ -55,15 +55,18 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
             CheckDlgButton(hWnd, IDC_CHK_ILLEGAL, imp->removeIllegalFaces);
             CheckDlgButton(hWnd, IDC_CHK_REM_BONES, imp->removeUnusedImportedBones);
             CheckDlgButton(hWnd, IDC_CHK_CLEARANIM, imp->clearAnimation);
+            CheckDlgButton(hWnd, IDC_CHK_KEYNOTES, imp->addNoteTracks);
+            CheckDlgButton(hWnd, IDC_CHK_TIMETAGS, imp->addTimeTags);
+            CheckDlgButton(hWnd, IDC_CHK_IGNORE_ROOT, imp->ignoreRootNode);
             
             CheckDlgButton(hWnd, IDC_CHK_BIPED, imp->useBiped);
-            CheckDlgButton(hWnd, IDC_CHK_UPB, !imp->importUPB);
-            
+            CheckDlgButton(hWnd, IDC_CHK_UPB, !imp->importUPB);           
             
             string selection = (imp->appSettings) ? imp->appSettings->Name : "User";
             for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr)
                SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_ADDSTRING, 0, LPARAM(itr->Name.c_str()));
             SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_SELECTSTRING, WPARAM(-1), LPARAM(selection.c_str()));
+            CheckDlgButton(hWnd, IDC_CHK_AUTO_DETECT, imp->autoDetect);
 
             SHAutoComplete(GetDlgItem(hWnd, IDC_ED_SKELETON), SHACF_FILESYSTEM);
             if (imp->HasSkeleton() && imp->appSettings && imp->importSkeleton) {
@@ -109,13 +112,17 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                   imp->removeIllegalFaces = IsDlgButtonChecked(hWnd, IDC_CHK_ILLEGAL) ? true : false;
                   imp->removeUnusedImportedBones = IsDlgButtonChecked(hWnd, IDC_CHK_REM_BONES) ? true : false;
                   imp->clearAnimation = IsDlgButtonChecked(hWnd, IDC_CHK_CLEARANIM) ? true : false;
+                  imp->addNoteTracks = IsDlgButtonChecked(hWnd, IDC_CHK_KEYNOTES) ? true : false;
+                  imp->addTimeTags = IsDlgButtonChecked(hWnd, IDC_CHK_TIMETAGS) ? true : false;
                   imp->useBiped = IsDlgButtonChecked(hWnd, IDC_CHK_BIPED) ? true : false;
                   imp->importUPB = IsDlgButtonChecked(hWnd, IDC_CHK_UPB) ? false : true;
-
+                  imp->ignoreRootNode = IsDlgButtonChecked(hWnd, IDC_CHK_IGNORE_ROOT) ? true : false;
+                  
                   GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
                   if (AppSettings *appSettings = FindAppSetting(tmp)) {
                      imp->appSettings = appSettings;
                   }
+                  imp->autoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT) ? true : false;
                   
                   GetDlgItemText(hWnd, IDC_ED_SKELETON, tmp, MAX_PATH);
                   imp->skeleton = tmp;

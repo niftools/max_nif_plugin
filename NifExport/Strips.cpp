@@ -1,5 +1,6 @@
 #include "pch.h"
 
+/*
 using namespace triangle_stripper;
 
 void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vector3> &norms, const Triangles &tris)
@@ -69,7 +70,7 @@ void Exporter::strippify(TriStrips &strips, vector<Vector3> &verts, vector<Vecto
 		strips.push_back(strip);
 	}
 }
-
+*/
 void Exporter::strippify(FaceGroup &grp)
 {
    TriStrips &strips = grp.strips;

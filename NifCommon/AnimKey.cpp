@@ -321,6 +321,44 @@ template<> void MergeKey<ITCBRotKey>(ITCBRotKey& lhs, ITCBRotKey& rhs) {
    lhs.val = Quat(lhs.val) * Quat(rhs.val);
 }
 
+
+template<> FloatKey InterpKey<FloatKey>(Control *subCtrl, TimeValue time, float timeOff) {
+   FloatKey rKey;
+   memset(&rKey, 0, sizeof(rKey));
+   rKey.time = timeOff + FrameToTime(time);
+   Interval valid; valid.SetEmpty();
+   if (subCtrl->SuperClassID() == SClass_ID(CTRL_SCALE_CLASS_ID) ) {
+      ScaleValue s;
+      subCtrl->GetValue(time, &s, valid, CTRL_ABSOLUTE);
+      rKey.data = Average(s.s);
+   } else {
+      subCtrl->GetValue(time, &rKey.data, valid, CTRL_ABSOLUTE);
+   }
+   return rKey;
+}
+
+template<> QuatKey InterpKey<QuatKey>(Control *subCtrl, TimeValue time, float timeOff) {
+   QuatKey rKey;
+   memset(&rKey, 0, sizeof(rKey));
+   rKey.time = timeOff + FrameToTime(time);
+   Interval valid; valid.SetEmpty();
+   Quat q;
+   subCtrl->GetValue(time, &q, valid, CTRL_ABSOLUTE);
+   rKey.data = TOQUAT(q, true);
+   return rKey;
+}
+
+template<> Vector3Key InterpKey<Vector3Key>(Control *subCtrl, TimeValue time, float timeOff) {
+   Vector3Key rKey;
+   memset(&rKey, 0, sizeof(rKey));
+   rKey.time = timeOff + FrameToTime(time);
+   Interval valid; valid.SetEmpty();
+   Point3 p;
+   subCtrl->GetValue(time, &p, valid, CTRL_ABSOLUTE);
+   rKey.data = TOVECTOR3(p);
+   return rKey;
+}
+
 float GetValue(Vector3& value, V3T type)
 {
    switch (type) {
@@ -363,7 +401,6 @@ Vector3Key& CopyKey( Vector3Key& dst, FloatKey& src, V3T type)
    SetValue(dst.data, src.data, type);
    return dst;
 }
-
 
 void SplitKeys(vector<Vector3Key>&keys, vector<FloatKey>&xkeys, vector<FloatKey>&ykeys, vector<FloatKey>&zkeys)
 {
@@ -435,3 +472,5 @@ bool GetTranslationKeys(Control *c, vector<Vector3Key> keys, const vector<float>
    }
    return false;
 }
+
+

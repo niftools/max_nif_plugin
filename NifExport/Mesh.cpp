@@ -27,7 +27,6 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 
 	Mesh *mesh = &tri->GetMesh();
 
-
    // Note that calling setVCDisplayData will clear things like normals so we set this up first
    vector<Color4> vertColors;
    if (mVertexColors)
@@ -35,8 +34,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
       bool hasvc = false;
       if (mesh->mapSupport(MAP_ALPHA))
       {
-         mesh->setVCDisplayData(MAP_ALPHA);
-         int n = mesh->getNumVertCol();
+         mesh->setVCDisplayData(MAP_ALPHA);         int n = mesh->getNumVertCol();
          if (n > vertColors.size())
             vertColors.assign(n, Color4(1.0f, 1.0f, 1.0f, 1.0f));
          VertColor *vertCol = mesh->vertColArray;
@@ -133,15 +131,13 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 
 	if (exportStrips) {
       shape = new NiTriStrips();
-      data = new NiTriStripsData();
+      data = new NiTriStripsData(grp.faces);
 	} else {
       shape = new NiTriShape();
-      data = new NiTriShapeData();
+      data = new NiTriShapeData(grp.faces);
 	}
-
-   data->SetTriangles(grp.faces);
-	data->SetVertices(grp.verts);
-	data->SetNormals(grp.vnorms);
+   data->SetVertices(grp.verts);
+   data->SetNormals(grp.vnorms);
 
 	if (grp.uvs.size() > 0)
 	{
@@ -285,6 +281,9 @@ struct SkinInstance : public Exporter::NiCallback
    // Bone to weight map
    BoneWeightList boneWeights;
 
+   Matrix3 bone_init_tm;
+   Matrix3 node_init_tm;
+
    SkinInstance(Exporter *Owner) : owner(Owner) {}
    virtual ~SkinInstance() {}
    virtual Exporter::Result execute();
@@ -318,6 +317,9 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
    // Create new call back to finish export
    SkinInstance* si = new SkinInstance(this);
    mPostExportCallbacks.push_back(si);
+
+   skin->GetSkinInitTM(node, si->bone_init_tm, false);
+   skin->GetSkinInitTM(node, si->node_init_tm, true);
 
    si->shape = shape;
 
@@ -369,24 +371,27 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
 
 Exporter::Result SkinInstance::execute()
 {
-   shape->BindSkin(boneList);
+   shape->BindSkin(boneList, false);
    uint bone = 0;
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
       shape->SetBoneWeights(bone, (*bitr));
    }
-   shape->GenHardwareSkinInfo();
-   return Exporter::Ok;
-}
+   if (Exporter::mMultiplePartitions)
+      shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex);
+   else
+      shape->GenHardwareSkinInfo(0, 0);
 
-static void InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef parent)
-{
-   ctrl->SetFrequency(1.0f);
-   ctrl->SetStartTime(FloatINF);
-   ctrl->SetStopTime(FloatNegINF);
-   ctrl->SetPhase(0.0f);
-   ctrl->SetFlags(0x0C);
-   ctrl->SetTarget( parent );
-   parent->AddController(DynamicCast<NiTimeController>(ctrl));
+   //NiSkinInstanceRef skinInst = shape->GetSkinInstance();
+   //NiSkinDataRef skinData = skinInst->GetSkinData();
+   //Matrix44 tm = skinData->GetOverallTransform();
+   //Matrix3 otm = TOMATRIX3(tm);
+   //Matrix3 stm = TOMATRIX3(shape->GetLocalTransform());
+   //Matrix3 btm = Inverse(bone_init_tm) * stm;
+
+   //Matrix3 asdf = btm * otm;
+   //skinData->SetOverallTransform(TOMATRIX4(btm));
+      
+   return Exporter::Ok;
 }
 
 static void FillBoneController(Exporter* exporter, NiBSBoneLODControllerRef boneCtrl, INode *node)
@@ -552,23 +557,33 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
          }
       }
 
+      if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+         NiNodeRef accumNode = createAccumNode(newParent, node);
 
-      if (wildmatch("Bip??", node->GetName()))
-      {
-         NiNodeRef accumNode = new NiNode();
-         accumNode->SetName(FormatString("%s NonAccum", node->GetName()));
-         accumNode->SetLocalTransform(Matrix44::IDENTITY);
-         newParent->AddChild(DynamicCast<NiAVObject>(accumNode));
-
-         // Transfer 
+         // Transfer collision object to accum and create blend on accum
          if (mIsBethesda) {
             InitializeTimeController(new bhkBlendController(), accumNode);
             accumNode->SetCollisionObject(newParent->GetCollisionObject());
             newParent->SetCollisionObject( NiCollisionObjectRef() );
-         }
-         InitializeTimeController(new NiTransformController(), accumNode);
-         
+         }        
          newParent = accumNode;
+      } else if (wildmatch("Bip??", node->GetName())) {
+         newParent = createAccumNode(newParent, node);
+      }
+   }
+   else // normal handling
+   {
+      // Check for Accum Root using 
+      if (mExportType == NIF_WO_KF)
+      {
+         // Add controllers
+         if (Exporter::mAllowAccum) {
+            newParent = createAccumNode(newParent, node);
+         }
+      }
+      else if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) 
+      {
+         newParent = createAccumNode(newParent, node);
       }
    }
 

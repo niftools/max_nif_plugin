@@ -4,6 +4,7 @@
 #include <obj/NiPointLight.h>
 #include <obj/NiDirectionalLight.h>
 #include <obj/NiSpotLight.h>
+#include <obj/NiTimeController.h>
 
 bool Exporter::TMNegParity(const Matrix3 &m)
 {
@@ -66,9 +67,12 @@ Matrix3 Exporter::getTransform(INode *node, TimeValue t, bool local)
    Matrix3 tm = node->GetObjTMAfterWSM(t);
    if (local)
    {
-      Matrix3 pm = node->GetParentTM(t);
-      pm.Invert();
-      tm *= pm;
+      INode *parent = node->GetParentNode();
+      if (parent != NULL) {
+         Matrix3 pm = parent->GetObjTMAfterWSM(t);
+         pm.Invert();
+         tm *= pm;
+      }
    }
    return tm;
 }
@@ -124,6 +128,10 @@ NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 	node->SetLocalTranslation(trans);
 
    exportUPB(node, maxNode);
+
+   // Normal Embedded Animation 
+   if (mExportType == NIF_WO_KF)
+      CreateController(maxNode, mI->GetAnimRange());
 
 	parent->AddChild(DynamicCast<NiAVObject>(node));
 	return node;
@@ -412,3 +420,14 @@ void Exporter::CalcBoundingSphere(INode *node, Point3 center, float& radius, int
    }
 }
 
+
+
+void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
+{
+   for (int i=0; i<node->NumberOfChildren(); i++) 
+   {
+      INode * child = node->GetChildNode(i);
+      list.push_back( getNode(child->GetName()) );
+      getChildNodes(child, list);
+   }
+}

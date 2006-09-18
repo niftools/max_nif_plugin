@@ -13,11 +13,12 @@ HISTORY:
 #include "pch.h"
 #include <IFrameTagManager.h>
 #include <notetrck.h>
-
+#include <set>
 #include "NifExport.h"
 #include "AnimKey.h"
 
 #include <obj/NiControllerSequence.h>
+#include <obj/NiControllerManager.h>
 #include <obj/NiInterpolator.h>
 #include <obj/NiTransformInterpolator.h>
 #include <obj/NiTransformData.h>
@@ -28,6 +29,8 @@ HISTORY:
 #include <obj/NiKeyframeData.h>
 #include <obj/NiStringPalette.h>
 #include <obj/NiBSplineCompTransformInterpolator.h>
+#include <obj/NiDefaultAVObjectPalette.h>
+#include <obj/NiMultiTargetTransformController.h>
 using namespace Niflib;
 
 const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
@@ -45,26 +48,152 @@ struct AnimationExport
    INode * findTrackedNode(INode *root);
 
    bool doExport(NiControllerSequenceRef seq);
+   bool doExport(NiControllerManagerRef ctrl, INode *node);
    bool exportController(INode *node);
    Control *GetTMController(INode* node);
+   NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
+   bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
 
    Exporter &ne;
    Interval range;
    NiControllerSequenceRef seq;
+
+   set<NiAVObjectRef> objRefs;
+   map<NiControllerSequenceRef, Interval> ranges;
 };
 
+bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
+{
+   // Populate Text keys and Sequence information from note tracks
+   if (Exporter::mUseTimeTags) {
+      if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+         int n = tagMgr->GetTagCount();
+         for (int i = 0; i<n; i++) {
+            UINT id = tagMgr->GetTagID(i);
+            TimeValue t = tagMgr->GetTimeByID(id, FALSE);
+            TSTR name = tagMgr->GetNameByID(id);
+
+            StringKey strkey;
+            strkey.time = FrameToTime( Interval(range.Start(), t).Duration()-1 );
+            strkey.data = name;
+            textKeys.push_back(strkey);
+         }
+      }
+   } else {
+      for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
+         if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+            if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+               DefNoteTrack *defNT = (DefNoteTrack *)nt;
+               if ( defNT->NumKeys() > 0 ) {
+                  bool stop = false;
+                  for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
+                     NoteKey* key = defNT->keys[j];
+
+                     if (wildmatch("start*", key->note)) {
+                        stringlist args = TokenizeCommandLine(key->note, true);
+                        if (args.empty()) continue;
+
+                        range.SetStart( key->time );
+                        for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                           if (strmatch("-name", *itr)) {
+                              if (++itr == args.end()) break;
+                           }
+                        }
+                     } else if ( wildmatch("end*", key->note) ) {
+                        range.SetEnd( key->time );
+                        stop = true;
+                     }
+                     StringKey strkey;
+                     strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
+                     strkey.data = key->note;
+                     textKeys.push_back(strkey);
+                  }
+               }
+            }
+         }
+      }
+   }
+   return !textKeys.empty();
+}
+
+void Exporter::InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef parent)
+{
+   ctrl->SetFrequency(1.0f);
+   ctrl->SetStartTime(FloatINF);
+   ctrl->SetStopTime(FloatNegINF);
+   ctrl->SetPhase(0.0f);
+   ctrl->SetFlags(0x0C);
+   ctrl->SetTarget( parent );
+   parent->AddController(DynamicCast<NiTimeController>(ctrl));
+}
+
+NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
+{
+   NiNodeRef accumNode;
+   bool isTracked = isNodeTracked(node);
+   if (!Exporter::mAllowAccum || !isTracked)
+   {
+      accumNode = parent;
+   }
+   else
+   {
+      accumNode = getNode( FormatString("%s NonAccum", node->GetName()) );
+      accumNode->SetLocalTransform(Matrix44::IDENTITY);
+      parent->AddChild(DynamicCast<NiAVObject>(accumNode));
+   }
+
+   // add multi target controller to parent if exporting with animation
+   if ( mExportType == NIF_WO_KF ){
+
+      if ( Exporter::mAllowAccum && isTracked ) {
+         // transfer controllers to accum
+         list<NiTimeControllerRef> ctlrs = parent->GetControllers();
+         for (list<NiTimeControllerRef>::iterator it = ctlrs.begin(); it != ctlrs.end(); ++it) {
+            parent->RemoveController(*it);
+            accumNode->AddController(*it);
+         }
+      }
+
+   } else if ( Exporter::mExportType != Exporter::NIF_WO_ANIM ) 
+   {
+      // NiMultiTargetTransformController causes crashes in old formats
+      if (Exporter::mNifVersionInt >= VER_10_0_1_0)
+      {
+         NiMultiTargetTransformControllerRef ctrl = new NiMultiTargetTransformController();
+         vector<NiNodeRef> children;
+         getChildNodes(node, children);
+         ctrl->SetExtraTargets(children);
+         Exporter::InitializeTimeController(ctrl, parent);
+      }
+      NiControllerManagerRef mgr = new NiControllerManager();
+      Exporter::InitializeTimeController(mgr, parent);
+
+      // Export Animation now
+      doAnimExport(mgr, node);
+   }
+   return accumNode;
+}
 Exporter::Result Exporter::doAnimExport(NiControllerSequenceRef root)
 {
    AnimationExport animExporter(*this);
-
    return animExporter.doExport(root) ? Exporter::Ok : Exporter::Abort ;
 }
-//NiControllerSequenceRef makeSequence(TimeValue start, TimeValue end);
 
-INode * AnimationExport::findTrackedNode(INode *node)
+Exporter::Result Exporter::doAnimExport(NiControllerManagerRef mgr, INode *node)
 {
-   // locate START in note track before assuming all is well
-   if (node->HasNoteTracks()) {
+   AnimationExport animExporter(*this);
+   return animExporter.doExport(mgr, node) ? Exporter::Ok : Exporter::Abort ;
+}
+
+bool Exporter::isNodeTracked(INode *node)
+{
+   if (Exporter::mUseTimeTags) {
+      // Assume only one top level node has animation
+      if (mI->GetRootNode() == node->GetParentNode() && isNodeKeyed(node)) {
+         return true;
+      }
+   }
+   else if (node->HasNoteTracks()) {
       for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
          if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
             if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
@@ -73,7 +202,7 @@ INode * AnimationExport::findTrackedNode(INode *node)
                   for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
                      NoteKey* key = defNT->keys[j];
                      if (wildmatch("start*", key->note)) {
-                        return node;
+                        return true;
                      }
                   }
                }
@@ -81,6 +210,75 @@ INode * AnimationExport::findTrackedNode(INode *node)
          }
       }
    }
+   return false;
+}
+
+
+static bool HasKeys(Control *c)
+{
+   bool rv = false;
+   if (c != NULL)
+   {
+      if (c->IsColorController())
+         return false;
+
+      if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+         if (ikeys->GetNumKeys() > 0)
+            return true;
+      }
+      if (Control *sc = c->GetWController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetXController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetYController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetZController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetRotationController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetPositionController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+      if (Control *sc = c->GetScaleController()) { 
+         if (sc != c && HasKeys(sc)) 
+            return true;
+      }
+   }
+   return false;
+}
+
+bool Exporter::isNodeKeyed(INode *node) {
+   if (node->HasNoteTracks()) {
+      return true;
+   }
+   if (node->NumKeys() > 0) {
+      return true;
+   }
+   if (Control *tmCont = node->GetTMController()) {
+      if (HasKeys(tmCont))
+         return true;
+   }
+   return false;
+}
+
+
+INode * AnimationExport::findTrackedNode(INode *node)
+{
+   if (ne.isNodeTracked(node))
+      return node;
+
+   // locate START in note track before assuming all is well
    for (int i=0; i < node->NumberOfChildren(); ++i ){
       if ( INode *root = findTrackedNode( node->GetChildNode(i) ) ) {
          return root;
@@ -111,38 +309,54 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
    seq->SetTextKey(textKeyData);
 
    // Populate Text keys and Sequence information from note tracks
-   for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
-      if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
-         if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
-            DefNoteTrack *defNT = (DefNoteTrack *)nt;
-            if ( defNT->NumKeys() > 0 ) {
-               bool stop = false;
-               for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
-                  NoteKey* key = defNT->keys[j];
+   if (Exporter::mUseTimeTags) {
+      if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+         int n = tagMgr->GetTagCount();
+         for (int i = 0; i<n; i++) {
+            UINT id = tagMgr->GetTagID(i);
+            TimeValue t = tagMgr->GetTimeByID(id, FALSE);
+            TSTR name = tagMgr->GetNameByID(id);
 
-                  if (wildmatch("start*", key->note)) {
-                     stringlist args = TokenizeCommandLine(key->note, true);
-                     if (args.empty()) continue;
+            StringKey strkey;
+            strkey.time = FrameToTime( Interval(range.Start(), t).Duration()-1 );
+            strkey.data = name;
+            textKeys.push_back(strkey);
+         }
+      }
+   } else {
+      for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
+         if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+            if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+               DefNoteTrack *defNT = (DefNoteTrack *)nt;
+               if ( defNT->NumKeys() > 0 ) {
+                  bool stop = false;
+                  for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
+                     NoteKey* key = defNT->keys[j];
 
-                     seq->SetStartTime(0.0f);
-                     range.SetStart( key->time );
-                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
-                        if (strmatch("-name", *itr)) {
-                           if (++itr == args.end()) break;
-                           seq->SetName(*itr);
-                        } else if (strmatch("-loop", *itr)) {
-                           seq->SetCycleType(CYCLE_LOOP);
+                     if (wildmatch("start*", key->note)) {
+                        stringlist args = TokenizeCommandLine(key->note, true);
+                        if (args.empty()) continue;
+
+                        seq->SetStartTime(0.0f);
+                        range.SetStart( key->time );
+                        for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                           if (strmatch("-name", *itr)) {
+                              if (++itr == args.end()) break;
+                              seq->SetName(*itr);
+                           } else if (strmatch("-loop", *itr)) {
+                              seq->SetCycleType(CYCLE_LOOP);
+                           }
                         }
+                     } else if ( wildmatch("end*", key->note) ) {
+                        range.SetEnd( key->time );
+                        seq->SetStopTime( FrameToTime( range.Duration()-1 ) );
+                        stop = true;
                      }
-                  } else if ( wildmatch("end*", key->note) ) {
-                     range.SetEnd( key->time );
-                     seq->SetStopTime( FrameToTime( range.Duration()-1 ) );
-                     stop = true;
+                     StringKey strkey;
+                     strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
+                     strkey.data = key->note;
+                     textKeys.push_back(strkey);
                   }
-                  StringKey strkey;
-                  strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
-                  strkey.data = key->note;
-                  textKeys.push_back(strkey);
                }
             }
          }
@@ -155,22 +369,189 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
    bool ok = exportController(node);
 
    // Handle NonAccum
-   if (ok)
+   if (ok && Exporter::mAllowAccum)
    {
       NiNodeRef ninode = new NiNode();
       ninode->SetName(FormatString("%s NonAccum", node->GetName()));
 
-      NiTransformControllerRef control = new NiTransformController();
-      NiTransformInterpolatorRef interp = new NiTransformInterpolator();
-      ninode->AddController(StaticCast<NiTimeController>(control));
-      control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+      if (Exporter::mNifVersionInt >= VER_10_2_0_0)
+      {
+         NiTransformControllerRef control = new NiTransformController();
+         NiTransformInterpolatorRef interp = new NiTransformInterpolator();
+         ninode->AddController(StaticCast<NiTimeController>(control));
+         control->SetInterpolator(StaticCast<NiInterpolator>(interp));
 
-      interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
-      interp->SetScale( 1.0f );
-      interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
-      seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
+         interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
+         interp->SetScale( 1.0f );
+         interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
+         seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
+      }
    }
    return ok;
+}
+
+bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
+{
+   int start = 0;
+   NiDefaultAVObjectPaletteRef objPal = new NiDefaultAVObjectPalette();
+   mgr->SetObjectPalette(objPal);
+
+
+   vector<NiControllerSequenceRef> seqs;
+   vector<StringKey> textKeys;
+   NiControllerSequenceRef curSeq;
+
+   // Populate Text keys and Sequence information from note tracks
+   if (Exporter::mUseTimeTags) {
+      if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+
+         curSeq = new NiControllerSequence();
+         curSeq->SetStartTime(FloatINF);
+         curSeq->SetStopTime(FloatINF);
+         curSeq->SetFrequency(1.0f);
+         curSeq->SetCycleType( CYCLE_CLAMP );
+         curSeq->SetTargetName( node->GetName() );
+         seqs.push_back(curSeq);
+         this->range.SetInstant(0);
+         curSeq->SetStartTime(0.0f);
+
+         int n = tagMgr->GetTagCount();
+         for (int i = 0; i<n; i++) {
+            UINT id = tagMgr->GetTagID(i);
+            TimeValue t = tagMgr->GetTimeByID(id, FALSE);
+            TSTR name = tagMgr->GetNameByID(id);
+
+            if (t < range.Start())
+               range.SetStart(t);
+
+            if (t > range.End())
+               range.SetEnd( t );
+
+            StringKey strkey;
+            strkey.time = FrameToTime( Interval(range.Start(), t).Duration()-1 );
+            strkey.data = name;
+            textKeys.push_back(strkey);
+         }
+         NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+         curSeq->SetTextKey(textKeyData);
+         textKeyData->SetKeys(textKeys);
+
+         curSeq->SetStopTime( FrameToTime( range.Duration()-1 ) );
+         this->ranges[curSeq] = range;
+         curSeq = NULL;
+      }
+
+   } else {
+
+      int nTracks = node->NumNoteTracks();
+
+      // Populate Text keys and Sequence information from note tracks
+      for (int i=0; i<nTracks; ++i) {
+         if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+            if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+               DefNoteTrack *defNT = (DefNoteTrack *)nt;
+               if ( defNT->NumKeys() > 0 ) {
+                  for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
+                     NoteKey* key = defNT->keys[j];
+
+                     if (wildmatch("start*", key->note)) {
+                        stringlist args = TokenizeCommandLine(key->note, true);
+                        textKeys.clear();
+
+                        curSeq = new NiControllerSequence();
+                        curSeq->SetStartTime(FloatINF);
+                        curSeq->SetStopTime(FloatINF);
+                        curSeq->SetFrequency(1.0f);
+                        curSeq->SetCycleType( CYCLE_CLAMP );
+                        curSeq->SetTargetName( node->GetName() );
+                        seqs.push_back(curSeq);
+                        this->range.SetInstant(0);
+
+                        curSeq->SetStartTime(0.0f);
+                        range.SetStart( key->time );
+                        for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                           if (strmatch("-name", *itr)) {
+                              if (++itr == args.end()) break;
+                              curSeq->SetName(*itr);
+                           } else if (strmatch("-loop", *itr)) {
+                              curSeq->SetCycleType(CYCLE_LOOP);
+                           }
+                        }
+                     }
+
+                     StringKey strkey;
+                     strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
+                     strkey.data = key->note;
+                     textKeys.push_back(strkey);
+
+                     if ( wildmatch("end*", key->note) ) {
+                        range.SetEnd( key->time );
+
+                        // add accumulated text keys to sequence
+                        if (curSeq != NULL) {
+                           curSeq->SetStopTime( FrameToTime( range.Duration()-1 ) );
+
+                           this->ranges[curSeq] = range;
+
+                           NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+                           curSeq->SetTextKey(textKeyData);
+                           textKeyData->SetKeys(textKeys);
+                           textKeys.clear();
+                           curSeq = NULL;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   for (vector<NiControllerSequenceRef>::iterator itr = seqs.begin(); itr != seqs.end(); ++itr)
+   {     
+      // Hold temporary value
+      this->seq = (*itr);
+      
+      //this->range.SetStart( TimeToFrame(seq->GetStartTime()) );
+      //this->range.SetEnd( TimeToFrame(seq->GetStopTime()) );
+
+      this->range = this->ranges[this->seq];
+
+      // Now let the fun begin.
+      bool ok = exportController(node);
+
+      // Handle NonAccum
+      if (ok && Exporter::mAllowAccum)
+      {
+         NiNodeRef ninode = ne.getNode( FormatString("%s NonAccum", node->GetName()) );
+         objRefs.insert( StaticCast<NiAVObject>(ninode) );
+
+         if (Exporter::mNifVersionInt >= VER_10_2_0_0)
+         {
+            NiTransformControllerRef control = new NiTransformController();
+            NiTransformInterpolatorRef interp = new NiTransformInterpolator();
+            ninode->AddController(StaticCast<NiTimeController>(control));
+            control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+
+            interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
+            interp->SetScale( 1.0f );
+            interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
+            seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
+
+            // now remove temporary controller
+            ninode->RemoveController(StaticCast<NiTimeController>(control));
+         }
+      }
+   }
+
+   // Set objects with animation
+   vector<NiAVObjectRef> objs;
+   objs.insert(objs.end(), objRefs.begin(), objRefs.end());
+   objPal->SetObjs(objs);
+
+   mgr->SetControllerSequences(seqs);
+
+   return true;
 }
 
 
@@ -191,11 +572,28 @@ Control *AnimationExport::GetTMController(INode *n)
    return c;
 }
 
-
-bool AnimationExport::exportController(INode *node)
+NiTimeControllerRef Exporter::CreateController(INode *node, Interval range)
 {
-   bool ok = true;
+   AnimationExport ae(*this);
+   if ( NiTimeControllerRef tc = ae.exportController(node, range, false) ) {
+      if (Exporter::mExportType == Exporter::NIF_WO_KF && isNodeTracked(node)) {
+         NiNodeRef ninode = getNode(node->GetName());
+         vector<StringKey> textKeys;
+         if (GetTextKeys(node, textKeys, range)) {
+            NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+            ninode->AddExtraData(StaticCast<NiExtraData>(textKeyData), Exporter::mNifVersionInt);
+            textKeyData->SetKeys(textKeys);
+         }
+      }
+      return tc;
+   }
+   return NiTimeControllerRef();
+}
+
+NiTimeControllerRef AnimationExport::exportController(INode *node, Interval range, bool setTM )
+{
    bool skip = false;
+   NiTimeControllerRef timeControl;
 
    // Primary recursive decent routine
 
@@ -217,23 +615,54 @@ bool AnimationExport::exportController(INode *node)
       {
          Interval validity; validity.SetEmpty();
          Matrix3 tm = node->GetObjTMAfterWSM(range.Start());
-         Matrix3 pm = Inverse(node->GetParentTM(range.Start()));
-         tm *= pm;
+         if (INode *parent = node->GetParentNode()) {
+            Matrix3 pm = Inverse(parent->GetObjTMAfterWSM(range.Start()));
+            tm *= pm;
+         }
 
-         NiNodeRef ninode = new NiNode();
-         ninode->SetName(node->GetName());
-
-         //Vector3 trans(FloatNegINF, FloatNegINF, FloatNegINF);
-         //Quaternion rot(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
-         Vector3 trans = TOVECTOR3(tm.GetTrans());
-         Quaternion rot = TOQUAT( Quat(tm), true );
-         float scale = FloatNegINF;
          bool keepData = false;
 
-         NiTransformControllerRef control = new NiTransformController();
-         NiTransformInterpolatorRef interp = new NiTransformInterpolator();
-         ninode->AddController(StaticCast<NiTimeController>(control));
-         control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+         // Set default transform to NaN except for root node
+         Vector3 trans(FloatNegINF, FloatNegINF, FloatNegINF);
+         Quaternion rot(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
+         float scale = FloatNegINF;
+         //Vector3 trans = TOVECTOR3(tm.GetTrans());
+         //Quaternion rot = TOQUAT( Quat(tm), true );
+
+         NiNodeRef ninode = ne.getNode( node->GetName() );
+         if (setTM) {
+            trans = TOVECTOR3(tm.GetTrans());
+            rot = TOQUAT( Quat(tm), true );
+         }
+
+         NiKeyframeDataRef data;
+
+         if (Exporter::mNifVersionInt < VER_10_2_0_0)
+         {
+            NiKeyframeControllerRef control = new NiKeyframeController();
+            Exporter::InitializeTimeController(control, ninode);
+            data = new NiKeyframeData();
+            control->SetData(data);
+            timeControl = StaticCast<NiTimeController>(control);
+         }
+         else
+         {
+            NiTransformControllerRef control = new NiTransformController();
+            Exporter::InitializeTimeController(control, ninode);
+
+            NiTransformInterpolatorRef interp = new NiTransformInterpolator();
+            data = new NiTransformData();
+            control->SetInterpolator(StaticCast<NiInterpolator>(interp));
+
+            interp->SetTranslation(trans);
+            interp->SetScale(scale);
+            interp->SetRotation(rot);
+            interp->SetData(data);
+
+            timeControl = StaticCast<NiTimeController>(control);
+         }
+         timeControl->SetStartTime( 0.0f );
+         timeControl->SetStopTime( FrameToTime( range.Duration()-1 ) );
 
          //if (validity.InInterval(range))
          //{
@@ -245,8 +674,6 @@ bool AnimationExport::exportController(INode *node)
          //}
          //else
          {
-            NiTransformDataRef data = new NiTransformData();
-
             if (Control *c = tmCont->GetPositionController()) 
             {
                int nkeys = 0;
@@ -334,6 +761,7 @@ bool AnimationExport::exportController(INode *node)
                   nkeys += GetKeys<QuatKey, IBezQuatKey>(c, keys, range);
                   data->SetQuatRotateKeys(keys);
                } else if (c->ClassID() == Class_ID(EULER_CONTROL_CLASS_ID,0)) {
+                  data->SetRotateType(XYZ_ROTATION_KEY);
                   if (Control *x = c->GetXController()){
                      vector<FloatKey> keys;
                      if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
@@ -351,7 +779,7 @@ bool AnimationExport::exportController(INode *node)
                      }
                      data->SetXRotateKeys(keys);
                   }
-                  if (Control *y = c->GetXController()) {
+                  if (Control *y = c->GetYController()) {
                      vector<FloatKey> keys;
                      if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
                         nkeys += GetKeys<FloatKey, ILinFloatKey>(y, keys, range);
@@ -422,21 +850,49 @@ bool AnimationExport::exportController(INode *node)
                   //scale = Average(GetScale(tm));
                }           
             }
-            // only add transform data object if data actually is present
-            if (keepData) {
-               interp->SetData(data);
-            }
-            interp->SetTranslation(trans);
-            interp->SetScale(scale);
-            interp->SetRotation(rot);
 
-            // Get Priority from node
-            float priority;
-            npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
-            seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), priority);
+            // only add transform data object if data actually is present
+            if (!keepData) {
+               ninode->RemoveController(timeControl);
+               timeControl = NULL;
+            } else {
+               objRefs.insert( StaticCast<NiAVObject>(ninode) );
+            }
          }
       }
    }
+   return timeControl;
+}
+
+bool AnimationExport::exportController(INode *node)
+{
+   bool ok = true;
+
+   bool keepTM = false;
+   if (seq->GetTargetName() == node->GetName()) {
+      keepTM = true;
+   }
+
+   NiTimeControllerRef control = exportController( node, range, keepTM );
+   if (control != NULL)
+   {
+      NiSingleInterpolatorControllerRef interpControl = DynamicCast<NiSingleInterpolatorController>(control);
+      if (interpControl) {
+         // Get Priority from node
+         float priority;
+         npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
+         seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), priority);
+      }
+      else 
+      {
+         seq->AddController(control);
+      }
+
+      NiObjectNETRef target = control->GetTarget();
+      // now remove temporary controller
+      target->RemoveController(StaticCast<NiTimeController>(control));
+   }
+
    for (int i=0, n=node->NumberOfChildren(); ok && i<n; ++i)
    {
       INode *child = node->GetChildNode(i);

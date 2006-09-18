@@ -286,6 +286,137 @@ static FPValue myAddNewNoteKey(Value* noteTrack, int frame)
    return retVal;
 }
 
+bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKeyExtraDataRef textKeyData, bool loop)
+{
+   vector<StringKey> textKeys = textKeyData->GetKeys();
+   if (!textKeys.empty()) {
+
+      Interval range = gi->GetAnimRange();
+      for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+         TimeValue t = TimeToFrame(time + (*itr).time);
+         if (t < range.Start())
+            range.SetStart(t);
+         if (t > range.End())
+            range.SetEnd(t);
+      }
+      gi->SetAnimRange(range);
+
+      if (addNoteTracks && (wildmatch("start*", textKeys.front().data)) ) {
+         if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
+#if 1
+            DefNoteTrack* nt = (DefNoteTrack*)NewDefaultNoteTrack();
+            n->AddNoteTrack(nt);
+
+            for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+               TimeValue t = TimeToFrame(time + (*itr).time);
+
+               if (wildmatch("start*", (*itr).data)){
+                  stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
+                  if (args.empty()) continue;
+                  bool hasName = false;
+                  bool hasLoop = false;
+                  for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                     if (strmatch("-name", *itr)) {
+                        if (++itr == args.end()) break;                       
+                        hasName = true;
+                     } else if (strmatch("-loop", *itr)) {
+                        hasLoop = true;
+                     }
+                  }
+                  if (!hasName) {
+                     if (name.empty())
+                        name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
+                     args.push_back("-name");
+                     args.push_back(name);
+                  }
+                  if (!hasLoop && loop) {
+                     args.push_back("-loop");
+                  }
+
+                  string line = JoinCommandLine(args);
+                  NoteKey *key = new NoteKey(t, line.c_str(), 0);
+                  nt->keys.Append(1, &key);
+               } else {
+                  NoteKey *key = new NoteKey(t, (*itr).data.c_str(), 0);
+                  nt->keys.Append(1, &key);
+               }
+            }
+
+#else
+            TSTR script;
+            script += 
+               "fn getActorManager obj = (\n"
+               "   local nt = undefined\n"
+               "   n = numNoteTracks obj\n"
+               "   for i = 1 to n do (\n"
+               "      local nt = getNoteTrack obj i\n"
+               "      if (nt.name == \"ActorManager\") then ( return nt )\n"
+               "   )\n"
+               "   nt = notetrack \"ActorManager\"\n"
+               "   addNoteTrack obj nt\n"
+               "   return nt\n"
+               ")\n"
+               "fn addNoteKey nt frame tag = (\n"
+               "   local Key = addNewNoteKey nt.keys frame\n"
+               "   Key.value = tag\n"
+               ")\n";
+
+            script += FormatText("nt = getActorManager $'%s'\n", target.c_str());
+
+            for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+               TimeValue t = TimeToFrame(time + (*itr).time);
+
+               if (wildmatch("start*", (*itr).data)){
+                  stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
+                  if (args.empty()) continue;
+                  bool hasName = false;
+                  bool hasLoop = false;
+                  CycleType ct = cntr->GetCycleType();
+                  for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
+                     if (strmatch("-name", *itr)) {
+                        if (++itr == args.end()) break;                       
+                        hasName = true;
+                     } else if (strmatch("-loop", *itr)) {
+                        hasLoop = true;
+                     }
+                  }
+                  if (!hasName) {
+                     string name = cntr->GetName();
+                     if (name.empty())
+                        name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
+                     args.push_back("-name");
+                     args.push_back(name);
+                  }
+                  if (!hasLoop && ct == CYCLE_LOOP) {
+                     args.push_back("-loop");
+                  }
+
+                  string line = JoinCommandLine(args);
+                  script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, line.c_str());
+               } else {
+                  script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, (*itr).data.c_str());
+               }
+
+               //NoteKey *key = new NoteKey(TimeToFrame(time + (*itr).time), (*itr).data.c_str(), 0);
+               //nt->keys.Append(1, &key);
+            }
+            ExecuteMAXScriptScript(script, TRUE, NULL);
+#endif
+         }
+      }
+
+      if (addTimeTags) {
+         if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
+            for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
+               tagMgr->CreateNewTag(const_cast<TCHAR*>((*itr).data.c_str()), TimeToFrame(time + (*itr).time), 0, FALSE);
+            }
+         }
+      }
+      return true;
+   }
+   return false;
+}
+
 bool KFMImporter::ImportAnimation()
 {
    bool ok = false;
@@ -308,124 +439,8 @@ bool KFMImporter::ImportAnimation()
       vector<ControllerLink> links = cntr->GetControllerData();
 
       NiTextKeyExtraDataRef textKeyData = cntr->GetTextKeyExtraData();
-      vector<StringKey> textKeys = textKeyData->GetKeys();
-      if (!textKeys.empty()) {
+      AddNoteTracks( time, cntr->GetName(), cntr->GetTargetName(), textKeyData, (CYCLE_LOOP == cntr->GetCycleType()) );
 
-         if (addNoteTracks) {
-            string target = cntr->GetTargetName();
-            if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
-#if 1
-               DefNoteTrack* nt = (DefNoteTrack*)NewDefaultNoteTrack();
-               n->AddNoteTrack(nt);
-
-               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
-                  TimeValue t = TimeToFrame(time + (*itr).time);
-
-                  if (wildmatch("start*", (*itr).data)){
-                     stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
-                     if (args.empty()) continue;
-                     bool hasName = false;
-                     bool hasLoop = false;
-                     CycleType ct = cntr->GetCycleType();
-                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
-                        if (strmatch("-name", *itr)) {
-                           if (++itr == args.end()) break;                       
-                           hasName = true;
-                        } else if (strmatch("-loop", *itr)) {
-                           hasLoop = true;
-                        }
-                     }
-                     if (!hasName) {
-                        string name = cntr->GetName();
-                        if (name.empty())
-                           name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
-                        args.push_back("-name");
-                        args.push_back(name);
-                     }
-                     if (!hasLoop && ct == CYCLE_LOOP) {
-                        args.push_back("-loop");
-                     }
-
-                     string line = JoinCommandLine(args);
-                     NoteKey *key = new NoteKey(t, line.c_str(), 0);
-                     nt->keys.Append(1, &key);
-                  } else {
-                     NoteKey *key = new NoteKey(t, (*itr).data.c_str(), 0);
-                     nt->keys.Append(1, &key);
-                  }
-               }
-
-#else
-               TSTR script;
-               script += 
-               "fn getActorManager obj = (\n"
-               "   local nt = undefined\n"
-               "   n = numNoteTracks obj\n"
-               "   for i = 1 to n do (\n"
-               "      local nt = getNoteTrack obj i\n"
-               "      if (nt.name == \"ActorManager\") then ( return nt )\n"
-               "   )\n"
-               "   nt = notetrack \"ActorManager\"\n"
-               "   addNoteTrack obj nt\n"
-               "   return nt\n"
-               ")\n"
-               "fn addNoteKey nt frame tag = (\n"
-               "   local Key = addNewNoteKey nt.keys frame\n"
-               "   Key.value = tag\n"
-               ")\n";
-
-               script += FormatText("nt = getActorManager $'%s'\n", target.c_str());
-               
-               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
-                  TimeValue t = TimeToFrame(time + (*itr).time);
-
-                  if (wildmatch("start*", (*itr).data)){
-                     stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
-                     if (args.empty()) continue;
-                     bool hasName = false;
-                     bool hasLoop = false;
-                     CycleType ct = cntr->GetCycleType();
-                     for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
-                        if (strmatch("-name", *itr)) {
-                           if (++itr == args.end()) break;                       
-                           hasName = true;
-                        } else if (strmatch("-loop", *itr)) {
-                           hasLoop = true;
-                        }
-                     }
-                     if (!hasName) {
-                        string name = cntr->GetName();
-                        if (name.empty())
-                           name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
-                        args.push_back("-name");
-                        args.push_back(name);
-                     }
-                     if (!hasLoop && ct == CYCLE_LOOP) {
-                        args.push_back("-loop");
-                     }
-                     
-                     string line = JoinCommandLine(args);
-                     script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, line.c_str());
-                  } else {
-                     script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, (*itr).data.c_str());
-                  }
-
-                  //NoteKey *key = new NoteKey(TimeToFrame(time + (*itr).time), (*itr).data.c_str(), 0);
-                  //nt->keys.Append(1, &key);
-               }
-               ExecuteMAXScriptScript(script, TRUE, NULL);
-#endif
-            }
-         }
-
-         if (addTimeTags) {
-            if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
-               for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
-                  tagMgr->CreateNewTag(const_cast<TCHAR*>((*itr).data.c_str()), TimeToFrame(time + (*itr).time), 0, FALSE);
-               }
-            }
-         }
-      }
       for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk)
       {
          string name = (*lnk).targetName;
@@ -589,7 +604,11 @@ bool AnimationImport::AddValues(NiObjectNETRef nref)
    if (NULL == c)
       return false;
 
-   float time = FramesIncrement;
+   if (NiTextKeyExtraDataRef keydata = SelectFirstObjectOfType<NiTextKeyExtraData>(nref->GetExtraData())) {
+      ni.AddNoteTracks(0.0f, string(), nref->GetName(), keydata, false);
+   }
+
+   float time = 0.0f;
    list< NiTimeControllerRef > clist = nref->GetControllers();
    if (NiTransformControllerRef tc = SelectFirstObjectOfType<NiTransformController>(clist)) {
       if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {

@@ -53,7 +53,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -81,7 +81,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflib.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax8\plugins\NifExport.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -155,7 +155,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -183,7 +183,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflibd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax8\plugins\NifExport.dle"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -252,7 +252,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -280,7 +280,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflibd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax6\plugins\NifExport.dle"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -355,7 +355,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -383,7 +383,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflib.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax6\plugins\NifExport.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -463,7 +463,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				ExceptionHandling="2"
@@ -491,7 +491,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflib.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax7\plugins\NifExport.dle"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -565,7 +565,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/LD /FI&quot;$(ProjectDir)pch.h&quot; /Zm200"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\..\niflib;..\NifCommon"
+				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\..\niflib\include;..\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -593,7 +593,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib niflibd.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib"
 				OutputFile="c:\3dsmax7\plugins\NifExport.dle"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -743,230 +743,6 @@
 				RelativePath="Util.cpp"
 				>
 			</File>
-			<Filter
-				Name="NvTriStrip"
-				>
-				<File
-					RelativePath="NvTriStrip\NvTriStrip.cpp"
-					>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="NvTriStrip\NvTriStripObjects.cpp"
-					>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="NvTriStrip\VertexCache.cpp"
-					>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
-			<Filter
-				Name="TriStripper"
-				>
-				<File
-					RelativePath=".\TriStripper\connectivity_graph.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\policy.cpp"
-					>
-				</File>
-				<File
-					RelativePath="TriStripper\tri_stripper.cpp"
-					>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							UsePrecompiledHeader="0"
-						/>
-					</FileConfiguration>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -988,50 +764,6 @@
 				RelativePath=".\resource.h"
 				>
 			</File>
-			<Filter
-				Name="NvTriStrip"
-				>
-				<File
-					RelativePath="NvTriStrip\NvTriStrip.h"
-					>
-				</File>
-				<File
-					RelativePath="NvTriStrip\NvTriStripObjects.h"
-					>
-				</File>
-				<File
-					RelativePath="NvTriStrip\VertexCache.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="TriStripper"
-				>
-				<File
-					RelativePath=".\TriStripper\detail\cache_simulator.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\detail\connectivity_graph.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\detail\graph_array.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\detail\heap_array.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\detail\policy.h"
-					>
-				</File>
-				<File
-					RelativePath=".\TriStripper\detail\types.h"
-					>
-				</File>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

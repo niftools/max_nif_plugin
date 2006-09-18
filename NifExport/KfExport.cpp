@@ -82,7 +82,7 @@ static BOOL CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam
          CheckDlgButton(hWnd, IDC_CHK_LIGHTS, Exporter::mExportLights);
          CheckDlgButton(hWnd, IDC_CHK_CAMERA, Exporter::mExportCameras);
          CheckDlgButton(hWnd, IDC_CHK_TRANSFORMS, Exporter::mExportTransforms);
-         SetDlgItemText(hWnd, IDC_ED_PRIORITY, FormatText("%.4f", Exporter::mDefaultPriority));
+         SetDlgItemText(hWnd, IDC_ED_PRIORITY, FormatText("%.1f", Exporter::mDefaultPriority));
 
          string selection = Exporter::mGameName;
          string version = Exporter::mNifVersion;

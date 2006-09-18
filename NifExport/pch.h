@@ -39,10 +39,13 @@
 #include "obj/bhkRigidBodyT.h"
 
 // undef macros for tristripper
-#undef max
-#undef min
-#include "NvTriStrip/NvTriStrip.h"
-#include "TriStripper/tri_stripper.h"
+//#undef max
+//#undef min
+#include "../NvTriStrip/NvTriStrip.h"
+//#include "TriStripper/detail/types.h"
+//#include "TriStripper/detail/policy.h"
+//#include "TriStripper/detail/cache_simulator.h"
+//#include "TriStripper/tri_stripper.h"
 
 #include "NifPlugins.h"
 #include "Exporter.h"
