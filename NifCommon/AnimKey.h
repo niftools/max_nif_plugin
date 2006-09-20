@@ -19,6 +19,17 @@ HISTORY:
 #include <Key.h>
 using namespace Niflib;
 
+#if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 7
+class AnyKey
+{
+public:
+   Tab<char> data;
+   AnyKey(int size = 128) { data.SetCount(size); } // 128 is default from IKeyControl::GetKeySize()
+   void SetSize(int size) { data.SetCount(size); }
+   operator IKey*() { return (IKey*)data.Addr(0); }
+};
+#endif
+
 const float FramesPerSecond = 30.0f;
 const float FramesIncrement = 1.0f/30.0f;
 const int TicksPerFrame = GetTicksPerFrame();

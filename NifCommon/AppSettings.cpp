@@ -106,14 +106,14 @@ string AppSettings::FindImage(const string& fname){
    // Search my filename for our texture
    _tcscpy(buffer, PathFindFileName(fname.c_str()));
    PathRemoveExtension(buffer);
-   NameValueCollection::iterator itr = imgTable.find(buffer);
-   if (itr != imgTable.end()){
+   NameValueCollection::iterator nmitr = imgTable.find(buffer);
+   if (nmitr != imgTable.end()){
       if (!rootPath.empty()) {
          _tcscpy(buffer, rootPath.c_str());
-         PathCombine(buffer, rootPath.c_str(), ((*itr).second).c_str());
+         PathCombine(buffer, rootPath.c_str(), ((*nmitr).second).c_str());
          return string(buffer);
       } else {
-         return (*itr).second;
+         return (*nmitr).second;
       }
    }
    return fname;

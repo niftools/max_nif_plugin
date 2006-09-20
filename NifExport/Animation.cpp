@@ -16,6 +16,9 @@ HISTORY:
 #include <set>
 #include "NifExport.h"
 #include "AnimKey.h"
+#ifdef USE_BIPED
+#  include <cs/BipedApi.h>
+#endif
 
 #include <obj/NiControllerSequence.h>
 #include <obj/NiControllerManager.h>

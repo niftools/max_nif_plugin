@@ -9,6 +9,12 @@
 //
 #include "afxres.h"
 
+#ifndef NIFPLUGINS
+#define DLLNAME "NifFurniture.dlu"  // DLL Name
+#define DLLDESCRIPTION "3ds Max Nif Furniture Plugin"
+#include "..\nifcommon\nifversion.rc"  
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -30,7 +36,6 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 3 TEXTINCLUDE 
 BEGIN
     "\r\n"
-    "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -62,7 +67,12 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
-    "\0"
+    "\r\n"
+    "#ifndef NIFPLUGINS\r\n"
+    "#define DLLNAME ""NifFurniture.dlu""  // DLL Name\r\n"
+    "#define DLLDESCRIPTION ""3ds Max Nif Furniture Plugin""\r\n"
+    "#include ""..\\nifcommon\\nifversion.rc""  \r\n"
+    "#endif\r\n"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -99,44 +109,6 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,5,0
- PRODUCTVERSION 0,2,5,0
- FILEFLAGSMASK 0x17L
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x2L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904b0"
-        BEGIN
-            VALUE "FileDescription", "3ds Max Nif Furniture Plugin"
-            VALUE "FileVersion", "0, 2, 5, 0"
-            VALUE "InternalName", "NifFurniture.dlu"
-            VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
-            VALUE "OriginalFilename", "NifFurniture.dlu"
-            VALUE "ProductName", "3ds Max Nif Furniture Plugin"
-            VALUE "ProductVersion", "0, 2, 5, 0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1200
-    END
-END
 
 
 /////////////////////////////////////////////////////////////////////////////

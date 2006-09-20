@@ -20,6 +20,7 @@ public:
 	int				mDlgResult;
    TSTR iniFileName;
    TSTR shortDescription;
+   TSTR fileVersion;
 		
 	int				ExtCount();					// Number of extensions supported
 	const TCHAR		*Ext(int n);					// Extension #n (i.e. "3DS")
@@ -71,17 +72,17 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
 	{
 		case WM_INITDIALOG:
 			{
+            imp = (NifExport *)lParam;
+
             // Append file version to dialog
-            TSTR fileVersion = GetFileVersion(NULL);
-            if (!fileVersion.isNull()) {
+            if (!imp->fileVersion.isNull()) {
                char buffer[256];
                GetWindowText(hWnd, buffer, _countof(buffer));
                _tcscat(buffer, TEXT(" "));
-               _tcscat(buffer, fileVersion);
+               _tcscat(buffer, imp->fileVersion);
                SetWindowText(hWnd, buffer);
             }
 
-				imp = (NifExport *)lParam;
 				CenterWindow(hWnd,GetParent(hWnd));
 				CheckDlgButton(hWnd, IDC_CHK_STRIPS, Exporter::mTriStrips);
 				CheckDlgButton(hWnd, IDC_CHK_HIDDEN, Exporter::mExportHidden);
@@ -277,6 +278,7 @@ NifExport::NifExport()
    }
    iniFileName = iniName;
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
+   fileVersion = GetFileVersion(NULL);
 }
 
 NifExport::~NifExport() 
@@ -442,6 +444,10 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
       {
          Exporter::mExportType = Exporter::NIF_WO_KF;
       }
+      Niflib::NifInfo info(nifVersion, nifUserVer, nifUserVer);
+      info.creator = Exporter::mCreatorName;
+      info.exportInfo1 = "Niflib";
+      info.exportInfo2 = FormatText("Niftools Max Plugins %s", fileVersion.data());
 
 		Exporter::mSelectedOnly = (options&SCENE_EXPORT_SELECTED) != 0;
 		Exporter exp(i, appSettings);
@@ -454,7 +460,7 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 
       if (exportType == Exporter::NIF_WO_ANIM || exportType == Exporter::NIF_WITH_MGR)
       {
-         WriteNifTree(path, NiObjectRef(root), nifVersion, nifUserVer);
+         WriteNifTree(path, NiObjectRef(root), info);
       }
       else 
       {
@@ -493,7 +499,7 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
          //   }
          //}
 
-         WriteFileGroup(path, StaticCast<NiObject>(root), nifVersion, nifUserVer, export_type, game);
+         WriteFileGroup(path, StaticCast<NiObject>(root), info, export_type, game);
 /*
          for (NodeList::iterator itr = mAnimationRoots.begin(); itr != mAnimationRoots.end(); ++itr){
             list<NiTimeControllerRef> ctlrs = (*itr)->GetControllers();

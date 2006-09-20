@@ -84,6 +84,7 @@ public:
    static bool          mUseTimeTags;
    static bool          mAutoDetect;
    static bool          mAllowAccum;
+   static string        mCreatorName;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 

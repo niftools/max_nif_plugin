@@ -79,6 +79,8 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "UseTimeTags", mUseTimeTags, iniName);
 
       SetIniValue(NifExportSection, "AllowAccum", mAllowAccum, iniName);
+
+      SetIniValue<string>(NifExportSection, "Creator", mCreatorName, iniName);
       
    }
 }
@@ -145,6 +147,8 @@ void Exporter::readConfig(Interface *i)
 
       mUseTimeTags = GetIniValue(NifExportSection, "UseTimeTags", false, iniName);
       mAllowAccum = GetIniValue(NifExportSection, "AllowAccum", true, iniName);
+
+      mCreatorName = GetIniValue<string>(NifExportSection, "Creator", "", iniName);
   }
 }
 

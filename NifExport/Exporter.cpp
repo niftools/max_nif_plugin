@@ -39,6 +39,7 @@ int Exporter::mBonesPerPartition = 20;
 bool Exporter::mUseTimeTags = false;
 bool Exporter::mAutoDetect = true;
 bool Exporter::mAllowAccum = true;
+string Exporter::mCreatorName;
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
    : mI(i), mAppSettings(appSettings)

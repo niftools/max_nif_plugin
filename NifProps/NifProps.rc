@@ -9,6 +9,12 @@
 //
 #include "afxres.h"
 
+#ifndef NIFPLUGINS
+#define DLLNAME "NifProps.dlu"  // DLL Name
+#define DLLDESCRIPTION "3ds Max Nif Reactor Properites Plugin"
+#include "..\nifcommon\nifversion.rc"  
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -30,7 +36,6 @@ LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 3 TEXTINCLUDE 
 BEGIN
     "\r\n"
-    "\0"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -62,7 +67,12 @@ END
 2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
-    "\0"
+    "\r\n"
+    "#ifndef NIFPLUGINS\r\n"
+    "#define DLLNAME ""NifProps.dlu""  // DLL Name\r\n"
+    "#define DLLDESCRIPTION ""3ds Max Nif Reactor Properites Plugin""\r\n"
+    "#include ""..\\nifcommon\\nifversion.rc""  \r\n"
+    "#endif\r\n"
 END
 
 #endif    // APSTUDIO_INVOKED
@@ -350,44 +360,6 @@ BEGIN
     IDC_CB_LAYER, 0x403, 5, 0
 0x6957, 0x676e, "\000" 
     0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,2,5,0
- PRODUCTVERSION 0,2,5,0
- FILEFLAGSMASK 0x17L
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x2L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904b0"
-        BEGIN
-            VALUE "FileDescription", "3ds Max Nif Reactor Properites Plugin"
-            VALUE "FileVersion", "0, 2, 5, 0"
-            VALUE "InternalName", "NifProps.dlu"
-            VALUE "LegalCopyright", "Copyright (c) 2006, NIF File Format Library and Tools\r\nAll rights reserved."
-            VALUE "OriginalFilename", "NifProps.dlu"
-            VALUE "ProductName", "3ds Max Nif Reactor Properites Plugin"
-            VALUE "ProductVersion", "0, 2, 5, 0"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1200
-    END
 END
 
 

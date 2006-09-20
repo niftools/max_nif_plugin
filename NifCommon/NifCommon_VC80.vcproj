@@ -417,6 +417,74 @@
 				CommandLine="set MaxRootDir=C:\3dsmax8&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)..\MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Debug - Max 5|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="4"
+			CharacterSet="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/FI&quot;$(ProjectDir)pch.h&quot;"
+				Optimization="0"
+				AdditionalIncludeDirectories="C:\3dsmax5\maxsdk\include;..\..\niflib\include"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES"
+				MinimalRebuild="true"
+				ExceptionHandling="2"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				ForceConformanceInForLoopScope="false"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="$(ProjectDir)pch.h"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLibrarianTool"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				Description="Copy Solution Files to 3ds Max Directories if necessary"
+				CommandLine="set MaxRootDir=C:\3dsmax6&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)..\MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -491,6 +559,14 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug - Max 8|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 5|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
