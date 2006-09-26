@@ -52,7 +52,7 @@ struct AnimationExport
 
    bool doExport(NiControllerSequenceRef seq);
    bool doExport(NiControllerManagerRef ctrl, INode *node);
-   bool exportController(INode *node);
+   bool exportController(INode *node, bool hasAccum);
    Control *GetTMController(INode* node);
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
@@ -134,7 +134,7 @@ NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
 {
    NiNodeRef accumNode;
    bool isTracked = isNodeTracked(node);
-   if (!Exporter::mAllowAccum || !isTracked)
+   if (!Exporter::mAllowAccum || (!isTracked && !isSkeletonRoot(node)))
    {
       accumNode = parent;
    }
@@ -369,28 +369,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
 
    // Now let the fun begin.
 
-   bool ok = exportController(node);
-
-   // Handle NonAccum
-   if (ok && Exporter::mAllowAccum)
-   {
-      NiNodeRef ninode = new NiNode();
-      ninode->SetName(FormatString("%s NonAccum", node->GetName()));
-
-      if (Exporter::mNifVersionInt >= VER_10_2_0_0)
-      {
-         NiTransformControllerRef control = new NiTransformController();
-         NiTransformInterpolatorRef interp = new NiTransformInterpolator();
-         ninode->AddController(StaticCast<NiTimeController>(control));
-         control->SetInterpolator(StaticCast<NiInterpolator>(interp));
-
-         interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
-         interp->SetScale( 1.0f );
-         interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
-         seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
-      }
-   }
-   return ok;
+   return exportController(node, true);
 }
 
 bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
@@ -521,30 +500,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
       this->range = this->ranges[this->seq];
 
       // Now let the fun begin.
-      bool ok = exportController(node);
-
-      // Handle NonAccum
-      if (ok && Exporter::mAllowAccum)
-      {
-         NiNodeRef ninode = ne.getNode( FormatString("%s NonAccum", node->GetName()) );
-         objRefs.insert( StaticCast<NiAVObject>(ninode) );
-
-         if (Exporter::mNifVersionInt >= VER_10_2_0_0)
-         {
-            NiTransformControllerRef control = new NiTransformController();
-            NiTransformInterpolatorRef interp = new NiTransformInterpolator();
-            ninode->AddController(StaticCast<NiTimeController>(control));
-            control->SetInterpolator(StaticCast<NiInterpolator>(interp));
-
-            interp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
-            interp->SetScale( 1.0f );
-            interp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
-            seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), Exporter::mDefaultPriority);
-
-            // now remove temporary controller
-            ninode->RemoveController(StaticCast<NiTimeController>(control));
-         }
-      }
+      bool ok = exportController(node, true);
    }
 
    // Set objects with animation
@@ -598,6 +554,8 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
    bool skip = false;
    NiTimeControllerRef timeControl;
 
+   ne.ProgressUpdate(Exporter::Animation, FormatText("'%s' Animation", node->GetName()));
+
    // Primary recursive decent routine
 
    ObjectState os = node->EvalWorldState(range.Start()); 
@@ -626,11 +584,11 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          bool keepData = false;
 
          // Set default transform to NaN except for root node
-         Vector3 trans(FloatNegINF, FloatNegINF, FloatNegINF);
-         Quaternion rot(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
+         //Vector3 trans(FloatNegINF, FloatNegINF, FloatNegINF);
+         //Quaternion rot(FloatNegINF, FloatNegINF, FloatNegINF, FloatNegINF);
          float scale = FloatNegINF;
-         //Vector3 trans = TOVECTOR3(tm.GetTrans());
-         //Quaternion rot = TOQUAT( Quat(tm), true );
+         Vector3 trans = TOVECTOR3(tm.GetTrans());
+         Quaternion rot = TOQUAT( Quat(tm), true );
 
          NiNodeRef ninode = ne.getNode( node->GetName() );
          if (setTM) {
@@ -867,7 +825,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
    return timeControl;
 }
 
-bool AnimationExport::exportController(INode *node)
+bool AnimationExport::exportController(INode *node, bool hasAccum)
 {
    bool ok = true;
 
@@ -880,11 +838,42 @@ bool AnimationExport::exportController(INode *node)
    if (control != NULL)
    {
       NiSingleInterpolatorControllerRef interpControl = DynamicCast<NiSingleInterpolatorController>(control);
-      if (interpControl) {
+      if (interpControl) 
+      {
          // Get Priority from node
          float priority;
          npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
          seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), priority);
+
+         // Handle NonAccum 
+         if (Exporter::mAllowAccum && hasAccum)
+         {
+            NiTransformInterpolatorRef interp = DynamicCast<NiTransformInterpolator>(interpControl->GetInterpolator());
+            NiNodeRef accnode = ne.getNode( FormatString("%s NonAccum", node->GetName()) );
+            objRefs.insert( StaticCast<NiAVObject>(accnode) );
+
+            if (Exporter::mNifVersionInt >= VER_10_2_0_0)
+            {
+               NiTransformControllerRef acccontrol = new NiTransformController();
+               NiTransformInterpolatorRef accinterp = new NiTransformInterpolator();
+               accnode->AddController(StaticCast<NiTimeController>(acccontrol));
+               acccontrol->SetInterpolator(StaticCast<NiInterpolator>(accinterp));
+
+               accinterp->SetTranslation( Vector3(0.0f, 0.0f, 0.0f) );
+               accinterp->SetScale( 1.0f );
+               accinterp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
+
+               // Transfer entire data to accum node
+               if (interp != NULL) {
+                  accinterp->SetData( interp->GetData() );
+                  interp->SetData( NiTransformDataRef() );
+               }
+               seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(acccontrol), Exporter::mDefaultPriority);
+
+               accnode->RemoveController(acccontrol);
+            }
+         }
+
       }
       else 
       {
@@ -899,7 +888,7 @@ bool AnimationExport::exportController(INode *node)
    for (int i=0, n=node->NumberOfChildren(); ok && i<n; ++i)
    {
       INode *child = node->GetChildNode(i);
-      ok |= exportController(child);
+      ok |= exportController(child, false);
    }
    return ok;
 }

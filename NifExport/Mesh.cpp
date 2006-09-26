@@ -112,6 +112,11 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 
          shape->SetName(name);
          shape->SetLocalTransform(tm);
+
+         if (Exporter::mCollapseTransforms) {
+            CollapseGeomTransform(shape);
+         }
+         
          makeSkin(shape, node, grp->second, t);
 		}
 
@@ -129,9 +134,13 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	NiTriBasedGeomRef shape;
 	NiTriBasedGeomDataRef data;
 
+   //if (Exporter::mFixNormals) {
+   //   FixNormals(grp.faces, grp.verts, grp.vnorms);
+   //}
+
 	if (exportStrips) {
       shape = new NiTriStrips();
-      data = new NiTriStripsData(grp.faces);
+      data = new NiTriStripsData(grp.faces, !mUseAlternateStripper);
 	} else {
       shape = new NiTriShape();
       data = new NiTriShapeData(grp.faces);
@@ -149,6 +158,9 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 		data->SetVertexColors(grp.vcolors);
 
 	shape->SetData(data);
+
+   if (Exporter::mTangentAndBinormalExtraData)
+      shape->UpdateTangentSpace();
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
 	makeMaterial(av, mtl);
@@ -380,17 +392,6 @@ Exporter::Result SkinInstance::execute()
       shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex);
    else
       shape->GenHardwareSkinInfo(0, 0);
-
-   //NiSkinInstanceRef skinInst = shape->GetSkinInstance();
-   //NiSkinDataRef skinData = skinInst->GetSkinData();
-   //Matrix44 tm = skinData->GetOverallTransform();
-   //Matrix3 otm = TOMATRIX3(tm);
-   //Matrix3 stm = TOMATRIX3(shape->GetLocalTransform());
-   //Matrix3 btm = Inverse(bone_init_tm) * stm;
-
-   //Matrix3 asdf = btm * otm;
-   //skinData->SetOverallTransform(TOMATRIX4(btm));
-      
    return Exporter::Ok;
 }
 
@@ -567,22 +568,21 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
             newParent->SetCollisionObject( NiCollisionObjectRef() );
          }        
          newParent = accumNode;
-      } else if (wildmatch("Bip??", node->GetName())) {
+      } else if (isSkeletonRoot(node)) {
          newParent = createAccumNode(newParent, node);
       }
    }
    else // normal handling
    {
       // Check for Accum Root using 
-      if (mExportType == NIF_WO_KF)
-      {
+      if (mExportType == NIF_WO_KF){
          // Add controllers
          if (Exporter::mAllowAccum) {
             newParent = createAccumNode(newParent, node);
          }
-      }
-      else if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) 
-      {
+      } else if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+         newParent = createAccumNode(newParent, node);
+      } else if (isSkeletonRoot(node)) {
          newParent = createAccumNode(newParent, node);
       }
    }

@@ -579,7 +579,26 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
 
       // Do all node manipulations here
       NiNodeRef parent = node->GetParent();
+      string parentname = (parent ? parent->GetName() : "");
       Matrix44 m4 = node->GetWorldTransform();
+
+      // Check for Prn strings and change parent if necessary
+      if (supportPrnStrings) {
+         list<NiStringExtraDataRef> strings = DynamicCast<NiStringExtraData>(node->GetExtraData());
+         for (list<NiStringExtraDataRef>::iterator itr = strings.begin(); itr != strings.end(); ++itr){
+            if (strmatch((*itr)->GetName(), "Prn")) {
+               parentname = (*itr)->GetData();
+               if (INode *pn = gi->GetINodeByName(parentname.c_str())){
+                  // Apparently Heads tend to need to be rotated 90 degrees on import for 
+                  if (!rotate90Degrees.empty() && wildmatch(rotate90Degrees, parentname)) {
+                     m4 *= TOMATRIX4(RotateYMatrix(TORAD(90)));
+                  }
+                  m4 *= TOMATRIX4(pn->GetObjTMAfterWSM(0, NULL));
+               }
+            }
+         }
+      }
+
       float len = node->GetLocalTranslation().Magnitude();
 
       // Remove NonAccum nodes and merge into primary bone
@@ -653,9 +672,8 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          }
          if (bone)
          {
-            if (parent)
+            if (!parentname.empty())
             {
-               string parentname = parent->GetName();
                if (mergeNonAccum && wildmatch("* NonAccum", parentname)) {
                   parentname = parentname.substr(0, parentname.length() - 9);
                }

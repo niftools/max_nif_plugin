@@ -14,7 +14,7 @@ HISTORY:
 #include "MaxNifImport.h"
 #include "resource.h"
 #include "shellapi.h"
-
+#include "Hyperlinks.h"
 using namespace Niflib;
 
 static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
@@ -78,6 +78,8 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                EnableWindow(GetDlgItem(hWnd, IDC_CHK_BIPED), FALSE);
                EnableWindow(GetDlgItem(hWnd, IDC_CHK_REM_BONES), FALSE);
             }
+            ConvertStaticToHyperlink(hWnd, IDC_LBL_LINK);
+            ConvertStaticToHyperlink(hWnd, IDC_LBL_WIKI);
          }
          return TRUE;
 
@@ -137,7 +139,7 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                case IDC_BTN_BROWSE:
                   {
                      TCHAR filter[64], *pfilter=filter;
-                     pfilter = _tcscpy(filter, shortDescription.c_str());
+                     pfilter = _tcscpy(filter, shortDescription);
                      pfilter = _tcscat(pfilter, " (*.NIF)");
                      pfilter += strlen(pfilter);
                      *pfilter++ = '\0';
@@ -164,13 +166,14 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                      }
                   }
                   break;
-               }
-            }
-            else if (HIWORD(wParam) == STN_CLICKED)
-            {
-               if (LOWORD(wParam) == IDC_LBL_LINK)
-               {
-                  ShellExecute(hWnd, "open", "http://www.niftools.org", NULL, NULL, SW_SHOWDEFAULT);
+
+               case IDC_LBL_LINK:
+                  ShellExecute(hWnd, "open", imp->webSite, NULL, NULL, SW_SHOWNORMAL);
+                  break;
+
+               case IDC_LBL_WIKI:
+                  ShellExecute(hWnd, "open", imp->wikiSite, NULL, NULL, SW_SHOWNORMAL);
+                  break;
                }
             }
             else if (HIWORD(wParam) == CBN_SELCHANGE)

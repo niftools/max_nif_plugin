@@ -8,6 +8,7 @@ using namespace Niflib;
 #define KFEXPORT_CLASS_ID	Class_ID(0xa57ff0a4, 0xa0374ffc)
 
 static LPCTSTR KfExportSection = TEXT("KfExport");
+extern TSTR shortDescription;
 
 class KfExport : public SceneExport 
 {
@@ -16,8 +17,9 @@ public:
    static HWND		hParams;
    int				mDlgResult;
    TSTR iniFileName;
-   TSTR shortDescription;
    TSTR fileVersion;
+   TSTR webSite;
+   TSTR wikiSite;
 
    int				ExtCount();					// Number of extensions supported
    const TCHAR		*Ext(int n);					// Extension #n (i.e. "3DS")
@@ -114,8 +116,8 @@ static BOOL CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam
             GetDlgItemText(hWnd, IDC_CB_VERSION, tmp, MAX_PATH);
             if (tmp[0] != 0)
             {
-               int nifVersion = GetVersion(tmp);
-               if (!IsVersionSupported(nifVersion))
+               int nifVersion = ParseVersionString(tmp);
+               if (!IsSupportedVersion(nifVersion))
                {
                   MessageBox(hWnd, FormatString("Version '%s' is not a supported version.", tmp).c_str(), "NifExport", MB_OK|MB_ICONSTOP);
                   return FALSE;
@@ -148,18 +150,18 @@ static BOOL CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam
             EndDialog(hWnd, imp->mDlgResult=IDCANCEL);
             close = true;
             break;
+
+         case IDC_LBL_LINK:
+            ShellExecute(hWnd, "open", imp->webSite, NULL, NULL, SW_SHOWNORMAL);
+            break;
+
+         case IDC_LBL_WIKI:
+            ShellExecute(hWnd, "open", imp->wikiSite, NULL, NULL, SW_SHOWNORMAL);
+            break;
          }
 
          if (close)
             SendMessage(hWnd, WM_CLOSE, 0, 0);
-      }
-      else if (HIWORD(wParam) == STN_CLICKED)
-      {
-         if (LOWORD(wParam) == IDC_LBL_LINK)
-         {
-            ShellExecute(hWnd, "open", "http://www.niftools.org",
-               NULL, NULL, SW_SHOWDEFAULT);
-         }
       }
       else if (HIWORD(wParam) == CBN_SELCHANGE)
       {
@@ -200,6 +202,8 @@ KfExport::KfExport()
    iniFileName = iniName;
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
    fileVersion = GetFileVersion(NULL);
+   webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org", iniFileName);
+   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max", iniFileName);
 }
 
 KfExport::~KfExport() 
@@ -328,8 +332,8 @@ int	KfExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL s
 
       if (!Exporter::mNifVersion.empty())
       {
-         nifVersion = GetVersion(Exporter::mNifVersion);
-         if (!IsVersionSupported(nifVersion))
+         nifVersion = ParseVersionString(Exporter::mNifVersion);
+         if (!IsSupportedVersion(nifVersion))
             throw exception(FormatString("Version '%s' is not a supported version.").c_str());
       }
 

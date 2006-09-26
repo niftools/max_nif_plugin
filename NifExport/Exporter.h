@@ -46,6 +46,8 @@ public:
       virtual Result execute() = 0;
    };
 
+   class CancelExporterException{};
+
 
 	/* exporter version */
 	static int				mVersion;
@@ -85,6 +87,13 @@ public:
    static bool          mAutoDetect;
    static bool          mAllowAccum;
    static string        mCreatorName;
+   static bool          mCollapseTransforms;
+   static bool          mFixNormals;
+   static bool          mTangentAndBinormalExtraData;
+   static stringlist    mRotate90Degrees;
+   static bool          mSupportPrnStrings;
+   static bool          mSuppressPrompts;
+   static bool          mUseAlternateStripper;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -108,6 +117,9 @@ public:
 	static void				readConfig(Interface *i);
    // reads config from registry
    static void				readKfConfig(Interface *i);
+
+   static AppSettings * exportAppSettings();
+   static AppSettings * importAppSettings(string fname);
 
 public:
 	typedef vector<unsigned short> TriStrip;
@@ -225,8 +237,23 @@ public:
    NiNodeRef exportBone(NiNodeRef parent, INode *node);
    Result exportLight(NiNodeRef root, INode *node, GenLight* light);
    void getChildNodes(INode *node, vector<NiNodeRef>&list);
-
+   bool exportPrn(NiNodeRef &root, INode *node);
    NiNodeRef createAccumNode(NiNodeRef parent, INode *node);
+   int countNodes(INode *node);
+   bool isSkeletonRoot(INode *node);
+
+   /* Progress Bar stuff */
+   enum ProgressSection
+   {
+      Geometry,
+      Animation,
+      Collision,
+      Skin,
+      ProgressSectionCount
+   };
+   int progressCounters[ProgressSectionCount];
+   int progressMax[ProgressSectionCount];
+   void ProgressUpdate( ProgressSection section, const TCHAR *s );
 };
 
 #endif 

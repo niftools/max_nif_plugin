@@ -937,3 +937,74 @@ void CalcCenteredSphere(const vector<Vector3>& vertices, Vector3& center, float&
       radius = max(radius, mag);
    }
 }
+
+
+
+static void TransformVector3(Matrix44& tm, vector<Vector3>& pts)
+{
+   Matrix44::IDENTITY;
+   for (vector<Vector3>::iterator itr = pts.begin(); itr != pts.end(); ++itr)
+   {    
+      Matrix44 m4(*itr, Matrix33::IDENTITY, 1.0f);
+      Matrix44 ntm = m4 * tm;
+      Vector3 v  = ntm.GetTranslation();
+      (*itr) = v;
+   }
+}
+
+void CollapseGeomTransform(NiNode node) {
+   
+}
+
+void CollapseGeomTransform(NiTriBasedGeomRef shape)
+{
+   NiTriBasedGeomDataRef data = shape->GetData();
+   vector<Vector3> verts = data->GetVertices();
+   vector<Vector3> norms = data->GetNormals();
+   int nuvsets = data->GetUVSetCount();
+   vector< vector<TexCoord> > uvSets;
+   uvSets.resize(nuvsets);
+   for (int i=0; i<nuvsets; ++i)
+      uvSets[i] = data->GetUVSet(i);
+
+   Matrix44 ltm = shape->GetLocalTransform();
+   Matrix44 invtm = ltm.Inverse();
+   Matrix44 tm = ltm * invtm;
+   shape->SetLocalTransform(tm);
+
+   TransformVector3(ltm, verts);
+
+   data->SetVertices(verts);
+   data->SetNormals(norms);
+   data->SetUVSetCount(nuvsets);
+   for (int i=0; i<nuvsets; ++i)
+      data->SetUVSet(i, uvSets[i]);
+}
+
+void CollapseGeomTransforms(vector<NiTriBasedGeomRef>& shapes)
+{
+   for (vector<NiTriBasedGeomRef>::iterator itr = shapes.begin(); itr != shapes.end(); ++itr) {
+      CollapseGeomTransform(*itr);
+   }
+}
+
+void FixNormals(vector<Triangle>& tris, vector<Vector3>& verts, vector<Vector3>& norms)
+{
+   if (tris.size() != norms.size())
+      return;
+
+   int n = tris.size();
+   for (int i=0; i < n; ++i)
+   {
+      Triangle& tri = tris[i];
+      Vector3 v1 = verts[tri.v1];
+      Vector3 v2 = verts[tri.v2];
+      Vector3 v3 = verts[tri.v3];
+      Vector3 n1 = (v2-v1).CrossProduct(v3-v1).Normalized();
+      Vector3 n2 = norms[i];
+      float dp = n1.DotProduct(n2);
+      if ( dp < 0.0f ) {
+         std::swap(tri.v3, tri.v2);
+      }
+   }
+}

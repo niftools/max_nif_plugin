@@ -395,4 +395,8 @@ inline Niflib::Ref<T> CreateNiObject() {
    return Niflib::StaticCast<T>(Niflib::CreateObject(T::TypeConst().GetTypeName()));
 }
 
+void CollapseGeomTransform(Niflib::NiTriBasedGeomRef shape);
+void CollapseGeomTransforms(std::vector<Niflib::NiTriBasedGeomRef>& shapes);
+void FixNormals(std::vector<Niflib::Triangle>& tris, std::vector<Niflib::Vector3>& verts, std::vector<Niflib::Vector3>& norms);
+
 #endif // _NIUTILS_H_

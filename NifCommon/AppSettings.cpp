@@ -65,6 +65,8 @@ void AppSettings::ReadSettings(string iniFile)
    textureUseFullPath = GetSetting<bool>("TextureUseFullPath", textureUseFullPath);
 
    dummyNodeMatches = TokenizeString(GetSetting<string>("DummyNodeMatches").c_str(), ";");
+   rotate90Degrees = TokenizeString(GetSetting<string>("Rotate90Degrees").c_str(), ";");
+   supportPrnStrings = GetSetting<bool>("SupportPrnStrings", supportPrnStrings);
 }
 
 void AppSettings::WriteSettings(Interface *gi)

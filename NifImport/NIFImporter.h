@@ -68,6 +68,8 @@ public:
    bool uncontrolledDummies;
    bool ignoreRootNode;
    bool autoDetect;
+   stringlist rotate90Degrees;
+   bool supportPrnStrings;
 
    // Animation related Settings
    bool replaceTCBRotationWithBezier;

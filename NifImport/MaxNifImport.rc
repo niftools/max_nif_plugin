@@ -69,8 +69,9 @@ BEGIN
     PUSHBUTTON      "...",IDC_BTN_BROWSE,184,215,16,13
     DEFPUSHBUTTON   "&Import",IDOK,5,236,34,14
     PUSHBUTTON      "&Cancel",IDCANCEL,45,236,33,14
-    LTEXT           "http://www.niftools.org",IDC_LBL_LINK,122,236,78,14,SS_NOTIFY | SS_CENTERIMAGE
     CONTROL         "Ignore Root Node",IDC_CHK_IGNORE_ROOT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,109,161,89,10
+    LTEXT           "www.niftools.org",IDC_LBL_LINK,125,239,53,8,SS_NOTIFY | SS_CENTERIMAGE
+    LTEXT           "Wiki",IDC_LBL_WIKI,185,239,16,8,SS_NOTIFY | SS_CENTERIMAGE
 END
 
 IDD_KF_PANEL DIALOGEX 0, 0, 118, 99
@@ -83,9 +84,10 @@ BEGIN
     CONTROL         "Clear Animation",IDC_CHK_CLEARANIM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,18,72,10
     CONTROL         "Add Key Notes",IDC_CHK_KEYNOTES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,31,72,10
     CONTROL         "Add Time Tags",IDC_CHK_TIMETAGS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,14,44,72,10
-    LTEXT           "http://www.niftools.org",IDC_LBL_LINK,7,61,95,14,SS_NOTIFY | SS_CENTERIMAGE
     DEFPUSHBUTTON   "&Import",IDOK,5,78,34,14
     PUSHBUTTON      "&Cancel",IDCANCEL,45,78,33,14
+    LTEXT           "www.niftools.org",IDC_LBL_LINK,7,62,54,8,SS_NOTIFY | SS_CENTERIMAGE
+    LTEXT           "Wiki",IDC_LBL_WIKI,90,62,16,9,SS_NOTIFY | SS_CENTERIMAGE
 END
 
 
@@ -164,4 +166,15 @@ END
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
 

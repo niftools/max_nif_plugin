@@ -431,3 +431,42 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
       getChildNodes(child, list);
    }
 }
+
+
+// Special case of a single branch being exported
+
+bool Exporter::exportPrn(NiNodeRef &obj, INode *node) {
+   // Export Prn Text strings for any parent bones if parent is root
+   if (mSupportPrnStrings) {
+      if (INode *parentNode = node->GetParentNode()){
+         string parentName = parentNode->GetName();
+         NiStringExtraDataRef strings = new NiStringExtraData();	
+         strings->SetName("Prn");
+         strings->SetData(parentName);
+         obj->AddExtraData(DynamicCast<NiExtraData>(strings));
+         return true;
+      }
+   }
+   return false;
+}
+
+
+int Exporter::countNodes(INode *node)
+{
+   int counter = 1;
+   for (int i=0; i<node->NumberOfChildren(); i++) {
+      counter += countNodes(node->GetChildNode(i));
+   }
+   return counter;
+}
+
+bool Exporter::isSkeletonRoot(INode *node)
+{
+   if (wildmatch("Bip??", node->GetName())) {
+      return true;
+   } else if ( node->GetParentNode() == mI->GetRootNode() ) {
+      return true;
+   }
+
+   return false;
+}

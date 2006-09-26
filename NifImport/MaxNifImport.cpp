@@ -18,12 +18,14 @@ using namespace Niflib;
 
 #define MaxNifImport_CLASS_ID	Class_ID(0x794ac1c1, 0x8b4c64c7)
 
-string shortDescription;
 
 class MaxNifImport : public SceneImport {
 	public:
 
 		static HWND hParams;
+      TSTR shortDescription;
+      TSTR webSite;
+      TSTR wikiSite;
 		
 		int				ExtCount();					// Number of extensions supported
 		const TCHAR *	Ext(int n);					// Extension #n (i.e. "3DS")
@@ -82,7 +84,9 @@ MaxNifImport::MaxNifImport()
       PathAppend(iniName, "MaxNifTools.ini");
    }
    iniFileName = iniName;
-   shortDescription = GetIniValue<string>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName.c_str());
+   shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName.c_str());
+   webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org", iniFileName.c_str());
+   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max", iniFileName.c_str());
 }
 
 MaxNifImport::~MaxNifImport() 
@@ -115,7 +119,7 @@ const TCHAR *MaxNifImport::LongDesc()
 const TCHAR *MaxNifImport::ShortDesc() 
 {			
 	//TODO: Return short ASCII description (i.e. "Targa")
-	return shortDescription.c_str();
+	return shortDescription;
 }
 
 const TCHAR *MaxNifImport::AuthorName()

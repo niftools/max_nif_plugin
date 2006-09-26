@@ -149,7 +149,7 @@ void Exporter::strippify(FaceGroup &grp)
 
 NiTriStripsDataRef Exporter::makeTriStripsData(const TriStrips &strips)
 {
-	NiTriStripsDataRef stripData = DynamicCast<NiTriStripsData>(CreateBlock("NiTriStripsData"));
+	NiTriStripsDataRef stripData = new NiTriStripsData();
 
 	if (strips.size() > 0)
 	{

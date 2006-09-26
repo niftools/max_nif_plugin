@@ -27,6 +27,31 @@
 
     Change log
     ----------
+      0.2.6
+      -----
+    o All
+      - Consolidate code to single plugin: NifPlugins.dlu
+      - Please remove the following when upgrading to this release.
+        o MaxNifImport.dli, NifExport.dle, NifProps.dlu, NifFurniture.dlu
+      - Started Wiki Documentation Project:
+        o http://www.niftools.org/wiki/index.php/3ds_Max
+      
+    o Exporter
+      - Fix bug in Skin Partitioning that would cause max to hang
+      - Add links to website and wiki to dialog
+      - Tag NIF files with Plugin version in first comment field.
+      - Fix export of selected nodes.
+      - Support Prn strings for Oblivion and Morrowind when selected
+        mesh is bound to bone bug does not have skin modifier.
+      - Change export to place all data in NonAccum nodes when available
+        Plan to do proper support for NonAccum nodes in the future.
+      - Add progress bar updates while exporting
+      
+    o Importer
+      - Add links to website and wiki to dialog
+      - Add support for Prn string imports for Oblivion and Morrowind
+      
+      
       0.2.5
       -----
     o Exporter
@@ -179,10 +204,8 @@
     Installation
     ------------
     
-    Copy NifExport.dle, NifProps.dlu, MaxNifImport.dli to your 3dsmax\plugins 
-      directory.
-  
-      Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
+    Copy NifPlugins.dlu, to your 3dsmax\plugins directory.
+    Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
         
     Usage
     -----

@@ -249,6 +249,8 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 
 Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 {
+   ProgressUpdate(Collision, FormatText("'%s' Collision", node->GetName()));
+
 	// marked as collision?
 	bool coll = npIsCollision(node);
 

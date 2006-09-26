@@ -74,7 +74,7 @@
 #include "NifImporter.h"
 
 extern TCHAR *GetString(int id);
-extern string shortDescription;
+extern TSTR shortDescription;
 extern HINSTANCE hInstance;
 
 #endif

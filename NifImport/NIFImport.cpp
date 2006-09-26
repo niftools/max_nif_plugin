@@ -119,10 +119,16 @@ void NifImporter::LoadIniSettings()
    if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
       autoDetect = true;
       // Scan Root paths
+      bool versionmatch = false;
+      int version = GetNifVersion(this->name);
       for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
          if ((*itr).IsFileInRootPaths(this->name)) {
             appSettings = &(*itr);
             break;
+         } else if ( !versionmatch && ParseVersionString((*itr).NiVersion) == version ) {
+            // Version matching is an ok fit but we want the other if possible. And we want the first match if possible.
+            appSettings = &(*itr);
+            versionmatch = true;
          }
       }
    } else {
@@ -179,6 +185,8 @@ void NifImporter::LoadIniSettings()
    addNoteTracks = GetIniValue(AnimImportSection, "AddNoteTracks", true);
    addTimeTags = GetIniValue(AnimImportSection, "AddTimeTags", true);
 
+   rotate90Degrees = TokenizeString(GetIniValue<string>(NifImportSection, "Rotate90Degrees", "").c_str(), ";");
+
    // Collision
    bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f);
    ApplyAppSettings();
@@ -195,6 +203,9 @@ void NifImporter::ApplyAppSettings()
          dummyNodeMatches = appSettings->dummyNodeMatches;
       if (appSettings->applyOverallTransformToSkinAndBones != -1)
          applyOverallTransformToSkinAndBones = appSettings->applyOverallTransformToSkinAndBones ? true : false;
+      if (!appSettings->rotate90Degrees.empty())
+         rotate90Degrees = appSettings->rotate90Degrees;
+      supportPrnStrings = appSettings->supportPrnStrings;
    }
 }
 

@@ -30,6 +30,8 @@ public:
    bool iniFileValid;
    string iniFileName;
    AppSettings *appSettings;
+   TSTR webSite;
+   TSTR wikiSite;
 
    Niflib::NiObjectRef root;
 
@@ -60,6 +62,10 @@ public:
             *(FARPROC*)&Max7CreateNewBiped = GetProcAddress(hBiped, Max7CreateNewBipedName);
          }
       }
+
+      webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org");
+      wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max");
+
       // Load ini settings
       iniFileValid = false;
       LoadIniSettings();

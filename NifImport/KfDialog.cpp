@@ -15,7 +15,7 @@ HISTORY:
 #include "KFMImporter.h"
 #include "resource.h"
 #include "shellapi.h"
-
+#include "Hyperlinks.h"
 using namespace Niflib;
 
 static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
@@ -43,6 +43,10 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
             CheckDlgButton(hWnd, IDC_CHK_CLEARANIM, imp->clearAnimation);
             CheckDlgButton(hWnd, IDC_CHK_KEYNOTES, imp->addNoteTracks);
             CheckDlgButton(hWnd, IDC_CHK_TIMETAGS, imp->addTimeTags);
+
+            ConvertStaticToHyperlink(hWnd, IDC_LBL_LINK);
+            ConvertStaticToHyperlink(hWnd, IDC_LBL_WIKI);
+
          }
          return TRUE;
 
@@ -68,13 +72,14 @@ static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wP
                case IDCANCEL:
                   EndDialog(hWnd, dlgRes=IDCANCEL);
                   return TRUE;
-               }
-            }
-            else if (HIWORD(wParam) == STN_CLICKED)
-            {
-               if (LOWORD(wParam) == IDC_LBL_LINK)
-               {
-                  ShellExecute(hWnd, "open", "http://www.niftools.org", NULL, NULL, SW_SHOWDEFAULT);
+
+               case IDC_LBL_LINK:
+                  ShellExecute(hWnd, "open", imp->webSite, NULL, NULL, SW_SHOWNORMAL);
+                  break;
+
+               case IDC_LBL_WIKI:
+                  ShellExecute(hWnd, "open", imp->wikiSite, NULL, NULL, SW_SHOWNORMAL);
+                  break;
                }
             }
          }

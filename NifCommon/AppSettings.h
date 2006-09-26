@@ -26,6 +26,7 @@ public:
       , goToSkeletonBindPosition(true)
       , disableCreateNubsForBones(false)
       , textureUseFullPath(false)
+      , supportPrnStrings(false)
    {}
 
    std::string Name;
@@ -46,6 +47,8 @@ public:
    int applyOverallTransformToSkinAndBones;
    std::string NiVersion;
    int NiUserVersion;
+   stringlist rotate90Degrees;
+   bool supportPrnStrings;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);

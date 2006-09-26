@@ -62,6 +62,7 @@
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
 #define IDC_SPIN                        13496
+#define IDC_LBL_WIKI                    13497
 
 // Next default values for new objects
 // 

@@ -76,9 +76,14 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "MultiplePartitions", mMultiplePartitions, iniName);
       SetIniValue<int>(NifExportSection, "BonesPerVertex", mBonesPerVertex, iniName);     
       SetIniValue<int>(KfExportSection, "BonesPerPartition", mBonesPerPartition, iniName);
-      SetIniValue(NifExportSection, "UseTimeTags", mUseTimeTags, iniName);
+      //SetIniValue(NifExportSection, "UseTimeTags", mUseTimeTags, iniName);
 
       SetIniValue(NifExportSection, "AllowAccum", mAllowAccum, iniName);
+      SetIniValue(NifExportSection, "CollapseTransforms", mCollapseTransforms, iniName);
+      SetIniValue(NifExportSection, "FixNormals", mFixNormals, iniName);
+      SetIniValue(NifExportSection, "TangentAndBinormalExtraData", mTangentAndBinormalExtraData, iniName);
+      SetIniValue(NifExportSection, "UseAlternateStripper", mUseAlternateStripper, iniName);
+      
 
       SetIniValue<string>(NifExportSection, "Creator", mCreatorName, iniName);
       
@@ -143,11 +148,15 @@ void Exporter::readConfig(Interface *i)
 
       mMultiplePartitions = GetIniValue(NifExportSection, "MultiplePartitions", false, iniName);
       mBonesPerVertex = GetIniValue<int>(NifExportSection, "BonesPerVertex", 4, iniName);     
-      mBonesPerPartition = GetIniValue<int>(KfExportSection, "BonesPerPartition", 20, iniName);
+      mBonesPerPartition = GetIniValue<int>(NifExportSection, "BonesPerPartition", 20, iniName);
 
-      mUseTimeTags = GetIniValue(NifExportSection, "UseTimeTags", false, iniName);
+      //mUseTimeTags = GetIniValue(NifExportSection, "UseTimeTags", false, iniName);
       mAllowAccum = GetIniValue(NifExportSection, "AllowAccum", true, iniName);
+      mCollapseTransforms = GetIniValue(NifExportSection, "CollapseTransforms", false, iniName);
+      mFixNormals = GetIniValue(NifExportSection, "FixNormals", false, iniName);
+      mTangentAndBinormalExtraData = GetIniValue(NifExportSection, "TangentAndBinormalExtraData", false, iniName);
 
+      mUseAlternateStripper = GetIniValue(NifExportSection, "UseAlternateStripper", false, iniName);
       mCreatorName = GetIniValue<string>(NifExportSection, "Creator", "", iniName);
   }
 }
@@ -179,6 +188,69 @@ void Exporter::writeKfConfig(Interface *i)
    SetIniValue<float>(KfExportSection, "Priority", mDefaultPriority, iniName);
 }
 
+
+AppSettings * Exporter::exportAppSettings()
+{
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+   // Update the current app version
+   AppSettings * appSettings = FindAppSetting(Exporter::mGameName);
+   if (appSettings == NULL && !TheAppSettings.empty())
+      appSettings = &TheAppSettings.front();
+
+   if (Exporter::mAutoDetect){
+      SetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
+   } else {
+      SetIniValue<string>(NifExportSection, "CurrentApp", appSettings->Name, iniName);
+   }
+
+   appSettings->NiVersion = Exporter::mNifVersion;
+   appSettings->NiUserVersion = Exporter::mNifUserVersion;
+   appSettings->rotate90Degrees = Exporter::mRotate90Degrees;
+   appSettings->supportPrnStrings = Exporter::mSupportPrnStrings;
+
+   return appSettings;
+}
+
+AppSettings *Exporter::importAppSettings(string fname)
+{
+   AppSettings *appSettings = NULL;
+   TCHAR iniName[MAX_PATH];
+   LPCTSTR pluginDir = GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+   // Locate which application to use. If Auto, find first app where this file appears in the root path list
+   string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);
+   if (0 == _tcsicmp(curapp.c_str(), "AUTO")) {
+      Exporter::mAutoDetect = true;
+      // Scan Root paths
+      for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr){
+         if ((*itr).IsFileInRootPaths(fname)) {
+            appSettings = &(*itr);
+            break;
+         }
+      }
+   } else {
+      Exporter::mAutoDetect = false;
+      appSettings = FindAppSetting(curapp);
+   }
+   if (appSettings == NULL && !TheAppSettings.empty())
+      appSettings = &TheAppSettings.front();
+
+   if (!appSettings)
+      return NULL;
+
+   Exporter::mGameName = appSettings->Name;
+   Exporter::mNifVersion = appSettings->NiVersion;
+   Exporter::mNifUserVersion = appSettings->NiUserVersion;
+   if (!appSettings->rotate90Degrees.empty())
+      Exporter::mRotate90Degrees = appSettings->rotate90Degrees;
+   Exporter::mSupportPrnStrings = appSettings->supportPrnStrings;
+
+   return appSettings;
+}
 
 void regSet(HKEY hKey, const char *value, float f)
 {
