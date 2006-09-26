@@ -103,6 +103,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
          CheckDlgButton(hWnd, IDC_CHK_SKEL_ONLY, Exporter::mSkeletonOnly);
          CheckDlgButton(hWnd, IDC_CHK_CAMERA, Exporter::mExportCameras);
          CheckDlgButton(hWnd, IDC_CHK_BONE_COLL, Exporter::mGenerateBoneCollision);            
+         CheckDlgButton(hWnd, IDC_CHK_TANGENTS, Exporter::mTangentAndBinormalExtraData);
 
          string selection = Exporter::mGameName;
          string version = Exporter::mNifVersion;
@@ -188,6 +189,7 @@ BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARA
             Exporter::mSkeletonOnly = IsDlgButtonChecked(hWnd, IDC_CHK_SKEL_ONLY);
             Exporter::mExportCameras = IsDlgButtonChecked(hWnd, IDC_CHK_CAMERA);
             Exporter::mGenerateBoneCollision = IsDlgButtonChecked(hWnd, IDC_CHK_BONE_COLL);
+            Exporter::mTangentAndBinormalExtraData = IsDlgButtonChecked(hWnd, IDC_CHK_TANGENTS);
 
             Exporter::mExportTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_TRANSFORMS2);
             //Exporter::mUseTimeTags = IsDlgButtonChecked(hWnd, IDC_CHK_USE_TIME_TAGS);           
