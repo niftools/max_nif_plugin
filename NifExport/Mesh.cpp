@@ -383,7 +383,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
 
 Exporter::Result SkinInstance::execute()
 {
-   shape->BindSkin(boneList, false);
+   shape->BindSkin(boneList);
    uint bone = 0;
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
       shape->SetBoneWeights(bone, (*bitr));

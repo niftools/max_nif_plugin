@@ -36,6 +36,7 @@ INFO: See Implementation for minimalist comments
 #include <obj\NiAVObject.h>
 #include <obj\NiObjectNET.h>
 #include <obj\NiNode.h>
+#include <obj\NiTriBasedGeom.h>
 #include <gen\QuaternionXYZW.h>
 #include <nif_math.h>
 

@@ -17,12 +17,27 @@ extern ClassDesc2* GetNifPropsDesc();
 extern ClassDesc2* GetNifFurnitureDesc();
 extern ClassDesc2* GetKfExportDesc();
 
+enum ClassDescType
+{
+   CD_Import,
+   CD_Export,
+   CD_Props,
+   CD_Furniture,
+   CD_KFExport,
+   CD_Count
+};
+
 static void InitializeLibSettings();
 
 HINSTANCE hInstance;
 static int controlsInit = FALSE;
 static int libVersion = VERSION_3DSMAX;
 static int foundOlderReleaseConflict = -1;
+static int nClasses = 0;
+static ClassDesc2* classDescriptions[CD_Count];
+static bool classDescEnabled[CD_Count];
+
+
 
 // This function is called by Windows when the DLL is loaded.  This 
 // function may also be called many times during time critical operations
@@ -60,9 +75,31 @@ void InitializeLibSettings()
       PathAppend(iniName, "plugcfg");
       PathAppend(iniName, "MaxNifTools.ini");
    }
-   libVersion = GetIniValue("MaxNifImport", "MaxSDKVersion", libVersion, iniName);
+   libVersion = GetIniValue("System", "MaxSDKVersion", libVersion, iniName);
    if (libVersion == 0)
       libVersion = VERSION_3DSMAX;
+
+   nClasses = 0;
+   if ( GetIniValue<bool>("MaxNifExport", "Enable", true, iniName) ) {
+      classDescEnabled[CD_Export] = true;
+      classDescriptions[nClasses++] = GetNifExportDesc();
+   }
+   if ( GetIniValue<bool>("MaxNifImport", "Enable", true, iniName) ) {
+      classDescEnabled[CD_Import] = true;
+      classDescriptions[nClasses++] = GetMaxNifImportDesc();
+   }
+   if ( GetIniValue<bool>("NifProps", "Enable", true, iniName) ) {
+      classDescEnabled[CD_Props] = true;
+      classDescriptions[nClasses++] = GetNifPropsDesc();
+   }
+   if ( GetIniValue<bool>("NifFurniture", "Enable", true, iniName) ) {
+      classDescEnabled[CD_Furniture] = true;
+      classDescriptions[nClasses++] = GetNifFurnitureDesc();
+   }
+   if ( GetIniValue<bool>("KFExport", "Enable", false, iniName) ) {
+      classDescEnabled[CD_KFExport] = true;
+      classDescriptions[nClasses++] = GetKfExportDesc();
+   }
 }
 
 // This function returns a string that describes the DLL and where the user
@@ -91,10 +128,10 @@ __declspec( dllexport ) int LibNumberClasses()
       foundOlderReleaseConflict = 0;
 
       // Check for older releases
-      if (  NULL != GetModuleHandle("MaxNifImport.dli")
-         || NULL != GetModuleHandle("NifExport.dle")
-         || NULL != GetModuleHandle("NifFurniture.dlo")
-         || NULL != GetModuleHandle("NifProps.dlu")
+      if (  (classDescEnabled[CD_Import] && NULL != GetModuleHandle("MaxNifImport.dli"))
+         || (classDescEnabled[CD_Export] && NULL != GetModuleHandle("NifExport.dle"))
+         || (classDescEnabled[CD_Furniture] && NULL != GetModuleHandle("NifFurniture.dlo"))
+         || (classDescEnabled[CD_Props]  && NULL != GetModuleHandle("NifProps.dlu"))
          )
       {
          foundOlderReleaseConflict = 1;
@@ -105,45 +142,43 @@ __declspec( dllexport ) int LibNumberClasses()
          TCHAR filename[MAX_PATH];
          GetModuleFileName(hInstance, filename, MAX_PATH);
 
-         if (-1 != _taccess(PathMerge(filename, TEXT("MaxNifImport.dli")), 0))
+         if (classDescEnabled[CD_Import] && -1 != _taccess(PathMerge(filename, TEXT("MaxNifImport.dli")), 0))
             foundOlderReleaseConflict = 1;
-         else if (-1 != _taccess(PathMerge(filename, TEXT("NifExport.dle")), 0))
+         else if (classDescEnabled[CD_Export] && -1 != _taccess(PathMerge(filename, TEXT("NifExport.dle")), 0))
             foundOlderReleaseConflict = 1;
-         else if (-1 != _taccess(PathMerge(filename, TEXT("NifFurniture.dlo")), 0))
+         else if (classDescEnabled[CD_Furniture] && -1 != _taccess(PathMerge(filename, TEXT("NifFurniture.dlo")), 0))
             foundOlderReleaseConflict = 1;
-         else if (-1 != _taccess(PathMerge(filename, TEXT("NifProps.dlu")), 0))
+         else if (classDescEnabled[CD_Props] && -1 != _taccess(PathMerge(filename, TEXT("NifProps.dlu")), 0))
             foundOlderReleaseConflict = 1;
       }
       if (foundOlderReleaseConflict > 0)
       {
-         ::MessageBox( NULL
-            , "An older release of the Niftools Max Plugins was found.\n\n"
+         TCHAR buffer[512];
+         sprintf(buffer,
+            "An older release of the Niftools Max Plugins was found.\n\n"
             "Please remove the following files from your 3dsmax\\plugins directory:\n"
-            "\tMaxNifImport.dli\n"
-            "\tNifExport.dle\n"
-            "\tNifFurniture.dlo\n"
-            "\tNifProps.dlu\n\n"
+            "%s%s%s%s"
             "The current version will be disabled."
+            , classDescEnabled[CD_Import] ? "\tMaxNifImport.dli\n" : ""
+            , classDescEnabled[CD_Export] ? "\tNifExport.dle\n" : ""
+            , classDescEnabled[CD_Furniture] ? "\tNifFurniture.dlo\n" : ""
+            , classDescEnabled[CD_Props] ? "\tNifProps.dlu\n\n" : ""
+            );
+         ::MessageBox( NULL
+            , buffer
             , "Niftools Max Plugins"
             , MB_ICONSTOP|MB_OK
             );
          return 0;
       }
    }
-	return 4;
+	return nClasses;
 }
 
 // This function returns the number of plug-in classes this DLL
 __declspec( dllexport ) ClassDesc* LibClassDesc(int i)
 {
-	switch(i) {
-		case 0: return GetMaxNifImportDesc();
-		case 1: return GetNifExportDesc();
-		case 2: return GetNifPropsDesc();
-		case 3: return GetNifFurnitureDesc();
-      //case 4: return GetKfExportDesc(); // Merged into NifExport.
-		default: return 0;
-	}
+   return classDescriptions[i];
 }
 
 TCHAR *GetString(int id)

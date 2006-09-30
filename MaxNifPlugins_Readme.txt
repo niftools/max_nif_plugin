@@ -1,19 +1,24 @@
-                        MaxPlugins 0.2.5
+                        MaxPlugins 0.2.7
                         ================
 
  
-    This plugin set currently consists of an exporter, importer and a utility 
-     plugin. This is a early release, so expect it to be buggy.      
+    This plugin currently consists of an exporter, importer and a utility 
+     plugin.
     
     Report problems and ask questions here:
     
-        http://niftools.sourceforge.net/forum/viewforum.php?f=6
+        http://www.niftools.org/forum/viewforum.php?f=6
         
     A tutorial on how to use the exporter and utility plugins can be found here:
     
         http://www.silgrad.com/wbb2/thread.php?threadid=2477    
+
+    A wiki for the 3ds Max plugins is available at:
         
+        http://www.niftools.org/wiki/index.php/3ds_Max
+
     Enjoy!
+
 
     Additional Notes
     ----------------
@@ -23,16 +28,24 @@
 
     If your collision mesh comes out deformed, go to the utilities tab, 
     choose "Reset XForm" and click "Reset Selected". This should fix it.
-
+    
 
     Change log
     ----------
+      0.2.7
+      -----
+    o All
+      - Add options to disable certain parts of plug via INI
+        o Added so people who only want importer can disable exporter.
+    
+    o Exporter
+      - Fix bug with NiTriShape export which created corrupted files.
+      
+        
       0.2.6
       -----
     o All
       - Consolidate code to single plugin: NifPlugins.dlu
-      - Please remove the following when upgrading to this release.
-        o MaxNifImport.dli, NifExport.dle, NifProps.dlu, NifFurniture.dlu
       - Started Wiki Documentation Project:
         o http://www.niftools.org/wiki/index.php/3ds_Max
       
@@ -195,17 +208,18 @@
     Requirements
     ------------
 
-      Exporter and Utility:
+      Plugins:
         3D Studio Max 6, 7 and 8
-    
-      Importer
-        3d Studio Max 8
 
     Installation
     ------------
     
     Copy NifPlugins.dlu, to your 3dsmax\plugins directory.
     Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
+    
+    Please remove the following when upgrading to 0.2.6 or later release:
+       MaxNifImport.dli, NifExport.dle, NifProps.dlu, NifFurniture.dlu
+    
         
     Usage
     -----
