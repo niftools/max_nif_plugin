@@ -70,7 +70,7 @@ void InitializeLibSettings()
    } else {
       GetModuleFileName(NULL, iniName, _countof(iniName));
       if (LPTSTR fname = PathFindFileName(iniName))
-         fname = NULL;
+         *fname = 0;
       PathAddBackslash(iniName);
       PathAppend(iniName, "plugcfg");
       PathAppend(iniName, "MaxNifTools.ini");

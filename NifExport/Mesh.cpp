@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "niutils.h"
 #include "iskin.h"
-#include "MeshNormalSpec.h"
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#  include "MeshNormalSpec.h"
+#endif
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
@@ -65,6 +67,9 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
       if (!hasvc) vertColors.clear();
    }
    
+#if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 5
+   mesh->checkNormals(TRUE);
+#else
    MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
    if (NULL != specNorms) {
       specNorms->CheckNormals();
@@ -73,6 +78,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
    } else {
       mesh->checkNormals(TRUE);
    }
+#endif
 
 	Result result = Ok;
 	while (1)
@@ -114,7 +120,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
          shape->SetLocalTransform(tm);
 
          if (Exporter::mCollapseTransforms) {
-            CollapseGeomTransform(shape);
+            shape->ApplyTransforms();
          }
          
          makeSkin(shape, node, grp->second, t);
@@ -176,12 +182,15 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 	Point3 pt = mesh->verts[ vidx ];
    Point3 norm;
 
+#if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 5
+   norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
+#else
    MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
    if (NULL != specNorms && specNorms->GetNumNormals() != 0)
       norm = specNorms->GetNormal(face, vi);
    else
       norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
-
+#endif
 	Point3 uv;
    if (mesh->tVerts && mesh->tvFace) {
 		uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;

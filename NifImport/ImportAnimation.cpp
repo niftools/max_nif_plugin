@@ -11,7 +11,9 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "stdafx.h"
-#include <IFrameTagManager.h>
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
+#  include <IFrameTagManager.h>
+#endif
 #include <notetrck.h>
 #include "MaxNifImport.h"
 #include "NIFImporter.h"
@@ -39,12 +41,13 @@ enum {
    IPOS_W_REF	=	3,
 };
 
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
 void* operator new(size_t size, NoteKey* stub )
 { return MAX_new(size); }
 
 void operator delete(void* memblock, NoteKey* stub )
 { return MAX_delete(memblock); }
-
+#endif
 
 struct AnimationImport
 {
@@ -109,9 +112,11 @@ static void ClearAnimation(Control *c)
       if (IKeyControl *ikeys = GetKeyControlInterface(c)){
          ikeys->SetNumKeys(0);
       }
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (Control *sc = c->GetWController()) { 
          if (sc != c) ClearAnimation(sc); 
       }
+#endif
       if (Control *sc = c->GetXController()) { 
          if (sc != c) ClearAnimation(sc); 
       }
@@ -157,6 +162,7 @@ void NifImporter::ClearAnimation()
 {
    if (clearAnimation)
    {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
 
          int n = tagMgr->GetTagCount();
@@ -164,10 +170,11 @@ void NifImporter::ClearAnimation()
             tagMgr->DeleteTag( tagMgr->GetTagID(i) );
          }
       }
+#endif
       ClearAnimation(gi->GetRootNode());
    }
 }
-
+#if 0
 FPValue GetScriptedProperty( FPValue& thing, TCHAR* propName ) {
    init_thread_locals();
    push_alloc_frame();
@@ -285,6 +292,7 @@ static FPValue myAddNewNoteKey(Value* noteTrack, int frame)
 
    return retVal;
 }
+#endif
 
 bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKeyExtraDataRef textKeyData, bool loop)
 {
@@ -406,11 +414,13 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
       }
 
       if (addTimeTags) {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
          if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
             for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
                tagMgr->CreateNewTag(const_cast<TCHAR*>((*itr).data.c_str()), TimeToFrame(time + (*itr).time), 0, FALSE);
             }
          }
+#endif
       }
       return true;
    }

@@ -13,7 +13,9 @@ HISTORY:
 #include "stdafx.h"
 #include "MaxNifImport.h"
 #include "istdplug.h"
-#include "MeshNormalSpec.h"
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#  include "MeshNormalSpec.h"
+#endif
 
 using namespace Niflib;
 
@@ -106,6 +108,7 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
          }
          if (needNormals)
          {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
             mesh.SpecifyNormals();
             MeshNormalSpec *specNorms = mesh.GetSpecifiedNormals ();
             if (NULL != specNorms)
@@ -129,6 +132,7 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
                specNorms->SetAllExplicit(true);
                specNorms->CheckNormals();
             }
+#endif
          }
       }
    }
@@ -296,6 +300,7 @@ bool NifImporter::ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBa
    }
    else if (vertexColorMode == 2)
    {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       vector<Color4> cv = triGeomData->GetColors();
       int n = cv.size();
       if (n > 0)
@@ -371,6 +376,7 @@ bool NifImporter::ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBa
             //mod->EnableModInViews();
          }
       }
+#endif
    }
    return (hasAlpha || hasColor);
 }
@@ -417,8 +423,10 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom)
       params->SetValue(0x7/*bone_Limit*/, 0, numWeightsPerVertex);
 
       // Can get some truly bizarre animations without this in MAX with Civ4 Leaderheads
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
       BOOL ignore = TRUE;
       params->SetValue(0xE/*ignoreBoneScale*/, 0, ignore);
+#endif
 
       //RefTargetHandle advanced = skinMod->GetReference(3);
       //setMAXScriptValue(advanced, "bone_Limit", 0, numWeightsPerVertex);

@@ -157,8 +157,10 @@ INode* CollisionImport::ImportSphere(bhkRigidBodyRef body, bhkSphereShapeRef sha
       setMAXScriptValue(t, "radius", 0, radius);
 
       if (INode *n = ni.gi->CreateObjectNode(ob)) {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
          // Need to "Affect Pivot Only" and "Center to Object" first
          n->CenterPivot(0, FALSE);
+#endif
          return n;
       }
    }

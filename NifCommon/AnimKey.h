@@ -19,7 +19,7 @@ HISTORY:
 #include <Key.h>
 using namespace Niflib;
 
-#if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 7
+#if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 5
 class AnyKey
 {
 public:

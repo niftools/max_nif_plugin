@@ -32,14 +32,18 @@
 
     Change log
     ----------
-      0.2.7
-      -----
-    o All
-      - Add options to disable certain parts of plug via INI
-        o Added so people who only want importer can disable exporter.
-    
-    o Exporter
-      - Fix bug with NiTriShape export which created corrupted files.
+0.2.7
+-----
+o All
+- Add options to disable certain parts of plug via INI
+o Added so people who only want importer can disable exporter.
+- Enhancements from NifLib including support for Freedom Force
+- Max 5 build is available but untested.
+
+o Exporter
+- Fix bug with NiTriShape export which created corrupted files.
+- Add option to Update Tangent Space (for Oblivion)
+- Add option to Collapse Transforms on meshes (mostly a debug aide)
       
         
       0.2.6

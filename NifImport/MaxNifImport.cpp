@@ -96,7 +96,7 @@ MaxNifImport::~MaxNifImport()
 
 int MaxNifImport::ExtCount()
 {
-	return 3;
+	return 2;
 }
 
 const TCHAR *MaxNifImport::Ext(int n)

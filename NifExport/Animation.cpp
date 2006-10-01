@@ -11,7 +11,9 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "pch.h"
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
 #include <IFrameTagManager.h>
+#endif
 #include <notetrck.h>
 #include <set>
 #include "NifExport.h"
@@ -69,6 +71,7 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
 {
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
          int n = tagMgr->GetTagCount();
          for (int i = 0; i<n; i++) {
@@ -82,6 +85,7 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
             textKeys.push_back(strkey);
          }
       }
+#endif
    } else {
       for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
          if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
@@ -229,10 +233,12 @@ static bool HasKeys(Control *c)
          if (ikeys->GetNumKeys() > 0)
             return true;
       }
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (Control *sc = c->GetWController()) { 
          if (sc != c && HasKeys(sc)) 
             return true;
       }
+#endif
       if (Control *sc = c->GetXController()) { 
          if (sc != c && HasKeys(sc)) 
             return true;
@@ -313,6 +319,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
 
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
          int n = tagMgr->GetTagCount();
          for (int i = 0; i<n; i++) {
@@ -326,6 +333,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
             textKeys.push_back(strkey);
          }
       }
+#endif
    } else {
       for (int i=0, n=node->NumNoteTracks(); i<n; ++i) {
          if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
@@ -385,6 +393,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
 
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
 
          curSeq = new NiControllerSequence();
@@ -422,7 +431,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
          this->ranges[curSeq] = range;
          curSeq = NULL;
       }
-
+#endif
    } else {
 
       int nTracks = node->NumNoteTracks();
