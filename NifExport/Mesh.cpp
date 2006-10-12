@@ -7,9 +7,6 @@
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
-#include "obj/NiSkinInstance.h"
-#include "obj/NiSkinData.h"
-#include "obj/NiSkinPartition.h"
 #include "obj/NiBSBoneLODController.h"
 #include "obj/NiTransformController.h"
 #include "obj/bhkBlendController.h"
@@ -18,7 +15,7 @@
 #include "obj/bhkCapsuleShape.h"
 
 Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
-{	
+{
 	ObjectState os = node->EvalWorldState(t);
 
    bool local = !mFlattenHierarchy;
@@ -27,8 +24,37 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 	if (!tri)
 		return Error;
 
+   Mesh *copymesh = NULL;
 	Mesh *mesh = &tri->GetMesh();
 
+   Matrix3 mtx(true);
+   if (Exporter::mCollapseTransforms)
+   {
+      mtx = GetNodeLocalTM(node, t);
+      //if ( fabs(mtx.GetRow(0)[0]) != fabs(mtx.GetRow(1)[1])
+      //   ||fabs(mtx.GetRow(0)[0]) != fabs(mtx.GetRow(2)[2])
+      //   )
+      {
+         mtx.NoTrans();    
+         mesh = copymesh = new Mesh(*mesh);     
+         int n = mesh->getNumVerts();
+         for ( uint i = 0; i < n; ++i ) {
+            Point3& vert = mesh->getVert(i);
+            vert = mtx * vert;
+         }
+         mesh->checkNormals(TRUE);
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
+         MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
+         if (NULL != specNorms) {
+            specNorms->CheckNormals();
+            for ( uint i = 0; i < specNorms->GetNumNormals(); ++i ) {
+               Point3& norm = specNorms->Normal(i);
+               norm = (mtx * norm).Normalize();
+            }
+         }
+#endif
+      }
+   }
    // Note that calling setVCDisplayData will clear things like normals so we set this up first
    vector<Color4> vertColors;
    if (mVertexColors)
@@ -97,6 +123,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
          nodeTransform(rot, trans, node, t, local);
          tm = Matrix44(trans, rot, 1.0f);
       }
+      tm = TOMATRIX4(Inverse(mtx)) * tm;
 
       TSTR basename = node->NodeName();
       TSTR format = (!basename.isNull() && grps.size() > 1) ? "%s:%d" : "%s";
@@ -131,6 +158,9 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 
 	if (tri != os.obj)
 		tri->DeleteMe();
+
+   if (copymesh)
+      delete copymesh;
 
 	return result;
 }
@@ -397,10 +427,13 @@ Exporter::Result SkinInstance::execute()
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
       shape->SetBoneWeights(bone, (*bitr));
    }
-   if (Exporter::mMultiplePartitions)
-      shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex);
-   else
-      shape->GenHardwareSkinInfo(0, 0);
+   if (Exporter::mNifVersionInt > VER_4_0_0_2)
+   {
+      if (Exporter::mMultiplePartitions)
+         shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex);
+      else
+         shape->GenHardwareSkinInfo(0, 0);
+   }
    return Exporter::Ok;
 }
 

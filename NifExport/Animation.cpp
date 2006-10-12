@@ -208,7 +208,8 @@ bool Exporter::isNodeTracked(INode *node)
                if ( defNT->NumKeys() > 0 ) {
                   for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
                      NoteKey* key = defNT->keys[j];
-                     if (wildmatch("start*", key->note)) {
+                     // Versions less than 20.0.0.4 will always export
+                     if (Exporter::mNifVersionInt < VER_20_0_0_4 || wildmatch("start*", key->note) ) {
                         return true;
                      }
                   }
@@ -373,6 +374,13 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
          }
       }
    }
+   // keys without explicit start/stop will 
+   if (!textKeys.empty() && seq->GetStartTime() == FloatINF)
+   {
+      seq->SetStartTime(0.0f);
+      seq->SetStopTime(textKeys.back().time);
+   }
+
    textKeyData->SetKeys(textKeys);
 
    // Now let the fun begin.

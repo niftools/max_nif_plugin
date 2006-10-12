@@ -2,6 +2,29 @@
 // Microsoft Visual C++ generated include file.
 // Used by NifProps.rc
 //
+#define IDD_SPHEREPARAM2                101
+#define IDC_RADIUS                      1000
+#define IDC_SEGMENTS                    1001
+#define IDC_RADIUS1                     1002
+#define IDC_RADIUS2                     1003
+#define IDC_SEGSPINNER                  1004
+#define IDC_RADSPINNER                  1005
+#define IDC_OBSMOOTH                    1006
+#define IDC_RADSPINNER1                 1007
+#define IDC_RADSPINNER2                 1008
+#define IDC_ED_POS1_X                   1700
+#define IDC_SP_POS1_X                   1701
+#define IDC_ED_POS1_Y                   1702
+#define IDC_SP_POS1_Y                   1703
+#define IDC_ED_POS1_Z                   1704
+#define IDC_SP_POS1_Z                   1705
+#define IDC_ED_POS2_X                   1706
+#define IDC_SP_POS2_X                   1707
+#define IDC_ED_POS2_Y                   1708
+#define IDC_SP_POS2_Y                   1709
+#define IDC_ED_POS2_Z                   1710
+#define IDC_SP_POS2_Z                   1711
+#define IDC_LBL_POS1                    1712
 #define IDS_LIBDESCRIPTION              11001
 #define IDD_PANEL                       11001
 #define IDC_LBL_BSXFLAGS                11001
@@ -10,19 +33,29 @@
 #define IDC_ED_BSXFLAGS                 11002
 #define IDS_CLASS_NAME                  11003
 #define IDC_ED_STRINGSEXTRA             11003
+#define IDD_RigidBody                   11003
 #define IDS_PARAMS                      11004
 #define IDC_LBL_STRINGSEXTRA            11004
+#define IDD_CAPSULEPARAM                11004
 #define IDS_SPIN                        11005
 #define IDC_GRP_OBJECT                  11005
 #define IDS_ANIM_PARAMS                 11006
 #define IDC_CHK_ISCOLL                  11006
 #define IDC_GRP_HAVOK                   11007
 #define IDC_HVK_BEGIN                   11007
+#define IDS_RB_Capsule                  11007
+#define IDS_RB_CAPSULE                  11007
+#define IDS_RB_Capsule                  11007
 #define IDC_LBL_MATERIAL                11008
+#define IDS_RB_CAPSULE_CLASS            11008
 #define IDC_CB_MATERIAL                 11009
+#define IDS_RB_RIGIDBODY_PARAM          11009
 #define IDC_LBL_LAYER                   11010
+#define IDS_RB_CAP_POS1                 11010
 #define IDC_CB_LAYER                    11011
+#define IDS_RB_CAP_POS2                 11011
 #define IDC_LBL_CENTER                  11012
+#define IDC_LBL_POS2                    11013
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -63,6 +96,16 @@
 #define IDC_ED_ANIM_PRIORITY            11601
 #define IDC_SP_ANIM_PRIORITY            11602
 #define IDC_ANIM_END                    11602
+#define IDS_RB_PARAMETERS               30028
+#define IDS_RB_RADIUS                   30045
+#define IDS_RB_SEGS                     30046
+#define IDS_RB_SMOOTH                   30048
+#define IDS_RB_PRIMITIVES               30264
+#define IDS_RB_SPHERE                   30503
+#define IDS_RB_RADIUS1                  30516
+#define IDS_RB_RADIUS2                  30517
+#define IDS_RB_SPHERE_CLASS             31298
+#define IDS_DS_PARAMCHG                 31316
 
 // Next default values for new objects
 // 
@@ -70,7 +113,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1700
+#define _APS_NEXT_CONTROL_VALUE         1713
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.7
+                        MaxPlugins 0.2.8
                         ================
 
  
@@ -32,18 +32,30 @@
 
     Change log
     ----------
-0.2.7
------
-o All
-- Add options to disable certain parts of plug via INI
-o Added so people who only want importer can disable exporter.
-- Enhancements from NifLib including support for Freedom Force
-- Max 5 build is available but untested.
+      0.2.8
+      -----   
+    o Exporter
+      - Fix Collapse Transforms on dialog so that it actually triggers collapse
+      - Change defaults for textures so Morrowind does not crash in CS
+      - Fix export of animation for Morrowind
+      - Introduce mechanism in Collapse Transforms so that poorly scaled 
+        models export better
 
-o Exporter
-- Fix bug with NiTriShape export which created corrupted files.
-- Add option to Update Tangent Space (for Oblivion)
-- Add option to Collapse Transforms on meshes (mostly a debug aide)
+    o Importer
+      - Fix import of animation for Morrowind
+    
+      0.2.7
+      -----
+    o All
+      - Add options to disable certain parts of plug via INI
+        o Added so people who only want importer can disable exporter.
+      - Enhancements from NifLib including support for Freedom Force
+      - Max 5 build is available but untested.
+    
+    o Exporter
+      - Fix bug with NiTriShape export which created corrupted files.
+      - Add option to Update Tangent Space (for Oblivion)
+      - Add option to Collapse Transforms on meshes (mostly a debug aide)
       
         
       0.2.6

@@ -175,6 +175,17 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       Result result = exportNodes(root, node);
       if (result != Ok)
          return result;
+
+      // Fix Used Nodes that where never properly initialized.  Happens normally during select export
+      for (NodeMap::iterator itr = mNodeMap.begin(); itr != mNodeMap.end(); ++itr) {
+         NiNodeRef bone = (*itr).second;
+         if (bone->GetParent() == NULL) {
+            if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
+               makeNode(root, boneNode, false);
+            }
+         }
+      }
+
       if (mExportCollision) {
          result = exportCollision(root, node);
          if (result != Ok)

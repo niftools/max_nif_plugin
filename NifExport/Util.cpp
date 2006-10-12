@@ -427,11 +427,49 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
    for (int i=0; i<node->NumberOfChildren(); i++) 
    {
       INode * child = node->GetChildNode(i);
-      list.push_back( getNode(child->GetName()) );
+      ObjectState os = node->EvalWorldState(0); 
+      bool addBone = false;
+      bool local = !mFlattenHierarchy;
+
+      if (node->IsBoneShowing()) 
+      {
+         addBone = true;
+      }
+      else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
+      {
+         if (  os.obj 
+            && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
+            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
+            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+            )
+            ) 
+         {
+            addBone = true;
+         } 
+         else if (!mSkeletonOnly)
+         {
+            if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+               addBone = true;
+            } else if ( mExportExtraNodes || (mExportType != NIF_WO_ANIM && isNodeKeyed(node) ) ) {
+               addBone = true;
+            }
+         }
+         else if (mExportCameras && os.obj && os.obj->SuperClassID()==CAMERA_CLASS_ID)
+         {
+            addBone = true;
+         }
+         else if (isMeshGroup(node) && local) // only create node if local
+         {
+            addBone = true;
+         } 
+      }
+      if (addBone)
+      {
+         list.push_back( getNode(child->GetName()) );
+      }
       getChildNodes(child, list);
    }
 }
-
 
 // Special case of a single branch being exported
 

@@ -47,6 +47,25 @@ void* operator new(size_t size, NoteKey* stub )
 
 void operator delete(void* memblock, NoteKey* stub )
 { return MAX_delete(memblock); }
+#else
+void* operator new(size_t size, NoteKey* stub )
+{ 
+   void * (__cdecl *pfmalloc)(__in size_t _Size) = 0;
+   if (HMODULE hMod = GetModuleHandle("msvcrt.dll")) 
+      *(FARPROC*)pfmalloc = GetProcAddress(hMod, "malloc");
+   if (pfmalloc == 0) pfmalloc = malloc;
+   return pfmalloc(size); 
+}
+
+void operator delete(void* memblock, NoteKey* stub )
+{ 
+   void (__cdecl *pffree)(void *memblock) = 0;
+   if (HMODULE hMod = GetModuleHandle("msvcrt.dll")) 
+      *(FARPROC*)pffree = GetProcAddress(hMod, "free");
+   if (pffree == 0) pffree = free;
+   return pffree(memblock); 
+}
+
 #endif
 
 struct AnimationImport
@@ -309,8 +328,9 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
       }
       gi->SetAnimRange(range);
 
-      if (addNoteTracks && (wildmatch("start*", textKeys.front().data)) ) {
+      if (addNoteTracks /*&& (wildmatch("start*", textKeys.front().data))*/ ) {
          if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
+//#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
 #if 1
             DefNoteTrack* nt = (DefNoteTrack*)NewDefaultNoteTrack();
             n->AddNoteTrack(nt);
@@ -350,7 +370,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                }
             }
 
-#else
+#else // Version 5
             TSTR script;
             script += 
                "fn getActorManager obj = (\n"
@@ -378,8 +398,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                   stringlist args = TokenizeCommandLine((*itr).data.c_str(), true);
                   if (args.empty()) continue;
                   bool hasName = false;
-                  bool hasLoop = false;
-                  CycleType ct = cntr->GetCycleType();
+                  bool hasLoop = loop;
                   for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
                      if (strmatch("-name", *itr)) {
                         if (++itr == args.end()) break;                       
@@ -389,13 +408,11 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                      }
                   }
                   if (!hasName) {
-                     string name = cntr->GetName();
-                     if (name.empty())
-                        name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
+                     string name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
                      args.push_back("-name");
                      args.push_back(name);
                   }
-                  if (!hasLoop && ct == CYCLE_LOOP) {
+                  if (!hasLoop) {
                      args.push_back("-loop");
                   }
 
@@ -408,7 +425,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                //NoteKey *key = new NoteKey(TimeToFrame(time + (*itr).time), (*itr).data.c_str(), 0);
                //nt->keys.Append(1, &key);
             }
-            ExecuteMAXScriptScript(script, TRUE, NULL);
+            //ExecuteMAXScriptScript(script, TRUE, NULL);
 #endif
          }
       }

@@ -30,7 +30,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
 bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
 {
-   td.source = CreateNiObject<NiSourceTexture>();
+   td.source = new NiSourceTexture();
 
    // Filtering
    switch (bmTex->GetFilterType())
@@ -378,7 +378,6 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
       if (alphaMode != 0 || AlphaTestEnable) {
          // always add alpha ???
          NiAlphaPropertyRef alphaProp = CreateNiObject<NiAlphaProperty>();
-         parent->AddProperty(alphaProp);
          alphaProp->SetAlphaBlend(true);
          if (alphaMode == 0) { // automatic
             alphaProp->SetSourceBlendMode(NiAlphaProperty::BlendMode(srcBlend));
@@ -404,6 +403,7 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
          alphaProp->SetAlphaSort(!NoSorter);
          alphaProp->SetAlphaTestThreshold(TestRef);
          alphaProp->SetAlphaTest(AlphaTestEnable);
+         parent->AddProperty(alphaProp);
       }
 
       int ntex = mtl->NumSubTexmaps();
@@ -411,15 +411,18 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
       {
          ntex = min(ntex, 7);
          TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
-         NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();       
-         texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
-         texProp->SetTextureCount(7);
+         NiTexturingPropertyRef texProp;
          for (int i = 0; i < ntex; ++i) {
-
             BitmapTex *bmTex = getTexture(mtl, i);
             if (!bmTex)
                continue;
 
+            if (texProp == NULL)
+            {
+               texProp = new NiTexturingProperty();       
+               texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
+               texProp->SetTextureCount(7);
+            }
             TexDesc td;
             if (makeTextureDesc(bmTex, td)) {
                TexType textype = texmap[i];
@@ -437,7 +440,10 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
             }
          }
 
-         parent->AddProperty(texProp);
+         if (texProp != NULL)
+         {
+            parent->AddProperty(texProp);
+         }
       }
       return true;
    }

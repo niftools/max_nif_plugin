@@ -16,6 +16,8 @@ extern ClassDesc2* GetNifExportDesc();
 extern ClassDesc2* GetNifPropsDesc();
 extern ClassDesc2* GetNifFurnitureDesc();
 extern ClassDesc2* GetKfExportDesc();
+extern ClassDesc2* GetbhkSphereDesc();
+extern ClassDesc2* GetbhkCapsuleDesc();
 
 enum ClassDescType
 {
@@ -34,7 +36,7 @@ static int controlsInit = FALSE;
 static int libVersion = VERSION_3DSMAX;
 static int foundOlderReleaseConflict = -1;
 static int nClasses = 0;
-static ClassDesc2* classDescriptions[CD_Count];
+static ClassDesc2* classDescriptions[20];
 static bool classDescEnabled[CD_Count];
 
 
@@ -91,6 +93,10 @@ void InitializeLibSettings()
    if ( GetIniValue<bool>("NifProps", "Enable", true, iniName) ) {
       classDescEnabled[CD_Props] = true;
       classDescriptions[nClasses++] = GetNifPropsDesc();
+#ifdef USE_UNSUPPORTED_CODE
+      classDescriptions[nClasses++] = GetbhkSphereDesc();
+      classDescriptions[nClasses++] = GetbhkCapsuleDesc();
+#endif
    }
    if ( GetIniValue<bool>("NifFurniture", "Enable", true, iniName) ) {
       classDescEnabled[CD_Furniture] = true;
