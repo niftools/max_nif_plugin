@@ -7,6 +7,7 @@
 #include <functional>
 #include <string>
 #include <sstream>
+#include <set>
 
 #include "Max.h"
 #include "resource.h"

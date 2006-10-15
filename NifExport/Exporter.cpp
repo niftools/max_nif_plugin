@@ -78,27 +78,36 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
    {
       CalcBoundingBox(node, mBoundingBox);
 
-      if (mSkeletonOnly && mIsBethesda)
+      if (mIsBethesda)
       {
-         BSBoundRef bsb = CreateNiObject<BSBound>();
-         bsb->SetName("BBX");    
-         bsb->SetCenter( TOVECTOR3(mBoundingBox.Center()) );
-         bsb->SetDimensions( TOVECTOR3(mBoundingBox.Width() / 2.0f) );
-         root->AddExtraData(DynamicCast<NiExtraData>(bsb));
+         if (mSkeletonOnly)
+         {
+            BSBoundRef bsb = CreateNiObject<BSBound>();
+            bsb->SetName("BBX");    
+            bsb->SetCenter( TOVECTOR3(mBoundingBox.Center()) );
+            bsb->SetDimensions( TOVECTOR3(mBoundingBox.Width() / 2.0f) );
+            root->AddExtraData(DynamicCast<NiExtraData>(bsb));
 
-         BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-         bsx->SetName("BSX");
-         bsx->SetFlags( 0x00000007 );
-         root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+            bsx->SetName("BSX");
+            bsx->SetFlags( 0x00000007 );
+            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+         }
+         else if (mExportType != NIF_WO_ANIM)
+         {
+            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+            bsx->SetName("BSX");
+            bsx->SetFlags( 0x00000003 );
+            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+         }
+         else if (mExportCollision)
+         {
+            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+            bsx->SetName("BSX");
+            bsx->SetFlags( 0x00000002 );
+            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+         }
       }
-      else if (mExportCollision && mIsBethesda)
-      {
-         BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-         bsx->SetName("BSX");
-         bsx->SetFlags( 0x00000002 );
-         root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-      }
-
       exportUPB(root, node);
    }
 
@@ -205,6 +214,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       removeUnreferencedBones(mNiRoot);
    if (mSortNodesToEnd)
       sortNodes(mNiRoot);
+   ApplyAllSkinOffsets(StaticCast<NiAVObject>(mNiRoot));
    root = mNiRoot;
 	return Ok;
 }
@@ -230,9 +240,6 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
    SClass_ID scid = node->SuperClassID();
    Class_ID ncid = node->ClassID();
    TSTR nodeClass; node->GetClassName(nodeClass);
-
-   // For some unusual reason, bones named Helper are converted to Meshes and 
-   //   lose their Bone properties except a new node named Bone seem to show up
    if (node->IsBoneShowing())
       newParent = exportBone(nodeParent, node);
    else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)

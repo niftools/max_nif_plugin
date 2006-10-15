@@ -24,6 +24,9 @@ HISTORY:
 #  include <cs/BipedApi.h>
 #  include <cs/OurExp.h> 
 #endif
+#include "maxscrpt\Strings.h"
+#include "maxscrpt\Parser.h"
+
 using namespace std;
 using namespace Niflib;
 
@@ -1008,3 +1011,63 @@ void FixNormals(vector<Triangle>& tris, vector<Vector3>& verts, vector<Vector3>&
       }
    }
 }
+
+
+static Value* LocalExecuteScript(CharStream* source, bool *res) {
+
+   *res = true;
+
+   init_thread_locals();
+   push_alloc_frame();
+   three_typed_value_locals(Parser* parser, Value* code, Value* result);
+   CharStream* out = thread_local(current_stdout);
+   vl.parser = new Parser (out);
+
+   try	{
+
+      source->flush_whitespace();
+      while (!source->at_eos()) {
+         vl.code		= vl.parser->compile(source);
+         vl.result	= vl.code->eval()->get_heap_ptr();
+         source->flush_whitespace();
+      }
+      source->close();
+
+   } catch (...) {
+      *res = false;
+   }
+
+   if (vl.result == NULL)
+      vl.result = &ok;
+
+   pop_alloc_frame();
+   return_value(vl.result);
+}
+
+// CallMaxscript
+// Send the string to maxscript 
+//
+void CallMaxscript(const TCHAR *s)
+{
+   static bool script_initialized = false;
+   if (!script_initialized) {
+      init_MAXScript();
+      script_initialized = TRUE;
+   }
+   init_thread_locals();
+
+   push_alloc_frame();
+   two_typed_value_locals(StringStream* ss, Value* result);
+
+   vl.ss = new StringStream ( const_cast<TCHAR*>(s) );
+   bool res = false;
+   try	{
+      vl.result = LocalExecuteScript(vl.ss,&res);
+   } catch (...) {
+      res = false;
+   }
+   thread_local(current_result) = vl.result;
+   thread_local(current_locals_frame) = vl.link;
+   pop_alloc_frame();
+}
+

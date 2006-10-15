@@ -58,6 +58,9 @@ struct AnimationExport
    Control *GetTMController(INode* node);
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
+   Interval GetTimeRange(INode *n);
+   void GetTimeRange(Control *n, Interval& range);
+
 
    Exporter &ne;
    Interval range;
@@ -99,16 +102,21 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
                      if (wildmatch("start*", key->note)) {
                         stringlist args = TokenizeCommandLine(key->note, true);
                         if (args.empty()) continue;
-
-                        range.SetStart( key->time );
                         for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
                            if (strmatch("-name", *itr)) {
                               if (++itr == args.end()) break;
                            }
                         }
                      } else if ( wildmatch("end*", key->note) ) {
-                        range.SetEnd( key->time );
                         stop = true;
+                     }
+                     if (range.Empty()) {
+                        range.SetInstant(key->time);
+                     } else {
+                        if (key->time < range.Start())
+                           range.SetStart(key->time);
+                        if (key->time > range.End())
+                           range.SetEnd(key->time);
                      }
                      StringKey strkey;
                      strkey.time = FrameToTime( Interval(range.Start(), key->time).Duration()-1 );
@@ -548,6 +556,84 @@ Control *AnimationExport::GetTMController(INode *n)
    return c;
 }
 
+void AnimationExport::GetTimeRange(Control *c, Interval& range)
+{
+   if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+      int n = ikeys->GetNumKeys();
+      for (int i=0; i<n; ++i){
+         AnyKey buf; IKey *key = (IKey*)buf;
+         ikeys->GetKey(i, key);
+         if (range.Empty()) {
+            range.SetInstant(key->time);
+         } else {
+            if (key->time < range.Start())
+               range.SetStart(key->time);
+            if (key->time > range.End())
+               range.SetEnd(key->time);
+         }
+      }
+   }
+}
+
+Interval AnimationExport::GetTimeRange(INode *node)
+{
+   Interval range;
+   range.SetEmpty();
+   int nTracks = node->NumNoteTracks();
+
+   // Populate Text keys and Sequence information from note tracks
+   for (int i=0; i<nTracks; ++i) {
+      if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+         if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+            DefNoteTrack *defNT = (DefNoteTrack *)nt;
+            if ( defNT->NumKeys() > 0 ) {
+               for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
+                  NoteKey* key = defNT->keys[j];
+                  if (range.Empty()) {
+                     range.SetInstant(key->time);
+                  } else {
+                     if (key->time < range.Start())
+                        range.SetStart(key->time);
+                     if (key->time > range.End())
+                        range.SetEnd(key->time);
+                  }
+               }
+            }
+         }
+      }
+   }
+   if (Control* c = node->GetTMController())
+   {
+      GetTimeRange(c, range);
+      
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+      if (Control *sc = c->GetWController()) { 
+         GetTimeRange(sc, range);
+         if (sc != c) GetTimeRange(sc, range);
+      }
+#endif
+      if (Control *sc = c->GetXController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetYController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetZController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetRotationController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetPositionController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetScaleController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+   }
+   return range;
+}
+
 NiTimeControllerRef Exporter::CreateController(INode *node, Interval range)
 {
    AnimationExport ae(*this);
@@ -570,6 +656,12 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 {
    bool skip = false;
    NiTimeControllerRef timeControl;
+   if (range.Empty())
+   {
+      range = GetTimeRange(node);
+      if (range.Empty())
+         return timeControl;
+   }
 
    ne.ProgressUpdate(Exporter::Animation, FormatText("'%s' Animation", node->GetName()));
 
@@ -816,6 +908,14 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                   vector<FloatKey> keys;
                   data->SetScaleType(QUADRATIC_KEY);
                   nkeys += GetKeys<FloatKey, IBezFloatKey>(c, keys, range);
+
+                  // I think max has a bug in the Bezier Scale control w.r.t. the keycontroller.
+                  float timeOffset = -FrameToTime(range.Start());
+                  for (int i=0, n=keys.size(); i<n; ++i) {
+                     FloatKey k = InterpKey<FloatKey>(c, TimeToFrame(keys[i].time-timeOffset), timeOffset);
+                     keys[i].data = k.data;
+                  }
+
                   data->SetScaleKeys(keys);
                } else if (c->ClassID() == Class_ID(TCBINTERP_SCALE_CLASS_ID,0)) {
                   vector<FloatKey> keys;

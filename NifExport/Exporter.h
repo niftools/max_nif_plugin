@@ -241,6 +241,7 @@ public:
    NiNodeRef createAccumNode(NiNodeRef parent, INode *node);
    int countNodes(INode *node);
    bool isSkeletonRoot(INode *node);
+   void ApplyAllSkinOffsets( NiAVObjectRef & root );
 
    /* Progress Bar stuff */
    enum ProgressSection

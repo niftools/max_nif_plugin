@@ -371,6 +371,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
             }
 
 #else // Version 5
+            extern void CallMaxscript(const TCHAR *s);
             TSTR script;
             script += 
                "fn getActorManager obj = (\n"
@@ -421,10 +422,8 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                } else {
                   script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, (*itr).data.c_str());
                }
-
-               //NoteKey *key = new NoteKey(TimeToFrame(time + (*itr).time), (*itr).data.c_str(), 0);
-               //nt->keys.Append(1, &key);
             }
+            CallMaxscript(script);
             //ExecuteMAXScriptScript(script, TRUE, NULL);
 #endif
          }

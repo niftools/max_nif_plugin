@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.8
+                        MaxPlugins 0.2.9
                         ================
 
  
@@ -32,6 +32,18 @@
 
     Change log
     ----------
+      0.2.9
+      -----   
+    o Exporter
+      - Add BSX flags for NIF exports when animation is involved for Oblivion.
+      - Worked around what appears to be a bug in the Bezier Scale controller.
+      - Change time intervals when exporting MW style animation.
+      - Fixed bug with missing reference in Footer in MW exported .KF files.
+      - Call routine to apply skin offsets to Skin data (required for MW?)
+    
+    o Importer
+      - Invoke Max Script in Max 5 so that we can import Note Tracks
+    
       0.2.8
       -----   
     o Exporter

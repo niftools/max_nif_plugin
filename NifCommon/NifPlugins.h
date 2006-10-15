@@ -11,6 +11,7 @@ using Niflib::Vector3;
 #define NP_HVK_MASS							_T("Mass")
 #define NP_HVK_FRICTION						_T("Friction")
 #define NP_HVK_RESTITUTION					_T("Ellasticity")
+#define NP_HVK_PROXY_GEOM					_T("Proxy_Geometry")
 
 #define NP_HVK_MASS_OLD						_T("np_hvk_mass")
 #define NP_HVK_FRICTION_OLD				_T("np_hvk_frict")
@@ -19,9 +20,10 @@ using Niflib::Vector3;
 
 /* default values */
 #define NP_DEFAULT_HVK_EMPTY					3.402823466e+38F
-#define NP_DEFAULT_HVK_MASS					0
+#define NP_DEFAULT_HVK_MASS					0.0f
 #define NP_DEFAULT_HVK_FRICTION				0.3f
 #define NP_DEFAULT_HVK_RESTITUTION			0.3f
+#define NP_DEFAULT_PROXY_GEOM			      _T("")
 
 
 // Custom Properties
@@ -81,5 +83,8 @@ void	npSetProp(INode *node, const TSTR &prop, float value);
 
 bool	npGetProp(INode *node, const TSTR &prop, Vector3 &value, const Vector3 def=Vector3(0,0,0));
 void	npSetProp(INode *node, const TSTR &prop, const Vector3 &value);
+
+bool	npGetProp(INode *node, const TSTR &prop, TSTR &value, TSTR def=TSTR());
+void	npSetProp(INode *node, const TSTR &prop, const TSTR& value);
 
 #endif //  __NIFPLUGINS_H__

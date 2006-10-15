@@ -131,7 +131,7 @@ NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 
    // Normal Embedded Animation 
    if (mExportType == NIF_WO_KF)
-      CreateController(maxNode, mI->GetAnimRange());
+      CreateController(maxNode, Interval());
 
 	parent->AddChild(DynamicCast<NiAVObject>(node));
 	return node;
@@ -508,3 +508,20 @@ bool Exporter::isSkeletonRoot(INode *node)
 
    return false;
 }
+
+void Exporter::ApplyAllSkinOffsets( NiAVObjectRef & root ) {
+   NiGeometryRef niGeom = DynamicCast<NiGeometry>(root);
+   if ( niGeom != NULL && niGeom->IsSkin() == true ) {
+      niGeom->ApplySkinOffset();
+   }
+
+   NiNodeRef niNode = DynamicCast<NiNode>(root);
+   if ( niNode != NULL ) {
+      //Call this function on all children
+      vector<NiAVObjectRef> children = niNode->GetChildren();
+
+      for ( unsigned i = 0; i < children.size(); ++i ) {
+         ApplyAllSkinOffsets( children[i] );
+      }
+   }
+} 

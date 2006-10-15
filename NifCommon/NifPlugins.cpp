@@ -109,3 +109,29 @@ void npSetProp(INode *node, const TSTR &prop, const Vector3 &value)
 }
 
 
+bool	npGetProp(INode *node, const TSTR &prop, TSTR &value, TSTR def)
+{
+   bool ret;
+   if (node)
+   {
+      if (!node->GetUserPropString(prop, value))
+      {
+         value = def;
+         ret = false;
+      } 
+      else
+         ret = true;
+   } 
+   else
+   {
+      value = def;
+      ret = false;
+   }
+   return ret;
+}
+
+void	npSetProp(INode *node, const TSTR &prop, const TSTR& value)
+{
+   if (node)
+      node->SetUserPropString(prop, value);
+}
