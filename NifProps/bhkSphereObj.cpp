@@ -49,7 +49,7 @@ public:
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
    void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
-   RefTargetHandle Clone(RemapDir& remap = NoRemap());
+   RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_SPHERE); }
 
    // From GeomObject
@@ -254,9 +254,9 @@ BOOL SphereParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,W
 bhkSphereObject::bhkSphereObject(BOOL loading)
 {
    SetAFlag(A_PLUGIN1);
-   MakeRefByID(FOREVER, 0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
+   ReplaceReference(0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
    assert(pblock);
-   MakeRefByID(FOREVER, 1, GetRBBlock());
+   ReplaceReference(1, GetRBBlock());
 
    pblock->SetValue(PB_RADIUS,0,crtRadius);
    pblock->SetValue(PB_SMOOTH,0,dlgSmooth);

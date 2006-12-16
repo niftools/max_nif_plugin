@@ -112,13 +112,14 @@ public:
    void SetTrangles(Mesh& mesh, vector<Niflib::Triangle>& v);
    bool ImportMesh(Niflib::NiTriShapeRef triShape);
    bool ImportMesh(Niflib::NiTriStripsRef triStrips);
-   bool ImportMaterialAndTextures(ImpNode *node, Niflib::NiAVObjectRef avObject);
+   bool ImportMultipleGeometry(Niflib::NiNodeRef parent, vector<Niflib::NiTriBasedGeomRef>& glist);
+   StdMat2 *ImportMaterialAndTextures(ImpNode *node, Niflib::NiAVObjectRef avObject);
+   bool ImportMaterialAndTextures(ImpNode *node, vector<Niflib::NiTriBasedGeomRef>& glist);
    bool ImportCiv4Shader(ImpNode *node, Niflib::NiAVObjectRef avObject, StdMat2 *m);
    bool ImportTransform(ImpNode *node, Niflib::NiAVObjectRef avObject);
    bool ImportMesh(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
-   bool ImportVertexColor(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
-
-   bool ImportSkin(ImpNode *node, Niflib::NiTriBasedGeomRef triGeom);
+   bool ImportVertexColor(INode *tnode, TriObject *o, vector<Niflib::Triangle>& tris, vector<Niflib::Color4> cv, int cv_offset=0);
+   bool ImportSkin(ImpNode *node, Niflib::NiTriBasedGeomRef triGeom, int v_start=0);
    Texmap* CreateTexture(Niflib::TexDesc& desc);
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);

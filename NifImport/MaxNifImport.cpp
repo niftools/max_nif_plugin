@@ -213,6 +213,13 @@ int MaxNifImport::DoImport(const TCHAR *filename,ImpInterface *i, Interface *gi,
       MessageBox(NULL, e.what(), "Import Error", MB_OK);
       return TRUE;
    }
+   catch (RuntimeError &e)
+   {
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
+      MessageBox(NULL, e.desc1, "Import Error", MB_OK);
+#endif
+      return TRUE;
+   }
    catch (...)
    {
       MessageBox(NULL, "Unknown error.", "Import Error", MB_OK);

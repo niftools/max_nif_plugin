@@ -54,7 +54,7 @@ public:
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
    void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
-   RefTargetHandle Clone(RemapDir& remap = NoRemap());
+   RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_Capsule); }
 
    // Animatable methods		
@@ -285,9 +285,9 @@ BOOL CapsuleParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,
 bhkCapsuleObject::bhkCapsuleObject(BOOL loading)
 {
    SetAFlag(A_PLUGIN1);
-   MakeRefByID(FOREVER, 0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
+   ReplaceReference(0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
    assert(pblock);
-   MakeRefByID(FOREVER, 1, GetRBBlock());
+   ReplaceReference(1, GetRBBlock());
 
    pblock->SetValue(PB_RADIUS1,0,crtRadius1);
    pblock->SetValue(PB_RADIUS2,0,crtRadius2);

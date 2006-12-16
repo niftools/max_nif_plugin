@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.9
+                        MaxPlugins 0.2.10
                         ================
 
  
@@ -32,6 +32,13 @@
 
     Change log
     ----------
+      0.2.10
+      ----- 
+    o All
+      - Compile with Max9
+    o Exporter
+      - Fix naming bug when spliting multi-material meshes
+      
       0.2.9
       -----   
     o Exporter

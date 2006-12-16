@@ -345,7 +345,7 @@ void Exporter::CalcBoundingBox(INode *node, Box3& box, int all)
 
    Matrix3 tm = node->GetObjTMAfterWSM(0);
    if (node->IsBoneShowing()) {
-      box.IncludePoints(&tm.GetTrans(), 1, NULL);
+      box.IncludePoints(const_cast<Point3*>(&tm.GetTrans()), 1, NULL);
    } else {
       if (Object *o = node->GetObjectRef()) {
          if (o->SuperClassID()==GEOMOBJECT_CLASS_ID) {
@@ -354,7 +354,7 @@ void Exporter::CalcBoundingBox(INode *node, Box3& box, int all)
                || o->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
                )
             {
-               box.IncludePoints(&tm.GetTrans(), 1, NULL);
+               box.IncludePoints(const_cast<Point3*>(&tm.GetTrans()), 1, NULL);
             }
             else
             {
@@ -366,7 +366,7 @@ void Exporter::CalcBoundingBox(INode *node, Box3& box, int all)
          }
          else if (mExportCameras && o->SuperClassID()==CAMERA_CLASS_ID)
          {
-            box.IncludePoints(&tm.GetTrans(), 1, NULL);
+            box.IncludePoints(const_cast<Point3*>(&tm.GetTrans()), 1, NULL);
          }
       }
    }

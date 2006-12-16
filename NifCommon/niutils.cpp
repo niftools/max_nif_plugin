@@ -20,6 +20,8 @@ HISTORY:
 #include <modstack.h>
 #include <iparamb2.h>
 #include <iskin.h>
+#include "../NifProps/bhkRigidBodyInterface.h"
+
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #  include <cs/OurExp.h> 
@@ -1071,3 +1073,25 @@ void CallMaxscript(const TCHAR *s)
    pop_alloc_frame();
 }
 
+Modifier *GetbhkCollisionModifier(INode *node)
+{
+   const Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID(0x398fd801, 0x303e44e5);
+   Object* pObj = node->GetObjectRef();
+   if (!pObj) return NULL;
+   while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+   {
+      IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
+      int Idx = 0;
+      while (Idx < pDerObj->NumModifiers())
+      {
+         // Get the modifier. 
+         Modifier* mod = pDerObj->GetModifier(Idx);
+         if (mod->ClassID() == BHKRIGIDBODYMODIFIER_CLASS_ID) {
+            return mod;
+         }
+         Idx++;
+      }
+      pObj = pDerObj->GetObjRef();
+   }
+   return NULL;
+}

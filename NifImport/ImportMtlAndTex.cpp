@@ -80,19 +80,17 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
    return NULL;
 }
 
-bool NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
+StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
    // Texture
-   vector<NiPropertyRef> props = avObject->GetProperties();
-   NiTexturingPropertyRef texRef = SelectFirstObjectOfType<NiTexturingProperty>(props);
-   NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props);
-   NiWireframePropertyRef wireRef = SelectFirstObjectOfType<NiWireframeProperty>(props);
-   NiAlphaPropertyRef alphaRef = SelectFirstObjectOfType<NiAlphaProperty>(props);
-   NiStencilPropertyRef stencilRef = SelectFirstObjectOfType<NiStencilProperty>(props);
-   NiShadePropertyRef shadeRef = SelectFirstObjectOfType<NiShadeProperty>(props);
-
-   bool hasTexture = (texRef && matRef);
+   NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TypeConst());
    if (matRef != NULL){
+      NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TypeConst());
+      NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TypeConst());
+      NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TypeConst());
+      NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TypeConst());
+      NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TypeConst());
+
       StdMat2 *m = NewDefaultStdMat();
       m->SetName(matRef->GetName().c_str());
       if (showTextures)
@@ -100,9 +98,7 @@ bool NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObjec
 
       // try the civ4 shader first then default back to normal shaders
       if (ImportCiv4Shader(node, avObject, m)) {
-         gi->GetMaterialLibrary().Add(m);
-         node->GetINode()->SetMtl(m);
-         return true;
+         return m;
 		}
       m->SetAmbient(TOCOLOR(matRef->GetAmbientColor()),0);
       m->SetDiffuse(TOCOLOR(matRef->GetDiffuseColor()),0);
@@ -166,10 +162,33 @@ bool NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObjec
                m->SetSubTexmap(ID_SI, tex);
          }
       }
-      gi->GetMaterialLibrary().Add(m);
-      node->GetINode()->SetMtl(m);
+      return m;
    }
-   return hasTexture;
+   return NULL;
+}
+
+
+bool NifImporter::ImportMaterialAndTextures(ImpNode *node, vector<NiTriBasedGeomRef>& glist)
+{
+   MultiMtl *mtl = NULL;
+   int isubmtl = 0;
+   for (vector<NiTriBasedGeomRef>::iterator itr = glist.begin(), end = glist.end(); itr != end; ++itr, ++isubmtl) {
+      NiTriBasedGeomDataRef triGeomData = StaticCast<NiTriBasedGeomData>((*itr)->GetData());
+      if ( StdMat2* submtl = ImportMaterialAndTextures(node, (*itr)) )
+      {
+         if (mtl == NULL) 
+            mtl = NewDefaultMultiMtl();
+         // SubMatIDs do not have to be contigious so we just use the offset
+         mtl->SetSubMtlAndName(isubmtl, submtl, submtl->GetName());
+      }
+   }
+   if (mtl != NULL)
+   {
+      gi->GetMaterialLibrary().Add(mtl);
+      node->GetINode()->SetMtl(mtl);
+      return true;
+   }
+   return false;
 }
 
 bool NifImporter::ImportCiv4Shader(ImpNode *node, NiAVObjectRef avObject, StdMat2 *mtl)

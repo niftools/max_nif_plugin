@@ -46,6 +46,11 @@ public:
       
       char buffer[MAX_PATH] = {0}, *p = NULL;
       GetFullPathName(Name, _countof(buffer), buffer, &p);
+
+      if (-1 == _access(buffer, 0)) {
+         throw RuntimeError(FormatText("File does not exist: %s", buffer));
+      }
+
       if (p) *p = 0;
       path = buffer;
       iniFileValid = false;

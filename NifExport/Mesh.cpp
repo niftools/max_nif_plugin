@@ -132,7 +132,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		FaceGroups::iterator grp;
 		for (grp=grps.begin(); grp!=grps.end(); ++grp, ++i)
 		{
-         string name = FormatString(basename, basename.data(), i);
+         string name = FormatString(format, basename.data(), i);
          NiTriBasedGeomRef shape = makeMesh(ninode, getMaterial(node, grp->first), grp->second, exportStrips);
          if (shape == NULL)
 			{
