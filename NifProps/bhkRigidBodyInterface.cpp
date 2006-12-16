@@ -30,7 +30,7 @@ HISTORY:
 FPInterfaceDesc thebhkRigidBodyInterface(
    BHKRIGIDBODYINTERFACE_DESC, _T("bhkRigidBody"), -1/*IDS_OPS*/, 0, FP_CORE,
    properties,
-      bhkRigidBodyInterface::get_material, bhkRigidBodyInterface::set_material, _T("Material"), 0, TYPE_ENUM, bhkRigidBodyInterface::enum_material,
+      //bhkRigidBodyInterface::get_material, bhkRigidBodyInterface::set_material, _T("Material"), 0, TYPE_ENUM, bhkRigidBodyInterface::enum_material,
       bhkRigidBodyInterface::get_layer, bhkRigidBodyInterface::set_layer, _T("Layer"), 0, TYPE_ENUM, bhkRigidBodyInterface::enum_layer,
       bhkRigidBodyInterface::get_mass, bhkRigidBodyInterface::set_mass, _T("Mass"), 0, TYPE_FLOAT,
       bhkRigidBodyInterface::get_friction, bhkRigidBodyInterface::set_friction, _T("Friction"), 0, TYPE_FLOAT,
@@ -238,7 +238,7 @@ static ParamUIDesc descRigidBodyParam[] = {
 const int descRigidBodyParamLength = _countof(descRigidBodyParam);
 
 static ParamBlockDescID gRigidBlockParamDesc[] = {
-   { TYPE_INT, NULL, FALSE, PB_RB_MATERIAL },
+   //{ TYPE_INT, NULL, FALSE, PB_RB_MATERIAL },
    { TYPE_INT, NULL, FALSE, PB_RB_LAYER },
    { TYPE_FLOAT, NULL, FALSE, PB_RB_MASS },
    { TYPE_FLOAT, NULL, FALSE, PB_RB_FRICTION },
@@ -258,7 +258,7 @@ public:
    bhkRigidBodyInterface *so;
    HWND thishWnd;
    NpComboBox		mCbLayer;
-   NpComboBox		mCbMaterial;
+   //NpComboBox		mCbMaterial;
    NpComboBox		mCbMotionSystem;
    NpComboBox		mCbQualityType;
 
@@ -283,7 +283,7 @@ void RigidBodyParamDlgProc::Update(TimeValue t)
       return;
 
    
-   mCbMaterial.select(max(0, min(so->GetMaterial(t), mCbMaterial.count()-1)));
+   //mCbMaterial.select(max(0, min(so->GetMaterial(t), mCbMaterial.count()-1)));
    mCbLayer.select(max(0, min(so->GetLayer(t), mCbLayer.count()-1)));
    mCbMotionSystem.select(max(0, min(so->GetMotionSystem(t), mCbMotionSystem.count()-1)));
    mCbQualityType.select(max(0, min(so->GetQualityType(t), mCbQualityType.count()-1)));
@@ -297,9 +297,9 @@ BOOL RigidBodyParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT ms
    {
    case WM_INITDIALOG: 
       {
-         mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
-         for (const char **str = NpHvkMaterialNames; *str; ++str)
-            mCbMaterial.add(*str);
+         //mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
+         //for (const char **str = NpHvkMaterialNames; *str; ++str)
+         //   mCbMaterial.add(*str);
 
          mCbLayer.init(GetDlgItem(hWnd, IDC_CB_LAYER));
          for (const char **str = NpHvkLayerNames; *str; ++str)
@@ -319,11 +319,11 @@ BOOL RigidBodyParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT ms
    case WM_COMMAND:
       switch (LOWORD(wParam))
       {
-      case IDC_CB_MATERIAL:
-         if (HIWORD(wParam)==CBN_SELCHANGE) {
-            so->SetMaterial( mCbMaterial.selection(), t );
-         }
-         break;
+      //case IDC_CB_MATERIAL:
+      //   if (HIWORD(wParam)==CBN_SELCHANGE) {
+      //      so->SetMaterial( mCbMaterial.selection(), t );
+      //   }
+      //   break;
 
       case IDC_CB_LAYER:
          if (HIWORD(wParam)==CBN_SELCHANGE) {
@@ -356,7 +356,7 @@ IObjParam *bhkRigidBodyIfcHelper::rbip = NULL;
 bhkRigidBodyIfcHelper::bhkRigidBodyIfcHelper()
 {
    rbpblock = CreateParameterBlock(gRigidBlockParamDesc, descRigidBodyDescIDLength, 1);
-   rbpblock->SetValue(PB_RB_MATERIAL,0,NP_DEFAULT_HVK_MATERIAL);
+   //rbpblock->SetValue(PB_RB_MATERIAL,0,NP_DEFAULT_HVK_MATERIAL);
    rbpblock->SetValue(PB_RB_LAYER,0,NP_DEFAULT_HVK_LAYER);
    rbpblock->SetValue(PB_RB_MASS,0,NP_DEFAULT_HVK_MASS);
    rbpblock->SetValue(PB_RB_FRICTION,0,NP_DEFAULT_HVK_FRICTION);
@@ -395,7 +395,7 @@ void bhkRigidBodyIfcHelper::BeginEditRBParams(IObjParam *ip,ULONG flags,Animatab
          rbpblock,
          ip,
          hInstance,
-         MAKEINTRESOURCE(IDD_RigidBody),
+         MAKEINTRESOURCE(IDD_RIGIDBODY),
          GetString(IDS_RB_RIGIDBODY_PARAM),
          0);
    }
@@ -417,17 +417,17 @@ void bhkRigidBodyIfcHelper::EndEditRBParams( IObjParam *ip, ULONG flags,Animatab
 }
 
 
-void bhkRigidBodyIfcHelper::SetMaterial(int value, TimeValue time)
-{
-   rbpblock->SetValue(PB_RB_MATERIAL,time,value);
-}
-
-int bhkRigidBodyIfcHelper::GetMaterial(TimeValue time, Interval& valid) const
-{
-   int value = NP_DEFAULT_HVK_MATERIAL;
-   rbpblock->GetValue(PB_RB_MATERIAL,time,value,valid);
-   return value;
-}
+//void bhkRigidBodyIfcHelper::SetMaterial(int value, TimeValue time)
+//{
+//   rbpblock->SetValue(PB_RB_MATERIAL,time,value);
+//}
+//
+//int bhkRigidBodyIfcHelper::GetMaterial(TimeValue time, Interval& valid) const
+//{
+//   int value = NP_DEFAULT_HVK_MATERIAL;
+//   rbpblock->GetValue(PB_RB_MATERIAL,time,value,valid);
+//   return value;
+//}
 
 void bhkRigidBodyIfcHelper::SetLayer(int value, TimeValue time)
 {

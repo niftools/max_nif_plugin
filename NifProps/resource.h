@@ -2,7 +2,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by NifProps.rc
 //
-#define IDD_SPHEREPARAM2                101
 #define IDC_RADIUS                      1000
 #define IDC_SEGMENTS                    1001
 #define IDC_RADIUS1                     1002
@@ -12,6 +11,17 @@
 #define IDC_OBSMOOTH                    1006
 #define IDC_RADSPINNER1                 1007
 #define IDC_RADSPINNER2                 1008
+#define IDC_LENSPINNER                  1009
+#define IDC_HEIGHTEDIT                  1010
+#define IDC_WIDTHSPINNER                1011
+#define IDC_HEIGHTSPINNER               1012
+#define IDC_LIST1                       1023
+#define IDC_ADD                         1024
+#define IDC_REMOVE                      1025
+#define IDC_RDO_NO_COLL                 1117
+#define IDC_RDO_SPHERE                  1119
+#define IDC_RDO_CAPSULE                 1120
+#define IDC_RDO_PROXY_MESH              1121
 #define IDC_ED_POS1_X                   1700
 #define IDC_SP_POS1_X                   1701
 #define IDC_ED_POS1_Y                   1702
@@ -25,37 +35,88 @@
 #define IDC_ED_POS2_Z                   1710
 #define IDC_SP_POS2_Z                   1711
 #define IDC_LBL_POS1                    1712
-#define IDS_LIBDESCRIPTION              11001
+#define IDC_PICK_NODE                   1713
+#define IDC_SLIDER1                     1714
+#define IDC_RDO_AXIS_ALIGNED_BOX        1715
+#define IDC_LENGTHEDIT                  3009
+#define IDC_WIDTHEDIT                   3010
 #define IDD_PANEL                       11001
+#define IDS_LIBDESCRIPTION              11001
 #define IDC_LBL_BSXFLAGS                11001
-#define IDS_CATEGORY                    11002
 #define IDD_ANIM_PANEL                  11002
+#define IDS_CATEGORY                    11002
 #define IDC_ED_BSXFLAGS                 11002
+#define IDD_RIGIDBODY                   11003
 #define IDS_CLASS_NAME                  11003
 #define IDC_ED_STRINGSEXTRA             11003
-#define IDD_RigidBody                   11003
+#define IDD_CAPSULEPARAM                11004
 #define IDS_PARAMS                      11004
 #define IDC_LBL_STRINGSEXTRA            11004
-#define IDD_CAPSULEPARAM                11004
+#define IDD_RB_MOD_PANEL                11005
 #define IDS_SPIN                        11005
 #define IDC_GRP_OBJECT                  11005
+#define IDD_BOXPARAM                    11006
 #define IDS_ANIM_PARAMS                 11006
 #define IDC_CHK_ISCOLL                  11006
+#define IDD_BOXPARAM1                   11006
+#define IDD_SPHEREPARAM2                11007
 #define IDC_GRP_HAVOK                   11007
 #define IDC_HVK_BEGIN                   11007
-#define IDS_RB_Capsule                  11007
 #define IDS_RB_CAPSULE                  11007
-#define IDS_RB_Capsule                  11007
 #define IDC_LBL_MATERIAL                11008
 #define IDS_RB_CAPSULE_CLASS            11008
+#define IDD_RB_MOD_PANEL1               11008
 #define IDC_CB_MATERIAL                 11009
 #define IDS_RB_RIGIDBODY_PARAM          11009
+#define IDD_RB_MOD_PANEL2               11009
 #define IDC_LBL_LAYER                   11010
 #define IDS_RB_CAP_POS1                 11010
+#define IDD_RB_MOD_PANEL3               11010
 #define IDC_CB_LAYER                    11011
 #define IDS_RB_CAP_POS2                 11011
+#define IDD_RB_MOD_PANEL4               11011
 #define IDC_LBL_CENTER                  11012
+#define IDS_DS_MASS                     11012
 #define IDC_LBL_POS2                    11013
+#define IDS_DS_FRICTION                 11013
+#define IDS_DS_RESTITUTION              11014
+#define IDS_DS_LINEAR_DAMPING           11015
+#define IDS_DS_ANGULAR_DAMPING          11016
+#define IDS_DS_MAX_LINEAR_VELOCITY      11017
+#define IDS_DS_MAX_ANGULAR_VELOCITY     11018
+#define IDS_DS_PENETRATION_DEPTH        11019
+#define IDS_DS_MOTION_SYSTEM            11020
+#define IDS_DS_QUALITY_TYPE             11021
+#define IDS_RB_PARAMETERS               11022
+#define IDS_RB_RADIUS                   11023
+#define IDS_RB_SEGS                     11024
+#define IDS_RB_SMOOTH                   11025
+#define IDS_RB_PRIMITIVES               11026
+#define IDS_RB_SPHERE                   11027
+#define IDS_RB_RADIUS1                  11028
+#define IDS_RB_RADIUS2                  11029
+#define IDS_RB_SPHERE_CLASS             11030
+#define IDS_DS_PARAMCHG                 11031
+#define IDS_DS_LAYER                    11032
+#define IDS_DS_MATERIAL                 11033
+#define IDS_DS_NODE                     11034
+#define IDS_DS_PRIORITY                 11035
+#define IDS_DS_COLLISION                11036
+#define IDS_PICKNODE                    11037
+#define IDS_PICKNODE_PROMPT             11038
+#define IDS_RB_BOX                      11039
+#define IDS_RB_BOX_CLASS                11040
+#define IDS_RB_CLASS_NAME               11041
+#define IDS_DS_LENGTH                   11042
+#define IDS_DS_WIDTH                    11043
+#define IDS_DS_HEIGHT                   11044
+#define IDS_ADD_MESH                    11045
+#define IDS_MESHLIST                    11046
+#define IDS_BV_BOUNDING_TYPE            11047
+#define IDS_RB_MOD_PANEL1               11048
+#define IDS_RB_MOD_PANEL2               11049
+#define IDS_RB_MOD_PANEL3               11050
+#define IDS_RB_MOD_PANEL4               11051
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -96,24 +157,14 @@
 #define IDC_ED_ANIM_PRIORITY            11601
 #define IDC_SP_ANIM_PRIORITY            11602
 #define IDC_ANIM_END                    11602
-#define IDS_RB_PARAMETERS               30028
-#define IDS_RB_RADIUS                   30045
-#define IDS_RB_SEGS                     30046
-#define IDS_RB_SMOOTH                   30048
-#define IDS_RB_PRIMITIVES               30264
-#define IDS_RB_SPHERE                   30503
-#define IDS_RB_RADIUS1                  30516
-#define IDS_RB_RADIUS2                  30517
-#define IDS_RB_SPHERE_CLASS             31298
-#define IDS_DS_PARAMCHG                 31316
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        103
+#define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1713
+#define _APS_NEXT_CONTROL_VALUE         1716
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

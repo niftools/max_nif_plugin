@@ -22,20 +22,22 @@ HISTORY:
 #include "notify.h"
 #include "macroRec.h"
 #include "bhkRigidBodyInterface.h"
+#include "NifGui.h"
+#include "NifStrings.h"
+
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
 
-const Class_ID bhkSphereObject_CLASS_ID = Class_ID(0x8d532427, 0x8b4c64c7);
+const Class_ID bhkSphereObject_CLASS_ID = Class_ID(0x8d532427, BHKRIGIDBODYCLASS_DESC.PartB());
 
-class bhkSphereObject : public SimpleObject, public IParamArray, public bhkRigidBodyIfcHelper
+extern void BuildSphere(Mesh&mesh, float radius, int segs=32, int smooth=1, float startAng = 0.0f);
+
+class bhkSphereObject : public SimpleObject2
 {
 public:			
    // Class vars
-   static IParamMap *pmapParam;
-   static int dlgSegments;
-   static int dlgSmooth;
-   static float crtRadius;
+   static IParamMap2 *pmapParam;
    static IObjParam *ip;
 
    bhkSphereObject(BOOL loading);		
@@ -60,27 +62,17 @@ public:
    Class_ID ClassID() { return bhkSphereObject_CLASS_ID; } 
    SClass_ID SuperClassID() { return HELPER_CLASS_ID; }
 
-   // From ReferenceTarget
-   IOResult Load(ILoad *iload);
-   IOResult Save(ISave *isave);
-
-   // From ref
-   int NumRefs() {return 2;}
-   RefTargetHandle GetReference(int i);
-   void SetReference(int i, RefTargetHandle rtarg);
+   int	NumParamBlocks() { return 1; }					// return number of ParamBlocks in this instance
+   IParamBlock2* GetParamBlock(int i) { return pblock2; } // return i'th ParamBlock
+   IParamBlock2* GetParamBlockByID(BlockID id) { return (pblock2->ID() == id) ? pblock2 : NULL; } // return id'd ParamBlock
 
    // From SimpleObject
    void BuildMesh(TimeValue t);
    BOOL OKtoDisplay(TimeValue t);
    void InvalidateUI();
-   ParamDimension *GetParameterDim(int pbIndex);
-   TSTR GetParameterName(int pbIndex);		
 
-   void SetParams(float rad, int segs, BOOL smooth=TRUE);
    void UpdateUI();
-
-   BaseInterface* GetInterface(Interface_ID id);
-
+   int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
 };
 
 
@@ -94,121 +86,107 @@ public:
 #define MIN_SMOOTH		0
 #define MAX_SMOOTH		1
 
-#define DEF_SEGMENTS	32	// 16
-#define DEF_RADIUS		float(0.0)
-
-#define SMOOTH_ON	1
-#define SMOOTH_OFF	0
-
-#define MIN_SLICE	float(-1.0E30)
-#define MAX_SLICE	float( 1.0E30)
-
 
 //--- ClassDescriptor and class vars ---------------------------------
-
-static BOOL sInterfaceAdded = FALSE;
 
 // The class descriptor for sphere
 class bhkSphereClassDesc : public ClassDesc2 
 {
 public:
+   bhkSphereClassDesc();
    int 			   IsPublic() { return 1; }
    void *			Create(BOOL loading = FALSE)
    {
-      AddInterface (GetbhkRigidBodyInterfaceDesc());
       return new bhkSphereObject(loading);
    }
    const TCHAR *	ClassName() { return GetString(IDS_RB_SPHERE_CLASS); }
    SClass_ID		SuperClassID() { return HELPER_CLASS_ID; }
    Class_ID		   ClassID() { return bhkSphereObject_CLASS_ID; }
    const TCHAR* 	Category() { return "NifTools"; }
-   void			   ResetClassParams(BOOL fileReset);
+
+   const TCHAR*	InternalName() { return _T("bhkSphere"); }	// returns fixed parsable name (scripter-visible name)
+   HINSTANCE		HInstance() { return hInstance; }			// returns owning module handle
 };
 
-static bhkSphereClassDesc sphereDesc;
-extern ClassDesc2* GetbhkSphereDesc() { return &sphereDesc; }
+extern ClassDesc2* GetbhkSphereDesc();
+
+class SphereObjCreateCallBack : public CreateMouseCallBack {
+   IPoint2 sp0;
+   bhkSphereObject *ob;
+   Point3 p0;
+public:
+   int proc( ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat);
+   void SetObj(bhkSphereObject *obj) {ob = obj;}
+};
+static SphereObjCreateCallBack sphereCreateCB;
 
 // in prim.cpp  - The dll instance handle
 extern HINSTANCE hInstance;
 
-int bhkSphereObject::dlgSegments       = DEF_SEGMENTS;
-int bhkSphereObject::dlgSmooth         = SMOOTH_ON;
-IParamMap *bhkSphereObject::pmapParam  = NULL;
+IParamMap2 *bhkSphereObject::pmapParam  = NULL;
 IObjParam *bhkSphereObject::ip         = NULL;
-float bhkSphereObject::crtRadius       = 0.0f;
-
-void bhkSphereClassDesc::ResetClassParams(BOOL fileReset)
-{
-   bhkSphereObject::dlgSegments    = DEF_SEGMENTS;
-   bhkSphereObject::dlgSmooth      = SMOOTH_ON;
-   bhkSphereObject::crtRadius      = 0.0f;
-}
 
 
 //--- Parameter map/block descriptors -------------------------------
 
+enum { sphere_params, };
+
 // Parameter block indices
 enum SphereParamIndicies
 {
-   PB_RADIUS = 0,
-   PB_SEGS = 1,
-   PB_SMOOTH = 2,
-};
-
-
-//
-//
-// Parameters
-
-static ParamUIDesc descParam[] = {
-   // Radius
-   ParamUIDesc(
+   PB_MATERIAL,
    PB_RADIUS,
-   EDITTYPE_UNIVERSE,
-   IDC_RADIUS,IDC_RADSPINNER,
-   MIN_RADIUS,MAX_RADIUS,
-   SPIN_AUTOSCALE),	
-
-   // Segments
-   ParamUIDesc(
    PB_SEGS,
-   EDITTYPE_INT,
-   IDC_SEGMENTS,IDC_SEGSPINNER,
-   (float)MIN_SEGMENTS,(float)MAX_SEGMENTS,
-   0.1f),
-
-   // Smooth
-   ParamUIDesc(PB_SMOOTH,TYPE_SINGLECHEKBOX,IDC_OBSMOOTH),
+   PB_SMOOTH,
 };
-const int PARAMDESC_LENGTH = _countof(descParam);
 
-static ParamBlockDescID descVer0[] = {
-   { TYPE_FLOAT, NULL, TRUE, 0 },		
-   { TYPE_INT, NULL, TRUE, 1 },
-   { TYPE_INT, NULL, TRUE, 2 } 
-};
-const int PBLOCK_LENGTH = _countof(descVer0);
-static ParamBlockDescID *curDescVer = descVer0;
+enum { box_params_panel, };
 
-// Array of old versions
-//static ParamVersionDesc versions[] = {
-//   ParamVersionDesc(descVer0,_countof(descVer0),0),
-//};
-//const int NUM_OLDVERSIONS = _countof(versions);
-static ParamVersionDesc* versions = NULL;
-const int NUM_OLDVERSIONS = 0;
+static ParamBlockDesc2 param_blk ( 
+    sphere_params, _T("bhkSphereParameters"),  0, NULL, P_AUTO_CONSTRUCT|P_AUTO_UI, 0,
+    //rollout
+    IDD_SPHEREPARAM2, IDS_PARAMS, 0, 0, NULL, 
 
-// Current version
-const int CURRENT_VERSION = NUM_OLDVERSIONS + 1;
-static ParamVersionDesc curVersion(descVer0,_countof(descVer0),CURRENT_VERSION);
+    // params
+    PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
+       p_default,	NP_DEFAULT_HVK_MATERIAL,
+       end,
 
-class SphereParamDlgProc : public ParamMapUserDlgProc {
+    PB_RADIUS, _T("radius"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS,
+       p_default,	   0.0,
+       p_range,		float(0), float(1.0E30),
+       p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS, IDC_RADSPINNER, SPIN_AUTOSCALE,
+       end,
+
+    PB_SEGS, _T("segments"), TYPE_INT, P_ANIMATABLE,	IDS_RB_SEGS,
+       p_default,	   32,
+       p_range,		MIN_SEGMENTS, MAX_SEGMENTS,
+       p_ui, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_SEGMENTS, IDC_SEGSPINNER, 1.0f,
+       end,
+
+    PB_SMOOTH, _T("smooth"), TYPE_INT, P_ANIMATABLE,	IDS_RB_SMOOTH,
+       p_default,	   TRUE,
+       p_ui, TYPE_SINGLECHEKBOX, IDC_OBSMOOTH,
+       end,
+
+    end
+    );
+
+// static ClassDesc must be declared after static paramblock
+static bhkSphereClassDesc sphereDesc;
+extern ClassDesc2* GetbhkSphereDesc() { return &sphereDesc; }
+bhkSphereClassDesc::bhkSphereClassDesc() {
+   param_blk.SetClassDesc(this);
+}
+
+class SphereParamDlgProc : public ParamMap2UserDlgProc {
 public:
    bhkSphereObject *so;
    HWND thishWnd;
+   NpComboBox		mCbMaterial;
 
    SphereParamDlgProc(bhkSphereObject *s) {so=s;thishWnd=NULL;}
-   BOOL DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
+   BOOL DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
    void Update(TimeValue t);
    void DeleteThis() {delete this;}
 
@@ -229,20 +207,34 @@ void SphereParamDlgProc::Update(TimeValue t)
    return;
 }
 
-BOOL SphereParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+BOOL SphereParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
    thishWnd=hWnd;
    switch (msg) 
    {
    case WM_INITDIALOG: 
       {
+         mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
+         for (const char **str = NpHvkMaterialNames; *str; ++str)
+            mCbMaterial.add(*str);
+
+         int sel = NP_DEFAULT_HVK_MATERIAL;
+         Interval valid;
+         so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
+         mCbMaterial.select( sel );
+
          Update(t);
          break;
       }
    case WM_COMMAND:
-      //switch (LOWORD(wParam)) 
-      //{
-      //}
+      switch (LOWORD(wParam)) 
+      {
+      case IDC_CB_MATERIAL:
+         if (HIWORD(wParam)==CBN_SELCHANGE) {
+            so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() );
+         }
+         break;
+      }
       break;	
    }
    return FALSE;
@@ -254,138 +246,83 @@ BOOL SphereParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,W
 bhkSphereObject::bhkSphereObject(BOOL loading)
 {
    SetAFlag(A_PLUGIN1);
-   ReplaceReference(0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
-   assert(pblock);
-   ReplaceReference(1, GetRBBlock());
-
-   pblock->SetValue(PB_RADIUS,0,crtRadius);
-   pblock->SetValue(PB_SMOOTH,0,dlgSmooth);
-   pblock->SetValue(PB_SEGS,0,dlgSegments);	
+   sphereDesc.MakeAutoParamBlocks(this);
+   assert(pblock2);
 }
 
 bhkSphereObject::~bhkSphereObject() {
-}
-
-#define NEWMAP_CHUNKID	0x0100
-
-IOResult bhkSphereObject::Load(ILoad *iload) 
-{
-   ClearAFlag(A_PLUGIN1);
-
-   IOResult res;
-   while (IO_OK==(res=iload->OpenChunk())) 
-   {
-      switch (iload->CurChunkID()) 
-      {	
-      case NEWMAP_CHUNKID:
-         SetAFlag(A_PLUGIN1);
-         break;
-      }
-      iload->CloseChunk();
-      if (res!=IO_OK)  return res;
+   param_blk.SetUserDlgProc();
+   sphereCreateCB.SetObj(NULL);
+   if (pmapParam) {
+      pmapParam  = NULL;
    }
-   return IO_OK;
 }
-
-IOResult bhkSphereObject::Save(ISave *isave)
-{
-   if (TestAFlag(A_PLUGIN1)) {
-      isave->BeginChunk(NEWMAP_CHUNKID);
-      isave->EndChunk();
-   }
-   return IO_OK;
-}
-
-RefTargetHandle bhkSphereObject::GetReference(int i) 
-{
-   if (i == 1) 
-      return GetRBBlock();
-   return pblock;
-}
-
-void bhkSphereObject::SetReference(int i, RefTargetHandle rtarg) 
-{
-   if (i == 1)
-      return;
-   pblock=(IParamBlock*)rtarg;
-}
-
-BaseInterface* bhkSphereObject::GetInterface(Interface_ID id)
-{
-   if (id == BHKRIGIDBODYINTERFACE_DESC)
-      return this;
-   return SimpleObject::GetInterface(id);
-}
-
-
 
 void bhkSphereObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
 {
    SimpleObject::BeginEditParams(ip,flags,prev);
 
    // Gotta make a new one.
-   if (NULL == pmapParam) 
-   {
-      pmapParam = CreateCPParamMap(
-         descParam,PARAMDESC_LENGTH,
-         pblock,
-         ip,
-         hInstance,
-         MAKEINTRESOURCE(IDD_SPHEREPARAM2),
-         GetString(IDS_RB_PARAMETERS),
-         0);
-   }
+   //if (NULL == pmapParam) 
+   //{
+   //   pmapParam = CreateCPParamMap2(
+   //      0,
+   //      pblock2,
+   //      GetCOREInterface(),
+   //      hInstance,
+   //      MAKEINTRESOURCE(IDD_SPHEREPARAM2),
+   //      GetString(IDS_RB_PARAMETERS),
+   //      0);
+   //}
    this->ip = ip;
-
-   if(pmapParam) {
-      // A callback for the type in.
-      pmapParam->SetUserDlgProc(new SphereParamDlgProc(this));
-   }
-   BeginEditRBParams(ip, flags, prev);
+   sphereDesc.BeginEditParams(ip,this,flags,prev);
+   param_blk.SetUserDlgProc(new SphereParamDlgProc(this));
+   pmapParam = pblock2->GetMap(sphere_params);
+   //if(pmapParam) {
+   //   // A callback for the type in.
+   //   pmapParam->SetUserDlgProc(new SphereParamDlgProc(this));
+   //}
 }
 
 void bhkSphereObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
+   param_blk.SetUserDlgProc();
+
    SimpleObject::EndEditParams(ip,flags,next);
    this->ip = NULL;
+   pmapParam = NULL;
 
-   if (flags&END_EDIT_REMOVEUI ) {
-      DestroyCPParamMap(pmapParam);
-      pmapParam  = NULL;
-   }
-   EndEditRBParams(ip, flags, next);
-
-   // Save these values in class variables so the next object created will inherit them.
-   pblock->GetValue(PB_SEGS,ip->GetTime(),dlgSegments,FOREVER);
-   pblock->GetValue(PB_SMOOTH,ip->GetTime(),dlgSmooth,FOREVER);	
+   //if (pmapParam && flags&END_EDIT_REMOVEUI ) {
+   //   DestroyCPParamMap2(pmapParam);
+   //   pmapParam  = NULL;
+   //}
+   // tear down the appropriate auto-rollouts
+   sphereDesc.EndEditParams(ip, this, flags, next);
 }
 
-void bhkSphereObject::SetParams(float rad, int segs, BOOL smooth)
-{
-   pblock->SetValue(PB_RADIUS,0, rad);				
-   pblock->SetValue(PB_SEGS,0, segs);				
-   pblock->SetValue(PB_SMOOTH,0, smooth);				
-}			   
-
 void bhkSphereObject::BuildMesh(TimeValue t)
+{
+   float radius; int segs; int smooth;
+   float startAng = 0.0f;
+   if (TestAFlag(A_PLUGIN1)) startAng = HALFPI;
+
+   // Start the validity interval at forever and whittle it down.
+   ivalid = FOREVER;
+   pblock2->GetValue(PB_RADIUS, t, radius, ivalid);
+   pblock2->GetValue(PB_SEGS, t, segs, ivalid);
+   pblock2->GetValue(PB_SMOOTH, t, smooth, ivalid);
+   BuildSphere(mesh, radius, segs, smooth, startAng);
+}
+
+extern void BuildSphere(Mesh&mesh, float radius, int segs, int smooth, float startAng)
 {
    Point3 p;	
    int ix,na,nb,nc,nd,jx,kx;
    int nf=0,nv=0;
    float delta, delta2;
    float a,alt,secrad,secang,b,c;
-   int segs, smooth;
-   float radius;
    float hemi = 0.0f;
-   BOOL genUVs = TRUE;
-   float startAng = 0.0f;
-   if (TestAFlag(A_PLUGIN1)) startAng = HALFPI;
 
-   // Start the validity interval at forever and whittle it down.
-   ivalid = FOREVER;
-   pblock->GetValue(PB_RADIUS, t, radius, ivalid);
-   pblock->GetValue(PB_SEGS, t, segs, ivalid);
-   pblock->GetValue(PB_SMOOTH, t, smooth, ivalid);
    LimitValue(segs, MIN_SEGMENTS, MAX_SEGMENTS);
    LimitValue(smooth, MIN_SMOOTH, MAX_SMOOTH);
    LimitValue(radius, MIN_RADIUS, MAX_RADIUS);
@@ -504,15 +441,6 @@ void bhkSphereObject::GetCollapseTypes(Tab<Class_ID> &clist,Tab<TSTR*> &nlist)
    Object::GetCollapseTypes(clist, nlist);
 }
 
-class SphereObjCreateCallBack : public CreateMouseCallBack {
-   IPoint2 sp0;
-   bhkSphereObject *ob;
-   Point3 p0;
-public:
-   int proc( ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat);
-   void SetObj(bhkSphereObject *obj) {ob = obj;}
-};
-
 int SphereObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat ) 
 {
    float r;
@@ -528,7 +456,14 @@ int SphereObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IP
       switch(point) 
       {
       case 0:  // only happens with MOUSE_POINT msg
-         ob->pblock->SetValue(PB_RADIUS,0,0.0f);
+         // Find the node and plug in the wire color
+         {
+            ULONG handle;
+            ob->NotifyDependents(FOREVER, (PartID)&handle, REFMSG_GET_NODE_HANDLE);
+            INode *node = GetCOREInterface()->GetINodeByHandle(handle);
+            if (node) node->SetWireColor(RGB(255, 0, 0));
+         }
+         ob->pblock2->SetValue(PB_RADIUS,0,0.0f);
          ob->suspendSnap = TRUE;				
          sp0 = m;
          p0 = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
@@ -541,7 +476,7 @@ int SphereObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IP
          r = Length(p1-p0);
          mat.SetTrans(p0);
 
-         ob->pblock->SetValue(PB_RADIUS,0,r);
+         ob->pblock2->SetValue(PB_RADIUS,0,r);
          ob->pmapParam->Invalidate();
 
          if (flags&MOUSE_CTRL) 
@@ -567,8 +502,6 @@ int SphereObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IP
       return TRUE;
 }
 
-static SphereObjCreateCallBack sphereCreateCB;
-
 CreateMouseCallBack* bhkSphereObject::GetCreateMouseCallBack() 
 {
    sphereCreateCB.SetObj(this);
@@ -579,7 +512,7 @@ CreateMouseCallBack* bhkSphereObject::GetCreateMouseCallBack()
 BOOL bhkSphereObject::OKtoDisplay(TimeValue t) 
 {
    float radius;
-   pblock->GetValue(PB_RADIUS,t,radius,FOREVER);
+   pblock2->GetValue(PB_RADIUS,t,radius,FOREVER);
    if (radius==0.0f) return FALSE;
    else return TRUE;
 }
@@ -588,14 +521,14 @@ BOOL bhkSphereObject::OKtoDisplay(TimeValue t)
 int bhkSphereObject::IntersectRay(TimeValue t, Ray& ray, float& at, Point3& norm)
 {
    int smooth;
-   pblock->GetValue(PB_SMOOTH,t,smooth,FOREVER);
+   pblock2->GetValue(PB_SMOOTH,t,smooth,FOREVER);
 
    float r;
    float a, b, c, ac4, b2, at1, at2;
    float root;
    BOOL neg1, neg2;
 
-   pblock->GetValue(PB_RADIUS,t,r,FOREVER);
+   pblock2->GetValue(PB_RADIUS,t,r,FOREVER);
 
    a = DotProd(ray.dir,ray.dir);
    b = DotProd(ray.dir,ray.p) * 2.0f;
@@ -631,35 +564,6 @@ void bhkSphereObject::InvalidateUI()
    if (pmapParam) pmapParam->Invalidate();
 }
 
-ParamDimension *bhkSphereObject::GetParameterDim(int pbIndex) 
-{
-   switch (pbIndex) 
-   {
-   case PB_RADIUS:
-      return stdWorldDim;			
-   case PB_SEGS:
-      return stdSegmentsDim;			
-   case PB_SMOOTH:
-      return stdNormalizedDim;
-   default:
-      return defaultDim;
-   }
-}
-
-TSTR bhkSphereObject::GetParameterName(int pbIndex) 
-{
-   switch (pbIndex) 
-   {
-   case PB_RADIUS:
-      return TSTR(GetString(IDS_RB_RADIUS));			
-   case PB_SEGS:
-      return TSTR(GetString(IDS_RB_SEGS));			
-   case PB_SMOOTH:
-      return TSTR(GetString(IDS_RB_SMOOTH));			
-   default:
-      return TSTR(_T(""));
-   }
-}
 
 RefTargetHandle bhkSphereObject::Clone(RemapDir& remap) 
 {
@@ -676,4 +580,25 @@ void bhkSphereObject::UpdateUI()
       return;
    SphereParamDlgProc* dlg = static_cast<SphereParamDlgProc*>(pmapParam->GetUserDlgProc());
    dlg->Update(ip->GetTime());
+}
+
+int bhkSphereObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags) 
+{
+   Matrix3 m;
+   Color color = Color(inode->GetWireColor());
+   GraphicsWindow *gw = vpt->getGW();
+   Material *mtl = gw->getMaterial();
+   m = inode->GetObjectTM(t);
+   gw->setTransform(m);
+   DWORD rlim = gw->getRndLimits();
+   gw->setRndLimits(GW_WIREFRAME|GW_EDGES_ONLY/*|GW_Z_BUFFER*/);
+   if (inode->Selected()) 
+      gw->setColor( LINE_COLOR, GetSelColor());
+   else if(!inode->IsFrozen() && !inode->Dependent())
+      gw->setColor( LINE_COLOR, color);
+
+   UpdateMesh(t);
+   mesh.render( gw, mtl, NULL, COMP_ALL);	
+   gw->setRndLimits(rlim);
+   return 0;
 }

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "../NifProps/bhkRigidBodyInterface.h"
 
 #ifdef _DEBUG
 #include <assert.h>
@@ -9,6 +10,7 @@
 #endif
 
 static Class_ID SCUBA_CLASS_ID(0x6d3d77ac, 0x79c939a9);
+static Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID(0x398fd801, 0x303e44e5);
 
 enum
 {
@@ -252,7 +254,8 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
    ProgressUpdate(Collision, FormatText("'%s' Collision", node->GetName()));
 
 	// marked as collision?
-	bool coll = npIsCollision(node);
+	//bool coll = npIsCollision(node);
+   bool coll = (mCollisionNodes.find(node) != mCollisionNodes.end());
 
    bool local = !mFlattenHierarchy;
    NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
@@ -481,4 +484,39 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm
 		tri->DeleteMe();
 
 	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(shape));
+}
+
+
+Exporter::Result Exporter::scanForCollision(INode *node)
+{   
+   if (NULL == node) 
+      return Exporter::Skip;
+   // Get the bhk RigidBody modifier if available and then get the picked node.
+   if (Modifier * mod = GetbhkCollisionModifier(node)){
+      if (IParamBlock2* pblock = (IParamBlock2*)mod->GetReference(0)) {
+         if (INode *collMesh = pblock->GetINode(0, 0)) {
+            mCollisionNodes.insert(collMesh);
+         } else {
+            if (mSceneCollisionNode != NULL) {
+               if (mExportCollision) {
+                  throw runtime_error("There are more than one Collision mesh found at the Scene Level.");
+               }
+            } else {
+               mSceneCollisionNode = node;
+            }
+         }
+      }
+   }
+   // Check self to see if is one of our bhkXXXObject classes
+   if (Object* obj = node->GetObjectRef())
+   {
+      if (obj->SuperClassID() == HELPER_CLASS_ID &&
+         obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB()) {
+         mCollisionNodes.insert(node);
+      }
+   }
+   for (int i=0; i<node->NumberOfChildren(); i++) {
+      scanForCollision(node->GetChildNode(i));
+   }
+   return Exporter::Ok;
 }

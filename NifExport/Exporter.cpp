@@ -57,7 +57,7 @@ static bool IsNodeOrParentSelected(INode *node) {
 }
 
 Exporter::Exporter(Interface *i, AppSettings *appSettings)
-   : mI(i), mAppSettings(appSettings)
+   : mI(i), mAppSettings(appSettings), mSceneCollisionNode(NULL)
 {
    memset(progressCounters, 0, sizeof(progressCounters));
    memset(progressMax, 0, sizeof(progressMax));
@@ -111,6 +111,9 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       exportUPB(root, node);
    }
 
+   // Always Scan for Collision Nodes first
+   scanForCollision(node);
+
    mNiRoot = root;
    if (mSelectedOnly) {
       int count = 0;
@@ -137,11 +140,11 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
          Result result = exportNodes(root, selectedRoots[i]);
          if (result != Ok && result != Skip)
             return result;
-         if (mExportCollision) {
-            result = exportCollision(root, selectedRoots[i]);
-            if (result != Ok)
-               return result;
-         }
+         //if (mExportCollision) {
+         //   result = exportCollision(root, selectedRoots[i]);
+         //   if (result != Ok)
+         //      return result;
+         //}
       }
       // Always Zero out root transforms
       vector<NiAVObjectRef> children = root->GetChildren();
@@ -223,10 +226,13 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 {
    TSTR nodeName = node->GetName();
-   bool coll = npIsCollision(node);
+   //bool coll = npIsCollision(node);
+   bool coll = (mCollisionNodes.find(node) != mCollisionNodes.end());
 
    ProgressUpdate(Geometry, FormatText("'%s' Geometry", nodeName.data()));
-   if (coll ||	(node->IsHidden() && !mExportHidden && !coll))
+
+   // Abort if is a collision node or is hidden and we are not exporting hidden
+   if (coll ||	(node->IsHidden() && !mExportHidden))
       return Skip;
 
    bool local = !mFlattenHierarchy;

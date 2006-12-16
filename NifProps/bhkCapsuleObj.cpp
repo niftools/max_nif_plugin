@@ -22,25 +22,23 @@ HISTORY:
 #include "notify.h"
 #include "macroRec.h"
 #include "bhkRigidBodyInterface.h"
+#include "NifGui.h"
+#include "NifStrings.h"
+
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
 
 static void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs, 
-                    float radius1, float radius2, Point3 cap1, Point3 cap2);
+                    float radius1, float radius2, float length);
 
-const Class_ID BHKCAPSULEOBJECT_CLASS_ID = Class_ID(0x7f8f629a, 0x1d88470a);
+const Class_ID BHKCAPSULEOBJECT_CLASS_ID = Class_ID(0x7f8f629a, BHKRIGIDBODYCLASS_DESC.PartB());
 
-class bhkCapsuleObject : public SimpleObject, public IParamArray, public bhkRigidBodyIfcHelper
+class bhkCapsuleObject : public SimpleObject2
 {
 public:			
    // Class vars
-   static IParamMap *pmapParam;
-   static float crtRadius;
-   static float crtRadius1;
-   static float crtRadius2;
-   static Point3 crtCapPos1;
-   static Point3 crtCapPos2;
+   static IParamMap2 *pmapParam;
    static IObjParam *ip;
 
    bhkCapsuleObject(BOOL loading);		
@@ -55,33 +53,24 @@ public:
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
    void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
-   TCHAR *GetObjectName() { return GetString(IDS_RB_Capsule); }
+   TCHAR *GetObjectName() { return GetString(IDS_RB_CAPSULE); }
 
    // Animatable methods		
    void DeleteThis() {delete this;}
    Class_ID ClassID() { return BHKCAPSULEOBJECT_CLASS_ID; } 
    SClass_ID SuperClassID() { return HELPER_CLASS_ID; }
 
-   // From ReferenceTarget
-   IOResult Load(ILoad *iload);
-   IOResult Save(ISave *isave);
-
-   // From ref
-   int NumRefs() {return 2;}
-   RefTargetHandle GetReference(int i);
-   void SetReference(int i, RefTargetHandle rtarg);
+   int	NumParamBlocks() { return 1; }					// return number of ParamBlocks in this instance
+   IParamBlock2* GetParamBlock(int i) { return pblock2; } // return i'th ParamBlock
+   IParamBlock2* GetParamBlockByID(BlockID id) { return (pblock2->ID() == id) ? pblock2 : NULL; } // return id'd ParamBlock
 
    // From SimpleObject
    void BuildMesh(TimeValue t);
    BOOL OKtoDisplay(TimeValue t);
    void InvalidateUI();
-   ParamDimension *GetParameterDim(int pbIndex);
-   TSTR GetParameterName(int pbIndex);		
 
    void UpdateUI();
-
-   BaseInterface* GetInterface(Interface_ID id);
-
+   int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
 };
 
 class CapsuleObjCreateCallBack : public CreateMouseCallBack {
@@ -94,152 +83,97 @@ public:
 };
 static CapsuleObjCreateCallBack CapsuleCreateCB;
 
-// Misc stuff
-#define MAX_SEGMENTS	200
-#define MIN_SEGMENTS	4
-
-#define MIN_RADIUS		float(0)
-#define MAX_RADIUS		float(1.0E30)
-
-#define MIN_SMOOTH		0
-#define MAX_SMOOTH		1
-
-#define DEF_SEGMENTS	32	// 16
-#define DEF_RADIUS		float(0.0)
-
-#define SMOOTH_ON	1
-#define SMOOTH_OFF	0
-
-#define MIN_SLICE	float(-1.0E30)
-#define MAX_SLICE	float( 1.0E30)
-
-
 //--- ClassDescriptor and class vars ---------------------------------
-
-static BOOL sInterfaceAdded = FALSE;
 
 // The class descriptor for Capsule
 class bhkCapsuleClassDesc : public ClassDesc2 
 {
 public:
+   bhkCapsuleClassDesc();
    int 			   IsPublic() { return 1; }
    void *			Create(BOOL loading = FALSE)
    {
-      AddInterface (GetbhkRigidBodyInterfaceDesc());
       return new bhkCapsuleObject(loading);
    }
    const TCHAR *	ClassName() { return GetString(IDS_RB_CAPSULE_CLASS); }
    SClass_ID		SuperClassID() { return HELPER_CLASS_ID; }
    Class_ID		   ClassID() { return BHKCAPSULEOBJECT_CLASS_ID; }
    const TCHAR* 	Category() { return "NifTools"; }
-   void			   ResetClassParams(BOOL fileReset);
+
+   const TCHAR*	InternalName() { return _T("bhkCapsule"); }	// returns fixed parsable name (scripter-visible name)
+   HINSTANCE		HInstance() { return hInstance; }			// returns owning module handle
 };
 
-static bhkCapsuleClassDesc CapsuleDesc;
-extern ClassDesc2* GetbhkCapsuleDesc() { return &CapsuleDesc; }
+extern ClassDesc2* GetbhkCapsuleDesc();
 
 // in prim.cpp  - The dll instance handle
 extern HINSTANCE hInstance;
 
-IParamMap *bhkCapsuleObject::pmapParam  = NULL;
+IParamMap2 *bhkCapsuleObject::pmapParam  = NULL;
 IObjParam *bhkCapsuleObject::ip         = NULL;
-float bhkCapsuleObject::crtRadius1      = 0.0f;
-float bhkCapsuleObject::crtRadius2      = 0.0f;
-Point3 bhkCapsuleObject::crtCapPos1;
-Point3 bhkCapsuleObject::crtCapPos2;
-
-
-void bhkCapsuleClassDesc::ResetClassParams(BOOL fileReset)
-{
-   bhkCapsuleObject::crtRadius1      = 0.0f;
-   bhkCapsuleObject::crtRadius2      = 0.0f;
-   bhkCapsuleObject::crtCapPos1.Set(0,0,0);
-   bhkCapsuleObject::crtCapPos2.Set(0,0,0);
-}
 
 
 //--- Parameter map/block descriptors -------------------------------
 
 // Parameter block indices
+enum { cap_params, };
+
 enum CapsuleParamIndicies
 {
+   PB_MATERIAL,
    PB_RADIUS1,
    PB_RADIUS2,
-   PB_CAP_POS1,
-   PB_CAP_POS2,
+   PB_LENGTH,
 };
 
+enum { box_params_panel, };
 
-//
-//
-// Parameters
+static ParamBlockDesc2 param_blk ( 
+    cap_params, _T("bhkCapsuleParameters"),  0, NULL, P_AUTO_CONSTRUCT|P_AUTO_UI, 0,
+    //rollout
+    IDD_CAPSULEPARAM, IDS_PARAMS, 0, 0, NULL, 
 
-static ParamUIDesc descParam[] = {
-   // Radius 1
-   ParamUIDesc(
-   PB_RADIUS1,
-   EDITTYPE_UNIVERSE,
-   IDC_RADIUS1,IDC_RADSPINNER1,
-   MIN_RADIUS,MAX_RADIUS,
-   SPIN_AUTOSCALE),	
+    // params
+    PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
+       p_default,	NP_DEFAULT_HVK_MATERIAL,
+       end,
 
-   // Radius 2
-   ParamUIDesc(
-   PB_RADIUS2,
-   EDITTYPE_UNIVERSE,
-   IDC_RADIUS2,IDC_RADSPINNER2,
-   MIN_RADIUS,MAX_RADIUS,
-   SPIN_AUTOSCALE),	
+    PB_RADIUS1, _T("radius1"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS1,
+       p_default,	   0.0,
+       p_range,		float(0), float(1.0E30),
+       p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS1, IDC_RADSPINNER1, SPIN_AUTOSCALE,
+       end,
 
-   ParamUIDesc(
-   PB_CAP_POS1,
-   EDITTYPE_UNIVERSE,
-   IDC_ED_POS1_X,IDC_SP_POS1_X,
-   IDC_ED_POS1_Y,IDC_SP_POS1_Y,
-   IDC_ED_POS1_Z,IDC_SP_POS1_Z,
-   float(-1.0E30),float(1.0E30),
-   SPIN_AUTOSCALE),
+    PB_RADIUS2, _T("radius2"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS2,
+       p_default,	   0.0,
+       p_range,		float(0), float(1.0E30),
+       p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS2, IDC_RADSPINNER2, SPIN_AUTOSCALE,
+       end,
 
-   ParamUIDesc(
-   PB_CAP_POS2,
-   EDITTYPE_UNIVERSE,
-   IDC_ED_POS2_X,IDC_SP_POS2_X,
-   IDC_ED_POS2_Y,IDC_SP_POS2_Y,
-   IDC_ED_POS2_Z,IDC_SP_POS2_Z,
-   float(-1.0E30),float(1.0E30),
-   SPIN_AUTOSCALE),
+    PB_LENGTH, _T("length"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_LENGTH,
+       p_default,	   0.0,
+       p_range,		float(-1.0E30), float(1.0E30),
+       p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_LENGTHEDIT, IDC_LENSPINNER, SPIN_AUTOSCALE,
+       end,
 
-};
-const int PARAMDESC_LENGTH = _countof(descParam);
+    end
+    );
 
-static ParamBlockDescID descVer0[] = {
-   { TYPE_FLOAT, NULL, TRUE, 0 },		
-   { TYPE_FLOAT, NULL, TRUE, 1 },		
-   { TYPE_POINT3, NULL, TRUE, 2 },
-   { TYPE_POINT3, NULL, TRUE, 3 } 
-};
-const int PBLOCK_LENGTH = _countof(descVer0);
-static ParamBlockDescID *curDescVer = descVer0;
+// static ClassDesc must be declared after static paramblock
+static bhkCapsuleClassDesc capsuleDesc;
+extern ClassDesc2* GetbhkCapsuleDesc() { return &capsuleDesc; }
+bhkCapsuleClassDesc::bhkCapsuleClassDesc() {
+   param_blk.SetClassDesc(this);
+}
 
-// Array of old versions
-//static ParamVersionDesc versions[] = {
-//   ParamVersionDesc(descVer0,_countof(descVer0),0),
-//};
-//const int NUM_OLDVERSIONS = _countof(versions);
-static ParamVersionDesc* versions = NULL;
-const int NUM_OLDVERSIONS = 0;
-
-// Current version
-const int CURRENT_VERSION = NUM_OLDVERSIONS + 1;
-static ParamVersionDesc curVersion(descVer0,_countof(descVer0),CURRENT_VERSION);
-
-class CapsuleParamDlgProc : public ParamMapUserDlgProc {
+class CapsuleParamDlgProc : public ParamMap2UserDlgProc {
 public:
    bhkCapsuleObject *so;
    HWND thishWnd;
+   NpComboBox		mCbMaterial;
 
    CapsuleParamDlgProc(bhkCapsuleObject *s) {so=s;thishWnd=NULL;}
-   BOOL DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
+   BOOL DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
    void Update(TimeValue t);
    void DeleteThis() {delete this;}
 
@@ -260,20 +194,34 @@ void CapsuleParamDlgProc::Update(TimeValue t)
    return;
 }
 
-BOOL CapsuleParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+BOOL CapsuleParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
    thishWnd=hWnd;
    switch (msg) 
    {
    case WM_INITDIALOG: 
       {
+         mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
+         for (const char **str = NpHvkMaterialNames; *str; ++str)
+            mCbMaterial.add(*str);
+
+         int sel = NP_DEFAULT_HVK_MATERIAL;
+         Interval valid;
+         so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
+         mCbMaterial.select( sel );
+
          Update(t);
          break;
       }
    case WM_COMMAND:
-      //switch (LOWORD(wParam)) 
-      //{
-      //}
+      switch (LOWORD(wParam)) 
+      {
+      case IDC_CB_MATERIAL:
+         if (HIWORD(wParam)==CBN_SELCHANGE) {
+            so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() );
+         }
+         break;
+      }
       break;	
    }
    return FALSE;
@@ -285,115 +233,38 @@ BOOL CapsuleParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,
 bhkCapsuleObject::bhkCapsuleObject(BOOL loading)
 {
    SetAFlag(A_PLUGIN1);
-   ReplaceReference(0, CreateParameterBlock(curDescVer, PBLOCK_LENGTH, CURRENT_VERSION));
-   assert(pblock);
-   ReplaceReference(1, GetRBBlock());
-
-   pblock->SetValue(PB_RADIUS1,0,crtRadius1);
-   pblock->SetValue(PB_RADIUS2,0,crtRadius2);
-   pblock->SetValue(PB_CAP_POS1,0,crtCapPos1);
-   pblock->SetValue(PB_CAP_POS2,0,crtCapPos2);
+   capsuleDesc.MakeAutoParamBlocks(this);
+   assert(pblock2);
 }
 
 bhkCapsuleObject::~bhkCapsuleObject() 
 {
+   param_blk.SetUserDlgProc();
    CapsuleCreateCB.SetObj(NULL);
    if (pmapParam) {
-      pmapParam->SetUserDlgProc(NULL);
-      DestroyCPParamMap(pmapParam);
       pmapParam  = NULL;
    }
 }
-
-#define NEWMAP_CHUNKID	0x0100
-
-IOResult bhkCapsuleObject::Load(ILoad *iload) 
-{
-   ClearAFlag(A_PLUGIN1);
-
-   IOResult res;
-   while (IO_OK==(res=iload->OpenChunk())) 
-   {
-      switch (iload->CurChunkID()) 
-      {	
-      case NEWMAP_CHUNKID:
-         SetAFlag(A_PLUGIN1);
-         break;
-      }
-      iload->CloseChunk();
-      if (res!=IO_OK)  return res;
-   }
-   return IO_OK;
-}
-
-IOResult bhkCapsuleObject::Save(ISave *isave)
-{
-   if (TestAFlag(A_PLUGIN1)) {
-      isave->BeginChunk(NEWMAP_CHUNKID);
-      isave->EndChunk();
-   }
-   return IO_OK;
-}
-
-RefTargetHandle bhkCapsuleObject::GetReference(int i) 
-{
-   if (i == 1) 
-      return GetRBBlock();
-   return pblock;
-}
-
-void bhkCapsuleObject::SetReference(int i, RefTargetHandle rtarg) 
-{
-   if (i == 1)
-      return;
-   pblock=(IParamBlock*)rtarg;
-}
-
-BaseInterface* bhkCapsuleObject::GetInterface(Interface_ID id)
-{
-   if (id == BHKRIGIDBODYINTERFACE_DESC)
-      return this;
-   return SimpleObject::GetInterface(id);
-}
-
-
 
 void bhkCapsuleObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
 {
    SimpleObject::BeginEditParams(ip,flags,prev);
 
-   // Gotta make a new one.
-   if (NULL == pmapParam) 
-   {
-      pmapParam = CreateCPParamMap(
-         descParam,PARAMDESC_LENGTH,
-         pblock,
-         ip,
-         hInstance,
-         MAKEINTRESOURCE(IDD_CAPSULEPARAM),
-         GetString(IDS_RB_PARAMETERS),
-         0);
-   }
+   capsuleDesc.BeginEditParams(ip,this,flags,prev);
+   param_blk.SetUserDlgProc(new CapsuleParamDlgProc(this));
+   pmapParam = pblock2->GetMap(cap_params);
    this->ip = ip;
-
-   if(pmapParam) {
-      // A callback for the type in.
-      pmapParam->SetUserDlgProc(new CapsuleParamDlgProc(this));
-   }
-   BeginEditRBParams(ip, flags, prev);
 }
 
 void bhkCapsuleObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
+   param_blk.SetUserDlgProc();
    SimpleObject::EndEditParams(ip,flags,next);
    this->ip = NULL;
+   pmapParam = NULL;
 
-   if (pmapParam && flags&END_EDIT_REMOVEUI ) {
-      pmapParam->SetUserDlgProc(NULL);
-      DestroyCPParamMap(pmapParam);
-      pmapParam  = NULL;
-   }
-   EndEditRBParams(ip, flags, next);
+   // tear down the appropriate auto-rollouts
+   capsuleDesc.EndEditParams(ip, this, flags, next);
 }
 
 void bhkCapsuleObject::BuildMesh(TimeValue t)
@@ -406,17 +277,13 @@ void bhkCapsuleObject::BuildMesh(TimeValue t)
    //FixHeight(pblock,t,(pmapParam?pmapParam->GetHWnd():NULL),increate);
    ivalid = FOREVER;
 
-   float radius1, radius2;
-   Point3 pos1, pos2;
-   pblock->GetValue(PB_RADIUS1,t,radius1,ivalid);
-   pblock->GetValue(PB_RADIUS2,t,radius2,ivalid);
-   pblock->GetValue(PB_CAP_POS1,t,pos1,ivalid);
-   pblock->GetValue(PB_CAP_POS2,t,pos2,ivalid);
-   LimitValue(radius1, MIN_RADIUS, MAX_RADIUS);
-   LimitValue(radius2, MIN_RADIUS, MAX_RADIUS);
-   if (radius2 == MIN_RADIUS) radius2 = radius1;
+   float radius1, radius2, length;
+   pblock2->GetValue(PB_RADIUS1,t,radius1,ivalid);
+   pblock2->GetValue(PB_RADIUS2,t,radius2,ivalid);
+   pblock2->GetValue(PB_LENGTH,t,length,ivalid);
+   if (radius2 == 0.0f) radius2 = radius1;
 
-   if (radius1 == 0)
+   if (radius1 == 0.0f)
    {
       mesh.setNumVerts(0);
       mesh.setNumFaces(0);
@@ -426,7 +293,7 @@ void bhkCapsuleObject::BuildMesh(TimeValue t)
    }
    else
    {
-      BuildScubaMesh(mesh, segs, smooth, hsegs, radius2, radius1, pos2, pos1);
+      BuildScubaMesh(mesh, segs, smooth, hsegs, radius2, radius1, length);
    }
 }
 
@@ -465,13 +332,19 @@ int CapsuleObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, I
       switch(point) 
       {
       case 0:  // only happens with MOUSE_POINT msg
-         ob->pblock->SetValue(PB_RADIUS1,0,0.0f);
-         ob->pblock->SetValue(PB_RADIUS2,0,0.0f);
+         // Find the node and plug in the wire color
+         {
+            ULONG handle;
+            ob->NotifyDependents(FOREVER, (PartID)&handle, REFMSG_GET_NODE_HANDLE);
+            INode *node = GetCOREInterface()->GetINodeByHandle(handle);
+            if (node) node->SetWireColor(RGB(255, 0, 0));
+         }
+         ob->pblock2->SetValue(PB_RADIUS1,0,0.0f);
+         ob->pblock2->SetValue(PB_RADIUS2,0,0.0f);
          ob->suspendSnap = TRUE;				
          sp[0] = m;
          p[0] = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
-         ob->pblock->SetValue(PB_CAP_POS1,0,p[0]);
-         ob->pblock->SetValue(PB_CAP_POS2,0,p[0]);
+         ob->pblock2->SetValue(PB_LENGTH,0,0.0f);
          mat.SetTrans(p[0]);
          break;
 
@@ -483,8 +356,8 @@ int CapsuleObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, I
          r = Length(p[1]-p[0]);
          mat.SetTrans(p[0]);
 
-         ob->pblock->SetValue(PB_RADIUS1,0,r);
-         ob->pblock->SetValue(PB_RADIUS2,0,r);
+         ob->pblock2->SetValue(PB_RADIUS1,0,r);
+         ob->pblock2->SetValue(PB_RADIUS2,0,r);
          ob->pmapParam->Invalidate();
 
          if (flags&MOUSE_CTRL) 
@@ -506,25 +379,21 @@ int CapsuleObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, I
          //mat.PreRotateZ(HALFPI);
          sp[2] = m;
          p[2] = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
-         r = Length(p[1]-p[0]);
+         r = Length(p[2]-p[1]);
          mat.SetTrans(p[0]);
 
-         ob->pblock->SetValue(PB_CAP_POS2,0,p[2]);
+         ob->pblock2->SetValue(PB_LENGTH,0,r);
          ob->pmapParam->Invalidate();
 
-         //if (flags&MOUSE_CTRL) 
-         //{
-         //   float ang = (float)atan2(p1.y-p[0].y,p1.x-p[0].x);					
-         //   mat.PreRotateZ(ob->ip->SnapAngle(ang));
-         //}
-         //if (msg==MOUSE_POINT) 
-         //{
-         //   ob->suspendSnap = FALSE;
-         //   return (Length(m-sp[0])<3 || Length(p1-p[0])<0.1f)?CREATE_ABORT:CREATE_STOP;
-         //}
+         // Stop unless Ctrl is selected then we size the final radius
+         if (msg==MOUSE_POINT && !(flags&MOUSE_CTRL) )
+         {
+            ob->suspendSnap = FALSE;
+            return CREATE_STOP;
+         }
          break;
 
-      case 3: // Get second point
+      case 3: // Size the second cap
          mat.IdentityMatrix();
          //mat.PreRotateZ(HALFPI);
          sp[3] = m;
@@ -532,13 +401,13 @@ int CapsuleObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, I
          if (flags&MOUSE_CTRL) // ignore radius
          {
             r = Length(p[1]-p[0]);
-            ob->pblock->SetValue(PB_RADIUS2,0,r);
+            ob->pblock2->SetValue(PB_RADIUS2,0,r);
          }
          else
          {
             // start radius at r1
             r = Length((p[3]-p[2]) + (p[1]-p[0]));
-            ob->pblock->SetValue(PB_RADIUS2,0,r);
+            ob->pblock2->SetValue(PB_RADIUS2,0,r);
          }
          ob->pmapParam->Invalidate();
          if (msg==MOUSE_POINT) 
@@ -567,7 +436,7 @@ CreateMouseCallBack* bhkCapsuleObject::GetCreateMouseCallBack()
 BOOL bhkCapsuleObject::OKtoDisplay(TimeValue t) 
 {
    float radius;
-   pblock->GetValue(PB_RADIUS1,t,radius,FOREVER);
+   pblock2->GetValue(PB_RADIUS1,t,radius,FOREVER);
    if (radius==0.0f) return FALSE;
    else return TRUE;
 }
@@ -575,40 +444,6 @@ BOOL bhkCapsuleObject::OKtoDisplay(TimeValue t)
 void bhkCapsuleObject::InvalidateUI() 
 {
    if (pmapParam) pmapParam->Invalidate();
-}
-
-ParamDimension *bhkCapsuleObject::GetParameterDim(int pbIndex) 
-{
-   switch (pbIndex) 
-   {
-   case PB_RADIUS1:
-      return stdWorldDim;			
-   case PB_RADIUS2:
-      return stdWorldDim;			
-   case PB_CAP_POS1:
-      return stdWorldDim;			
-   case PB_CAP_POS2:
-      return stdWorldDim;			
-   default:
-      return defaultDim;
-   }
-}
-
-TSTR bhkCapsuleObject::GetParameterName(int pbIndex) 
-{
-   switch (pbIndex) 
-   {
-   case PB_RADIUS1:
-      return TSTR(GetString(IDS_RB_RADIUS1));			
-   case PB_RADIUS2:
-      return TSTR(GetString(IDS_RB_RADIUS2));			
-   case PB_CAP_POS1:
-      return TSTR(GetString(IDS_RB_CAP_POS1));			
-   case PB_CAP_POS2:
-      return TSTR(GetString(IDS_RB_CAP_POS2));			
-   default:
-      return TSTR(_T(""));
-   }
 }
 
 RefTargetHandle bhkCapsuleObject::Clone(RemapDir& remap) 
@@ -642,7 +477,7 @@ void AddFace(Face *f,int a,int b,int c,int evis,int smooth_group)
 }
 
 void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs, 
-                    float radius1, float radius2, Point3 cap1, Point3 cap2)
+                    float radius1, float radius2, float cylh)
 {
    Point3 p;
    int ix,jx,ic = 1;
@@ -691,7 +526,6 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
    mesh.setSmoothFlags(smooth != 0);
 
    // bottom vertex 
-   float cylh = (cap1 - cap2).Length();
    float height = cylh + radius1 + radius2;
    mesh.setVert(nv, Point3(0.0f,0.0f,height));
    mesh.setVert(nverts-1, Point3(0.0f,0.0f,0.0f));		
@@ -828,7 +662,7 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
       t0++;t1++;
    }
    for (i=0;i<nverts;i++) 
-      mesh.verts[i].z -= radius2;
+      mesh.verts[i].z -= (radius2 + cylh/2.0f);
 
    if (edgelstr) delete []edgelstr;
    if (edgelstl) delete []edgelstl;
@@ -837,174 +671,23 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
    mesh.InvalidateTopologyCache();
 }
 
-#if 0
-void BuildCylinderMesh(Mesh &mesh,
-                       int segs, int smooth, int llsegs, int capsegs, 
-                       float radius1, float radius2, float height, 
-                       int doPie, float pie1, float pie2)
+int bhkCapsuleObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags) 
 {
-   Point3 p;
-   int ix,na,nb,nc,nd,jx,kx, ic = 1;
-   int nf=0,nv=0, lsegs;
-   float delta,ang, u;	
-   float totalPie, startAng = 0.0f;	
+   Matrix3 m;
+   Color color = Color(inode->GetWireColor());
+   GraphicsWindow *gw = vpt->getGW();
+   Material *mtl = gw->getMaterial();
+   m = inode->GetObjectTM(t);
+   gw->setTransform(m);
+   DWORD rlim = gw->getRndLimits();
+   gw->setRndLimits(GW_WIREFRAME|GW_EDGES_ONLY/*|GW_Z_BUFFER*/);
+   if (inode->Selected()) 
+      gw->setColor( LINE_COLOR, GetSelColor());
+   else if(!inode->IsFrozen() && !inode->Dependent())
+      gw->setColor( LINE_COLOR, color);
 
-   lsegs = llsegs-1 + 2*capsegs;
-
-   // Make pie2 < pie1 and pie1-pie2 < TWOPI
-   while (pie1 < pie2) pie1 += TWOPI;
-   while (pie1 > pie2+TWOPI) pie1 -= TWOPI;
-   if (pie1==pie2) totalPie = TWOPI;
-   else totalPie = pie1-pie2;	
-
-   delta = (float)2.0*PI/(float)segs;
-
-   if (height<0) delta = -delta;
-
-   int nverts;
-   int nfaces;
-   nverts = 2+segs*(lsegs);
-   nfaces = 2*segs*(lsegs);	
-   mesh.setNumVerts(nverts);
-   mesh.setNumFaces(nfaces);
-   mesh.setSmoothFlags(smooth != 0);
-   mesh.setNumTVerts(0);
-   mesh.setNumTVFaces(0);
-
-   // bottom vertex 
-   mesh.setVert(nv, Point3(0.0,0.0,0.0));
-   nv++;
-
-   // Bottom cap vertices	
-   for(ix=0; ix<capsegs; ix++) {
-
-      // Put center vertices all the way up
-      p.z = 0.0f;
-      u   = float(ix+1)/float(capsegs);
-      ang = startAng;
-      for (jx = 0; jx<segs; jx++) {			
-         p.x = (float)cos(ang)*radius1*u;
-         p.y = (float)sin(ang)*radius1*u;	
-         mesh.setVert(nv, p);
-         nv++;
-         ang += delta;
-      }	
-   }
-
-   // Middle vertices 
-   for(ix=1; ix<llsegs; ix++) {
-
-      // Put center vertices all the way up
-      float   u = float(ix)/float(llsegs);
-      float rad = (radius1*(1.0f-u) + radius2*u);
-      p.z = height*((float)ix/float(llsegs));
-      ang = startAng;
-      for (jx = 0; jx<segs; jx++) {
-         p.x = (float)cos(ang)*rad;
-         p.y = (float)sin(ang)*rad;
-         mesh.setVert(nv, p);
-         nv++;
-         ang += delta;
-      }	
-   }
-
-   // Top cap vertices	
-   for(ix=0; ix<capsegs; ix++) {
-
-      // Put center vertices all the way up
-      p.z = height;
-      u   = 1.0f-float(ix)/float(capsegs);
-      ang = startAng;
-      for (jx = 0; jx<segs; jx++) {			
-         p.x = (float)cos(ang)*radius2*u;		
-         p.y = (float)sin(ang)*radius2*u;	
-         mesh.setVert(nv, p);
-         nv++;
-         ang += delta;
-      }	
-   }
-
-   /* top vertex */
-   mesh.setVert(nv, (float)0.0, (float)0.0, height);
-   nv++;
-
-   // Now make faces ---
-
-   BitArray startSliceFaces;
-   BitArray endSliceFaces;
-   BitArray topCapFaces;
-   BitArray botCapFaces;
-
-   // Make bottom cap		
-
-   for(ix=1; ix<=segs; ++ix) {
-      nc=(ix==segs)?1:ix+1;
-      mesh.faces[nf].setEdgeVisFlags(capsegs>1,1,capsegs>1);
-      mesh.faces[nf].setSmGroup(1);
-      mesh.faces[nf].setVerts(0,nc,ix);
-      mesh.faces[nf].setMatID(1);
-      nf++;
-   }
-
-   int topCapStartFace = 0;
-
-   /* Make midsection */
-   for(ix=0; ix<lsegs-1; ++ix) {
-      jx=ix*segs+1;
-      for(kx=0; kx<segs; ++kx) {
-         DWORD grp = 0;
-         int mtlid;
-         BOOL inSlice = FALSE;
-
-         if (kx==segs) {
-            mtlid = 4;
-            grp = (1<<2);
-            inSlice = TRUE;
-         } else if (ix < capsegs-1 || ix >= capsegs+llsegs-1) {
-            grp = 1;
-            mtlid = (ix<capsegs-1)?0:1;
-         } else {		
-            mtlid = 2;
-            if (smooth) {				
-               grp = (1<<3);	
-            }			
-         }
-
-         na = jx+kx;
-         nb = na+segs;
-         nc = (kx==(segs-1))? jx+segs: nb+1;
-         nd = (kx==(segs-1))? jx : na+1;			
-
-         mesh.faces[nf].setEdgeVisFlags(0,!inSlice,1);
-         mesh.faces[nf].setSmGroup(grp);
-         mesh.faces[nf].setVerts(na,nc,nb);
-         mesh.faces[nf].setMatID(mtlid);
-         nf++;
-
-         mesh.faces[nf].setEdgeVisFlags(!inSlice,1,0);
-         mesh.faces[nf].setSmGroup(grp);
-         mesh.faces[nf].setVerts(na,nd,nc);
-         mesh.faces[nf].setMatID(mtlid);
-         nf++;
-      }
-   }
-
-   //Make Top cap 			
-   na = mesh.getNumVerts()-1;	
-   jx = (lsegs-1)*segs+1;
-
-   for(ix=0; ix<segs; ++ix) {
-      nb = jx+ix;
-      nc = (ix==segs-1)? jx: nb+1;		
-      mesh.faces[nf].setEdgeVisFlags(capsegs>1,1,capsegs>1);		
-      mesh.faces[nf].setSmGroup( 1);
-      mesh.faces[nf].setVerts(na,nb,nc);
-      mesh.faces[nf].setMatID(0);
-      nf++;
-   }
-
-   assert(nf==mesh.numFaces);
-   assert(nv==mesh.numVerts);
-   mesh.InvalidateTopologyCache();
+   UpdateMesh(t);
+   mesh.render( gw, mtl, NULL, COMP_ALL);	
+   gw->setRndLimits(rlim);
+   return 0;
 }
-#endif

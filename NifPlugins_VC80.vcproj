@@ -1076,6 +1076,10 @@
 				Name="Source Files"
 				>
 				<File
+					RelativePath=".\NifProps\bhkBoxObj.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\NifProps\bhkCapsuleObj.cpp"
 					>
 				</File>
@@ -1084,11 +1088,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkSphereObj.cpp"
+					RelativePath=".\NifProps\bhkRigidBodyModifer.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\NifProps.cpp"
+					RelativePath=".\NifProps\bhkSphereObj.cpp"
 					>
 				</File>
 			</Filter>

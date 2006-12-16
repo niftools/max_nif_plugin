@@ -23,14 +23,16 @@ HISTORY:
 //! The unique instance of the rigid body interface
 extern CoreExport FPInterfaceDesc gbhkRigidBodyDesc;
 
-#define BHKRIGIDBODYINTERFACE_DESC   Interface_ID(0x056aad53, 0x52c54024)
+#define BHKRIGIDBODYCLASS_DESC Class_ID(0x00000000, 0x1d88470a)
+const Interface_ID BHKRIGIDBODYINTERFACE_DESC(0x056aad53, 0x52c54024);
+
 extern FPInterfaceDesc* GetbhkRigidBodyInterfaceDesc();
 
 class bhkRigidBodyInterface : public FPMixinInterface
 {
 public:			
-   virtual void		SetMaterial(int value, TimeValue time) = 0;
-   virtual int		   GetMaterial(TimeValue time, Interval& valid = FOREVER) const = 0 ;
+   //virtual void		SetMaterial(int value, TimeValue time) = 0;
+   //virtual int		   GetMaterial(TimeValue time, Interval& valid = FOREVER) const = 0 ;
 
    virtual void		SetLayer(int value, TimeValue time) = 0;
    virtual int		   GetLayer(TimeValue time, Interval& valid = FOREVER) const = 0 ;
@@ -84,7 +86,7 @@ public:
    //Function Map For Mixin Interface
    //*************************************************
    BEGIN_FUNCTION_MAP
-      PROP_TFNS(get_material, GetMaterial, set_material, SetMaterial, TYPE_INT);
+      //PROP_TFNS(get_material, GetMaterial, set_material, SetMaterial, TYPE_INT);
       PROP_TFNS(get_layer, GetLayer, set_layer, SetLayer, TYPE_INT);
       PROP_TFNS(get_mass, GetMass, set_mass, SetMass, TYPE_FLOAT);
       PROP_TFNS(get_friction, GetFriction, set_friction, SetFriction, TYPE_FLOAT);
@@ -107,7 +109,7 @@ public:
 // Parameter block indices
 enum RigidBodyParamIndicies
 {
-   PB_RB_MATERIAL,
+   //PB_RB_MATERIAL,
    PB_RB_LAYER,
    PB_RB_MASS,
    PB_RB_FRICTION,
@@ -131,8 +133,8 @@ public:
    void              BeginEditRBParams(IObjParam *ip,ULONG flags,Animatable *prev);
    void              EndEditRBParams(IObjParam *ip,ULONG flags,Animatable *next);
 
-   virtual void		SetMaterial(int value, TimeValue time);
-   virtual int		   GetMaterial(TimeValue time, Interval& valid = FOREVER) const ;
+   //virtual void		SetMaterial(int value, TimeValue time);
+   //virtual int		   GetMaterial(TimeValue time, Interval& valid = FOREVER) const ;
 
    virtual void		SetLayer(int value, TimeValue time);
    virtual int		   GetLayer(TimeValue time, Interval& valid = FOREVER) const ;

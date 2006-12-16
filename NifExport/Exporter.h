@@ -139,14 +139,17 @@ public:
 
 	// maps face groups to material ID
 	typedef std::map<int, FaceGroup>	FaceGroups;	
+   typedef std::set<INode*> INodeMap;	
    typedef std::map<string, NiNodeRef>	NodeMap;	
-   typedef std::list<NiCallback*> CallbackList;
+   typedef std::list<NiCallback*> CallbackList; 
    typedef std::list<Ref<NiNode> > NodeList;
    
 	Interface				*mI;
 	NiNodeRef				mNiRoot;
    AppSettings          *mAppSettings;
    NodeMap              mNodeMap;
+   INodeMap             mCollisionNodes;
+   INode*               mSceneCollisionNode;
    CallbackList         mPostExportCallbacks;
    bool                 mIsBethesda;
    Box3                 mBoundingBox;
@@ -154,6 +157,7 @@ public:
 
    Result					exportNodes(NiNodeRef &root, INode *node);
 	Result					exportCollision(NiNodeRef &root, INode *node);
+   Result               scanForCollision(INode *node);
 
 	/* utility functions */
 	Mtl						*getMaterial(INode *node, int subMtl);
