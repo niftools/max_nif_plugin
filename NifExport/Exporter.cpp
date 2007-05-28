@@ -90,21 +90,21 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 
             BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
             bsx->SetName("BSX");
-            bsx->SetFlags( 0x00000007 );
+			bsx->SetData( 0x00000007 );
             root->AddExtraData(DynamicCast<NiExtraData>(bsx));
          }
          else if (mExportType != NIF_WO_ANIM)
          {
             BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
             bsx->SetName("BSX");
-            bsx->SetFlags( 0x00000003 );
+            bsx->SetData( 0x00000003 );
             root->AddExtraData(DynamicCast<NiExtraData>(bsx));
          }
          else if (mExportCollision)
          {
             BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
             bsx->SetName("BSX");
-            bsx->SetFlags( 0x00000002 );
+            bsx->SetData( 0x00000002 );
             root->AddExtraData(DynamicCast<NiExtraData>(bsx));
          }
       }

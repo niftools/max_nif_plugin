@@ -173,7 +173,7 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
    if (INode *parent = GetNode(triGeom->GetParent()))
       parent->AttachChild(inode, 1);
 
-   inode->Hide(triGeom->GetHidden() ? TRUE : FALSE);
+   inode->Hide(triGeom->GetVisibility() ? FALSE : TRUE);
 
    if (enableAutoSmooth){
       mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
@@ -278,7 +278,7 @@ bool NifImporter::ImportMultipleGeometry(NiNodeRef parent, vector<NiTriBasedGeom
       Matrix44 transform = (*itr)->GetLocalTransform();
       //Apply the transformations
       if (transform != Matrix44::IDENTITY) {
-         for ( uint i = 0; i < subverts.size(); ++i )
+         for ( unsigned int i = 0; i < subverts.size(); ++i )
             subverts[i] = transform * subverts[i];
       }
       vert_range.push_back( pair<int,int>( verts.size(), verts.size() + subverts.size()) );
@@ -334,7 +334,7 @@ bool NifImporter::ImportMultipleGeometry(NiNodeRef parent, vector<NiTriBasedGeom
       vector<Vector3> subnorms = triGeomData->GetNormals();
       Matrix44 rotation = (*itr)->GetLocalTransform().GetRotation();
       if (rotation != Matrix44::IDENTITY) {
-         for ( uint i = 0; i < subnorms.size(); ++i )
+         for ( unsigned int i = 0; i < subnorms.size(); ++i )
             subnorms[i] = rotation * subnorms[i];
       }
       if (!subnorms.empty())
@@ -410,7 +410,7 @@ bool NifImporter::ImportMultipleGeometry(NiNodeRef parent, vector<NiTriBasedGeom
       // attach child
       if (INode *parent = GetNode((*itr)->GetParent()))
          parent->AttachChild(inode, 1);
-      inode->Hide((*itr)->GetHidden() ? TRUE : FALSE);
+      inode->Hide((*itr)->GetVisibility() ? FALSE : TRUE);
    }
    if (removeDegenerateFaces)
       mesh.RemoveDegenerateFaces();
@@ -600,8 +600,10 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
       //   and the value always seems to be 4 anyway.  I'd also this be more dynamic than hard coded numbers
       //   but I cant figure out the correct values to pass the scripting engine from here so I'm giving up.
       int numWeightsPerVertex = 4;
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
       IParamBlock2 *params = skinMod->GetParamBlockByID(2/*advanced*/);
       params->SetValue(0x7/*bone_Limit*/, 0, numWeightsPerVertex);
+#endif
 
       // Can get some truly bizarre animations without this in MAX with Civ4 Leaderheads
 #if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
@@ -655,6 +657,13 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
          }
       }
 
+      tnode->EvalWorldState(0);
+      skinMod->DisableModInViews();
+      skinMod->EnableModInViews();
+#if VERSION_3DSMAX < ((5000<<16)+(15<<8)+0) // Version 4
+      gi->SetCommandPanelTaskMode(TASK_MODE_MODIFY);
+      gi->SelectNode(tnode);
+#endif
       // Assign the weights 
       for (vector<VertexHolder>::iterator itr=vertexHolders.begin(), end=vertexHolders.end(); itr != end; ++itr){
          VertexHolder& h = (*itr);

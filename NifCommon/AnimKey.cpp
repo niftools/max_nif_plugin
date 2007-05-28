@@ -50,8 +50,10 @@ T& InitBezKey(T& rKey, U& key, float time)
 {
    rKey.time = TimeToFrame(time + key.time);
    rKey.flags = 0;
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
    SetInTanType(rKey.flags,BEZKEY_FLAT);
    SetOutTanType(rKey.flags,BEZKEY_FLAT);
+#endif
    return rKey;
 }
 

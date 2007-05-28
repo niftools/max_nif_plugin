@@ -79,9 +79,7 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
    if (mAppSettings)
    {
       string newPath = mAppSettings->GetRelativeTexPath(string(mapPath), mTexPrefix);
-
-      NiObjectRef unk_link(NULL);
-      td.source->SetExternalTexture(newPath, unk_link);
+      td.source->SetExternalTexture(newPath);
    }
    else
    {
@@ -93,8 +91,7 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
       else
          newPath = f;
 
-      NiObjectRef unk_link(NULL);
-      td.source->SetExternalTexture(newPath.data(), unk_link);
+      td.source->SetExternalTexture(newPath.data());
    }
    return true;
 }
@@ -107,7 +104,7 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
       return;
 
 	string name;
-	NiMaterialPropertyRef mtlProp(DynamicCast<NiMaterialProperty>(CreateBlock("NiMaterialProperty")));
+	NiMaterialPropertyRef mtlProp(CreateNiObject<NiMaterialProperty>());
 	if (mtl)
 	{
 		Color c;
@@ -143,9 +140,9 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
                if (smtl->GetTwoSided()){
                   NiStencilPropertyRef stencil = new NiStencilProperty();
                   stencil->SetStencilFunction(TEST_GREATER);
-                  stencil->SetStencilEnabled(false);
+                  stencil->SetStencilState(false);
                   stencil->SetPassAction(ACTION_INCREMENT);
-                  stencil->SetDrawMode(DRAW_BOTH);
+                  stencil->SetFaceDrawMode(DRAW_BOTH);
                   parent->AddProperty(stencil);
                }
                if (smtl->IsFaceted()) {
@@ -344,9 +341,9 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
                if (smtl->GetTwoSided()){
                   NiStencilPropertyRef stencil = CreateNiObject<NiStencilProperty>();
                   stencil->SetStencilFunction(TEST_GREATER);
-                  stencil->SetStencilEnabled(false);
+                  stencil->SetStencilState(false);
                   stencil->SetPassAction(ACTION_INCREMENT);
-                  stencil->SetDrawMode(DRAW_BOTH);
+                  stencil->SetFaceDrawMode(DRAW_BOTH);
                   parent->AddProperty(stencil);
                }
                if (smtl->IsFaceted()) {
@@ -378,31 +375,31 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
       if (alphaMode != 0 || AlphaTestEnable) {
          // always add alpha ???
          NiAlphaPropertyRef alphaProp = CreateNiObject<NiAlphaProperty>();
-         alphaProp->SetAlphaBlend(true);
+         alphaProp->SetBlendState(true);
          if (alphaMode == 0) { // automatic
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BlendMode(srcBlend));
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BlendMode(destBlend));
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BlendFunc(srcBlend));
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BlendFunc(destBlend));
          } else if (alphaMode == 1) { // None
-            alphaProp->SetAlphaBlend(false);
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BM_SRC_ALPHA);
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BM_ONE_MINUS_SRC_ALPHA);
+            alphaProp->SetBlendState(false);
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BF_SRC_ALPHA);
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BF_ONE_MINUS_SRC_ALPHA);
          } else if (alphaMode == 2) { // Standard
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BM_SRC_ALPHA);
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BM_ONE_MINUS_SRC_ALPHA);
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BF_SRC_ALPHA);
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BF_ONE_MINUS_SRC_ALPHA);
          } else if (alphaMode == 3) { // Additive
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BM_ONE);
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BM_ONE);
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BF_ONE);
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BF_ONE);
          } else if (alphaMode == 4) { // Multiplicative
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BM_ZERO);
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BM_SRC_COLOR);
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BF_ZERO);
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BF_SRC_COLOR);
          } else { // Advanced
-            alphaProp->SetSourceBlendMode(NiAlphaProperty::BlendMode(srcBlend));
-            alphaProp->SetDestBlendMode(NiAlphaProperty::BlendMode(destBlend));
+            alphaProp->SetSourceBlendFunc(NiAlphaProperty::BlendFunc(srcBlend));
+            alphaProp->SetDestBlendFunc(NiAlphaProperty::BlendFunc(destBlend));
          }
-         alphaProp->SetTestMode(NiAlphaProperty::TestMode(TestMode));
-         alphaProp->SetAlphaSort(!NoSorter);
-         alphaProp->SetAlphaTestThreshold(TestRef);
-         alphaProp->SetAlphaTest(AlphaTestEnable);
+         alphaProp->SetTestFunc(NiAlphaProperty::TestFunc(TestMode));
+         alphaProp->SetTriangleSortMode(!NoSorter);
+         alphaProp->SetTestThreshold(TestRef);
+         alphaProp->SetBlendState(AlphaTestEnable);
          parent->AddProperty(alphaProp);
       }
 

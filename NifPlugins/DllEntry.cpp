@@ -20,6 +20,7 @@ extern ClassDesc2* GetbhkSphereDesc();
 extern ClassDesc2* GetbhkCapsuleDesc();
 extern ClassDesc2* GetbhkRigidBodyModifierDesc();
 extern ClassDesc2* GetbhkBoxDesc();
+extern ClassDesc* GetDDSLibClassDesc();
 
 enum ClassDescType
 {
@@ -66,19 +67,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 void InitializeLibSettings()
 {
-   Interface *gi = GetCOREInterface();
    TCHAR iniName[MAX_PATH];
-   if (gi) {
-      LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
-   } else {
-      GetModuleFileName(NULL, iniName, _countof(iniName));
-      if (LPTSTR fname = PathFindFileName(iniName))
-         *fname = 0;
-      PathAddBackslash(iniName);
-      PathAppend(iniName, "plugcfg");
-      PathAppend(iniName, "MaxNifTools.ini");
-   }
+   GetIniFileName(iniName);
    libVersion = GetIniValue("System", "MaxSDKVersion", libVersion, iniName);
    if (libVersion == 0)
       libVersion = VERSION_3DSMAX;
@@ -110,6 +100,9 @@ void InitializeLibSettings()
       classDescEnabled[CD_KFExport] = true;
       classDescriptions[nClasses++] = GetKfExportDesc();
    }
+#ifdef GAME_VER
+   classDescriptions[nClasses++] = (ClassDesc2 *)GetDDSLibClassDesc();
+#endif
 }
 
 // This function returns a string that describes the DLL and where the user

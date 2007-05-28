@@ -188,17 +188,7 @@ KfExport::KfExport()
 {
    Interface *gi = GetCOREInterface();
    TCHAR iniName[MAX_PATH];
-   if (gi) {
-      LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
-   } else {
-      GetModuleFileName(NULL, iniName, _countof(iniName));
-      if (LPTSTR fname = PathFindFileName(iniName))
-         fname = NULL;
-      PathAddBackslash(iniName);
-      PathAppend(iniName, "plugcfg");
-      PathAppend(iniName, "MaxNifTools.ini");
-   }
+   GetIniFileName(iniName);
    iniFileName = iniName;
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
    fileVersion = GetFileVersion(NULL);
@@ -275,8 +265,7 @@ int	KfExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL s
       AppSettings::Initialize(i);
 
       TCHAR iniName[MAX_PATH];
-      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+      GetIniFileName(iniName);
       bool iniNameIsValid = (-1 != _taccess(iniName, 0));
 
       // read config from registry

@@ -281,7 +281,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		bhkCollisionObjectRef co = new bhkCollisionObject();
 		co->SetBody(DynamicCast<NiObject>(body));
       
-		co->SetParent(newParent);
+		//co->SetTarget(newParent);
 
 		// link
 		newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
@@ -332,7 +332,7 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	npGetProp(node, NP_HVK_CENTER, center);
 
 	// setup body
-	bhkRigidBodyRef body = DynamicCast<bhkRigidBody>(CreateBlock("bhkRigidBodyT"));
+	bhkRigidBodyRef body = CreateNiObject<bhkRigidBodyT>();
 
 	body->SetLayer(OblivionLayer(lyr));
 	body->SetLayerCopy(OblivionLayer(lyr));
@@ -424,7 +424,7 @@ bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj, const Matrix3& tm)
 	params->GetValue(obj->GetParamBlockIndex(CAPSULE_RADIUS), 0, radius, FOREVER);
 	params->GetValue(obj->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height, FOREVER);
 
-	bhkCapsuleShapeRef capsule = DynamicCast<bhkCapsuleShape>(CreateBlock("bhkCapsuleShape"));
+	bhkCapsuleShapeRef capsule = CreateNiObject<bhkCapsuleShape>();
 
 	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(capsule));
 }
@@ -476,14 +476,16 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm
 	data->SetNormals(vnorms);
 
 	// setup shape
-	bhkNiTriStripsShapeRef shape = DynamicCast<bhkNiTriStripsShape>(CreateBlock("bhkNiTriStripsShape"));
-	shape->SetNumStripsData(1);
-	shape->SetStripsData(0, data);
+	bhkNiTriStripsShapeRef shape = StaticCast<bhkNiTriStripsShape>(bhkNiTriStripsShape::Create());
 
-	if (tri != os.obj)
-		tri->DeleteMe();
+	//bhkNiTriStripsShapeRef shape = DynamicCast<bhkNiTriStripsShape>(CreateBlock("bhkNiTriStripsShape"));
+	//shape->SetNumStripsData(1);
+	//shape->SetStripsData(0, data);
 
-	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(shape));
+	//if (tri != os.obj)
+	//	tri->DeleteMe();
+
+	return bhkSphereRepShapeRef();
 }
 
 

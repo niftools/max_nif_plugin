@@ -11,7 +11,7 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "stdafx.h"
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
 #  include <IFrameTagManager.h>
 #endif
 #include <notetrck.h>
@@ -181,7 +181,7 @@ void NifImporter::ClearAnimation()
 {
    if (clearAnimation)
    {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
 
          int n = tagMgr->GetTagCount();
@@ -430,7 +430,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
       }
 
       if (addTimeTags) {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
          if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
             for (vector<StringKey>::iterator itr=textKeys.begin(); itr != textKeys.end(); ++itr) {
                tagMgr->CreateNewTag(const_cast<TCHAR*>((*itr).data.c_str()), TimeToFrame(time + (*itr).time), 0, FALSE);
@@ -539,7 +539,7 @@ bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyfr
 
          if (npoints > 3)
          {
-            NiKeyframeDataRef data = CreateBlock("NiKeyframeData");
+            NiKeyframeDataRef data = CreateNiObject<NiKeyframeData>();
             data->SetRotateType(QUADRATIC_KEY);
             data->SetTranslateType(QUADRATIC_KEY);
             data->SetScaleType(QUADRATIC_KEY);

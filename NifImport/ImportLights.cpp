@@ -72,7 +72,7 @@ bool NifImporter::ImportLights(vector<NiLightRef> lights)
       GenLight *ob = NULL;
       NiLightRef& light = (*itr);
 
-      if (light->IsSameType(NiPointLight::TypeConst())){
+      if (light->IsSameType(NiPointLight::TYPE)){
          ob = CreateLight(gi, light, OMNI_LIGHT);
          NiPointLightRef ptLight = light;
          float c = ptLight->GetConstantAttenuation();
@@ -88,12 +88,12 @@ bool NifImporter::ImportLights(vector<NiLightRef> lights)
             ob->SetDecayType(2);
             ob->SetAtten(0, ATTEN_START, 4.0f/(l*l));
          }
-      } else if (light->IsSameType(NiDirectionalLight::TypeConst())){
+      } else if (light->IsSameType(NiDirectionalLight::TYPE)){
          ob = CreateLight(gi, light, DIR_LIGHT);
-      } else if (light->IsSameType(NiAmbientLight::TypeConst())){
+      } else if (light->IsSameType(NiAmbientLight::TYPE)){
          ob = CreateLight(gi, light, OMNI_LIGHT);
          ob->SetAmbientOnly(TRUE);
-      } else if (light->IsSameType(NiSpotLight::TypeConst())){
+      } else if (light->IsSameType(NiSpotLight::TYPE)){
          ob = CreateLight(gi, light, FSPOT_LIGHT);
       }
       if (INode *n = gi->CreateObjectNode(ob)) {
@@ -108,7 +108,7 @@ bool NifImporter::ImportLights(vector<NiLightRef> lights)
          Quat q = TOQUAT(rot.AsQuaternion());
 
          PosRotScaleNode(n, p, q, scale, prsDefault);
-         n->Hide(light->GetHidden() ? TRUE : FALSE);
+         n->Hide(light->GetVisibility() ? FALSE : TRUE );
       }
       ok = true;
    }

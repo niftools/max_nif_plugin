@@ -27,7 +27,7 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
 {
    BitmapManager *bmpMgr = TheManager;
    if (NiSourceTextureRef texSrc = desc.source){
-      string filename = texSrc->GetExternalFileName();
+      string filename = texSrc->GetTextureFileName();
       if (bmpMgr->CanImport(filename.c_str())){
          BitmapTex *bmpTex = NewDefaultBitmapTex();
          string name = texSrc->GetName();
@@ -83,13 +83,13 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
    // Texture
-   NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TypeConst());
+   NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TYPE);
    if (matRef != NULL){
-      NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TypeConst());
-      NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TypeConst());
-      NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TypeConst());
-      NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TypeConst());
-      NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TypeConst());
+      NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TYPE);
+      NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TYPE);
+      NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
+      NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
+      NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TYPE);
 
       StdMat2 *m = NewDefaultStdMat();
       m->SetName(matRef->GetName().c_str());
@@ -120,7 +120,7 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
                m->SetWire(value);
             }
             if (stencilRef != NULL) {
-               if (stencilRef->GetDrawMode() == 3 /*DRAW_BOTH*/) {
+				if (stencilRef->GetFaceDrawMode() == DRAW_BOTH) {
                   BOOL value = TRUE;
                   m->SetTwoSided(value);
                }
@@ -267,22 +267,22 @@ bool NifImporter::ImportCiv4Shader(ImpNode *node, NiAVObjectRef avObject, StdMat
       setMAXScriptValue(ref, "Vertex_Color_Enable", 0, VertexColorsEnable);
    }
    if (NiAlphaPropertyRef alphaRef = SelectFirstObjectOfType<NiAlphaProperty>(props)) {
-      int TestRef = alphaRef->GetAlphaTestThreshold();
-      int srcBlend = alphaRef->GetSourceBlendMode(); 
-      int destBlend = alphaRef->GetDestBlendMode();
-      int TestMode = alphaRef->GetTestMode();
-      bool AlphaTestEnable = alphaRef->GetAlphaTest();     
-      bool NoSorter = !alphaRef->GetAlphaSort();
-      bool alphaBlend = alphaRef->GetAlphaBlend();
+      int TestRef = alphaRef->GetTestThreshold();
+      int srcBlend = alphaRef->GetSourceBlendFunc(); 
+      int destBlend = alphaRef->GetSourceBlendFunc ();
+      int TestMode = alphaRef->GetTestFunc();
+      bool AlphaTestEnable = alphaRef->GetTestState();     
+      bool NoSorter = !alphaRef->GetTriangleSortMode();
+      bool alphaBlend = alphaRef->GetBlendState();
       int alphaMode = 1;
 
       if (!alphaBlend) {
          alphaMode = 1; // none
-      } else if (srcBlend == NiAlphaProperty::BM_SRC_ALPHA && destBlend == NiAlphaProperty::BM_ONE_MINUS_SRC_ALPHA) {
+      } else if (srcBlend == NiAlphaProperty::BF_SRC_ALPHA && destBlend == NiAlphaProperty::BF_ONE_MINUS_SRC_ALPHA) {
          alphaMode = 0; // standard or automatic?
-      } else if (srcBlend == NiAlphaProperty::BM_ONE && destBlend == NiAlphaProperty::BM_ONE) {
+      } else if (srcBlend == NiAlphaProperty::BF_ONE && destBlend == NiAlphaProperty::BF_ONE) {
          alphaMode = 3;
-      } else if (srcBlend == NiAlphaProperty::BM_ZERO && destBlend == NiAlphaProperty::BM_SRC_COLOR) {
+      } else if (srcBlend == NiAlphaProperty::BF_ZERO && destBlend == NiAlphaProperty::BF_SRC_COLOR) {
          alphaMode = 4;
       } else {
          alphaMode = 5;

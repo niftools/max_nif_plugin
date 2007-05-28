@@ -39,6 +39,13 @@ public:
    int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
    int				DoExportInternal(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts, DWORD options);
 
+   SDK_RESERVED_METHOD(1); // russom 02/26/01
+   SDK_RESERVED_METHOD(2); // russom 02/26/01
+   SDK_RESERVED_METHOD(3); // russom 02/26/01
+   SDK_RESERVED_METHOD(4); // russom 02/26/01
+   SDK_RESERVED_METHOD(5); // russom 02/26/01
+   SDK_RESERVED_METHOD(6); // russom 02/26/01
+
 	NifExport();
 	~NifExport();		
 };
@@ -275,17 +282,7 @@ NifExport::NifExport()
 {
    Interface *gi = GetCOREInterface();
    TCHAR iniName[MAX_PATH];
-   if (gi) {
-      LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
-   } else {
-      GetModuleFileName(NULL, iniName, _countof(iniName));
-      if (LPTSTR fname = PathFindFileName(iniName))
-         fname = NULL;
-      PathAddBackslash(iniName);
-      PathAppend(iniName, "plugcfg");
-      PathAppend(iniName, "MaxNifTools.ini");
-   }
+   GetIniFileName(iniName);
    iniFileName = iniName;
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
    fileVersion = GetFileVersion(NULL);
@@ -405,8 +402,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
    AppSettings::Initialize(i);
 
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
    bool iniNameIsValid = (-1 != _taccess(iniName, 0));
 
    // Set whether Config should use registry or not
@@ -455,7 +451,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
       Exporter::mExportType = Exporter::NIF_WO_KF;
    }
    Niflib::NifInfo info(nifVersion, nifUserVer, nifUserVer);
-   info.endian = Niflib::NifInfo::INFO_LITTLE_ENDIAN;
+   info.endian = ENDIAN_LITTLE;
    info.creator = Exporter::mCreatorName;
    info.exportInfo1 = FormatText("Niftools 3ds Max Plugins %s", fileVersion.data());
 

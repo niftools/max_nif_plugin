@@ -38,7 +38,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
          mtx.NoTrans();    
          mesh = copymesh = new Mesh(*mesh);     
          int n = mesh->getNumVerts();
-         for ( uint i = 0; i < n; ++i ) {
+         for ( unsigned int i = 0; i < n; ++i ) {
             Point3& vert = mesh->getVert(i);
             vert = mtx * vert;
          }
@@ -47,7 +47,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
          MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
          if (NULL != specNorms) {
             specNorms->CheckNormals();
-            for ( uint i = 0; i < specNorms->GetNumNormals(); ++i ) {
+            for ( unsigned int i = 0; i < specNorms->GetNumNormals(); ++i ) {
                Point3& norm = specNorms->Normal(i);
                norm = (mtx * norm).Normalize();
             }
@@ -141,7 +141,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 			}
 
          if (node->IsHidden())
-            shape->SetHidden(true);
+            shape->SetVisibility(false);
 
          shape->SetName(name);
          shape->SetLocalTransform(tm);
@@ -423,7 +423,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
 Exporter::Result SkinInstance::execute()
 {
    shape->BindSkin(boneList);
-   uint bone = 0;
+   unsigned int bone = 0;
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
       shape->SetBoneWeights(bone, (*bitr));
    }

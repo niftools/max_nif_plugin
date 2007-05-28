@@ -56,10 +56,10 @@ bool NifImporter::ImportCollision(NiNodeRef node)
    if (collObj)
    {
       CollisionImport ci(*this);
-      if (INode *inode = FindINode(gi, collObj->GetParent()))
+      if (INode *inode = FindINode(gi, collObj->GetTarget()))
       {
          NiObjectRef body = collObj->GetBody();
-         if (body->IsDerivedType(bhkRigidBody::TypeConst()))
+         if (body->IsDerivedType(bhkRigidBody::TYPE))
          {
             ci.ImportRigidBody(bhkRigidBodyRef(body), inode);
          }
@@ -113,15 +113,15 @@ bool CollisionImport::ImportRigidBody(bhkRigidBodyRef body, INode* node)
 bool CollisionImport::ImportShape(bhkRigidBodyRef body, bhkShapeRef shape, INode* parent)
 {
    INode *shapeNode = NULL;
-   if (shape->IsDerivedType(bhkCapsuleShape::TypeConst()))
+   if (shape->IsDerivedType(bhkCapsuleShape::TYPE))
    {
       shapeNode = ImportCapsule(body, bhkCapsuleShapeRef(shape), parent);
    }
-   else if (shape->IsDerivedType(bhkSphereShape::TypeConst()))
+   else if (shape->IsDerivedType(bhkSphereShape::TYPE))
    {
       shapeNode = ImportSphere(body, bhkSphereShapeRef(shape), parent);
    }
-   else if (shape->IsDerivedType(bhkConvexVerticesShape::TypeConst()))
+   else if (shape->IsDerivedType(bhkConvexVerticesShape::TYPE))
    {
       shapeNode = ImportConvexVertices(body, bhkConvexVerticesShapeRef(shape), parent);
    }

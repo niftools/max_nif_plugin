@@ -947,7 +947,6 @@ void CalcCenteredSphere(const vector<Vector3>& vertices, Vector3& center, float&
 
 static void TransformVector3(Matrix44& tm, vector<Vector3>& pts)
 {
-   Matrix44::IDENTITY;
    for (vector<Vector3>::iterator itr = pts.begin(); itr != pts.end(); ++itr)
    {    
       Matrix44 m4(*itr, Matrix33::IDENTITY, 1.0f);
@@ -1094,4 +1093,46 @@ Modifier *GetbhkCollisionModifier(INode *node)
       pObj = pDerObj->GetObjRef();
    }
    return NULL;
+}
+
+void GetIniFileName(char *iniName)
+{
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
+	Interface *gi = GetCOREInterface();
+#else
+	Interface *gi = NULL;
+#endif
+	if (gi) {
+		LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
+		PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+
+		int forcePlugcfg = GetIniValue("System", "ForcePlugcfg", 0, iniName);
+
+		if (forcePlugcfg == 1 || _access(iniName, 06) != 0) {
+			TCHAR iniPath[MAX_PATH];
+			GetModuleFileName(NULL, iniPath, MAX_PATH);
+			if (LPTSTR fname = PathFindFileName(iniPath))
+				*fname = 0;
+			PathAddBackslash(iniPath);
+			PathAppend(iniPath, "plugcfg");
+			PathAppend(iniPath, "MaxNifTools.ini");
+
+			// Use plugcfg directory ini 
+			if (_access(iniPath, 06) == 0) {
+				strcpy(iniName, iniPath);
+			}
+		}
+	} else {
+		GetModuleFileName(NULL, iniName, MAX_PATH);
+		if (LPTSTR fname = PathFindFileName(iniName))
+			*fname = 0;
+		PathAddBackslash(iniName);
+		PathAppend(iniName, "plugcfg");
+		PathAppend(iniName, "MaxNifTools.ini");
+	}
+
+	if (_access(iniName, 06) != 0) {
+		MessageBox(NULL, "MaxNifTools could not find a valid INI.  The plugin may not work correctly.\nPlease check for proper installation.", 
+			"MaxNifTools", MB_OK|MB_ICONWARNING);
+	}
 }

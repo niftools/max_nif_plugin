@@ -36,7 +36,7 @@ struct NiNodeNameEquivalence : public NumericStringEquivalence
 void GoToSkeletonBindPosition(vector<NiNodeRef>& blocks)
 {
    //Send all skeleton roots to bind position
-   for (uint i = 0; i < blocks.size(); ++i) {
+   for (unsigned int i = 0; i < blocks.size(); ++i) {
       NiNodeRef node = blocks[i];
       if ( node != NULL && node->IsSkeletonRoot() ) {
          node->GoToSkeletonBindPosition();
@@ -481,6 +481,7 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
          if (INode *n = result.n)
          {
             n->SetName(const_cast<TCHAR*>(name.c_str()));
+
             float len = Length(endPos-startPos);
             float width = max(minBoneWidth, min(maxBoneWidth, len * boneWidthToLengthRatio));
             if (Object* o = n->GetObjectRef())
@@ -573,7 +574,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       vector<NiAVObjectRef> children = node->GetChildren();
       vector<NiNodeRef> childNodes = DynamicCast<NiNode>(children);
 
-      NiAVObject::CollisionType cType = node->GetCollision();
+      NiAVObject::CollisionType cType = node->GetCollisionMode();
       if (children.empty() && name=="Bounding Box")
          return;
 
@@ -654,13 +655,13 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       {
          bool isDummy = ( (uncontrolledDummies && !HasControllerRef(ctrlCount, name))
                      || (!dummyNodeMatches.empty() && wildmatch(dummyNodeMatches, name))
-                     || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TypeConst()))
+                     || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TYPE))
                       );
          if (wildmatch("Camera*", name)) {
             if (enableCameras) {
                if (bone = CreateCamera(name)) {
                   PosRotScaleNode(bone, p, q, scale, prs);
-                  bone->Hide(node->GetHidden() ? TRUE : FALSE);
+                  bone->Hide(node->GetVisibility() ? FALSE : TRUE);
                }
             }
          }else if (isDummy && createNubsForBones)
@@ -668,7 +669,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          else if (bone = CreateBone(name, p, pp, zAxis))
          {
             PosRotScaleNode(bone, p, q, scale, prs);
-            bone->Hide(node->GetHidden() ? TRUE : FALSE);
+            bone->Hide(node->GetVisibility() ? FALSE : TRUE);
          }
          if (bone)
          {

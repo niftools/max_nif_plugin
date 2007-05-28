@@ -2,22 +2,28 @@
 
 #include <string>
 #include <list>
-enum INIDEFTYPE
+
+enum VARIABLETYPE
 {
-   IDT_STRING,
-   IDT_INT,
-   IDT_FLOAT,
-   IDT_BOOL,
-   IDT_FILENAME,
-   IDT_UNKNOWN,
+   vtUnknown,
+   vtInteger,
+   vtFloat,
+   vtDouble,
+   vtBoolean,
+   vtText,
+   vtPointer,
+   vtHandle,
+   vtVector = 0x1000,
+   vtFixedVector = vtVector | 0x2000,
+   vtMatrix = 0x4000,
 };
 
-struct INIDEF
+struct VARIABLE
 {
-   INIDEF() : ShortName(NULL), IniName(NULL), MemberAddr(0), Description(NULL), DefaultValue(NULL), ValueSize(0) {
+   VARIABLE() : ShortName(NULL), IniName(NULL), MemberAddr(0), Description(NULL), DefaultValue(NULL), ValueSize(0) {
    }
 
-   ~INIDEF() {
+   ~VARIABLE() {
       if (ValueSize && DefaultValue) {
          delete DefaultValue;
          DefaultValue = NULL;
@@ -26,36 +32,43 @@ struct INIDEF
    }
 
    template<typename U>
-   INIDEF(LPCTSTR sName, LPCTSTR iName, const U& member, U default, LPCTSTR desc, INIDEFTYPE type) 
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const U& member, U default, LPCTSTR desc, VARIABLETYPE type) 
       : ShortName(sName), IniName(iName), MemberAddr(NULL), Description(NULL), MemberType(type) {
       SetDefault(default);
    }
 
    template<>
-   INIDEF(LPCTSTR sName, LPCTSTR iName, const std::string& member, std::string default, LPCTSTR desc, INIDEFTYPE type) 
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const std::string& member, std::string default, LPCTSTR desc, VARIABLETYPE type) 
       : ShortName(sName), IniName(iName), MemberAddr((DWORD)&member), Description(NULL) { 
-      MemberType = type==IDT_UNKNOWN?IDT_STRING:type; 
+      MemberType = type==vtUnknown?vtText:type; 
       SetDefault(default);
    }
 
    template<>
-   INIDEF(LPCTSTR sName, LPCTSTR iName, const int& member, int default, LPCTSTR desc, INIDEFTYPE type) 
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const int& member, int default, LPCTSTR desc, VARIABLETYPE type) 
       : ShortName(sName), IniName(iName), MemberAddr((DWORD)&member), Description(NULL) { 
-      MemberType = type==IDT_UNKNOWN?IDT_INT:type; 
+      MemberType = type==vtUnknown?vtInteger:type; 
       SetDefault(default);
    }
 
    template<>
-   INIDEF(LPCTSTR sName, LPCTSTR iName, const float& member, float default, LPCTSTR desc, INIDEFTYPE type) 
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const float& member, float default, LPCTSTR desc, VARIABLETYPE type) 
       : ShortName(sName), IniName(iName), MemberAddr((DWORD)&member), Description(NULL) { 
-      MemberType = type==IDT_UNKNOWN?IDT_FLOAT:type; 
+      MemberType = type==vtUnknown?vtFloat:type; 
       SetDefault(default);
    }
 
    template<>
-   INIDEF(LPCTSTR sName, LPCTSTR iName, const bool& member, bool default, LPCTSTR desc, INIDEFTYPE type) 
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const double& member, double default, LPCTSTR desc, VARIABLETYPE type) 
       : ShortName(sName), IniName(iName), MemberAddr((DWORD)&member), Description(NULL) { 
-      MemberType = type==IDT_UNKNOWN?IDT_BOOL:type; 
+         MemberType = type==vtUnknown?vtDouble:type; 
+         SetDefault(default);
+   }
+
+   template<>
+   VARIABLE(LPCTSTR sName, LPCTSTR iName, const bool& member, bool default, LPCTSTR desc, VARIABLETYPE type) 
+      : ShortName(sName), IniName(iName), MemberAddr((DWORD)&member), Description(NULL) { 
+      MemberType = type==vtUnknown?vtBoolean:type; 
       SetDefault(default);
    }
 
@@ -73,42 +86,42 @@ struct INIDEF
    LPCTSTR ShortName;
    LPCTSTR IniName;
    DWORD MemberAddr;
-   INIDEFTYPE MemberType;
+   VARIABLETYPE MemberType;
    LPCTSTR Description;
    LPVOID DefaultValue;
    DWORD ValueSize;
 };
 
 #define BEGIN_INI_MAP(name) \
-   virtual void *GetMember(const INIDEF* memptr) const { return (void*)(((char*)this) + memptr->MemberAddr); } \
-   virtual const INIDEF* GetInfDefmap() const { return InternalGetInfDefmap(); } \
-   static INIDEF* InternalGetInfDefmap() { \
+   virtual void *GetMember(const VARIABLE* memptr) const { return (void*)(((char*)this) + memptr->MemberAddr); } \
+   virtual const VARIABLE* GetInfDefmap() const { return InternalGetInfDefmap(); } \
+   static VARIABLE* InternalGetInfDefmap() { \
    const name* pThis = 0; \
-   static INIDEF map[] = { \
+   static VARIABLE map[] = { \
 
 #define BEGIN_INI_MAP_WITH_BASE(name, base) \
-   virtual void *GetMember(const INIDEF* memptr) const { return (void*)(((char*)this) + memptr->MemberAddr); } \
-   virtual const INIDEF* GetInfDefmap() const { return InternalGetInfDefmap(); } \
-   static INIDEF* InternalGetInfDefmap() { \
+   virtual void *GetMember(const VARIABLE* memptr) const { return (void*)(((char*)this) + memptr->MemberAddr); } \
+   virtual const VARIABLE* GetInfDefmap() const { return InternalGetInfDefmap(); } \
+   static VARIABLE* InternalGetInfDefmap() { \
    const name* pThis = 0; \
-   static INIDEF map[] = { \
+   static VARIABLE map[] = { \
 
 #define END_INI_MAP() \
-   INIDEF() };\
+   VARIABLE() };\
    return map;\
 }
 
 #define ADDITEM(sName, iName, member, desc) \
-   INIDEF(sName, iName, pThis->member, desc, IDT_UNKNOWN), \
+   VARIABLE(sName, iName, pThis->member, desc, vtUnknown), \
 
 #define ADDITEMEX(sName, iName, member, type, desc) \
-   INIDEF(sName, iName, pThis->member, desc, type), \
+   VARIABLE(sName, iName, pThis->member, desc, type), \
 
 struct IniFileSection
 {
    virtual LPCTSTR GetName() const = 0;
-   virtual const INIDEF* GetInfDefmap() const = 0;
-   virtual void *GetMember(const INIDEF* memptr) const = 0;
+   virtual const VARIABLE* GetInfDefmap() const = 0;
+   virtual void *GetMember(const VARIABLE* memptr) const = 0;
 };
 
 typedef std::list<IniFileSection*>  IniFileSectionList;
@@ -116,7 +129,7 @@ typedef std::list<IniFileSection*>  IniFileSectionList;
 inline int GetIniDefSectionSize(IniFileSection *section) {
    int len = 0;
 
-   for (const INIDEF *inidef = section->GetInfDefmap()
+   for (const VARIABLE *inidef = section->GetInfDefmap()
       ; inidef != NULL && inidef->ShortName
       ; ++inidef)
       ++len;

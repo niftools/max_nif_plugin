@@ -228,7 +228,7 @@ bool Exporter::removeUnreferencedBones(NiNodeRef node)
    {
       NiAVObjectRef& child = (*itr);
       bool childRemove = false;
-      if (child->IsDerivedType(NiNode::TypeConst()))
+      if (child->IsDerivedType(NiNode::TYPE))
       {
          childRemove = removeUnreferencedBones(StaticCast<NiNode>(child));
       }

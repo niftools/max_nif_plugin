@@ -16,6 +16,8 @@
 #ifndef __MAX_MEM_H
 #define __MAX_MEM_H
 
+#if VERSION_3DSMAX < ((9000<<16)+(15<<8)+0) // Version 9
+
 #include <crtdbg.h>
 #include <malloc.h>
 #include <new.h>
@@ -191,5 +193,5 @@ CoreExport int	(__cdecl *MAX_CrtDumpMemoryLeaks)(void);
 #endif //IS_HYBRID
 #endif //_DEBUG
 
-
+#endif
 #endif //__MAX_MEM_H

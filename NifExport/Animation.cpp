@@ -11,7 +11,7 @@ HISTORY:
 *>	Copyright (c) 2006, All Rights Reserved.
 **********************************************************************/
 #include "pch.h"
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7+
 #include <IFrameTagManager.h>
 #endif
 #include <notetrck.h>
@@ -74,7 +74,7 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
 {
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7+
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
          int n = tagMgr->GetTagCount();
          for (int i = 0; i<n; i++) {
@@ -138,7 +138,7 @@ void Exporter::InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef pare
    ctrl->SetStopTime(FloatNegINF);
    ctrl->SetPhase(0.0f);
    ctrl->SetFlags(0x0C);
-   ctrl->SetTarget( parent );
+   //ctrl->SetTarget( parent );
    parent->AddController(DynamicCast<NiTimeController>(ctrl));
 }
 
@@ -328,7 +328,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
 
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
          int n = tagMgr->GetTagCount();
          for (int i = 0; i<n; i++) {
@@ -409,7 +409,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
 
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+#if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
       if (IFrameTagManager *tagMgr = (IFrameTagManager*)GetCOREInterface(FRAMETAGMANAGER_INTERFACE)) {
 
          curSeq = new NiControllerSequence();
@@ -721,13 +721,14 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             Exporter::InitializeTimeController(control, ninode);
 
             NiTransformInterpolatorRef interp = new NiTransformInterpolator();
-            data = new NiTransformData();
+            NiTransformDataRef tdata = new NiTransformData();
+            data = StaticCast<NiKeyframeData>(tdata);
             control->SetInterpolator(StaticCast<NiInterpolator>(interp));
 
             interp->SetTranslation(trans);
             interp->SetScale(scale);
             interp->SetRotation(rot);
-            interp->SetData(data);
+            interp->SetData(tdata);
 
             timeControl = StaticCast<NiTimeController>(control);
          }
@@ -740,7 +741,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          //   interp->SetTranslation( TOVECTOR3(tm.GetTrans()) );
          //   interp->SetScale( Average(GetScale(tm)) );
          //   interp->SetRotation( TOQUAT( Quat(tm) ) );
-         //   seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control));
+         //   seq->AddInterpolator(StaticCast<NiSingleInterpController>(control));
          //}
          //else
          {
@@ -954,13 +955,13 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
    NiTimeControllerRef control = exportController( node, range, keepTM );
    if (control != NULL)
    {
-      NiSingleInterpolatorControllerRef interpControl = DynamicCast<NiSingleInterpolatorController>(control);
+      NiSingleInterpControllerRef interpControl = DynamicCast<NiSingleInterpController>(control);
       if (interpControl) 
       {
          // Get Priority from node
          float priority;
          npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
-         seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(control), priority);
+         seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), priority);
 
          // Handle NonAccum 
          if (Exporter::mAllowAccum && hasAccum)
@@ -985,7 +986,7 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
                   accinterp->SetData( interp->GetData() );
                   interp->SetData( NiTransformDataRef() );
                }
-               seq->AddInterpolator(StaticCast<NiSingleInterpolatorController>(acccontrol), Exporter::mDefaultPriority);
+               seq->AddInterpolator(StaticCast<NiSingleInterpController>(acccontrol), Exporter::mDefaultPriority);
 
                accnode->RemoveController(acccontrol);
             }

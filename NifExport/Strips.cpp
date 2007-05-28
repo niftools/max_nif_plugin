@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "NvTriStrip/NvTriStrip.h"
+using namespace NvTriStrip;
 /*
 using namespace triangle_stripper;
 
@@ -85,7 +87,7 @@ void Exporter::strippify(FaceGroup &grp)
 		data[i * 3 + 2] = grp.faces[i][2];
 	}
 	
-	PrimitiveGroup * groups = 0;
+   PrimitiveGroup * groups = 0;
 	unsigned short numGroups = 0;
 	
 	// GF 3+

@@ -252,7 +252,12 @@ int NifFurnitureMarker::Display(TimeValue t, INode* inode, ViewExp *vpt, int fla
     Material *mtl = gw->getMaterial();
 
     DWORD rlim = gw->getRndLimits();
-    gw->setRndLimits(GW_WIREFRAME|GW_EDGES_ONLY|GW_BACKCULL);
+
+    DWORD newrlim = GW_WIREFRAME|GW_BACKCULL;
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
+    newrlim |= GW_EDGES_ONLY;
+#endif
+    gw->setRndLimits(newrlim);
     
 	GetMat(t, inode, vpt, m);
 	m.Scale(mFlip);

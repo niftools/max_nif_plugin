@@ -9,8 +9,7 @@ AppSettingsMap TheAppSettings;
 void AppSettings::Initialize(Interface *gi) 
 {
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
    if (-1 != _taccess(iniName, 0)) {
       bool reparse = GetIniValue<bool>("System", "Reparse", false, iniName);
       if (reparse || TheAppSettings.empty()){
@@ -72,8 +71,7 @@ void AppSettings::ReadSettings(string iniFile)
 void AppSettings::WriteSettings(Interface *gi)
 {
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
    if (-1 != _taccess(iniName, 0)) 
    {
       SetIniValue(Name.c_str(), "NiVersion", NiVersion.c_str(), iniName);

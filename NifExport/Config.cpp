@@ -46,8 +46,7 @@ void Exporter::writeConfig(Interface *i)
    else
    {
       TCHAR iniName[MAX_PATH];
-      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+      GetIniFileName(iniName);
 
       SetIniValue(NifExportSection, "GenerateStrips", mTriStrips, iniName);
       SetIniValue(NifExportSection, "IncludeHidden", mExportHidden, iniName);
@@ -118,8 +117,7 @@ void Exporter::readConfig(Interface *i)
    else
    {
       TCHAR iniName[MAX_PATH];
-      LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-      PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+      GetIniFileName(iniName);
 
       //mVersion = GetIniValue<int>(NifExportSection, "Version", 013, iniName);
       mTriStrips = GetIniValue<bool>(NifExportSection, "GenerateStrips", true, iniName);
@@ -165,8 +163,7 @@ void Exporter::readConfig(Interface *i)
 void Exporter::readKfConfig(Interface *i)
 {
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = i->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
 
    mExportHidden = GetIniValue(KfExportSection, "IncludeHidden", false, iniName);
    mExportLights = GetIniValue(KfExportSection, "Lights", false, iniName);
@@ -192,8 +189,7 @@ void Exporter::writeKfConfig(Interface *i)
 AppSettings * Exporter::exportAppSettings()
 {
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
 
    // Update the current app version
    AppSettings * appSettings = FindAppSetting(Exporter::mGameName);
@@ -218,8 +214,7 @@ AppSettings *Exporter::importAppSettings(string fname)
 {
    AppSettings *appSettings = NULL;
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
 
    // Locate which application to use. If Auto, find first app where this file appears in the root path list
    string curapp = GetIniValue<string>(NifExportSection, "CurrentApp", "AUTO", iniName);

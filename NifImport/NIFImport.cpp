@@ -108,8 +108,7 @@ string NifImporter::GetSkeleton(AppSettings *appSettings)
 void NifImporter::LoadIniSettings()
 {
    TCHAR iniName[MAX_PATH];
-   LPCTSTR pluginDir = gi->GetDir(APP_PLUGCFG_DIR);
-   PathCombine(iniName, pluginDir, "MaxNifTools.ini");
+   GetIniFileName(iniName);
    this->iniFileName = iniName;
    iniFileValid = (-1 != _access(iniName, 0));
 
@@ -283,7 +282,7 @@ bool NifImporter::DoImport()
 
    if (isValid()) {
 
-      if (root->IsDerivedType(NiNode::TypeConst()))
+      if (root->IsDerivedType(NiNode::TYPE))
       {
          NiNodeRef rootNode = root;
 
@@ -317,11 +316,11 @@ bool NifImporter::DoImport()
             }
          }
       }
-      else if (root->IsDerivedType(NiTriShape::TypeConst()))
+      else if (root->IsDerivedType(NiTriShape::TYPE))
       {
          ok |= ImportMesh(NiTriShapeRef(root));
       }
-      else if (root->IsDerivedType(NiTriStrips::TypeConst()))
+      else if (root->IsDerivedType(NiTriStrips::TYPE))
       {
          ok |= ImportMesh(NiTriStripsRef(root));
       }

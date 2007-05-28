@@ -591,7 +591,13 @@ int bhkSphereObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
    m = inode->GetObjectTM(t);
    gw->setTransform(m);
    DWORD rlim = gw->getRndLimits();
-   gw->setRndLimits(GW_WIREFRAME|GW_EDGES_ONLY/*|GW_Z_BUFFER*/);
+
+   DWORD newrlim = GW_WIREFRAME/*|GW_Z_BUFFER*/;
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
+   newrlim |= GW_EDGES_ONLY;
+#endif
+   gw->setRndLimits(newrlim);
+
    if (inode->Selected()) 
       gw->setColor( LINE_COLOR, GetSelColor());
    else if(!inode->IsFrozen() && !inode->Dependent())
