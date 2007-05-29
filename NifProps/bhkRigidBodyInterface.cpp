@@ -263,7 +263,7 @@ public:
    NpComboBox		mCbQualityType;
 
    RigidBodyParamDlgProc(bhkRigidBodyInterface *s) {so=s;thishWnd=NULL;}
-   BOOL DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
+   INT_PTR DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
    void Update(TimeValue t);
    void DeleteThis() {delete this;}
 
@@ -290,7 +290,7 @@ void RigidBodyParamDlgProc::Update(TimeValue t)
    return;
 }
 
-BOOL RigidBodyParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+INT_PTR RigidBodyParamDlgProc::DlgProc(TimeValue t,IParamMap *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
    thishWnd=hWnd;
    switch (msg) 

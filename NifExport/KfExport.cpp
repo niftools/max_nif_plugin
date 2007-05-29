@@ -61,7 +61,7 @@ static KfExportClassDesc KfExportDesc;
 ClassDesc2* GetKfExportDesc() { return &KfExportDesc; }
 
 
-static BOOL CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
+static INT_PTR CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
    static KfExport *imp = NULL;
 
    switch (message) 

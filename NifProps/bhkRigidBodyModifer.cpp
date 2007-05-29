@@ -70,13 +70,13 @@ void CalcAxisAlignedSphere(Mesh& mesh, Point3& center, float& radius)
 // Calculate bounding sphere using average position of the points.  Better fit but slower.
 void CalcCenteredSphere(Mesh& mesh, Point3& center, float& radius)
 {
-   size_t nv = mesh.getNumVerts();
+   int nv = mesh.getNumVerts();
    Point3 sum;
-   for (size_t i=0; i<nv; ++i)
+   for (int i=0; i<nv; ++i)
       sum += mesh.getVert(i);
    center = sum / float(nv);
    float radsq = 0.0f;
-   for (size_t i=0; i<nv; ++i){
+   for (int i=0; i<nv; ++i){
       Point3 diff = mesh.getVert(i) - center;
       float mag = diff.LengthSquared();
       radsq = max(radsq, mag);
@@ -149,7 +149,7 @@ public:
 
 	void			selectionChanged();
    void        saveState();
-   BOOL			dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+   INT_PTR	dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
    // ParamBlock2 access:
    int NumParamBlocks () { return 1; }
@@ -466,11 +466,11 @@ class bhkRigidBodyModifierDlgProc : public ParamMap2UserDlgProc {
 public:
    bhkRigidBodyModifier *mod;
    bhkRigidBodyModifierDlgProc(bhkRigidBodyModifier* m) {mod = m;}		
-   BOOL DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);		
+   INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);		
    void DeleteThis() {delete this;}		
 };
 
-BOOL bhkRigidBodyModifierDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+INT_PTR bhkRigidBodyModifierDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
    switch (msg) 
    {

@@ -40,7 +40,7 @@ LRESULT CALLBACK _HyperlinkParentProc(HWND hwnd, UINT message, WPARAM wParam, LP
 		}
 	case WM_DESTROY:
 		{
-			SetWindowLong(hwnd, GWL_WNDPROC, (LONG) pfnOrigProc);
+			SetWindowLong(hwnd, GWLP_WNDPROC, (LONG) pfnOrigProc);
 			RemoveProp(hwnd, PROP_ORIGINAL_PROC);
 			break;
 		}
@@ -56,7 +56,7 @@ LRESULT CALLBACK _HyperlinkProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM l
 	{
 	case WM_DESTROY:
 		{
-			SetWindowLong(hwnd, GWL_WNDPROC, (LONG) pfnOrigProc);
+			SetWindowLong(hwnd, GWLP_WNDPROC, (LONG) pfnOrigProc);
 			RemoveProp(hwnd, PROP_ORIGINAL_PROC);
 
 			HFONT hOrigFont = (HFONT) GetProp(hwnd, PROP_ORIGINAL_FONT);
@@ -135,11 +135,11 @@ BOOL ConvertStaticToHyperlink(HWND hwndCtl)
 	HWND hwndParent = GetParent(hwndCtl);
 	if (NULL != hwndParent)
 	{
-		WNDPROC pfnOrigProc = (WNDPROC) GetWindowLong(hwndParent, GWL_WNDPROC);
+		WNDPROC pfnOrigProc = (WNDPROC) GetWindowLong(hwndParent, GWLP_WNDPROC);
 		if (pfnOrigProc != _HyperlinkParentProc)
 		{
 			SetProp(hwndParent, PROP_ORIGINAL_PROC, (HANDLE) pfnOrigProc);
-			SetWindowLong(hwndParent, GWL_WNDPROC, (LONG) (WNDPROC) _HyperlinkParentProc);
+			SetWindowLong(hwndParent, GWLP_WNDPROC, (LONG) (WNDPROC) _HyperlinkParentProc);
 		}
 	}
 
@@ -150,9 +150,9 @@ BOOL ConvertStaticToHyperlink(HWND hwndCtl)
 
 	// Subclass the existing control.
 
-	WNDPROC pfnOrigProc = (WNDPROC) GetWindowLong(hwndCtl, GWL_WNDPROC);
+	WNDPROC pfnOrigProc = (WNDPROC) GetWindowLong(hwndCtl, GWLP_WNDPROC);
 	SetProp(hwndCtl, PROP_ORIGINAL_PROC, (HANDLE) pfnOrigProc);
-	SetWindowLong(hwndCtl, GWL_WNDPROC, (LONG) (WNDPROC) _HyperlinkProc);
+	SetWindowLong(hwndCtl, GWLP_WNDPROC, (LONG) (WNDPROC) _HyperlinkProc);
 
 	// Create an updated font by adding an underline.
 

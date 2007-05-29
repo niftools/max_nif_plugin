@@ -17,7 +17,7 @@ HISTORY:
 #include "Hyperlinks.h"
 using namespace Niflib;
 
-static BOOL CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
+static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
    static NifImporter *imp = NULL;
    static DWORD dlgRes = IDCANCEL; 
 

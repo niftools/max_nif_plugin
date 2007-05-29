@@ -186,7 +186,7 @@ public:
    NpComboBox		mCbMaterial;
 
    SphereParamDlgProc(bhkSphereObject *s) {so=s;thishWnd=NULL;}
-   BOOL DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
+   INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
    void Update(TimeValue t);
    void DeleteThis() {delete this;}
 
@@ -207,7 +207,7 @@ void SphereParamDlgProc::Update(TimeValue t)
    return;
 }
 
-BOOL SphereParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+INT_PTR SphereParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
 {
    thishWnd=hWnd;
    switch (msg) 

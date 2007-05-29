@@ -73,7 +73,7 @@ ClassDesc2* GetNifExportDesc() { return &NifExportDesc; }
 
 extern list<NiObjectRef> GetAllObjectsByType( NiObjectRef const & root, const Type & type );
 
-BOOL CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
+INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LPARAM lParam) {
 	static NifExport *imp = NULL;
    char buffer[256];
    static bool setCursor = false;
