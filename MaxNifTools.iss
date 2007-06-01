@@ -96,25 +96,25 @@ begin
   case Param of
     'gmax12':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\gmax', 'uninstallpath', Result) then
-          Result := ExpandConstant('{sd}{\}gmax12}');
+          Result := ExpandConstant('{sd}{\}gmax12');
     'max4':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax4}');
+          Result := ExpandConstant('{sd}{\}3dsmax4');
     'max42':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax42}');
+          Result := ExpandConstant('{sd}{\}3dsmax42');
     'max5':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 5', 'uninstallpath', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax5}');
+          Result := ExpandConstant('{sd}{\}3dsmax5');
     'max6':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\6.0', 'InstallDir', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax6}');
+          Result := ExpandConstant('{sd}{\}3dsmax6');
     'max7':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\7.0', 'InstallDir', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax7}');
+          Result := ExpandConstant('{sd}{\}3dsmax7');
     'max8':
         if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\8.0', 'InstallDir', Result) then
-          Result := ExpandConstant('{sd}{\}3dsmax8}');
+          Result := ExpandConstant('{sd}{\}3dsmax8');
     'max9': 
         begin
           if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin

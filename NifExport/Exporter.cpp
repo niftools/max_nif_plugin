@@ -40,7 +40,7 @@ bool Exporter::mUseTimeTags = false;
 bool Exporter::mAutoDetect = true;
 bool Exporter::mAllowAccum = true;
 string Exporter::mCreatorName;
-bool Exporter::mCollapseTransforms = false;
+bool Exporter::mCollapseTransforms = true;
 bool Exporter::mFixNormals = false;
 bool Exporter::mTangentAndBinormalExtraData = false;
 bool Exporter::mSupportPrnStrings = false;
