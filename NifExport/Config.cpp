@@ -6,6 +6,8 @@
 
 static LPCTSTR NifExportSection = TEXT("MaxNifExport");
 static LPCTSTR KfExportSection = TEXT("KfExport");
+static LPCTSTR CollisionSection = TEXT("Collision");
+
 
 void regSet(HKEY hKey, const char *value, float f);
 void regSet(HKEY hKey, const char *value, bool b);
@@ -83,6 +85,7 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "TangentAndBinormalExtraData", mTangentAndBinormalExtraData, iniName);
       SetIniValue(NifExportSection, "UseAlternateStripper", mUseAlternateStripper, iniName);
       
+	  //SetIniValue(CollisionSection, "bhkScaleFactor", bhkScaleFactor, iniName);
 
       SetIniValue<string>(NifExportSection, "Creator", mCreatorName, iniName);
       
@@ -156,6 +159,8 @@ void Exporter::readConfig(Interface *i)
 
       mUseAlternateStripper = GetIniValue(NifExportSection, "UseAlternateStripper", false, iniName);
       mCreatorName = GetIniValue<string>(NifExportSection, "Creator", "", iniName);
+
+	  bhkScaleFactor = GetIniValue<float>(CollisionSection, "bhkScaleFactor", 7.0f, iniName);
   }
 }
 

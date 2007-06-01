@@ -36,9 +36,13 @@
       0.2.11 (Experimental Release)
       -----
     o All
+      - Please note that this is most an experimental release!
       - Update to latest version of Niflib
       - Introduce gmax importer/exporter
       - Introduce build for max 4.2
+      
+    o Exporter
+      - Introduce bhkRigidBody export for Box
       
       0.2.10
       ----- 

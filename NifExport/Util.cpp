@@ -143,10 +143,10 @@ bool Exporter::isCollisionGroup(INode *maxNode, bool root)
 	{
 		if (!maxNode->IsGroupHead())
 			return false;
-	} else
+	} 
+	else
 	{
-      if (mCollisionNodes.find(maxNode) != mCollisionNodes.end())
-		//if (npIsCollision(maxNode))
+      if (isCollision(maxNode))
 			return true;
 	}
 
@@ -165,10 +165,10 @@ bool Exporter::isMeshGroup(INode *maxNode, bool root)
 	{
 		if (!maxNode->IsGroupHead())
 			return false;
-	} else
+	} 
+	else
 	{
-      if (mCollisionNodes.find(maxNode) == mCollisionNodes.end())
-		//if (!npIsCollision(maxNode))
+		if (!isCollision(maxNode))
 		{
 			TimeValue t = 0;
 			ObjectState os = maxNode->EvalWorldState(t); 

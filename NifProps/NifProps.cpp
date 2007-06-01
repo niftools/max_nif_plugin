@@ -273,9 +273,9 @@ void NifProps::selectionChanged()
 	mCbMotionSystem.select(max(0, min(msys, mCbMotionSystem.count()-1)));
 	mCbQualityType.select(max(0, min(qtype, mCbQualityType.count()-1)));
 
-	mSpins[IDC_SP_CENTER_X]->SetValue(center.x, TRUE);
-	mSpins[IDC_SP_CENTER_Y]->SetValue(center.y, TRUE);
-	mSpins[IDC_SP_CENTER_Z]->SetValue(center.z, TRUE);
+	//mSpins[IDC_SP_CENTER_X]->SetValue(center.x, TRUE);
+	//mSpins[IDC_SP_CENTER_Y]->SetValue(center.y, TRUE);
+	//mSpins[IDC_SP_CENTER_Z]->SetValue(center.z, TRUE);
 
 	mSpins[IDC_SP_MASS]->SetValue(mass, TRUE);
 	mSpins[IDC_SP_LINEAR_DAMPING]->SetValue(lindamp, TRUE);

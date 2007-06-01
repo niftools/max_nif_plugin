@@ -47,6 +47,7 @@ bool Exporter::mSupportPrnStrings = false;
 stringlist Exporter::mRotate90Degrees;
 bool Exporter::mSuppressPrompts = false;
 bool Exporter::mUseAlternateStripper = false;
+float Exporter::bhkScaleFactor = 7.0f;
 
 static bool IsNodeOrParentSelected(INode *node) {
    if (node == NULL)
@@ -227,7 +228,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 {
    TSTR nodeName = node->GetName();
    //bool coll = npIsCollision(node);
-   bool coll = (mCollisionNodes.find(node) != mCollisionNodes.end());
+   bool coll = isCollision(node);
 
    ProgressUpdate(Geometry, FormatText("'%s' Geometry", nodeName.data()));
 

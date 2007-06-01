@@ -94,6 +94,7 @@ public:
    static bool          mSupportPrnStrings;
    static bool          mSuppressPrompts;
    static bool          mUseAlternateStripper;
+   static float			bhkScaleFactor;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 
@@ -158,6 +159,7 @@ public:
    Result					exportNodes(NiNodeRef &root, INode *node);
 	Result					exportCollision(NiNodeRef &root, INode *node);
    Result               scanForCollision(INode *node);
+   bool					isCollision(INode *node);
 
 	/* utility functions */
 	Mtl						*getMaterial(INode *node, int subMtl);
@@ -215,12 +217,12 @@ public:
 	/* creates a bhkRigidBody */
 	bhkRigidBodyRef			makeCollisionBody(INode *node);
 	/* creates a collision shape from a node */
-   bhkSphereRepShapeRef	makeCollisionShape(INode *node, const Matrix3& tm = Matrix3::Identity);
+	bhkShapeRef				makeCollisionShape(INode *node, Matrix3& tm);
 
-	bhkSphereRepShapeRef	makeTriStripsShape(INode *node, const Matrix3& tm);
-	bhkSphereRepShapeRef	makeBoxShape(Object *obj, const Matrix3& tm);
-	bhkSphereRepShapeRef	makeSphereShape(Object *obj, const Matrix3& tm);
-	bhkSphereRepShapeRef	makeCapsuleShape(Object *obj, const Matrix3& tm);
+	bhkShapeRef				makeTriStripsShape(INode *node, Matrix3& tm);
+	bhkShapeRef				makeBoxShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makeSphereShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makeCapsuleShape(INode *node, Object *obj, Matrix3& tm);
 
    /* skin export */
    bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);

@@ -84,7 +84,7 @@ void InitializeLibSettings()
    }
    if ( GetIniValue<bool>("NifProps", "Enable", true, iniName) ) {
       classDescEnabled[CD_Props] = true;
-      //classDescriptions[nClasses++] = GetNifPropsDesc();
+      classDescriptions[nClasses++] = GetNifPropsDesc();
 #ifdef USE_UNSUPPORTED_CODE
       classDescriptions[nClasses++] = GetbhkRigidBodyModifierDesc();
       classDescriptions[nClasses++] = GetbhkSphereDesc();

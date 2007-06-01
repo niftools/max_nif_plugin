@@ -255,7 +255,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 
 	// marked as collision?
 	//bool coll = npIsCollision(node);
-   bool coll = (mCollisionNodes.find(node) != mCollisionNodes.end());
+   bool coll = isCollision(node);
 
    bool local = !mFlattenHierarchy;
    NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
@@ -265,18 +265,19 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	{
 		newParent = nodeParent; // always have collision one level up?
 
-      TimeValue t = 0;
-      Matrix3 tm = getTransform(node, t, local);
-      Matrix44 rm4 = TOMATRIX4(tm, false);
-      Vector3 trans; Matrix33 rm; float scale;
-      rm4.Decompose(trans, rm, scale);
-      QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
-
-		bhkSphereRepShapeRef shape = makeCollisionShape(node, tm);
+		TimeValue t = 0;
+		Matrix3 tm = getTransform(node, t, local);
+		bhkShapeRef shape = makeCollisionShape(node, tm);
 		bhkRigidBodyRef body = makeCollisionBody(node);
 		body->SetShape(DynamicCast<bhkShape>(shape));
-      body->SetRotation(q);
-      body->SetTranslation(trans / 7.0f);
+
+		Matrix44 rm4 = TOMATRIX4(tm, false);
+		Vector3 trans; Matrix33 rm; float scale;
+		rm4.Decompose(trans, rm, scale);
+
+		QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
+		body->SetRotation(q);
+		body->SetTranslation(trans / Exporter::bhkScaleFactor);
 
 		bhkCollisionObjectRef co = new bhkCollisionObject();
 		co->SetBody(DynamicCast<NiObject>(body));
@@ -309,27 +310,45 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel, resti, pendepth;
 	Vector3 center;
 
-   // Handle compatibility
-   npGetProp(node, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
-   if (mass == NP_DEFAULT_HVK_EMPTY)
-      npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
-   npGetProp(node, NP_HVK_FRICTION_OLD, frict, NP_DEFAULT_HVK_EMPTY);
-   if (frict == NP_DEFAULT_HVK_EMPTY)
-      npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
-   npGetProp(node, NP_HVK_RESTITUTION_OLD, resti, NP_DEFAULT_HVK_EMPTY);
-   if (resti == NP_DEFAULT_HVK_EMPTY)
-      npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
+	if (npIsCollision(node))
+	{
+		// Handle compatibility
+		npGetProp(node, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
+		if (mass == NP_DEFAULT_HVK_EMPTY)
+			npGetProp(node, NP_HVK_MASS, mass, NP_DEFAULT_HVK_MASS);
+		npGetProp(node, NP_HVK_FRICTION_OLD, frict, NP_DEFAULT_HVK_EMPTY);
+		if (frict == NP_DEFAULT_HVK_EMPTY)
+			npGetProp(node, NP_HVK_FRICTION, frict, NP_DEFAULT_HVK_FRICTION);
+		npGetProp(node, NP_HVK_RESTITUTION_OLD, resti, NP_DEFAULT_HVK_EMPTY);
+		if (resti == NP_DEFAULT_HVK_EMPTY)
+			npGetProp(node, NP_HVK_RESTITUTION, resti, NP_DEFAULT_HVK_RESTITUTION);
 
-	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
-	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
-	npGetProp(node, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
-	npGetProp(node, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
-	npGetProp(node, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
-	npGetProp(node, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
-	npGetProp(node, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_MAX_LINEAR_VELOCITY);
-	npGetProp(node, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
-	npGetProp(node, NP_HVK_PENETRATION_DEPTH, pendepth, NP_DEFAULT_HVK_PENETRATION_DEPTH);
-	npGetProp(node, NP_HVK_CENTER, center);
+		npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
+		npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+		npGetProp(node, NP_HVK_MOTION_SYSTEM, msys, NP_DEFAULT_HVK_MOTION_SYSTEM);
+		npGetProp(node, NP_HVK_QUALITY_TYPE, qtype, NP_DEFAULT_HVK_QUALITY_TYPE);
+		npGetProp(node, NP_HVK_LINEAR_DAMPING, lindamp, NP_DEFAULT_HVK_LINEAR_DAMPING);
+		npGetProp(node, NP_HVK_ANGULAR_DAMPING, angdamp, NP_DEFAULT_HVK_ANGULAR_DAMPING);
+		npGetProp(node, NP_HVK_MAX_LINEAR_VELOCITY, maxlinvel, NP_DEFAULT_HVK_MAX_LINEAR_VELOCITY);
+		npGetProp(node, NP_HVK_MAX_ANGULAR_VELOCITY, maxangvel, NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY);
+		npGetProp(node, NP_HVK_PENETRATION_DEPTH, pendepth, NP_DEFAULT_HVK_PENETRATION_DEPTH);
+		npGetProp(node, NP_HVK_CENTER, center);
+	}
+	else
+	{
+		// Check self to see if is one of our bhkXXXObject classes
+		if (Object* obj = node->GetObjectRef())
+		{
+			if (obj->SuperClassID() == HELPER_CLASS_ID &&
+				obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB()) 
+			{
+				// TODO: do standard body export
+			}
+		}
+
+		// else check redirection 
+	}
+
 
 	// setup body
 	bhkRigidBodyRef body = CreateNiObject<bhkRigidBodyT>();
@@ -353,35 +372,24 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	return body;
 }
 
-bhkSphereRepShapeRef Exporter::makeCollisionShape(INode *node, const Matrix3& tm)
+bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm)
 {
-	bhkSphereRepShapeRef shape;
+	bhkShapeRef shape;
 	
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t); 
 	if (os.obj->ClassID() == SCUBA_CLASS_ID)
-		shape = makeCapsuleShape(os.obj, tm);
-	else
-	if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
-		shape = makeBoxShape(os.obj, tm);
-	else
-	if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
-		shape = makeSphereShape(os.obj, tm);
-	else
-	if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+		shape = makeCapsuleShape(node, os.obj, tm);
+	else if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
+		shape = makeBoxShape(node, os.obj, tm);
+	else if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
+		shape = makeSphereShape(node, os.obj, tm);
+	else if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
 		shape = makeTriStripsShape(node, tm);
-
-	if (shape)
-	{
-		int mtl;
-		npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
-		shape->SetMaterial(HavokMaterial(mtl));
-	}
-
 	return shape;
 }
 
-bhkSphereRepShapeRef Exporter::makeBoxShape(Object *obj, const Matrix3& tm)
+bhkShapeRef Exporter::makeBoxShape(INode *node, Object *obj, Matrix3& tm)
 {
    Point3 scale = GetScale(tm);
 	float length = 0;
@@ -393,12 +401,22 @@ bhkSphereRepShapeRef Exporter::makeBoxShape(Object *obj, const Matrix3& tm)
 	params->GetValue(obj->GetParamBlockIndex(BOXOBJ_WIDTH), 0, width, FOREVER);
 
 	bhkBoxShapeRef box = new bhkBoxShape();
-	box->SetDimensions(Vector3(width * scale[0], height * scale[1], length * scale[2]));
+	Vector3 dim(width * scale[0], length * scale[1], height * scale[2]);
 
-	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(box));
+	// Adjust translation for center of z axis in box
+	tm.Translate(Point3(0.0, 0.0, dim.z / 2.0));
+
+	dim /= (Exporter::bhkScaleFactor * 2);
+	box->SetDimensions(dim);
+
+	int mtl = 0;
+	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	box->SetMaterial(HavokMaterial(mtl));
+
+	return bhkShapeRef(DynamicCast<bhkSphereRepShape>(box));
 }
 
-bhkSphereRepShapeRef Exporter::makeSphereShape(Object *obj, const Matrix3& tm)
+bhkShapeRef Exporter::makeSphereShape(INode *node, Object *obj, Matrix3& tm)
 {
    Point3 scale = GetScale(tm);
    float s = (scale[0] + scale[1] + scale[2]) / 3.0;
@@ -410,10 +428,14 @@ bhkSphereRepShapeRef Exporter::makeSphereShape(Object *obj, const Matrix3& tm)
 	bhkSphereShapeRef sphere = new bhkSphereShape();
 	sphere->SetRadius(radius * s);
 
-	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(sphere));
+	int mtl = 0;
+	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	sphere->SetMaterial(HavokMaterial(mtl));
+
+	return bhkShapeRef(DynamicCast<bhkSphereRepShape>(sphere));
 }
 
-bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj, const Matrix3& tm)
+bhkShapeRef Exporter::makeCapsuleShape(INode *node, Object *obj, Matrix3& tm)
 {
    Point3 scale = GetScale(tm);
    float s = (scale[0] + scale[1] + scale[2]) / 3.0;
@@ -426,10 +448,18 @@ bhkSphereRepShapeRef Exporter::makeCapsuleShape(Object *obj, const Matrix3& tm)
 
 	bhkCapsuleShapeRef capsule = CreateNiObject<bhkCapsuleShape>();
 
-	return bhkSphereRepShapeRef(DynamicCast<bhkSphereRepShape>(capsule));
+	capsule->SetRadius(radius);
+	capsule->SetRadius1(radius);
+	capsule->SetRadius2(radius);
+
+	int mtl = 0;
+	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	capsule->SetMaterial(HavokMaterial(mtl));
+
+	return bhkShapeRef(DynamicCast<bhkSphereRepShape>(capsule));
 }
 
-bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm)
+bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 {
 	TimeValue t = 0;
    Matrix3 sm = ScaleMatrix( GetScale(tm) );
@@ -471,23 +501,23 @@ bhkSphereRepShapeRef Exporter::makeTriStripsShape(INode *node, const Matrix3& tm
 	//TriStrips strips;
 	//strippify(strips, verts, vnorms, tris);
 	//NiTriStripsDataRef data = makeTriStripsData(strips);
-   NiTriStripsDataRef data = new NiTriStripsData(tris, false);
+	NiTriStripsDataRef data = new NiTriStripsData(tris, Exporter::mUseAlternateStripper);
 	data->SetVertices(verts);
 	data->SetNormals(vnorms);
 
 	// setup shape
 	bhkNiTriStripsShapeRef shape = StaticCast<bhkNiTriStripsShape>(bhkNiTriStripsShape::Create());
+	shape->SetNumStripsData(1);
+	shape->SetStripsData(0, data);
 
-	//bhkNiTriStripsShapeRef shape = DynamicCast<bhkNiTriStripsShape>(CreateBlock("bhkNiTriStripsShape"));
-	//shape->SetNumStripsData(1);
-	//shape->SetStripsData(0, data);
+	int mtl;
+	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	shape->SetMaterial(HavokMaterial(mtl));
 
 	//if (tri != os.obj)
 	//	tri->DeleteMe();
-
-	return bhkSphereRepShapeRef();
+	return StaticCast<bhkShape>(shape);
 }
-
 
 Exporter::Result Exporter::scanForCollision(INode *node)
 {   
@@ -517,8 +547,19 @@ Exporter::Result Exporter::scanForCollision(INode *node)
          mCollisionNodes.insert(node);
       }
    }
+
+   if (npIsCollision(node))
+   {
+	   mCollisionNodes.insert(node);
+   }
+
    for (int i=0; i<node->NumberOfChildren(); i++) {
       scanForCollision(node->GetChildNode(i));
    }
    return Exporter::Ok;
+}
+
+bool Exporter::isCollision(INode *node)
+{
+	return (mCollisionNodes.find(node) != mCollisionNodes.end());
 }
