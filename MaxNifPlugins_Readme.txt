@@ -1,9 +1,10 @@
-                        MaxPlugins 0.2.10
+                        MaxPlugins 0.2.11
                         ================
 
  
     This plugin currently consists of an exporter, importer and a utility 
-     plugin.
+     plugin for 3ds max and gmax for read and writing Gamebryo/Netimmerse
+     related files.
     
     Report problems and ask questions here:
     
@@ -32,6 +33,13 @@
 
     Change log
     ----------
+      0.2.11 (Experimental Release)
+      -----
+    o All
+      - Update to latest version of Niflib
+      - Introduce gmax importer/exporter
+      - Introduce build for max 4.2
+      
       0.2.10
       ----- 
     o All
@@ -244,7 +252,8 @@
     ------------
 
       Plugins:
-        3D Studio Max 6, 7 and 8
+        3D Studio Max 4.2, 5, 6, 7, 8 and 9
+        gmax 1.2
 
     Installation
     ------------
@@ -291,7 +300,7 @@
     Copyright
     ---------
       
-    Copyright (c) 2006, NIF File Format Library and Tools. All rights reserved.
+    Copyright (c) 2007, NIF File Format Library and Tools. All rights reserved.
     
     Legal
     -----
