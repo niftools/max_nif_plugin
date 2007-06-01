@@ -27,8 +27,8 @@ public:
 
 	void			selectionChanged();
 
-   BOOL			dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-   BOOL			dlgAnimProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+   INT_PTR			dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+   INT_PTR			dlgAnimProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 private:
 		
@@ -74,12 +74,12 @@ ClassDesc2* GetNifPropsDesc() { return &NifPropsDesc; }
 
 
 
-static BOOL CALLBACK NifPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK NifPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    return plugin.dlgProc(hWnd, msg, wParam, lParam);
 }
 
-static BOOL CALLBACK NifAnimPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+static INT_PTR CALLBACK NifAnimPropsDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
    return plugin.dlgAnimProc(hWnd, msg, wParam, lParam);
 }
@@ -303,7 +303,7 @@ void NifProps::Destroy(HWND hWnd)
 
 }
 
-BOOL NifProps::dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR NifProps::dlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	Vector3 center;
 

@@ -550,7 +550,7 @@ void bhkRigidBodyIfcHelper::SetQualityType(int value, TimeValue time)
 }
 int bhkRigidBodyIfcHelper::GetQualityType(TimeValue time, Interval& valid) const 
 {
-   float value = NP_DEFAULT_HVK_QUALITY_TYPE;
+   int value = NP_DEFAULT_HVK_QUALITY_TYPE;
    rbpblock->GetValue(PB_RB_QUALITY_TYPE,time,value,valid);
    return value;
 }
