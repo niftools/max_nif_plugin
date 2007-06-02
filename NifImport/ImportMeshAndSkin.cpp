@@ -136,7 +136,9 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
                   pFaces[i].SpecifyNormalID(1, tri.v2);
                   pFaces[i].SpecifyNormalID(2, tri.v3);
                }
+#if VERSION_3DSMAX > ((7000<<16)+(15<<8)+0) // Version 7+
                specNorms->SetAllExplicit(true);
+#endif
                specNorms->CheckNormals();
             }
 #endif
@@ -368,7 +370,9 @@ bool NifImporter::ImportMultipleGeometry(NiNodeRef parent, vector<NiTriBasedGeom
             //   face.SpecifyNormalID(1, tri.v2);
             //   face.SpecifyNormalID(2, tri.v3);
             //}
-            specNorms->SetAllExplicit(true);
+#if VERSION_3DSMAX > ((7000<<16)+(15<<8)+0) // Version 7+
+			specNorms->SetAllExplicit(true);
+#endif
             specNorms->CheckNormals();
          }
 #endif
