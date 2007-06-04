@@ -138,6 +138,10 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
                }
 #if VERSION_3DSMAX > ((7000<<16)+(15<<8)+0) // Version 7+
                specNorms->SetAllExplicit(true);
+#else
+			   for (int i=0; i<specNorms->GetNumNormals(); ++i) {
+				   specNorms->SetNormalExplicit(i, true);
+			   }
 #endif
                specNorms->CheckNormals();
             }

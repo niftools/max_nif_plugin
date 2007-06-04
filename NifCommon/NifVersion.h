@@ -18,15 +18,15 @@ HISTORY:
 */
 #define VERSION_MAJOR_INT  0
 #define VERSION_MINOR_INT  2
-#define VERSION_BUILD_INT  11
+#define VERSION_BUILD_INT  12
 #define VERSION_PATCH_INT  0
 
-#define VERSION_STRING "0, 2, 11, 0"
+#define VERSION_STRING "0, 2, 12, 0"
 
 //#define DEF_VERSION_STRING(a,b,c,d) #a ", " #b ", " #c ", " #d
 //#define VERSION_STRING DEF_VERSION_STRING(a,b,c,d)
 
-#define COPYRIGHTYEARINT 2006
-#define COPYRIGHTYEAR "2006"
+#define COPYRIGHTYEARINT 2007
+#define COPYRIGHTYEAR "2007"
 
 #endif

@@ -55,7 +55,9 @@
 #include <iskin.h>
 #include <strclass.h>
 #include "objectParams.h"
+
 #undef ALPHA_NONE
+#undef DECAY_NONE
 
 #include "niflib.h"
 #include "obj/NiObject.h"

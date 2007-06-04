@@ -1,10 +1,10 @@
-; -- NWN2Utils.iss --
+; -- MaxNifUtils.iss --
 ;
 
 [Setup]
 AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
-OutputBaseFilename=niftools-max-plugins-0.2.11
+OutputBaseFilename=niftools-max-plugins-0.2.12
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -15,6 +15,7 @@ DefaultDirName={win}{\}Installer\NifTools
 UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
+ArchitecturesInstallIn64BitMode=x64
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -38,7 +39,7 @@ Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
 [Files]
 Source: "Staging\Release - gmax\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - gmax\nifgmax.exe"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: ignoreversion;
-Source: "Staging\Release - gmax\NifPlugins.dlu"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
+;Source: "Staging\Release - gmax\NifPlugins.dlu"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
 Source: "Staging\Release - gmax\MaxNifTools.ini"; DestDir: "{code:InstallPath|gmax12}{\}plugcfg"; Components: "gmax12"; Flags: ignoreversion;
 
 ;Source: "Staging\Release - Max 4\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max4}"; Components: "max4"; Flags: isreadme ignoreversion;
@@ -46,32 +47,32 @@ Source: "Staging\Release - gmax\MaxNifTools.ini"; DestDir: "{code:InstallPath|gm
 ;Source: "Staging\Release - Max 4\MaxNifTools.ini"; DestDir: "{code:InstallPath|max4}{\}plugcfg"; Components: "max4"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 4.2\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max42}"; Components: "max42"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 4.2\NifPlugins.dlu"; DestDir: "{code:InstallPath|max42}{\}plugins"; Components: "max42"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 4.2\NifPlugins.dlu"; DestDir: "{code:InstallPath|max42}{\}plugins"; Components: "max42"; Flags: ignoreversion;
 Source: "Staging\Release - Max 4.2\MaxNifTools.ini"; DestDir: "{code:InstallPath|max42}{\}plugcfg"; Components: "max42"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 5\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max5}"; Components: "max5"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 5\NifPlugins.dlu"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 5\NifPlugins.dlu"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
 Source: "Staging\Release - Max 5\MaxNifTools.ini"; DestDir: "{code:InstallPath|max5}{\}plugcfg"; Components: "max5"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 6\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max6}"; Components: "max6"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 6\NifPlugins.dlu"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 6\NifPlugins.dlu"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
 Source: "Staging\Release - Max 6\MaxNifTools.ini"; DestDir: "{code:InstallPath|max6}{\}plugcfg"; Components: "max6"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 7\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max7}"; Components: "max7"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 7\NifPlugins.dlu"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 7\NifPlugins.dlu"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
 Source: "Staging\Release - Max 7\MaxNifTools.ini"; DestDir: "{code:InstallPath|max7}{\}plugcfg"; Components: "max7"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 8\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max8}"; Components: "max8"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 8\NifPlugins.dlu"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 8\NifPlugins.dlu"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
 Source: "Staging\Release - Max 8\MaxNifTools.ini"; DestDir: "{code:InstallPath|max8}{\}plugcfg"; Components: "max8"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 9\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9}"; Components: "max9"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
+;Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9}{\}plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 32bit\enu\plugcfg"; Components: "max9"; Flags: ignoreversion;
 
 Source: "Staging\x64\Release - Max 9\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
-Source: "Staging\x64\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+;Source: "Staging\x64\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
 Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
 Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
 
@@ -80,11 +81,192 @@ Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{
 [Code]
 var sVersion: String;
     i: Integer;
+    UsagePage: TInputOptionWizardPage;
+    OBDataDirPage: TInputDirWizardPage;
+    MWDataDirPage: TInputDirWizardPage;
+    Civ4DataDirPage: TInputDirWizardPage;
+    DAoCDataDirPage: TInputDirWizardPage;
+    FFDataDirPage: TInputDirWizardPage;
+    FF3RDataDirPage: TInputDirWizardPage;
+    BCDataDirPage: TInputDirWizardPage;
 
 function InitializeSetup(): Boolean;
 begin
-  sVersion := '0.2.11';
+  sVersion := '0.2.12';
   Result := True;
+end;
+
+function GetOptionString(value: Boolean): String;
+begin
+  if value then begin
+    Result := 'True';
+  end else begin
+    Result := 'False';
+  end;
+end;
+
+function GetOptionBool(value: String): Boolean;
+begin
+  if value = 'True' then begin
+    Result := True;
+  end else begin
+    Result := False;
+  end;
+end;
+
+function GetPrevDataBool(key: String; value: Boolean): Boolean;
+begin
+    Result := GetOptionBool(GetPreviousData(key, GetOptionString(value)));
+end;
+
+function SetPrevDataString(PreviousDataKey: Integer; key:String; value: Boolean): Boolean;
+begin
+    Result := SetPreviousData(PreviousDataKey, key, GetOptionString(value));
+end;
+
+function DataDirPage_ShouldSkipPage(Page: TWizardPage): Boolean;
+begin
+    Result := True;
+    case Page.ID of
+      OBDataDirPage.ID: Result    := not UsagePage.Values[0];
+      MWDataDirPage.ID: Result    := not UsagePage.Values[1];
+      Civ4DataDirPage.ID: Result  := not UsagePage.Values[2];
+      DAoCDataDirPage.ID: Result  := not UsagePage.Values[3];
+      FFDataDirPage.ID: Result    := not UsagePage.Values[4];
+      FF3RDataDirPage.ID: Result  := not UsagePage.Values[5];
+      BCDataDirPage.ID: Result    := not UsagePage.Values[6];
+    end;
+end;
+
+procedure InitializeWizard;
+begin
+  { Create the pages }
+
+  { Add each supported game to option page }
+  UsagePage := CreateInputOptionPage(wpSelectComponents,
+    'Custom Directories', 'Select Custom Directories for supported Games',
+    'Please specify which games you wish to add custom directories for, then click Next.',
+    False, False);
+  UsagePage.Add('Oblivion');
+  UsagePage.Add('Morrowind');
+  UsagePage.Add('Civilization 4');
+  UsagePage.Add('Dark Age of Camelot');
+  UsagePage.Add('Freedom Force');
+  UsagePage.Add('Freedom Force vs. the 3rd Reich');
+  UsagePage.Add('Star Trek: Bridge Commander');
+
+  { Create pages for each Game texture locations }
+  OBDataDirPage := CreateInputDirPage(UsagePage.ID,
+    'Select Oblivion Data Directory', 'Where are the extracted Oblivion data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  OBDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  OBDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  OBDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  MWDataDirPage := CreateInputDirPage(OBDataDirPage.ID,
+    'Select Morrowind Data Directory', 'Where are the extracted Morrowind data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  MWDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  MWDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  MWDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  Civ4DataDirPage := CreateInputDirPage(MWDataDirPage.ID,
+    'Select Civilization 4 Data Directory', 'Where are the extracted Civilization 4 data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  Civ4DataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  Civ4DataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  Civ4DataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  DAoCDataDirPage := CreateInputDirPage(Civ4DataDirPage.ID,
+    'Select Dark Age of Camelot Data Directory', 'Where are the extracted Dark Age of Camelot data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  DAoCDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  DAoCDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  DAoCDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  FFDataDirPage := CreateInputDirPage(DAoCDataDirPage.ID,
+    'Select Freedom Force Data Directory', 'Where are the extracted Freedom Force data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  FFDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  FFDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  FFDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  FF3RDataDirPage := CreateInputDirPage(FFDataDirPage.ID,
+    'Select Freedom Force vs. the 3rd Reich Data Directory', 'Where are the extracted Freedom Force vs. the 3rd Reich data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  FF3RDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  FF3RDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  FF3RDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  BCDataDirPage := CreateInputDirPage(DAoCDataDirPage.ID,
+    'Select Star Trek: Bridge Commander Data Directory', 'Where are the extracted Star Trek: Bridge Commander data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  BCDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  BCDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  BCDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  { Set default values, using settings that were stored last time if possible }
+  UsagePage.Values[0] := GetPrevDataBool('bOB', False);
+  UsagePage.Values[1] := GetPrevDataBool('bMW', False);
+  UsagePage.Values[2] := GetPrevDataBool('bCiv4', False);
+  UsagePage.Values[3] := GetPrevDataBool('bDAoC', False);
+  UsagePage.Values[4] := GetPrevDataBool('bFF', False);
+  UsagePage.Values[5] := GetPrevDataBool('bFF3R', False);
+  UsagePage.Values[6] := GetPrevDataBool('bBC', False);
+
+  OBDataDirPage.Values[0] := GetPreviousData('OBModelDir', '');
+  OBDataDirPage.Values[1] := GetPreviousData('OBTexDir', '');
+  MWDataDirPage.Values[0] := GetPreviousData('MWModelDir', '');
+  MWDataDirPage.Values[1] := GetPreviousData('MWTexDir', '');
+  Civ4DataDirPage.Values[0] := GetPreviousData('Civ4ModelDir', '');
+  Civ4DataDirPage.Values[1] := GetPreviousData('Civ4TexDir', '');
+  DAoCDataDirPage.Values[0] := GetPreviousData('DAoCModelDir', '');
+  DAoCDataDirPage.Values[1] := GetPreviousData('DAoCTexDir', '');
+  FFDataDirPage.Values[0] := GetPreviousData('FFModelDir', '');
+  FFDataDirPage.Values[1] := GetPreviousData('FFTexDir', '');
+  FF3RDataDirPage.Values[0] := GetPreviousData('FF3RModelDir', '');
+  FF3RDataDirPage.Values[1] := GetPreviousData('FF3RTexDir', '');
+  BCDataDirPage.Values[0] := GetPreviousData('BCModelDir', '');
+  BCDataDirPage.Values[1] := GetPreviousData('BCTexDir', '');
+
+end;
+
+
+procedure RegisterPreviousData(PreviousDataKey: Integer);
+var
+  UsageMode: String;
+begin
+  { Store the settings so we can restore them next time }
+  SetPrevDataString(PreviousDataKey, 'bOB',   UsagePage.Values[0]);
+  SetPrevDataString(PreviousDataKey, 'bMW',   UsagePage.Values[1]);
+  SetPrevDataString(PreviousDataKey, 'bCiv4', UsagePage.Values[2]);
+  SetPrevDataString(PreviousDataKey, 'bDAoC', UsagePage.Values[3]);
+  SetPrevDataString(PreviousDataKey, 'bFF',   UsagePage.Values[4]);
+  SetPrevDataString(PreviousDataKey, 'bFF3R', UsagePage.Values[5]);
+  SetPrevDataString(PreviousDataKey, 'bBC',   UsagePage.Values[6]);
+
+  SetPreviousData(PreviousDataKey, 'OBModelDir', OBDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'OBTexDir', OBDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'MWModelDir', MWDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'MWTexDir', MWDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'Civ4ModelDir', Civ4DataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'Civ4TexDir', Civ4DataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'DAoCModelDir', DAoCDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'DAoCTexDir', DAoCDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'FFModelDir', FFDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'FFTexDir', FFDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'FF3RModelDir', FF3RDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'FF3RTexDir', FF3RDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'BCModelDir', BCDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'BCTexDir', BCDataDirPage.Values[1]);
+
 end;
 
 function InstallPath(Param: String): String;
@@ -119,13 +301,13 @@ begin
         begin
           if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
           end;
           if (Length(Result) = 0) then
-            Result := ExpandConstant('{pf}{\}AutoDesk\3ds Max 9}{\}plugcfg');
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 9}{\}plugcfg');
         end;
     'max9x64':
         begin
@@ -136,7 +318,7 @@ begin
             end;
           end;
           if Length(Result) = 0 then
-            Result := ExpandConstant('{pf}{\}AutoDesk\3ds Max 9}{\}plugcfg');
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 9}{\}plugcfg');
         end;
     else
       Result := '';
@@ -187,7 +369,7 @@ function IsInstalled(Param: String): Boolean;
 begin
   Result := Length(RegInstallPath(Param)) <> 0;
   if Result then begin
-    if IsWin64() and (Param <> '3ds Max 9 (x64)') then
+    if IsWin64() and (Param = '3ds Max 9 (Win32)') then
        Result := False;
     if not IsWin64() and (Param = '3ds Max 9 (x64)') then
        Result := False;
@@ -205,3 +387,58 @@ function CurVer(Param: String): String;
 begin
   Result := sVersion;
 end;
+
+procedure FixPathInINI(component: String);
+  var
+    iniFile: String;
+begin
+  if IsComponentSelected(component) then begin
+      iniFile :=  InstallPath(component);
+      iniFile := AddBackslash(iniFile) + '\plugcfg\MaxNifTools.ini';
+      iniFile := ExpandFileName(iniFile);
+
+      if UsagePage.Values[0] then begin {Oblivion}
+        SetIniString('Oblivion', 'MeshRootPath', OBDataDirPage.Values[0], iniFile);
+        SetIniString('Oblivion', 'TextureRootPath', OBDataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[1] then begin
+        SetIniString('Morrowind', 'MeshRootPath', MWDataDirPage.Values[0], iniFile);
+        SetIniString('Morrowind', 'TextureRootPath', MWDataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[2] then begin
+        SetIniString('Civilization 4', 'MeshRootPath', Civ4DataDirPage.Values[0], iniFile);
+        SetIniString('Civilization 4', 'TextureRootPath', Civ4DataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[3] then begin
+        SetIniString('Dark Age of Camelot', 'MeshRootPath', DAoCDataDirPage.Values[0], iniFile);
+        SetIniString('Dark Age of Camelot', 'TextureRootPath', DAoCDataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[4] then begin
+        SetIniString('Freedom Force', 'MeshRootPath', FFDataDirPage.Values[0], iniFile);
+        SetIniString('Freedom Force', 'TextureRootPath', FFDataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[5] then begin
+        SetIniString('Freedom Force vs. the 3rd Reich', 'MeshRootPath', FF3RDataDirPage.Values[0], iniFile);
+        SetIniString('Freedom Force vs. the 3rd Reich', 'TextureRootPath', FF3RDataDirPage.Values[1], iniFile);
+      end else if UsagePage.Values[6] then begin
+        SetIniString('Star Trek: Bridge Commander', 'MeshRootPath', BCDataDirPage.Values[0], iniFile);
+        SetIniString('Star Trek: Bridge Commander', 'TextureRootPath', BCDataDirPage.Values[1], iniFile);
+      end;
+  end;
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if (CurStep = ssPostInstall) then begin
+      FixPathInINI('gmax12');
+      FixPathInINI('max4');
+      FixPathInINI('max42');
+      FixPathInINI('max5');
+      FixPathInINI('max6');
+      FixPathInINI('max7');
+      FixPathInINI('max8');
+      FixPathInINI('max9');
+      FixPathInINI('max9x64');
+  end;
+end;
+
+[Code]
+function RegDisableReflectionKey(B: Integer): Integer;
+external 'RegDisableReflectionKey@Advapi32.dll stdcall';
+
+
