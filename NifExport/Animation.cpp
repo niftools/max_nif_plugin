@@ -144,6 +144,16 @@ void Exporter::InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef pare
 
 NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
 {
+   //
+   //Tweak by veryxRV
+   //
+   NiNodeRef root= parent->GetParent();
+   NiNodeRef temp;
+   while(root->GetParent() != NULL)
+   {
+	   temp= root->GetParent();
+	   root= temp;
+   }
    NiNodeRef accumNode;
    bool isTracked = isNodeTracked(node);
    if (!Exporter::mAllowAccum || (!isTracked && !isSkeletonRoot(node)))
@@ -178,10 +188,12 @@ NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
          vector<NiNodeRef> children;
          getChildNodes(node, children);
          ctrl->SetExtraTargets(children);
-         Exporter::InitializeTimeController(ctrl, parent);
+         //Changed parent to root for ingame compatibility
+		 Exporter::InitializeTimeController(ctrl, root);
       }
       NiControllerManagerRef mgr = new NiControllerManager();
-      Exporter::InitializeTimeController(mgr, parent);
+      //Changed parent to root for ingame compatibility
+	  Exporter::InitializeTimeController(mgr, root);
 
       // Export Animation now
       doAnimExport(mgr, node);
