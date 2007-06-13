@@ -116,24 +116,28 @@ NiNodeRef Exporter::getNode(const string& name)
 
 NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 {
-   string name = (char*)maxNode->GetName();
-   NiNodeRef node = getNode(name);
+	string name = (char*)maxNode->GetName();
+	NiNodeRef node = getNode(name);
 
 	Matrix33 rot;
 	Vector3 trans;
 	TimeValue t = 0;
 	nodeTransform(rot, trans, maxNode, t, local);
-	
+
 	node->SetLocalRotation(rot);
 	node->SetLocalTranslation(trans);
 
-   exportUPB(node, maxNode);
+	exportUPB(node, maxNode);
 
-   // Normal Embedded Animation 
-   if (mExportType == NIF_WO_KF)
-      CreateController(maxNode, Interval());
+	if (node->GetParent() == NULL) {
 
-	parent->AddChild(DynamicCast<NiAVObject>(node));
+		// Normal Embedded Animation 
+		if (mExportType == NIF_WO_KF)
+			CreateController(maxNode, Interval());
+
+		parent->AddChild(DynamicCast<NiAVObject>(node));
+	}
+
 	return node;
 }
 

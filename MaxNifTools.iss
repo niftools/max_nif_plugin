@@ -4,7 +4,9 @@
 [Setup]
 AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
-OutputBaseFilename=niftools-max-plugins-0.2.12
+AppPublisher=NIF File Format Library and Tools
+AppCopyright=Copyright © 2007, NIF File Format Library and Tools
+OutputBaseFilename=niftools-max-plugins-0.2.12.0
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -16,6 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
+VersionInfoVersion=0.2.12.0
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -39,7 +42,7 @@ Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
 [Files]
 Source: "Staging\Release - gmax\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - gmax\nifgmax.exe"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: ignoreversion;
-;Source: "Staging\Release - gmax\NifPlugins.dlu"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
+Source: "Staging\Release - gmax\NifPlugins.dlu"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
 Source: "Staging\Release - gmax\MaxNifTools.ini"; DestDir: "{code:InstallPath|gmax12}{\}plugcfg"; Components: "gmax12"; Flags: ignoreversion;
 
 ;Source: "Staging\Release - Max 4\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max4}"; Components: "max4"; Flags: isreadme ignoreversion;
@@ -47,32 +50,32 @@ Source: "Staging\Release - gmax\MaxNifTools.ini"; DestDir: "{code:InstallPath|gm
 ;Source: "Staging\Release - Max 4\MaxNifTools.ini"; DestDir: "{code:InstallPath|max4}{\}plugcfg"; Components: "max4"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 4.2\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max42}"; Components: "max42"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 4.2\NifPlugins.dlu"; DestDir: "{code:InstallPath|max42}{\}plugins"; Components: "max42"; Flags: ignoreversion;
+Source: "Staging\Release - Max 4.2\NifPlugins.dlu"; DestDir: "{code:InstallPath|max42}{\}plugins"; Components: "max42"; Flags: ignoreversion;
 Source: "Staging\Release - Max 4.2\MaxNifTools.ini"; DestDir: "{code:InstallPath|max42}{\}plugcfg"; Components: "max42"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 5\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max5}"; Components: "max5"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 5\NifPlugins.dlu"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
+Source: "Staging\Release - Max 5\NifPlugins.dlu"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
 Source: "Staging\Release - Max 5\MaxNifTools.ini"; DestDir: "{code:InstallPath|max5}{\}plugcfg"; Components: "max5"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 6\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max6}"; Components: "max6"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 6\NifPlugins.dlu"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
+Source: "Staging\Release - Max 6\NifPlugins.dlu"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
 Source: "Staging\Release - Max 6\MaxNifTools.ini"; DestDir: "{code:InstallPath|max6}{\}plugcfg"; Components: "max6"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 7\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max7}"; Components: "max7"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 7\NifPlugins.dlu"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
+Source: "Staging\Release - Max 7\NifPlugins.dlu"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
 Source: "Staging\Release - Max 7\MaxNifTools.ini"; DestDir: "{code:InstallPath|max7}{\}plugcfg"; Components: "max7"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 8\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max8}"; Components: "max8"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 8\NifPlugins.dlu"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
+Source: "Staging\Release - Max 8\NifPlugins.dlu"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
 Source: "Staging\Release - Max 8\MaxNifTools.ini"; DestDir: "{code:InstallPath|max8}{\}plugcfg"; Components: "max8"; Flags: ignoreversion;
 
 Source: "Staging\Release - Max 9\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9}"; Components: "max9"; Flags: isreadme ignoreversion;
-;Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
+Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9}{\}plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 32bit\enu\plugcfg"; Components: "max9"; Flags: ignoreversion;
 
 Source: "Staging\x64\Release - Max 9\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
-;Source: "Staging\x64\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+Source: "Staging\x64\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
 Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
 Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
 

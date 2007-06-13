@@ -174,7 +174,9 @@ void NifImporter::ClearAnimation(INode *node)
       }
 
       // Clear animation priority
-      node->SetUserPropFloat(NP_ANM_PRI, 0.0f);
+	  if (node->UserPropExists(NP_ANM_PRI)) {
+		node->SetUserPropString(NP_ANM_PRI, "");
+	  }
    }
 }
 void NifImporter::ClearAnimation()
