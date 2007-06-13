@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.11
+                        MaxPlugins 0.2.12
                         ================
 
  
@@ -33,6 +33,14 @@
 
     Change log
     ----------
+      0.2.12
+      -----
+    o Installer
+      - Add nifgmax shortcut on desktop option
+    o Exporter
+      - Controller parentage change in Animation export
+      - Fix bug where child node has parent set twice resulting in error.
+      
       0.2.11 (Experimental Release)
       -----
     o All
@@ -42,7 +50,7 @@
       - Introduce build for max 4.2
       
     o Exporter
-      - Introduce bhkRigidBody export for Box
+      - Fix bhkRigidBody export for Box
       
       0.2.10
       ----- 
@@ -267,6 +275,13 @@
     
     Please remove the following when upgrading to 0.2.6 or later release:
        MaxNifImport.dli, NifExport.dle, NifProps.dlu, NifFurniture.dlu
+    
+    gmax notes:
+       NifPlugins.dlu goes in gmax\plugin folder
+       MaxNifTools.ini goes in gmax\plugCFG folder
+       nifgmax.exe goes in gmax folder where gmax.exe is located.
+
+       You must start gmax with the nifgmax.exe, NOT the gmax.exe.
     
         
     Usage

@@ -81,6 +81,13 @@ Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{
 
 ;Source: "src\*"; DestDir: "{reg:HKLM\SOFTWARE\Bethesda Softworks\Oblivion,Path|{pf}{\}Bethesda Softworks\Oblivion}\Data\niftools";  Components: "src"; Flags: ignoreversion recursesubdirs;
 
+[Icons]
+Name: "{commondesktop}\nif-gmax"; Filename: "{code:InstallPath|gmax12}\nifgmax.exe"; Components: "gmax12"; Tasks: desktopicon; WorkingDir: "{code:InstallPath|gmax12}"; Flags: createonlyiffileexists;
+
+[Tasks]
+Name: desktopicon; Description: "Create shortcut for nifgmax on Desktop"; Components: "gmax12";
+
+
 [Code]
 var sVersion: String;
     i: Integer;
