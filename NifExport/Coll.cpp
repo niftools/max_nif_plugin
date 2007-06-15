@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "../NifProps/bhkRigidBodyInterface.h"
-
+#include "obj/bhkListShape.h"
 #ifdef _DEBUG
 #include <assert.h>
 #include <crtdbg.h>
@@ -11,6 +11,7 @@
 
 static Class_ID SCUBA_CLASS_ID(0x6d3d77ac, 0x79c939a9);
 static Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID(0x398fd801, 0x303e44e5);
+extern Class_ID BHKLISTOBJECT_CLASS_ID;
 
 enum
 {
@@ -251,6 +252,9 @@ bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue 
 
 Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 {
+	if (isHandled(node))
+		return Exporter::Skip;
+
    ProgressUpdate(Collision, FormatText("'%s' Collision", node->GetName()));
 
 	// marked as collision?
@@ -263,30 +267,35 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	NiNodeRef newParent;
 	if (coll)
 	{
+		markAsHandled(node);
+
 		newParent = nodeParent; // always have collision one level up?
 
 		TimeValue t = 0;
 		Matrix3 tm = getTransform(node, t, local);
-		bhkShapeRef shape = makeCollisionShape(node, tm);
+
 		bhkRigidBodyRef body = makeCollisionBody(node);
-		body->SetShape(DynamicCast<bhkShape>(shape));
+		bhkShapeRef shape = makeCollisionShape(node, tm, body);
+		if (shape)
+		{
+			body->SetShape(DynamicCast<bhkShape>(shape));
 
-		Matrix44 rm4 = TOMATRIX4(tm, false);
-		Vector3 trans; Matrix33 rm; float scale;
-		rm4.Decompose(trans, rm, scale);
+			Matrix44 rm4 = TOMATRIX4(tm, false);
+			Vector3 trans; Matrix33 rm; float scale;
+			rm4.Decompose(trans, rm, scale);
 
-		QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
-		body->SetRotation(q);
-		body->SetTranslation(trans / Exporter::bhkScaleFactor);
+			QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
+			body->SetRotation(q);
+			body->SetTranslation(trans / Exporter::bhkScaleFactor);
 
-		bhkCollisionObjectRef co = new bhkCollisionObject();
-		co->SetBody(DynamicCast<NiObject>(body));
-      
-		//co->SetTarget(newParent);
+			bhkCollisionObjectRef co = new bhkCollisionObject();
+			co->SetBody(DynamicCast<NiObject>(body));
 
-		// link
-		newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
+			//co->SetTarget(newParent);
 
+			// link
+			newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
+		}
 	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {
 		newParent = makeNode(nodeParent, node);
    } else {
@@ -306,11 +315,35 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 {
 	// get data from node
-	int lyr, mtl, msys, qtype;
-	float mass, lindamp, angdamp, frict, maxlinvel, maxangvel, resti, pendepth;
-	Vector3 center;
+	int lyr = NP_DEFAULT_HVK_LAYER;
+	int mtl = NP_DEFAULT_HVK_MATERIAL;
+	int msys  = NP_DEFAULT_HVK_MOTION_SYSTEM;
+	int qtype = NP_DEFAULT_HVK_QUALITY_TYPE;
+	float mass = NP_DEFAULT_HVK_MASS;
+	float lindamp = NP_DEFAULT_HVK_LINEAR_DAMPING;
+	float angdamp = NP_DEFAULT_HVK_ANGULAR_DAMPING;
+	float frict = NP_DEFAULT_HVK_FRICTION;
+	float maxlinvel = NP_DEFAULT_HVK_MAX_LINEAR_VELOCITY;
+	float maxangvel = NP_DEFAULT_HVK_MAX_ANGULAR_VELOCITY;
+	float resti = NP_DEFAULT_HVK_RESTITUTION;
+	float pendepth = NP_DEFAULT_HVK_PENETRATION_DEPTH;
+	Vector3 center(0,0,0);
 
-	if (npIsCollision(node))
+	if (bhkRigidBodyInterface *irb = (bhkRigidBodyInterface *)node->GetObjectRef()->GetInterface(BHKRIGIDBODYINTERFACE_DESC))
+	{
+		mass = irb->GetMass(0);
+		frict = irb->GetFriction(0);
+		resti = irb->GetRestitution(0);
+		lyr = irb->GetLayer(0);
+		msys = irb->GetMotionSystem(0);
+		qtype = irb->GetQualityType(0);
+		lindamp = irb->GetLinearDamping(0);
+		angdamp = irb->GetAngularDamping(0);
+		maxlinvel = irb->GetMaxLinearVelocity(0);
+		pendepth = irb->GetPenetrationDepth(0);
+		maxangvel = irb->GetMaxAngularVelocity(0);
+	}
+	else if (npIsCollision(node))
 	{
 		// Handle compatibility
 		npGetProp(node, NP_HVK_MASS_OLD, mass, NP_DEFAULT_HVK_EMPTY);
@@ -372,7 +405,7 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	return body;
 }
 
-bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm)
+bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm, bhkRigidBodyRef body)
 {
 	bhkShapeRef shape;
 	
@@ -386,6 +419,8 @@ bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm)
 		shape = makeSphereShape(node, os.obj, tm);
 	else if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
 		shape = makeTriStripsShape(node, tm);
+	else if (os.obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
+		shape = makeListShape(node, tm, body);
 	return shape;
 }
 
@@ -505,10 +540,15 @@ bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 	data->SetVertices(verts);
 	data->SetNormals(vnorms);
 
+	int lyr = OL_STATIC;
+	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
+
 	// setup shape
 	bhkNiTriStripsShapeRef shape = StaticCast<bhkNiTriStripsShape>(bhkNiTriStripsShape::Create());
 	shape->SetNumStripsData(1);
 	shape->SetStripsData(0, data);
+	shape->SetNumDataLayers(1);
+	shape->SetOblivionLayer(0, OblivionLayer(lyr));
 
 	int mtl;
 	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
@@ -542,12 +582,28 @@ Exporter::Result Exporter::scanForCollision(INode *node)
    // Check self to see if is one of our bhkXXXObject classes
    if (Object* obj = node->GetObjectRef())
    {
-      if (obj->SuperClassID() == HELPER_CLASS_ID &&
-         obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB()) {
-         mCollisionNodes.insert(node);
-      }
-   }
+	   if (obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
+	   {
+		   mCollisionNodes.insert(node);
 
+		   const int PB_MESHLIST = 1;
+		   IParamBlock2* pblock2 = obj->GetParamBlockByID(0);
+		   int nBlocks = pblock2->Count(PB_MESHLIST);
+		   for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
+			   INode *tnode = NULL;
+			   pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+			   if (tnode != NULL) {
+				   mCollisionNodes.insert(tnode);
+				   markAsHandled(tnode); // dont process collision since the list will 
+			   }
+		   }
+	   }
+	   else if (obj->SuperClassID() == HELPER_CLASS_ID &&
+		   obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB()) 
+	   {
+		   mCollisionNodes.insert(node);
+	   }
+   }
    if (npIsCollision(node))
    {
 	   mCollisionNodes.insert(node);
@@ -559,7 +615,85 @@ Exporter::Result Exporter::scanForCollision(INode *node)
    return Exporter::Ok;
 }
 
+bool Exporter::isHandled(INode *node)
+{
+	return (mHandledNodes.find(node) != mHandledNodes.end());
+}
+
+bool Exporter::markAsHandled(INode* node)
+{
+	mHandledNodes.insert(node);
+	return true;
+}
+
 bool Exporter::isCollision(INode *node)
 {
 	return (mCollisionNodes.find(node) != mCollisionNodes.end());
+}
+
+bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef body)
+{
+	const int PB_MATERIAL = 0;
+	const int PB_MESHLIST = 1;
+	IParamBlock2* pblock2 = node->GetObjectRef()->GetParamBlockByID(0);
+	int nBlocks = pblock2->Count(PB_MESHLIST);
+	if (nBlocks > 0)
+	{
+		if (bhkRigidBodyInterface *irb = (bhkRigidBodyInterface *)node->GetObjectRef()->GetInterface(BHKRIGIDBODYINTERFACE_DESC))
+		{
+			int mass = irb->GetMass(0);
+			float frict = irb->GetFriction(0);
+			float resti = irb->GetRestitution(0);
+			int lyr = irb->GetLayer(0);
+			int msys = irb->GetMotionSystem(0);
+			int qtype = irb->GetQualityType(0);
+			float lindamp = irb->GetLinearDamping(0);
+			float angdamp = irb->GetAngularDamping(0);
+			float maxlinvel = irb->GetMaxLinearVelocity(0);
+			float maxangvel = irb->GetMaxAngularVelocity(0);
+			float pendepth = irb->GetPenetrationDepth(0);
+
+			body->SetLayer(OblivionLayer(lyr));
+			body->SetLayerCopy(OblivionLayer(lyr));
+			body->SetMotionSystem(MotionSystem(msys));
+			body->SetQualityType(MotionQuality(qtype));
+			body->SetMass(mass);
+			body->SetLinearDamping(lindamp);
+			body->SetAngularDamping(angdamp);
+			body->SetFriction(frict);
+			body->SetRestitution(resti);
+			body->SetMaxLinearVelocity(maxlinvel);
+			body->SetMaxAngularVelocity(maxangvel);
+			body->SetPenetrationDepth(pendepth);
+		}
+
+		bhkListShapeRef shape = new bhkListShape();
+
+		int mtl = pblock2->GetInt(PB_MATERIAL, 0, 0);
+		shape->SetMaterial(HavokMaterial(mtl));
+
+		vector<bhkShapeRef> shapes;
+
+		for (int i = 0; i < nBlocks; i++) {
+			INode *tnode = NULL;
+			pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+			if (tnode != NULL)
+			{
+				bhkShapeRef subshape = makeCollisionShape(tnode, tm, body);
+				if (subshape)
+					shapes.push_back(subshape);
+			}
+		}
+		shape->SetSubShapes(shapes);
+
+		if (shapes.size() == 1) // ignore the list when only one object is present
+		{
+			return shapes[0];
+		}
+		else if (!shapes.empty())
+		{
+			return bhkShapeRef(shape);
+		}
+	}
+	return bhkShapeRef();
 }

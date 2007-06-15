@@ -3378,6 +3378,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NifProps\bhkListObj.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\NifProps\bhkRigidBodyInterface.cpp"
 					>
 				</File>
@@ -5106,6 +5110,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NifCommon\NifQHull.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\NifCommon\niutils.cpp"
 					>
 				</File>
@@ -5113,6 +5121,1826 @@
 			<Filter
 				Name="Resource Files"
 				>
+			</Filter>
+			<Filter
+				Name="qhull"
+				>
+				<File
+					RelativePath=".\NifCommon\qhull\geom.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\geom.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\geom2.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\global.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\io.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\io.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\mem.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\mem.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\merge.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\merge.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\poly.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\poly.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\poly2.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\qhull.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\qhull.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\qhull_a.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\qset.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\qset.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\stat.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\stat.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\user.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							UsePrecompiledHeader="0"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\NifCommon\qhull\user.h"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter

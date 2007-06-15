@@ -66,7 +66,7 @@ void npSetProp(INode *node, const TSTR &prop, float value)
 
 bool npGetProp(INode *node, const TSTR &prop, Vector3 &value, const Vector3 def)
 {
-	bool ret;
+	bool ret = false;
 	if (node)
 	{
 		TSTR tmp;
@@ -80,6 +80,7 @@ bool npGetProp(INode *node, const TSTR &prop, Vector3 &value, const Vector3 def)
 			if (endp)
 				value.z = _tcstod(endp, &endp);
 
+			ret = true;
 		} else
 		{
 			value = def;

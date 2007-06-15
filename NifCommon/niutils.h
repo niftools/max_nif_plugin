@@ -340,6 +340,13 @@ static inline Matrix3 TOMATRIX3(const Niflib::Matrix44 &tm, bool invert = false)
    return m;
 }
 
+static inline Niflib::Matrix33 TOMATRIX33(const Matrix3 &tm, bool invert = false){
+	Niflib::Matrix33 m3(tm.GetRow(0)[0], tm.GetRow(0)[1], tm.GetRow(0)[2],
+		tm.GetRow(1)[0], tm.GetRow(1)[1], tm.GetRow(1)[2],
+		tm.GetRow(2)[0], tm.GetRow(2)[1], tm.GetRow(2)[2]);
+	return m3;
+}
+
 static inline Niflib::Matrix44 TOMATRIX4(const Matrix3 &tm, bool invert = false){
    Niflib::Matrix33 m3(tm.GetRow(0)[0], tm.GetRow(0)[1], tm.GetRow(0)[2],
                        tm.GetRow(1)[0], tm.GetRow(1)[1], tm.GetRow(1)[2],

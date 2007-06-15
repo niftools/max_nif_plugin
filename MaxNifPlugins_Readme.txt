@@ -37,9 +37,16 @@
       -----
     o Installer
       - Add nifgmax shortcut on desktop option
+    
+    o Props
+      - Add bhkListObject utility to hold collision objects
+      
     o Exporter
       - Controller parentage change in Animation export
       - Fix bug where child node has parent set twice resulting in error.
+    
+    o Importer
+      - Add limited Collision import support
       
       0.2.11 (Experimental Release)
       -----

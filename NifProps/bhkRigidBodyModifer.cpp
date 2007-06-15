@@ -101,9 +101,9 @@ private:
          return TRUE;
       }
       // and out objects which support the RigidBodyInterface
-      //if (os.obj->SuperClassID() == HELPER_CLASS_ID && NULL != GetInterface(BHKRIGIDBODYINTERFACE_DESC)) {
-      //   return TRUE;
-      //}
+      if (os.obj->SuperClassID() == HELPER_CLASS_ID && NULL != GetInterface(BHKRIGIDBODYINTERFACE_DESC)) {
+         return TRUE;
+      }
       if (os.obj->SuperClassID() == HELPER_CLASS_ID && os.obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB() ) {
          return TRUE;
       }

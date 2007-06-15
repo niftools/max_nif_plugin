@@ -109,7 +109,9 @@ public:
 
    bool ImportUPB(INode *node, Niflib::NiNodeRef block);
 
-   void SetTrangles(Mesh& mesh, vector<Niflib::Triangle>& v);
+   void SetTriangles(Mesh& mesh, const vector<Niflib::Triangle>& v);
+   void SetNormals(Mesh& mesh, const vector<Niflib::Triangle>& t, const vector<Niflib::Vector3>& v);
+
    bool ImportMesh(Niflib::NiTriShapeRef triShape);
    bool ImportMesh(Niflib::NiTriStripsRef triStrips);
    bool ImportMultipleGeometry(Niflib::NiNodeRef parent, vector<Niflib::NiTriBasedGeomRef>& glist);

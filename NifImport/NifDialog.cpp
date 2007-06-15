@@ -43,6 +43,7 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
             CheckDlgButton(hWnd, IDC_CHK_SKIN, imp->enableSkinSupport);
             CheckDlgButton(hWnd, IDC_CHK_VCOLORS, imp->vertexColorMode);
             CheckDlgButton(hWnd, IDC_CHK_COLL, imp->enableCollision);
+			EnableWindow(GetDlgItem(hWnd, IDC_CHK_COLL), TRUE);
             CheckDlgButton(hWnd, IDC_CHK_ANIMATION, imp->enableAnimations);
             CheckDlgButton(hWnd, IDC_CHK_LIGHTS, imp->enableLights);
             CheckDlgButton(hWnd, IDC_CHK_CAMERA, imp->enableCameras);

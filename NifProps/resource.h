@@ -77,6 +77,7 @@
 #define IDD_RB_MOD_PANEL4               11011
 #define IDC_LBL_CENTER                  11012
 #define IDS_DS_MASS                     11012
+#define IDD_LISTPARAM                   11012
 #define IDC_LBL_POS2                    11013
 #define IDS_DS_FRICTION                 11013
 #define IDS_DS_RESTITUTION              11014
@@ -117,6 +118,8 @@
 #define IDS_RB_MOD_PANEL2               11049
 #define IDS_RB_MOD_PANEL3               11050
 #define IDS_RB_MOD_PANEL4               11051
+#define IDS_RB_LIST                     11052
+#define IDS_RB_LIST_CLASS               11053
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492

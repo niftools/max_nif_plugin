@@ -233,7 +233,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
    ProgressUpdate(Geometry, FormatText("'%s' Geometry", nodeName.data()));
 
    // Abort if is a collision node or is hidden and we are not exporting hidden
-   if (coll ||	(node->IsHidden() && !mExportHidden))
+   if (coll ||	(node->IsHidden() && !mExportHidden) || isHandled(node))
       return Skip;
 
    bool local = !mFlattenHierarchy;

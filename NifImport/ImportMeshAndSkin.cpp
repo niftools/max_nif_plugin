@@ -96,60 +96,8 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
       }
    }
    // Triangles and texture vertices
-   SetTrangles(mesh, tris);
-
-   // Normals
-   {
-      mesh.checkNormals(TRUE);
-      vector<Vector3> n = triGeomData->GetNormals();
-      if (n.size() > 0)
-      {
-         bool needNormals = false;
-         for (int i=0; i<n.size(); i++){
-            Vector3 v = n[i];
-            Point3 norm(v.x, v.y, v.z);
-            if (norm != mesh.getNormal(i)) {
-               needNormals = true;
-               break;
-            }
-         }
-         if (needNormals)
-         {
-#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
-            mesh.SpecifyNormals();
-            MeshNormalSpec *specNorms = mesh.GetSpecifiedNormals ();
-            if (NULL != specNorms)
-            {
-               specNorms->ClearAndFree();
-               specNorms->SetNumFaces(tris.size());
-               specNorms->SetNumNormals(n.size());
-
-               Point3* norms = specNorms->GetNormalArray();
-               for (int i=0; i<n.size(); i++){
-                  Vector3 v = n[i];
-                  norms[i] = Point3(v.x, v.y, v.z);
-               }
-               MeshNormalFace* pFaces = specNorms->GetFaceArray();
-               for (int i=0; i<tris.size(); i++){
-                  Triangle& tri = tris[i];
-                  pFaces[i].SpecifyNormalID(0, tri.v1);
-                  pFaces[i].SpecifyNormalID(1, tri.v2);
-                  pFaces[i].SpecifyNormalID(2, tri.v3);
-               }
-#if VERSION_3DSMAX > ((7000<<16)+(15<<8)+0) // Version 7+
-               specNorms->SetAllExplicit(true);
-#else
-			   for (int i=0; i<specNorms->GetNumNormals(); ++i) {
-				   specNorms->SetNormalExplicit(i, true);
-			   }
-#endif
-               specNorms->CheckNormals();
-            }
-#endif
-         }
-      }
-   }
-
+   SetTriangles(mesh, tris);
+   SetNormals(mesh, tris, triGeomData->GetNormals() );
 
    vector<Color4> cv = triGeomData->GetColors();
    ImportVertexColor(tnode, o, tris, cv, 0);
@@ -164,8 +112,6 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
       mesh.RemoveDegenerateFaces();
    if (removeIllegalFaces)
       mesh.RemoveIllegalFaces();
-   if (enableAutoSmooth)
-      mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
 
    if (enableSkinSupport)
       ImportSkin(node, triGeom);
@@ -188,13 +134,13 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
    return true;
 }
 
-void NifImporter::SetTrangles(Mesh& mesh, vector<Triangle>& v)
+void NifImporter::SetTriangles(Mesh& mesh, const vector<Triangle>& v)
 {
    int n = v.size();
    mesh.setNumFaces(n);
    mesh.setNumTVFaces(n);
    for (int i=0; i<n; ++i) {
-      Triangle& t = v[i];
+      const Triangle& t = v[i];
       Face& f = mesh.faces[i];
       f.setVerts(t.v1, t.v2, t.v3);
       f.Show();
@@ -202,6 +148,57 @@ void NifImporter::SetTrangles(Mesh& mesh, vector<Triangle>& v)
       TVFace& tf = mesh.tvFace[i];
       tf.setTVerts(t.v1, t.v2, t.v3);
    }
+}
+
+void NifImporter::SetNormals(Mesh& mesh, const vector<Niflib::Triangle>& tris, const vector<Niflib::Vector3>& n)
+{
+	mesh.checkNormals(TRUE);
+	if (n.size() > 0)
+	{
+		bool needNormals = false;
+		for (int i=0; i<n.size(); i++){
+			Vector3 v = n[i];
+			Point3 norm(v.x, v.y, v.z);
+			if (norm != mesh.getNormal(i)) {
+				needNormals = true;
+				break;
+			}
+		}
+		if (needNormals)
+		{
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+			mesh.SpecifyNormals();
+			MeshNormalSpec *specNorms = mesh.GetSpecifiedNormals ();
+			if (NULL != specNorms)
+			{
+				specNorms->ClearAndFree();
+				specNorms->SetNumFaces(tris.size());
+				specNorms->SetNumNormals(n.size());
+
+				Point3* norms = specNorms->GetNormalArray();
+				for (int i=0; i<n.size(); i++){
+					Vector3 v = n[i];
+					norms[i] = Point3(v.x, v.y, v.z);
+				}
+				MeshNormalFace* pFaces = specNorms->GetFaceArray();
+				for (int i=0; i<tris.size(); i++){
+					const Triangle& tri = tris[i];
+					pFaces[i].SpecifyNormalID(0, tri.v1);
+					pFaces[i].SpecifyNormalID(1, tri.v2);
+					pFaces[i].SpecifyNormalID(2, tri.v3);
+				}
+#if VERSION_3DSMAX > ((7000<<16)+(15<<8)+0) // Version 7+
+				specNorms->SetAllExplicit(true);
+#else
+				for (int i=0; i<specNorms->GetNumNormals(); ++i) {
+					specNorms->SetNormalExplicit(i, true);
+				}
+#endif
+				specNorms->CheckNormals();
+			}
+#endif
+		}
+	}
 }
 
 bool NifImporter::ImportMesh(NiTriShapeRef triShape)

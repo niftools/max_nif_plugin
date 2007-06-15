@@ -21,6 +21,8 @@ extern ClassDesc2* GetbhkCapsuleDesc();
 extern ClassDesc2* GetbhkRigidBodyModifierDesc();
 extern ClassDesc2* GetbhkBoxDesc();
 extern ClassDesc* GetDDSLibClassDesc();
+extern ClassDesc2* GetbhkListObjDesc();
+
 
 enum ClassDescType
 {
@@ -85,6 +87,7 @@ void InitializeLibSettings()
    if ( GetIniValue<bool>("NifProps", "Enable", true, iniName) ) {
       classDescEnabled[CD_Props] = true;
       classDescriptions[nClasses++] = GetNifPropsDesc();
+	  classDescriptions[nClasses++] = GetbhkListObjDesc();
 #ifdef USE_UNSUPPORTED_CODE
       classDescriptions[nClasses++] = GetbhkRigidBodyModifierDesc();
       classDescriptions[nClasses++] = GetbhkSphereDesc();

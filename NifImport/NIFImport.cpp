@@ -300,6 +300,11 @@ bool NifImporter::DoImport()
 
          ok = ImportMeshes(rootNode);
 
+		 // Import Havok Collision Data surrounding node
+		 if (enableCollision) {
+			 ImportCollision(rootNode);
+		 }
+
          if (importSkeleton && removeUnusedImportedBones){
             vector<string> importedNodes = GetNamesOfNodes(nodes);
             sort(importedBones.begin(), importedBones.end());
