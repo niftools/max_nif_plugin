@@ -109,6 +109,8 @@ bool NifImporter::ImportLights(vector<NiLightRef> lights)
 
          PosRotScaleNode(n, p, q, scale, prsDefault);
          n->Hide(light->GetVisibility() ? FALSE : TRUE );
+
+		 RegisterNode(light, n);
       }
       ok = true;
    }

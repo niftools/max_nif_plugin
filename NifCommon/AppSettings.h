@@ -25,8 +25,9 @@ public:
       , useSkeleton(false)
       , goToSkeletonBindPosition(true)
       , disableCreateNubsForBones(false)
-      , textureUseFullPath(false)
+      , textureUseFullPath(0)
       , supportPrnStrings(false)
+	  , doNotReuseExistingBones(false)
    {}
 
    std::string Name;
@@ -40,7 +41,7 @@ public:
    bool useSkeleton;
    bool goToSkeletonBindPosition;
    bool disableCreateNubsForBones;
-   bool textureUseFullPath;
+   int textureUseFullPath;
    NameValueCollection Environment;
    NameValueCollection imgTable;
    stringlist dummyNodeMatches;
@@ -49,6 +50,7 @@ public:
    int NiUserVersion;
    stringlist rotate90Degrees;
    bool supportPrnStrings;
+   bool doNotReuseExistingBones;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);

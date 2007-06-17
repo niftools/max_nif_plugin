@@ -61,11 +61,12 @@ void AppSettings::ReadSettings(string iniFile)
    goToSkeletonBindPosition = GetSetting<bool>("GoToSkeletonBindPosition", goToSkeletonBindPosition);
    disableCreateNubsForBones = GetSetting<bool>("DisableCreateNubsForBones", disableCreateNubsForBones);
    applyOverallTransformToSkinAndBones = GetSetting<int>("ApplyOverallTransformToSkinAndBones", -1);
-   textureUseFullPath = GetSetting<bool>("TextureUseFullPath", textureUseFullPath);
+   textureUseFullPath = GetSetting<int>("TextureUseFullPath", textureUseFullPath);
 
    dummyNodeMatches = TokenizeString(GetSetting<string>("DummyNodeMatches").c_str(), ";");
    rotate90Degrees = TokenizeString(GetSetting<string>("Rotate90Degrees").c_str(), ";");
    supportPrnStrings = GetSetting<bool>("SupportPrnStrings", supportPrnStrings);
+   doNotReuseExistingBones = GetSetting<bool>("DoNotReuseExistingBones", doNotReuseExistingBones);
 }
 
 void AppSettings::WriteSettings(Interface *gi)
@@ -145,10 +146,14 @@ bool AppSettings::IsFileInRootPaths(const std::string& fname)
 std::string AppSettings::GetRelativeTexPath(const std::string& fname, const std::string& prefix)
 {
    TCHAR buffer[MAX_PATH];
-   if (textureUseFullPath)
+   if (textureUseFullPath == 1) // full path name
    {
       GetFullPathName(fname.c_str(), _countof(buffer), buffer, NULL);
       return string(buffer);
+   }
+   else if (textureUseFullPath == -1) // only filename
+   {
+	   return string(PathFindFileName(fname.c_str()));
    }
    if (!PathIsRelative(fname.c_str())) 
    {

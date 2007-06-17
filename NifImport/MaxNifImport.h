@@ -55,6 +55,7 @@
 #include "obj\NiSkinInstance.h"
 #include "obj\NiSkinPartition.h"
 #include "obj\NiLight.h"
+#include "obj\NiTextureProperty.h"
 
 #include "niutils.h"
 #include "AppSettings.h"

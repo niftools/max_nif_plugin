@@ -103,21 +103,34 @@ bool Exporter::equal(const Vector3 &a, const Point3 &b, float thresh)
 		   (fabsf(a.z-b.z) <= thresh);
 }
 
+NiNodeRef Exporter::getNode(INode* maxNode)
+{
+	string name = maxNode->GetName();
+
+	NodeToNodeMap::iterator itr = mNodeMap.find(maxNode);
+	if (itr != mNodeMap.end())
+		return (*itr).second;
+	NiNodeRef node = CreateNiObject<NiNode>();
+	node->SetName(name);
+	mNodeMap[maxNode] = node;
+	mNameMap[name] = node;
+	return node;
+}
 NiNodeRef Exporter::getNode(const string& name)
 {
-   NodeMap::iterator itr = mNodeMap.find(name);
-   if (itr != mNodeMap.end())
+   NodeMap::iterator itr = mNameMap.find(name);
+   if (itr != mNameMap.end())
       return (*itr).second;
    NiNodeRef node = CreateNiObject<NiNode>();
    node->SetName(name);
-   mNodeMap[name] = node;
+   mNameMap[name] = node;
    return node;
 }
 
 NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 {
 	string name = (char*)maxNode->GetName();
-	NiNodeRef node = getNode(name);
+	NiNodeRef node = getNode(maxNode);
 
 	Matrix33 rot;
 	Vector3 trans;

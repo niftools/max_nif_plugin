@@ -205,6 +205,8 @@ void NifImporter::ApplyAppSettings()
       if (!appSettings->rotate90Degrees.empty())
          rotate90Degrees = appSettings->rotate90Degrees;
       supportPrnStrings = appSettings->supportPrnStrings;
+
+	  doNotReuseExistingBones = appSettings->doNotReuseExistingBones;
    }
 }
 
@@ -238,11 +240,26 @@ void NifImporter::SaveIniSettings()
    SetIniValue<string>(NifImportSection, "CurrentApp", autoDetect ? "AUTO" : appSettings->Name );
 }
 
+void NifImporter::RegisterNode(Niflib::NiObjectNETRef node, INode* inode)
+{
+	nodeMap[node] = inode;
+}
+
+INode* NifImporter::FindNode(Niflib::NiObjectNETRef node)
+{
+	// may want to make this a map if its hit a lot
+	if (NULL == node) return NULL;
+
+	NodeToNodeMap::iterator itr = nodeMap.find(node);
+	if (itr != nodeMap.end())
+		return (*itr).second;
+
+	return gi->GetINodeByName(node->GetName().c_str());
+}
+
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
 {
-   // may want to make this a map if its hit a lot
-   if (NULL == node) return NULL;
-   return gi->GetINodeByName(node->GetName().c_str());
+	return FindNode(node);
 }
 
 bool NifImporter::DoImport()
@@ -285,13 +302,15 @@ bool NifImporter::DoImport()
       if (root->IsDerivedType(NiNode::TYPE))
       {
          NiNodeRef rootNode = root;
+		 RegisterNode(root, gi->GetRootNode());
 
-         if (importBones) {
-            if (ignoreRootNode || strmatch(rootNode->GetName(), "Scene Root"))
-               ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
-            else
-               ImportBones(rootNode);
-         }
+		 if (importBones) {
+			 if (ignoreRootNode || strmatch(rootNode->GetName(), "Scene Root")) {
+				 ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
+			 } else {
+				 ImportBones(rootNode);
+			 }
+		 }
 
 
          if (enableLights){

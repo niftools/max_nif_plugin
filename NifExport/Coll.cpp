@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "../NifProps/bhkRigidBodyInterface.h"
 #include "obj/bhkListShape.h"
+#include "obj/bhkConvexVerticesShape.h"
+#include "..\NifProps\bhkHelperFuncs.h"
+#include "..\NifProps\bhkHelperInterface.h"
+
 #ifdef _DEBUG
 #include <assert.h>
 #include <crtdbg.h>
@@ -10,8 +14,12 @@
 #endif
 
 static Class_ID SCUBA_CLASS_ID(0x6d3d77ac, 0x79c939a9);
-static Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID(0x398fd801, 0x303e44e5);
+extern Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID;
 extern Class_ID BHKLISTOBJECT_CLASS_ID;
+extern Class_ID bhkBoxObject_CLASS_ID;
+extern Class_ID BHKCAPSULEOBJECT_CLASS_ID;
+extern Class_ID bhkSphereObject_CLASS_ID;
+extern Class_ID BHKPROXYOBJECT_CLASS_ID;
 
 enum
 {
@@ -135,120 +143,6 @@ void Exporter::addFace(Triangles &tris, vector<Vector3> &verts, vector<Vector3> 
 	}
 	tris.push_back(tri);
 }
-/*
-bool Exporter::makeCollisionHierarchy(NiNodeRef &parent, INode *node, TimeValue t)
-{	
-	Matrix3 tm = node->GetObjTMAfterWSM(t);
-
-	// Order of the vertices. Get 'em counter clockwise if the objects is
-	// negatively scaled.
-	int vi[3];
-	if (TMNegParity(tm)) 
-	{
-		vi[0] = 2;
-		vi[1] = 1;
-		vi[2] = 0;
-	} else 
-	{
-		vi[0] = 0;
-		vi[1] = 1;
-		vi[2] = 2;
-	}
-
-	ObjectState os = node->EvalWorldState(t);
-	if (!os.obj || os.obj->SuperClassID()!=GEOMOBJECT_CLASS_ID)
-		return Error;
-		
-	Object *obj = os.obj;
-	if (!obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0))) 
-		return Error;
-
-	TriObject *tri = (TriObject *)obj->ConvertToType(t, Class_ID(TRIOBJ_CLASS_ID, 0));
-	if (!tri)
-		return false;
-
-	Mesh *mesh = &tri->GetMesh();
-	mesh->buildNormals();
-
-	// setup shape data
-	vector<Vector3> verts;
-	vector<Vector3> vnorms;
-	Triangles		tris;
-
-	for (int i=0; i<mesh->getNumFaces(); i++)
-		addFace(tris, verts, vnorms, i, vi, mesh);
-
-	TriStrips strips;
-	strippify(strips, verts, vnorms, tris);
-	NiTriStripsDataRef data = makeTriStripsData(strips);
-	data->SetVertices(verts);
-	data->SetNormals(vnorms);
-
-	// setup shape
-	bhkNiTriStripsShapeRef shape = DynamicCast<bhkNiTriStripsShape>(CreateBlock("bhkNiTriStripsShape"));
-	shape->SetNumStripsData(1);
-	shape->SetStripsData(0, data);
-	shape->SetMaterial(mtl);
-
-	//array<float, 2> unknownFloats1;
-	//uint i1 = 0x3DCCCCCD;
-	//uint i2 = 0x004ABE60;
-	//unknownFloats1[0] = *((float*)&i1);
-	//unknownFloats1[1] = *((float*)&i2);
-	//shape->SetUnknownFloats1(unknownFloats1);
-
-	//array<float, 3> unknownFloats2;
-	//unknownFloats2[0] = 1;
-	//unknownFloats2[1] = 1;
-	//unknownFloats2[2] = 1;
-	//shape->SetUnknownFloats2(unknownFloats2);
-
-	//array<uint, 5> unknownInts1;
-	//unknownInts1[4] = 1;
-	//shape->SetUnknownInts1(unknownInts1);
-
-	//vector<uint> unknownInts3;
-	//unknownInts3.resize(1);
-	//shape->SetUnknownInts3(unknownInts3);
-
-	// setup collision object
-	bhkCollisionObjectRef co = DynamicCast<bhkCollisionObject>(CreateBlock("bhkCollisionObject"));
-
-	// setup body
-	bhkRigidBodyTRef body = DynamicCast<bhkRigidBodyT>(CreateBlock("bhkRigidBodyT"));
-
-	Vector3 trans;
-	QuaternionXYZW q;
-	nodeTransform(q, trans, node, t, false);
-	body->SetRotation(q);
-	body->SetTranslation(Vector3(trans.x/7, trans.y/7, trans.z/7));
-
-	body->SetLayer(lyr);
-	body->SetLayerCopy(lyr);
-	body->SetMotionSystem(msys);
-	body->SetQualityType(qtype);
-	body->SetMass(mass);
-	body->SetLinearDamping(lindamp);
-	body->SetAngularDamping(angdamp);
-	body->SetFriction(frict);
-	body->SetRestitution(resti);
-	body->SetMaxLinearVelocity(maxlinvel);
-	body->SetMaxAngularVelocity(maxangvel);
-	body->SetPenetrationDepth(pendepth);
-	body->SetCenter(center);
-
-	// link
-	parent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
-	co->SetParent(parent);
-	co->SetBody(DynamicCast<NiObject>(body));
-	body->SetShape(DynamicCast<bhkShape>(shape));
-
-	if (obj != tri)
-		tri->DeleteMe();
-
-	return true;
-}
-*/
 
 Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 {
@@ -275,11 +169,8 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		Matrix3 tm = getTransform(node, t, local);
 
 		bhkRigidBodyRef body = makeCollisionBody(node);
-		bhkShapeRef shape = makeCollisionShape(node, tm, body);
-		if (shape)
+		if (body)
 		{
-			body->SetShape(DynamicCast<bhkShape>(shape));
-
 			Matrix44 rm4 = TOMATRIX4(tm, false);
 			Vector3 trans; Matrix33 rm; float scale;
 			rm4.Decompose(trans, rm, scale);
@@ -288,13 +179,19 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 			body->SetRotation(q);
 			body->SetTranslation(trans / Exporter::bhkScaleFactor);
 
-			bhkCollisionObjectRef co = new bhkCollisionObject();
-			co->SetBody(DynamicCast<NiObject>(body));
+			bhkShapeRef shape = makeCollisionShape(node, tm, body);
+			if (shape)
+			{
+				body->SetShape(DynamicCast<bhkShape>(shape));
 
-			//co->SetTarget(newParent);
+				bhkCollisionObjectRef co = new bhkCollisionObject();
+				co->SetBody(DynamicCast<NiObject>(body));
 
-			// link
-			newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
+				//co->SetTarget(newParent);
+
+				// link
+				newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
+			}
 		}
 	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {
 		newParent = makeNode(nodeParent, node);
@@ -405,6 +302,75 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	return body;
 }
 
+bhkNiTriStripsShapeRef Exporter::makeTriStripsShape(Mesh& mesh, Matrix3& sm)
+{
+	typedef vector<Triangle> Triangles;
+
+	// setup shape data
+	vector<Vector3> verts;
+	vector<Vector3> vnorms;
+	Triangles		tris;
+
+	int vi[3];
+	if (TMNegParity(sm)) {
+		vi[0] = 2; vi[1] = 1; vi[2] = 0;
+	} else {
+		vi[0] = 0; vi[1] = 1; vi[2] = 2;
+	}
+
+	for (int i=0; i<mesh.getNumFaces(); i++)
+		addFace(tris, verts, vnorms, i, vi, &mesh, sm);
+
+	NiTriStripsDataRef data = new NiTriStripsData(tris, Exporter::mUseAlternateStripper);
+	data->SetVertices(verts);
+	data->SetNormals(vnorms);
+
+	//int lyr = OL_STATIC;
+	//npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
+
+	//int mtl;
+	//npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
+	//shape->SetMaterial(HavokMaterial(mtl));
+
+	// setup shape
+	bhkNiTriStripsShapeRef shape = StaticCast<bhkNiTriStripsShape>(bhkNiTriStripsShape::Create());
+	shape->SetNumStripsData(1);
+	shape->SetStripsData(0, data);
+	shape->SetNumDataLayers(1);
+	shape->SetOblivionLayer(0, OL_STATIC);
+
+	//if (tri != os.obj)
+	//	tri->DeleteMe();
+	return shape;
+}
+
+bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
+{
+	bhkConvexVerticesShapeRef shape = StaticCast<bhkConvexVerticesShape>(bhkConvexVerticesShape::Create());
+	Point3 center(0.0f, 0.0f, 0.0f);
+	float radius = 0.0f;
+	CalcAxisAlignedSphere(mesh, center, radius);
+	shape->SetRadius(radius);
+	vector<Vector3> verts, norms;
+	vector<float> dist;
+	int nvert = mesh.getNumVerts();
+	verts.resize(nvert);
+	norms.resize(nvert);
+	dist.resize(nvert);
+	for (int i=0; i<nvert; ++i)
+	{
+		Point3& vert = mesh.getVert(i);
+		verts[i] = TOVECTOR3(vert) / Exporter::bhkScaleFactor;
+		norms[i] = TOVECTOR3(mesh.getNormal(i));
+		dist[i] = vert.Length();
+	}
+	shape->SetVertices(verts);
+	shape->SetNormals(norms);
+	shape->SetDistToCenter(dist);
+	return shape;
+}
+
+
 bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm, bhkRigidBodyRef body)
 {
 	bhkShapeRef shape;
@@ -417,10 +383,27 @@ bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm, bhkRigidBodyR
 		shape = makeBoxShape(node, os.obj, tm);
 	else if (os.obj->ClassID() == Class_ID(SPHERE_CLASS_ID, 0))
 		shape = makeSphereShape(node, os.obj, tm);
-	else if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
-		shape = makeTriStripsShape(node, tm);
+	else if (os.obj->ClassID() == bhkBoxObject_CLASS_ID)
+		shape = makebhkBoxShape(node, os.obj, tm);
+	else if (os.obj->ClassID() == bhkSphereObject_CLASS_ID)
+		shape = makebhkSphereShape(node, os.obj, tm);
+	else if (os.obj->ClassID() == BHKCAPSULEOBJECT_CLASS_ID)
+		shape = makebhkCapsuleShape(node, os.obj, tm);
 	else if (os.obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
 		shape = makeListShape(node, tm, body);
+	else if (os.obj->ClassID() == BHKPROXYOBJECT_CLASS_ID)
+		shape = makeProxyShape(node, os.obj, tm);
+	else if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
+	{
+		if (Modifier* mod = GetbhkCollisionModifier(node))
+		{
+			shape = makeModifierShape(node, os.obj, mod, tm);
+		}
+		else
+		{
+			shape = makeTriStripsShape(node, tm);
+		}
+	}
 	return shape;
 }
 
@@ -494,6 +477,55 @@ bhkShapeRef Exporter::makeCapsuleShape(INode *node, Object *obj, Matrix3& tm)
 	return bhkShapeRef(DynamicCast<bhkSphereRepShape>(capsule));
 }
 
+bhkShapeRef Exporter::makebhkBoxShape(INode *node, Object *obj, Matrix3& tm)
+{
+	enum { box_params, };
+	enum { PB_MATERIAL, PB_LENGTH, PB_WIDTH, PB_HEIGHT, };
+
+	bhkShapeRef retval;
+	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(box_params))
+	{
+		Point3 scale = GetScale(tm);
+		float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+
+		int mtl = 0, length = 0, width = 0, height = 0;
+		pblock2->GetValue(PB_MATERIAL, 0, mtl, FOREVER, 0);
+		pblock2->GetValue(PB_LENGTH, 0, length, FOREVER, 0);
+		pblock2->GetValue(PB_WIDTH, 0, width, FOREVER, 0);
+		pblock2->GetValue(PB_HEIGHT, 0, height, FOREVER, 0);
+
+
+		bhkBoxShapeRef box = new bhkBoxShape();
+		Vector3 dim(width * scale[0], length * scale[1], height * scale[2]);
+
+		// Adjust translation for center of z axis in box
+		tm.Translate(Point3(0.0, 0.0, dim.z / 2.0));
+
+		dim /= (Exporter::bhkScaleFactor * 2);
+		box->SetDimensions(dim);
+
+		box->SetMaterial(HavokMaterial(mtl));
+		retval = StaticCast<bhkShape>(box);
+	}
+
+	return retval;
+}
+
+bhkShapeRef	Exporter::makebhkSphereShape(INode *node, Object *obj, Matrix3& tm)
+{
+	bhkShapeRef retval;
+
+	return retval;
+}
+
+bhkShapeRef	Exporter::makebhkCapsuleShape(INode *node, Object *obj, Matrix3& tm)
+{
+	bhkShapeRef retval;
+
+	return retval;
+}
+
+
 bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 {
 	TimeValue t = 0;
@@ -503,50 +535,19 @@ bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 
 	// Order of the vertices. Get 'em counter clockwise if the objects is
 	// negatively scaled.
-	int vi[3];
-	if (TMNegParity(tm)) 
-	{
-		vi[0] = 2;
-		vi[1] = 1;
-		vi[2] = 0;
-	} else 
-	{
-		vi[0] = 0;
-		vi[1] = 1;
-		vi[2] = 2;
-	}
-
 	ObjectState os = node->EvalWorldState(t);
 
 	TriObject *tri = (TriObject *)os.obj->ConvertToType(t, Class_ID(TRIOBJ_CLASS_ID, 0));
 	if (!tri)
 		return false;
 
-	Mesh *mesh = &tri->GetMesh();
-	mesh->buildNormals();
+	Mesh &mesh = tri->GetMesh();
+	mesh.buildNormals();
 
-	// setup shape data
-	vector<Vector3> verts;
-	vector<Vector3> vnorms;
-	Triangles		tris;
-
-	for (int i=0; i<mesh->getNumFaces(); i++)
-		addFace(tris, verts, vnorms, i, vi, mesh, sm);
-
-	//TriStrips strips;
-	//strippify(strips, verts, vnorms, tris);
-	//NiTriStripsDataRef data = makeTriStripsData(strips);
-	NiTriStripsDataRef data = new NiTriStripsData(tris, Exporter::mUseAlternateStripper);
-	data->SetVertices(verts);
-	data->SetNormals(vnorms);
+	bhkNiTriStripsShapeRef shape = makeTriStripsShape(mesh, sm);
 
 	int lyr = OL_STATIC;
 	npGetProp(node, NP_HVK_LAYER, lyr, NP_DEFAULT_HVK_LAYER);
-
-	// setup shape
-	bhkNiTriStripsShapeRef shape = StaticCast<bhkNiTriStripsShape>(bhkNiTriStripsShape::Create());
-	shape->SetNumStripsData(1);
-	shape->SetStripsData(0, data);
 	shape->SetNumDataLayers(1);
 	shape->SetOblivionLayer(0, OblivionLayer(lyr));
 
@@ -554,9 +555,14 @@ bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
 	shape->SetMaterial(HavokMaterial(mtl));
 
-	//if (tri != os.obj)
-	//	tri->DeleteMe();
 	return StaticCast<bhkShape>(shape);
+}
+
+bhkShapeRef	Exporter::makeConvexShape(INode *node, Object* obj, Matrix3& tm)
+{
+	bhkShapeRef shape;
+
+	return shape;
 }
 
 Exporter::Result Exporter::scanForCollision(INode *node)
@@ -603,6 +609,14 @@ Exporter::Result Exporter::scanForCollision(INode *node)
 	   {
 		   mCollisionNodes.insert(node);
 	   }
+	   else
+	   {
+		   Modifier* mod = GetbhkCollisionModifier(node);
+		   if (mod != NULL)
+		   {
+			   mCollisionNodes.insert(node);
+		   }
+	   }
    }
    if (npIsCollision(node))
    {
@@ -633,6 +647,11 @@ bool Exporter::isCollision(INode *node)
 
 bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef body)
 {
+	// reset transform
+	body->SetCenter(Vector3(0,0,0));
+	body->SetTranslation(Vector3(0.0f,0.0f,0.0f));
+	body->SetRotation(TOQUATXYZW(Quat(0.0f,0.0f,0.0f,1.0f)));
+
 	const int PB_MATERIAL = 0;
 	const int PB_MESHLIST = 1;
 	IParamBlock2* pblock2 = node->GetObjectRef()->GetParamBlockByID(0);
@@ -696,4 +715,112 @@ bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef bo
 		}
 	}
 	return bhkShapeRef();
+}
+
+bhkShapeRef Exporter::makeProxyShape(INode *node, Object *obj, Matrix3& tm)
+{
+	enum { list_params, bv_mesh, };  // pblock2 ID
+	enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, };
+	enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+
+	bhkShapeRef shape;
+	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(list_params))
+	{
+		int bvType = bv_type_none;
+		pblock2->GetValue(PB_BOUND_TYPE, 0, bvType, FOREVER, 0);
+		if (bvType != bv_type_none) 
+		{
+			if (TriObject *triObj = (TriObject *)obj->ConvertToType(0, triObjectClassID))
+			{
+				Mesh& mesh = triObj->GetMesh();
+				mesh.buildNormals();
+
+				switch (bvType)
+				{
+				case bv_type_box:
+					break;
+
+				case bv_type_shapes:
+				case bv_type_packed:
+					break;
+
+				case bv_type_convex: 
+					Matrix3 tm(true);
+					if (bhkConvexVerticesShapeRef convShape = makeConvexShape(mesh, tm))
+					{
+						int mtl = pblock2->GetInt(PB_MATERIAL, 0, 0);
+						convShape->SetMaterial(HavokMaterial(mtl));
+						shape = StaticCast<bhkShape>(convShape);
+					}
+					break;
+				}
+			}
+		}
+	}
+	return shape;
+}
+
+bhkShapeRef	Exporter::makeModifierShape(INode *node, Object* obj, Modifier* mod, Matrix3& tm)
+{
+	enum { havok_params };
+	enum { PB_BOUND_TYPE, PB_MATERIAL, };
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+
+	bhkShapeRef shape;
+
+	const Mesh* mesh = NULL;
+	int material = NP_DEFAULT_HVK_MATERIAL;
+	int type = bv_type_none;
+
+	if (bhkHelperInterface* bhkHelp = (bhkHelperInterface*)mod->GetInterface(BHKHELPERINTERFACE_DESC))
+	{
+		mesh = bhkHelp->GetMesh();
+	}
+	else
+	{
+		if (TriObject *tri = (TriObject *)obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0)))
+		{
+			mesh = &tri->GetMesh();
+		}
+	}
+	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
+	{
+		pblock2->GetValue(PB_BOUND_TYPE, 0, type, FOREVER, 0);
+		pblock2->GetValue(PB_MATERIAL, 0, material, FOREVER, 0);
+	}
+	switch (type)
+	{
+	default:
+	case bv_type_none:
+		break;
+
+	case bv_type_box:
+		shape = makeBoxShape(node, obj, tm);
+		break;
+
+	case bv_type_sphere:
+		shape = makeSphereShape(node, obj, tm);
+		break;
+
+	case bv_type_capsule:
+		shape = makeCapsuleShape(node, obj, tm);
+		break;
+
+	case bv_type_shapes:
+		if (bhkNiTriStripsShapeRef trishape = makeTriStripsShape(const_cast<Mesh&>(*mesh), tm))
+		{
+			trishape->SetMaterial(HavokMaterial(material));
+			shape = StaticCast<bhkShape>(trishape);
+		}
+		break;
+
+	case bv_type_convex:
+		if (bhkConvexVerticesShapeRef convShape = makeConvexShape(const_cast<Mesh&>(*mesh), tm))
+		{
+			convShape->SetMaterial(HavokMaterial(material));
+			shape = StaticCast<bhkShape>(convShape);
+		}
+		break;
+	}
+	return shape;
 }

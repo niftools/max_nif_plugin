@@ -651,7 +651,7 @@ NiTimeControllerRef Exporter::CreateController(INode *node, Interval range)
    AnimationExport ae(*this);
    if ( NiTimeControllerRef tc = ae.exportController(node, range, false) ) {
       if (Exporter::mExportType == Exporter::NIF_WO_KF && isNodeTracked(node)) {
-         NiNodeRef ninode = getNode(node->GetName());
+         NiNodeRef ninode = getNode(node);
          vector<StringKey> textKeys;
          if (GetTextKeys(node, textKeys, range)) {
             NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
@@ -711,7 +711,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          Vector3 trans = TOVECTOR3(tm.GetTrans());
          Quaternion rot = TOQUAT( Quat(tm), true );
 
-         NiNodeRef ninode = ne.getNode( node->GetName() );
+         NiNodeRef ninode = ne.getNode(node);
          if (setTM) {
             trans = TOVECTOR3(tm.GetTrans());
             rot = TOQUAT( Quat(tm), true );

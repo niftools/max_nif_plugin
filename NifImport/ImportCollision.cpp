@@ -29,6 +29,8 @@ HISTORY:
 using namespace Niflib;
 
 extern Class_ID BHKLISTOBJECT_CLASS_ID;
+extern Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID;
+
 static Class_ID SCUBA_CLASS_ID(0x6d3d77ac, 0x79c939a9);
 enum
 {
@@ -65,6 +67,8 @@ struct CollisionImport
 	   const vector<Vector3>& norms,
 	   INode *parent
 	   );
+
+   enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
 };
 
 bool NifImporter::ImportCollision(NiNodeRef node)
@@ -87,7 +91,7 @@ bool NifImporter::ImportCollision(NiNodeRef node)
 			   if (ignoreRootNode || strmatch(target->GetName(), "Scene Root"))
 				   node = gi->GetRootNode();
 			   else
-				   node = FindINode(gi, target);
+				   node = FindNode(target);
 
 			   CollisionImport ci(*this);
 			   INode *body = ci.CreateRigidBody(rbody);
@@ -179,7 +183,7 @@ INode* CollisionImport::CreateRigidBody(bhkRigidBodyRef body)
 			body->SetPenetrationDepth(pendepth);
 			body->SetCenter(center);
 		}
-
+		RefTargetHandle t = listObj->GetReference(0);
 		if (INode *n = ni.gi->CreateObjectNode(listObj)) {
 			Point3 startPos(0.0,0.0,0.0);
 			Quat q; q.Identity();
@@ -331,6 +335,8 @@ bool CollisionImport::ImportSphere(INode *rbody, bhkRigidBodyRef body, bhkSphere
          // Need to "Affect Pivot Only" and "Center to Object" first
          n->CenterPivot(0, FALSE);
 #endif
+		 CreatebhkCollisionModifier(n, bv_type_sphere, shape->GetMaterial());
+		 
 		 ImportBase(body, shape, parent, n);
 		 AddShape(rbody, n);
          return true;
@@ -341,6 +347,7 @@ bool CollisionImport::ImportSphere(INode *rbody, bhkRigidBodyRef body, bhkSphere
 
 bool CollisionImport::ImportBox(INode *rbody, bhkRigidBodyRef body, bhkBoxShapeRef shape, INode *parent)
 {
+	//CreatebhkCollisionModifier(inode, bv_type_box, shape->GetMaterial());
 	return false;
 }
 
@@ -361,16 +368,17 @@ bool CollisionImport::ImportCapsule(INode *rbody, bhkRigidBodyRef body, bhkCapsu
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height);
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_CENTERS), 0, heighttype);
 
-      if (INode *n = ni.gi->CreateObjectNode(ob)) {
-         // Need to "Affect Pivot Only" and "Center to Object" first
-         //n->CenterPivot(0, FALSE);
+	  if (INode *n = ni.gi->CreateObjectNode(ob)) {
+		  // Need to "Affect Pivot Only" and "Center to Object" first
+		  //n->CenterPivot(0, FALSE);
 
-         // Need to reposition the Capsule so that caps are rotated correctly for pts given
+		  // Need to reposition the Capsule so that caps are rotated correctly for pts given
 
+		  CreatebhkCollisionModifier(n, bv_type_capsule, shape->GetMaterial());
 		  ImportBase(body, shape, parent, n);
 		  AddShape(rbody, n);
-         return true;
-      }
+		  return true;
+	  }
    }
    return true;
 }
@@ -386,6 +394,7 @@ bool CollisionImport::ImportConvexVertices(INode *rbody, bhkRigidBodyRef body, b
 	vector<Triangle> tris = compute_convex_hull(verts);
 	returnNode = ImportCollisionMesh(verts, tris, norms, parent);
 
+	CreatebhkCollisionModifier(returnNode, bv_type_convex, shape->GetMaterial());
 	ImportBase(body, shape, parent, returnNode);
 	AddShape(rbody, returnNode);
 	return true;
@@ -426,6 +435,7 @@ bool CollisionImport::ImportTriStripsShape(INode *rbody, bhkRigidBodyRef body, b
 		vector<Triangle> tris = triShapeData->GetTriangles();
 		ni.ImportMesh(node, triObject, triShape, triShapeData, tris);
 
+		CreatebhkCollisionModifier(inode, bv_type_shapes, shape->GetMaterial());
 		ImportBase(body, shape, parent, inode);
 		AddShape(rbody, inode);
 		return true;
@@ -454,6 +464,7 @@ bool CollisionImport::ImportPackedNiTriStripsShape(INode *rbody, bhkRigidBodyRef
 		vector<Vector3> norms = data->GetNormals();
 
 		INode *inode = ImportCollisionMesh(verts, tris, norms, parent);
+		CreatebhkCollisionModifier(inode, bv_type_shapes, HavokMaterial(NP_DEFAULT_HVK_MATERIAL));
 		ImportBase(body, shape, parent, inode);
 		AddShape(rbody, inode);
 		return true;

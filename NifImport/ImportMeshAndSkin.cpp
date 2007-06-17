@@ -131,6 +131,7 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
       mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
    }
 
+   RegisterNode(triGeom, inode);
    return true;
 }
 
@@ -628,9 +629,7 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
       Tab<INode*> bones;
       for (size_t i=0; i<nifBones.size(); ++i){
          NiNodeRef bone = nifBones[i];
-
-         string name = bone->GetName();
-         if (INode *boneRef = gi->GetINodeByName(name.c_str())) {
+         if (INode *boneRef = FindNode(bone)) {
             bones.Append(1, &boneRef);
             iskinImport->AddBoneEx(boneRef, TRUE);
 

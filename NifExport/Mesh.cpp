@@ -379,8 +379,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
    si->boneWeights.resize(totalBones);
    si->boneList.resize(totalBones);
    for (int i=0; i<totalBones; ++i) {
-      string name = skin->GetBone(i)->GetName();
-      si->boneList[i] = getNode(name);
+      si->boneList[i] = getNode(skin->GetBone(i));
    }
 
    vector<int>& vidx = grp.vidx;
@@ -464,7 +463,7 @@ static void FillBoneController(Exporter* exporter, NiBSBoneLODControllerRef bone
                         int group = 0;
                         std::stringstream str (*token);
                         str >> group;
-                        boneCtrl->AddNodeToGroup(group, exporter->getNode(child->GetName()));
+                        boneCtrl->AddNodeToGroup(group, exporter->getNode(child));
                      }
                   }
                }

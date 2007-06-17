@@ -42,6 +42,7 @@ public:
    bool enableLights;
    bool enableCameras;
    bool importUPB;
+   bool doNotReuseExistingBones;
 
    // Biped/Bones related settings
    bool importBones;
@@ -87,6 +88,9 @@ public:
    vector<Niflib::NiNodeRef> nodes;
    map<string,int> ctrlCount; // counter for number of controllers referencing a node
 
+   typedef map<Niflib::NiObjectNETRef, INode*> NodeToNodeMap;
+   NodeToNodeMap nodeMap;
+
    NifImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts);
    virtual void Initialize();
    virtual void ReadBlocks();
@@ -123,6 +127,7 @@ public:
    bool ImportVertexColor(INode *tnode, TriObject *o, vector<Niflib::Triangle>& tris, vector<Niflib::Color4> cv, int cv_offset=0);
    bool ImportSkin(ImpNode *node, Niflib::NiTriBasedGeomRef triGeom, int v_start=0);
    Texmap* CreateTexture(Niflib::TexDesc& desc);
+   Texmap* CreateTexture(Niflib::NiTexturePropertyRef desc);
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);
    INode *CreateCamera(const string& name);
@@ -132,6 +137,9 @@ public:
 
    // Primary Collision entry point.  Tests for bhk objects
    bool ImportCollision(Niflib::NiNodeRef node);
+
+   void RegisterNode(Niflib::NiObjectNETRef node, INode* inode);
+   INode *FindNode(Niflib::NiObjectNETRef node);
 
    INode *GetNode(Niflib::NiNodeRef node);
    string GetSkeleton(AppSettings *appSettings);

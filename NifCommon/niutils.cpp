@@ -1072,29 +1072,6 @@ void CallMaxscript(const TCHAR *s)
    pop_alloc_frame();
 }
 
-Modifier *GetbhkCollisionModifier(INode *node)
-{
-   const Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID(0x398fd801, 0x303e44e5);
-   Object* pObj = node->GetObjectRef();
-   if (!pObj) return NULL;
-   while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
-   {
-      IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
-      int Idx = 0;
-      while (Idx < pDerObj->NumModifiers())
-      {
-         // Get the modifier. 
-         Modifier* mod = pDerObj->GetModifier(Idx);
-         if (mod->ClassID() == BHKRIGIDBODYMODIFIER_CLASS_ID) {
-            return mod;
-         }
-         Idx++;
-      }
-      pObj = pDerObj->GetObjRef();
-   }
-   return NULL;
-}
-
 void GetIniFileName(char *iniName)
 {
 #if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
@@ -1135,4 +1112,55 @@ void GetIniFileName(char *iniName)
 		MessageBox(NULL, "MaxNifTools could not find a valid INI.  The plugin may not work correctly.\nPlease check for proper installation.", 
 			"MaxNifTools", MB_OK|MB_ICONWARNING);
 	}
+}
+
+
+Modifier *GetbhkCollisionModifier(INode* node)
+{
+	extern Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID;
+
+	Object* pObj = node->GetObjectRef();
+	if (!pObj) return NULL;
+	while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	{
+		IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
+		int Idx = 0;
+		while (Idx < pDerObj->NumModifiers())
+		{
+			// Get the modifier. 
+			Modifier* mod = pDerObj->GetModifier(Idx);
+			if (mod->ClassID() == BHKRIGIDBODYMODIFIER_CLASS_ID)
+			{
+				return mod;
+			}
+			Idx++;
+		}
+		pObj = pDerObj->GetObjRef();
+	}
+	return NULL;
+}
+
+Modifier *CreatebhkCollisionModifier(INode* node, int type, HavokMaterial material)
+{
+	enum { havok_params };
+	enum { PB_BOUND_TYPE, PB_MATERIAL, };
+	extern Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID;
+
+	Modifier *rbMod = GetbhkCollisionModifier(node);
+	if (rbMod == NULL)
+	{
+		IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
+		rbMod = (Modifier*) CreateInstance(OSM_CLASS_ID, BHKRIGIDBODYMODIFIER_CLASS_ID);
+		dobj->SetAFlag(A_LOCK_TARGET);
+		dobj->AddModifier(rbMod);
+		dobj->ClearAFlag(A_LOCK_TARGET);
+		node->SetObjectRef(dobj);
+	}
+
+	if (IParamBlock2* pblock2 = rbMod->GetParamBlockByID(havok_params))
+	{
+		pblock2->SetValue(PB_BOUND_TYPE, 0, type, 0);
+		pblock2->SetValue(PB_MATERIAL, 0, material, 0);
+	}
+	return rbMod;
 }

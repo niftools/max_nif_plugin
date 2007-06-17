@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.12
+                        MaxPlugins 0.2.13
                         ================
 
  
@@ -33,6 +33,12 @@
 
     Change log
     ----------
+      0.2.13
+      -----
+    o Importer/Exporter
+      - Improved Bridge Commander support.
+    
+    
       0.2.12
       -----
     o Installer

@@ -20,6 +20,8 @@ HISTORY:
 #include "obj/NiVertexColorProperty.h"
 #include "obj/NiDitherProperty.h"
 #include "obj/NiSpecularProperty.h"
+#include "obj/NiTextureProperty.h"
+#include "obj/NiImage.h"
 #include "objectParams.h"
 using namespace Niflib;
 
@@ -80,12 +82,44 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
    return NULL;
 }
 
+Texmap* NifImporter::CreateTexture(NiTexturePropertyRef texSrc)
+{
+	BitmapManager *bmpMgr = TheManager;
+	if (NiImageRef imgRef = texSrc->GetImage()) {
+		string filename = imgRef->GetTextureFileName();
+		if (bmpMgr->CanImport(filename.c_str())){
+			BitmapTex *bmpTex = NewDefaultBitmapTex();
+			string name = texSrc->GetName();
+			if (name.empty()) {
+				TCHAR buffer[MAX_PATH];
+				_tcscpy(buffer, PathFindFileName(filename.c_str()));
+				PathRemoveExtension(buffer);
+				name = buffer;
+			}         
+			bmpTex->SetName(name.c_str());
+			bmpTex->SetMapName(const_cast<TCHAR*>(FindImage(filename).c_str()));
+			bmpTex->SetAlphaAsMono(TRUE);
+			bmpTex->SetAlphaSource(ALPHA_DEFAULT);
+
+			bmpTex->SetFilterType(FILTER_PYR); 
+
+			if (UVGen *uvGen = bmpTex->GetTheUVGen()){
+				uvGen->SetTextureTiling(0);
+			}
+
+			return bmpTex;
+		}
+	}
+	return NULL;
+}
+
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
    // Texture
    NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TYPE);
    if (matRef != NULL){
       NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TYPE);
+	  NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE);
       NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TYPE);
       NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
       NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
@@ -162,6 +196,13 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
                m->SetSubTexmap(ID_SI, tex);
          }
       }
+	  if (NULL != tex2Ref)
+	  {
+		  // Handle Base/Detail ???
+		  if (Texmap* tex = CreateTexture(tex2Ref)) {
+			  m->SetSubTexmap(ID_DI, tex);
+		  } 
+	  }
       return m;
    }
    return NULL;

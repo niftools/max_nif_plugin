@@ -83,7 +83,7 @@ bool KFMImporter::DoImport()
       int n = nodes.size();
       int m = 0;
       for (vector<NiNodeRef>::iterator itr = nodes.begin(), end = nodes.end(); itr != end; ++itr) {
-         if (INode *p = gi->GetINodeByName((*itr)->GetName().c_str()))
+         if (INode *p = FindNode(*itr))
             m++;
       }
       if (m != n) {

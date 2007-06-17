@@ -38,6 +38,9 @@
 #define IDC_PICK_NODE                   1713
 #define IDC_SLIDER1                     1714
 #define IDC_RDO_AXIS_ALIGNED_BOX        1715
+#define IDC_RDO_STRIPS_SHAPE            1716
+#define IDC_RDO_PACKED_STRIPS           1717
+#define IDC_RDO_CONVEX                  1718
 #define IDC_LENGTHEDIT                  3009
 #define IDC_WIDTHEDIT                   3010
 #define IDD_PANEL                       11001
@@ -80,6 +83,7 @@
 #define IDD_LISTPARAM                   11012
 #define IDC_LBL_POS2                    11013
 #define IDS_DS_FRICTION                 11013
+#define IDD_PROXYPARAM1                 11013
 #define IDS_DS_RESTITUTION              11014
 #define IDS_DS_LINEAR_DAMPING           11015
 #define IDS_DS_ANGULAR_DAMPING          11016
@@ -120,6 +124,10 @@
 #define IDS_RB_MOD_PANEL4               11051
 #define IDS_RB_LIST                     11052
 #define IDS_RB_LIST_CLASS               11053
+#define IDS_RB_PROXY                    11054
+#define IDS_RB_PROXY_CLASS              11055
+#define IDS_CENTER_X                    11056
+#define IDS_CENTER                      11056
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -167,7 +175,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1716
+#define _APS_NEXT_CONTROL_VALUE         1719
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

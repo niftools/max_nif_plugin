@@ -154,7 +154,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       }
 
       // Fix Used Nodes that where never properly initialized.  Happens normally during select export
-      for (NodeMap::iterator itr = mNodeMap.begin(); itr != mNodeMap.end(); ++itr) {
+      for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
          NiNodeRef bone = (*itr).second;
          if (bone->GetParent() == NULL) {
             if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
@@ -190,7 +190,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
          return result;
 
       // Fix Used Nodes that where never properly initialized.  Happens normally during select export
-      for (NodeMap::iterator itr = mNodeMap.begin(); itr != mNodeMap.end(); ++itr) {
+      for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
          NiNodeRef bone = (*itr).second;
          if (bone->GetParent() == NULL) {
             if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {

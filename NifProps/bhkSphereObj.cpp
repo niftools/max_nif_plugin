@@ -24,14 +24,18 @@ HISTORY:
 #include "bhkRigidBodyInterface.h"
 #include "NifGui.h"
 #include "NifStrings.h"
+#include "bhkHelperFuncs.h"
 
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
 
-const Class_ID bhkSphereObject_CLASS_ID = Class_ID(0x8d532427, BHKRIGIDBODYCLASS_DESC.PartB());
+#define MAX_SEGMENTS	200
+#define MIN_SEGMENTS	4
 
-extern void BuildSphere(Mesh&mesh, float radius, int segs=32, int smooth=1, float startAng = 0.0f);
+Class_ID bhkSphereObject_CLASS_ID = Class_ID(0x8d532427, BHKRIGIDBODYCLASS_DESC.PartB());
+
+extern void BuildSphere(Mesh&mesh, float radius, int segs, int smooth, float startAng);
 
 class bhkSphereObject : public SimpleObject2
 {
@@ -74,17 +78,6 @@ public:
    void UpdateUI();
    int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
 };
-
-
-// Misc stuff
-#define MAX_SEGMENTS	200
-#define MIN_SEGMENTS	4
-
-#define MIN_RADIUS		float(0)
-#define MAX_RADIUS		float(1.0E30)
-
-#define MIN_SMOOTH		0
-#define MAX_SMOOTH		1
 
 
 //--- ClassDescriptor and class vars ---------------------------------
@@ -314,115 +307,7 @@ void bhkSphereObject::BuildMesh(TimeValue t)
    BuildSphere(mesh, radius, segs, smooth, startAng);
 }
 
-extern void BuildSphere(Mesh&mesh, float radius, int segs, int smooth, float startAng)
-{
-   Point3 p;	
-   int ix,na,nb,nc,nd,jx,kx;
-   int nf=0,nv=0;
-   float delta, delta2;
-   float a,alt,secrad,secang,b,c;
-   float hemi = 0.0f;
 
-   LimitValue(segs, MIN_SEGMENTS, MAX_SEGMENTS);
-   LimitValue(smooth, MIN_SMOOTH, MAX_SMOOTH);
-   LimitValue(radius, MIN_RADIUS, MAX_RADIUS);
-
-   float totalPie(0.0f);
-   if (hemi>=1.0f) hemi = 0.9999f;
-   hemi = (1.0f-hemi) * PI;
-   float basedelta=2.0f*PI/(float)segs;
-   delta2 = basedelta;
-   delta  = basedelta;
-
-   int rows = int(hemi/delta) + 1;
-   int realsegs=segs;
-   int nverts = rows * realsegs + 2;
-   int nfaces = rows * realsegs * 2;
-   mesh.setNumVerts(nverts);
-   mesh.setNumFaces(nfaces);
-   mesh.setSmoothFlags(smooth != 0);
-   int lastvert=nverts-1;
-
-   // Top vertex 
-   mesh.setVert(nv, 0.0f, 0.0f, radius);
-   nv++;
-
-   // Middle vertices 
-   alt=delta;
-   for(ix=1; ix<=rows; ix++) {		
-      a = (float)cos(alt)*radius;		
-      secrad = (float)sin(alt)*radius;
-      secang = startAng; //0.0f
-      for(jx=0; jx<segs; ++jx) {
-         b = (float)cos(secang)*secrad;
-         c = (float)sin(secang)*secrad;
-         mesh.setVert(nv++,b,c,a);
-         secang+=delta2;
-      }
-      alt+=delta;		
-   }
-
-   /* Bottom vertex */
-   mesh.setVert(nv++, 0.0f, 0.0f,-radius);
-
-   // Now make faces 
-
-   BitArray startSliceFaces;
-   BitArray endSliceFaces;
-
-   // Make top conic cap
-   for(ix=1; ix<=segs; ++ix) {
-      nc=(ix==segs)?1:ix+1;
-      mesh.faces[nf].setEdgeVisFlags(1,1,1);
-      mesh.faces[nf].setSmGroup(smooth?1:0);
-      mesh.faces[nf].setMatID(1);
-      mesh.faces[nf].setVerts(0, ix, nc);
-      nf++;
-   }
-
-   /* Make midsection */
-   int lastrow=rows-1,lastseg=segs-1,almostlast=lastseg-1;
-   for(ix=1; ix<rows; ++ix) {
-      jx=(ix-1)*segs+1;
-      for(kx=0; kx<segs; ++kx) {
-         na = jx+kx;
-         nb = na+segs;
-         nc = (kx==lastseg)? jx+segs: nb+1;
-         nd = (kx==lastseg)? jx : na+1;
-
-         mesh.faces[nf].setEdgeVisFlags(1,1,0);
-         mesh.faces[nf].setSmGroup(smooth?1:0);
-         mesh.faces[nf].setMatID(1); 
-         mesh.faces[nf].setVerts(na,nb,nc);
-         nf++;
-
-         mesh.faces[nf].setEdgeVisFlags(0,1,1);
-         mesh.faces[nf].setSmGroup(smooth?1:0);
-         mesh.faces[nf].setMatID(1);
-         mesh.faces[nf].setVerts(na,nc,nd);
-         nf++;
-      }
-   }
-
-   // Make bottom conic cap
-   na = mesh.getNumVerts()-1;
-   int botsegs=segs;
-   jx = (rows-1)*segs+1;lastseg=botsegs-1;
-   int fstart = nf;
-   for(ix=0; ix<botsegs; ++ix) {
-      nc = ix + jx;
-      nb = (ix==lastseg)?jx:nc+1;
-      mesh.faces[nf].setEdgeVisFlags(1,1,1);
-      mesh.faces[nf].setSmGroup(smooth?1:0);
-      mesh.faces[nf].setMatID(1);
-      mesh.faces[nf].setVerts(na, nb, nc);
-      nf++;
-   }
-
-   mesh.setNumTVerts(0);
-   mesh.setNumTVFaces(0);
-   mesh.InvalidateTopologyCache();
-}
 
 Object* bhkSphereObject::ConvertToType(TimeValue t, Class_ID obtype)
 {

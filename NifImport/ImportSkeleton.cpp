@@ -401,7 +401,7 @@ void NifImporter::AlignBiped(IBipMaster* master, NiNodeRef node)
 
    TSTR s1 = FormatText("Processing %s:", name.c_str());
    TSTR s2 = FormatText("Processing %s:", name.c_str());
-   INode *bone = gi->GetINodeByName(name.c_str());
+   INode *bone = GetNode(node);
    if (bone != NULL) 
    {
       if (uncontrolledDummies)
@@ -425,7 +425,7 @@ void NifImporter::AlignBiped(IBipMaster* master, NiNodeRef node)
       {
          // Reparent if necessary
          if (!strmatch(parent->GetName(), pnode->GetName())) {
-            if (pnode = gi->GetINodeByName(parent->GetName().c_str())) {
+            if (pnode = FindNode(parent)) {
                bone->Detach(0);
                pnode->AttachChild(bone);
             }
@@ -640,7 +640,14 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       }
       Point3 pp(ppos.x, ppos.y, ppos.z);
 
-      INode *bone = gi->GetINodeByName(name.c_str());
+
+      INode *bone = NULL;
+	  if (!doNotReuseExistingBones) // Games like BC3 reuse the same bone names
+	  {
+		  bone = FindNode(node);
+		  if (bone == NULL) 
+			  bone = gi->GetINodeByName(name.c_str());
+	  }
       if (bone)
       {
          // Is there a better way of "Affect Pivot Only" behaviors?
@@ -681,6 +688,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
                if (INode *pn = gi->GetINodeByName(parentname.c_str()))
                   pn->AttachChild(bone, 1);
             }
+			RegisterNode(node, bone);
          }
       }
       // Import UPB

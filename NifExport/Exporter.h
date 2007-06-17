@@ -6,6 +6,10 @@ namespace Niflib
    class NiTimeController;
    class NiControllerManager;
    class NiControllerSequence;
+
+   class bhkConvexVerticesShape;
+   class bhkNiTriStripsShape;
+
 }
 using namespace Niflib;
 
@@ -142,13 +146,15 @@ public:
 	typedef std::map<int, FaceGroup>	FaceGroups;	
 	typedef std::set<INode*> INodeMap;	
 	typedef std::map<string, NiNodeRef>	NodeMap;	
+	typedef std::map<INode*, NiNodeRef>	NodeToNodeMap;	
 	typedef std::list<NiCallback*> CallbackList; 
 	typedef std::list<Ref<NiNode> > NodeList;
 
 	Interface				*mI;
 	NiNodeRef				mNiRoot;
 	AppSettings          *mAppSettings;
-	NodeMap              mNodeMap;
+	NodeMap              mNameMap;
+	NodeToNodeMap		 mNodeMap;
 	INodeMap             mCollisionNodes;
 	INodeMap             mHandledNodes;
 	INode*               mSceneCollisionNode;
@@ -178,6 +184,7 @@ public:
 	void					getTextureMatrix(Matrix3 &mat, Mtl *mtl);
 	NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
 	NiNodeRef				getNode(const string& name);
+	NiNodeRef				getNode(INode* maxNode);
 	// returns true if the node contains collision objects
 	bool					isCollisionGroup(INode *maxNode, bool root=true);
 	// returns true if the node contains meshes
@@ -227,6 +234,15 @@ public:
 	bhkShapeRef				makeSphereShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makeCapsuleShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef body);
+	bhkShapeRef				makebhkBoxShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makebhkSphereShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makebhkCapsuleShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makeProxyShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makeConvexShape(INode *node, Object* obj, Matrix3& tm);
+	bhkShapeRef				makeModifierShape(INode *node, Object* obj, Modifier* mod, Matrix3& tm);
+
+	Ref<bhkConvexVerticesShape> makeConvexShape(Mesh& mesh, Matrix3& tm);
+	Ref<bhkNiTriStripsShape>	makeTriStripsShape(Mesh& mesh, Matrix3& sm);
 
 	/* skin export */
 	bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);

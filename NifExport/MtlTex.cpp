@@ -9,6 +9,8 @@
 #include "obj/NiVertexColorProperty.h"
 #include "obj/NiDitherProperty.h"
 #include "obj/NiSpecularProperty.h"
+#include "obj/NiTextureProperty.h"
+#include "obj/NiImage.h"
 
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 {
@@ -16,16 +18,42 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 	if (!bmTex)
       return;
 
-	NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();
-	texProp->SetApplyMode(APPLY_MODULATE);
-	texProp->SetTextureCount(7);
+	 if (Exporter::mNifVersionInt <= VER_4_0_0_0)
+	 {
+		 NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();
+		 texProp->SetApplyMode(APPLY_MODULATE);
+		 texProp->SetTextureCount(7);
 
-	TexDesc td;
-   if (makeTextureDesc(bmTex, td))
-	   texProp->SetTexture(BASE_MAP, td);
+		 TexDesc td;
+		 if (makeTextureDesc(bmTex, td))
+			 texProp->SetTexture(BASE_MAP, td);
 
-	NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-	parent->AddProperty(prop);
+		 NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		 parent->AddProperty(prop);
+	 }
+	 else
+	 {
+		 NiTexturePropertyRef texProp = CreateNiObject<NiTextureProperty>();
+		 NiImageRef imgProp = CreateNiObject<NiImage>();
+		 texProp->SetImage(imgProp);
+
+		 // Get file name and check if it matches the "app" settings in the ini file
+		 TSTR mapPath = bmTex->GetMapName();
+		 if (mAppSettings)
+		 {
+			 string newPath = mAppSettings->GetRelativeTexPath(string(mapPath), mTexPrefix);
+			 imgProp->SetExternalTexture(newPath);
+		 }
+		 else
+		 {
+			 TSTR p, f;
+			 SplitPathFile(mapPath, &p, &f);
+			 TSTR newPath = (mTexPrefix == "") ? f : (TSTR(mTexPrefix.c_str()) + _T("\\") + f);
+			 imgProp->SetExternalTexture(newPath.data());
+		 }
+		 NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		 parent->AddProperty(prop);
+	 }
 }
 
 bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
