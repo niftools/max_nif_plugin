@@ -375,6 +375,7 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 		//BuildScubaMesh();
 		break;
 	}
+	proxyMesh.buildNormals();
 
 	if (needsDelete) {
 		os->obj = tobj;

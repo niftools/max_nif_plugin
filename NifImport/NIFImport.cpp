@@ -36,6 +36,24 @@ NifImporter::NifImporter()
 {
 }
 
+INode* NifImporter::CreateImportNode(const char *name, Object *obj, INode* parent)
+{
+	ImpNode* impNode = i->CreateNode();
+	if (INode *n = impNode->GetINode()) {
+		n->SetName(const_cast<TCHAR*>(name));
+		n->SetObjectRef(obj);
+		i->AddNodeToScene(impNode);
+		if (parent)
+		{
+			parent->AttachChild(impNode->GetINode());
+
+			ASSERT(parent == n->GetParentNode());
+
+		}
+	}
+	return impNode->GetINode();
+}
+
 void NifImporter::ReadBlocks()
 {
    //blocks = ReadNifList( name );

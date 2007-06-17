@@ -103,6 +103,14 @@ bool Exporter::equal(const Vector3 &a, const Point3 &b, float thresh)
 		   (fabsf(a.z-b.z) <= thresh);
 }
 
+NiNodeRef Exporter::findNode(INode* maxNode)
+{
+	NodeToNodeMap::iterator itr = mNodeMap.find(maxNode);
+	if (itr != mNodeMap.end())
+		return (*itr).second;
+	return NiNodeRef();
+}
+
 NiNodeRef Exporter::getNode(INode* maxNode)
 {
 	string name = maxNode->GetName();

@@ -504,8 +504,7 @@ INode *NifImporter::CreateHelper(const string& name, Point3 startPos)
    if (DummyObject *ob = (DummyObject *)gi->CreateInstance(HELPER_CLASS_ID,Class_ID(DUMMY_CLASS_ID,0))) {
       const float DUMSZ = 1.0f;
       ob->SetBox(Box3(Point3(-DUMSZ,-DUMSZ,-DUMSZ),Point3(DUMSZ,DUMSZ,DUMSZ)));
-      if (INode *n = gi->CreateObjectNode(ob)) {
-         n->SetName(const_cast<TCHAR*>(name.c_str()));
+	  if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
          Quat q; q.Identity();
          PosRotScaleNode(n, startPos, q, 1.0f, prsPos);
          return n;
@@ -528,9 +527,8 @@ INode *NifImporter::CreateCamera(const string& name)
       ob->Enable(1);
       ob->NewCamera(0);
       ob->SetFOV(0, TORAD(75.0f));
-      if (INode *n = gi->CreateObjectNode(ob)) {
+      if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
          n->Hide(TRUE);
-         n->SetName(const_cast<TCHAR*>(name.c_str()));
          n->BoneAsLine(1);
          return n;
       }

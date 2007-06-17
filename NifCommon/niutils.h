@@ -347,6 +347,26 @@ static inline Niflib::Matrix33 TOMATRIX33(const Matrix3 &tm, bool invert = false
 	return m3;
 }
 
+static inline Matrix3 TOMATRIX3(Niflib::Vector3& trans, Niflib::QuaternionXYZW quat, float scale){
+	Matrix3 tm, qm;
+	Quat q(quat.x, quat.y, quat.z, quat.w);
+	q.MakeMatrix(qm);
+	tm.SetTranslate(TOPOINT3(trans));
+	tm *= qm;
+	tm *= ScaleMatrix(Point3(scale, scale, scale));
+	return tm;
+}
+
+static inline Matrix3 TOMATRIX3(Niflib::Vector3& trans, Niflib::Quaternion quat, float scale){
+	Matrix3 tm, qm;
+	Quat q(quat.x, quat.y, quat.z, quat.w);
+	q.MakeMatrix(qm);
+	tm.SetTranslate(TOPOINT3(trans));
+	tm *= qm;
+	tm *= ScaleMatrix(Point3(scale, scale, scale));
+	return tm;
+}
+
 static inline Niflib::Matrix44 TOMATRIX4(const Matrix3 &tm, bool invert = false){
    Niflib::Matrix33 m3(tm.GetRow(0)[0], tm.GetRow(0)[1], tm.GetRow(0)[2],
                        tm.GetRow(1)[0], tm.GetRow(1)[1], tm.GetRow(1)[2],

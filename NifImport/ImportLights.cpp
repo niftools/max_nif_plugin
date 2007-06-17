@@ -96,7 +96,7 @@ bool NifImporter::ImportLights(vector<NiLightRef> lights)
       } else if (light->IsSameType(NiSpotLight::TYPE)){
          ob = CreateLight(gi, light, FSPOT_LIGHT);
       }
-      if (INode *n = gi->CreateObjectNode(ob)) {
+	  if (INode *n = CreateImportNode(light->GetName().c_str(), ob, NULL)) {
          string name = light->GetName();
          if (!name.empty()) {
             n->SetName(const_cast<TCHAR*>(name.c_str()));

@@ -37,7 +37,7 @@
       -----
     o Importer/Exporter
       - Improved Bridge Commander support.
-    
+      - Added more Collision support (bhkRigidBodyModifier, bhkCollisionShape)
     
       0.2.12
       -----

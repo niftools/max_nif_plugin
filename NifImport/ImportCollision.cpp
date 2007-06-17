@@ -48,7 +48,7 @@ struct CollisionImport
    void AddShape(INode *rbody, INode *shapeNode);
 
    bool ImportRigidBody(bhkRigidBodyRef rb, INode* node);
-   INode *CreateRigidBody(bhkRigidBodyRef body);
+   INode *CreateRigidBody(bhkRigidBodyRef body, INode* parent);
 
    bool ImportBase(bhkRigidBodyRef body, bhkShapeRef shape, INode* parent, INode *shapeNode);
    bool ImportShape(INode *rbody, bhkRigidBodyRef body, bhkShapeRef shape, INode* parent);
@@ -65,6 +65,7 @@ struct CollisionImport
 	   const vector<Vector3>& verts, 
 	   const vector<Triangle>& tris,
 	   const vector<Vector3>& norms,
+	   Matrix3& tm,
 	   INode *parent
 	   );
 
@@ -88,16 +89,18 @@ bool NifImporter::ImportCollision(NiNodeRef node)
 		   if (bhkShapeRef shape = rbody->GetShape()) {
 			   INode *node = NULL;
 			   NiNodeRef target = collObj->GetTarget();
-			   if (ignoreRootNode || strmatch(target->GetName(), "Scene Root"))
+			   if (strmatch(target->GetName(), "Scene Root"))
 				   node = gi->GetRootNode();
 			   else
 				   node = FindNode(target);
 
 			   CollisionImport ci(*this);
-			   INode *body = ci.CreateRigidBody(rbody);
-			   if (!ci.ImportShape(body, rbody, shape, node))
+			   if (INode *body = ci.CreateRigidBody(rbody, node))
 			   {
-				   body->Delete(0, 1);
+				   if (!ci.ImportShape(body, rbody, shape, node))
+				   {
+					   body->Delete(0, 1);
+				   }
 			   }
 		   }
 	   }
@@ -144,7 +147,7 @@ bool CollisionImport::ImportRigidBody(bhkRigidBodyRef body, INode* node)
    return true;
 }
 
-INode* CollisionImport::CreateRigidBody(bhkRigidBodyRef body)
+INode* CollisionImport::CreateRigidBody(bhkRigidBodyRef body, INode *parent)
 {
 	INode *rbody = NULL;
 	if (body == NULL)
@@ -184,11 +187,13 @@ INode* CollisionImport::CreateRigidBody(bhkRigidBodyRef body)
 			body->SetCenter(center);
 		}
 		RefTargetHandle t = listObj->GetReference(0);
-		if (INode *n = ni.gi->CreateObjectNode(listObj)) {
-			Point3 startPos(0.0,0.0,0.0);
-			Quat q; q.Identity();
-			PosRotScaleNode(n, startPos, q, 1.0f, prsPos);
 
+		TSTR clsName;
+		listObj->GetClassName(clsName);
+		if (INode *n = ni.CreateImportNode(clsName, listObj, parent)) {
+			Point3 startPos = TOPOINT3(body->GetTranslation());
+			Quat q = TOQUAT(body->GetRotation());
+			PosRotScaleNode(n, startPos, q, 1.0f, prsPos);
 			rbody = n;
 		}
 	}
@@ -218,9 +223,9 @@ bool CollisionImport::ImportBase(bhkRigidBodyRef body, bhkShapeRef shape, INode*
 
 		//ImportRigidBody(body, shapeNode);
 
-		Point3 pos = TOPOINT3(body->GetTranslation()) / ni.bhkScaleFactor;
-		Quat rot = TOQUAT(body->GetRotation());
-		PosRotScaleNode(shapeNode, pos, rot, 1.0, prsDefault);
+		//Point3 pos = TOPOINT3(body->GetTranslation()) / ni.bhkScaleFactor;
+		//Quat rot = TOQUAT(body->GetRotation());
+		//PosRotScaleNode(shapeNode, pos, rot, 1.0, prsDefault);
 
 
 		// Wireframe Red color
@@ -285,6 +290,7 @@ INode *CollisionImport::ImportCollisionMesh(
 	const vector<Vector3>& verts, 
 	const vector<Triangle>& tris,
 	const vector<Vector3>& norms,
+	Matrix3& tm,
 	INode *parent
 	)
 {
@@ -309,7 +315,12 @@ INode *CollisionImport::ImportCollisionMesh(
 
 		// Triangles and texture vertices
 		ni.SetTriangles(mesh, tris);
-		ni.SetNormals(mesh, tris, norms);
+		//ni.SetNormals(mesh, tris, norms);
+
+		MNMesh mn(mesh);
+		mn.Transform(tm);
+		mn.OutToTri(mesh);
+		mesh.checkNormals(TRUE);
 
 		ni.i->AddNodeToScene(node);   
 
@@ -330,7 +341,7 @@ bool CollisionImport::ImportSphere(INode *rbody, bhkRigidBodyRef body, bhkSphere
       RefTargetHandle t = ob->GetReference(0);
       setMAXScriptValue(t, "radius", 0, radius);
 
-      if (INode *n = ni.gi->CreateObjectNode(ob)) {
+      if (INode *n = ni.CreateImportNode(shape->GetType().GetTypeName().c_str(), ob, parent)) {
 #if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
          // Need to "Affect Pivot Only" and "Center to Object" first
          n->CenterPivot(0, FALSE);
@@ -368,7 +379,7 @@ bool CollisionImport::ImportCapsule(INode *rbody, bhkRigidBodyRef body, bhkCapsu
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height);
       params->SetValue(ob->GetParamBlockIndex(CAPSULE_CENTERS), 0, heighttype);
 
-	  if (INode *n = ni.gi->CreateObjectNode(ob)) {
+	  if (INode *n = ni.CreateImportNode(shape->GetType().GetTypeName().c_str(), ob, parent)) {
 		  // Need to "Affect Pivot Only" and "Center to Object" first
 		  //n->CenterPivot(0, FALSE);
 
@@ -388,11 +399,15 @@ extern vector<Triangle> compute_convex_hull(const vector<Vector3>& verts);
 bool CollisionImport::ImportConvexVertices(INode *rbody, bhkRigidBodyRef body, bhkConvexVerticesShapeRef shape, INode *parent)
 {
 	INode *returnNode = NULL;
+	//Vector3 trans = body->GetTranslation();
+	//QuaternionXYZW quat = body->GetRotation();
+	//Matrix3 tm = TOMATRIX3(trans, quat, 1.0f);
+	Matrix3 tm(true);
 	vector<Vector3> verts = shape->GetVertices();
 	//vector<Triangle> tris = shape->GetTriangles();
 	vector<Vector3> norms = shape->GetNormals();
 	vector<Triangle> tris = compute_convex_hull(verts);
-	returnNode = ImportCollisionMesh(verts, tris, norms, parent);
+	returnNode = ImportCollisionMesh(verts, tris, norms, tm, parent);
 
 	CreatebhkCollisionModifier(returnNode, bv_type_convex, shape->GetMaterial());
 	ImportBase(body, shape, parent, returnNode);
@@ -459,11 +474,16 @@ bool CollisionImport::ImportPackedNiTriStripsShape(INode *rbody, bhkRigidBodyRef
 {
 	if (hkPackedNiTriStripsDataRef data = shape->GetData())
 	{
+		//Vector3 trans = body->GetTranslation();
+		//QuaternionXYZW quat = body->GetRotation();
+		//Matrix3 tm = TOMATRIX3(trans, quat, 1.0f);
+		Matrix3 tm(true);
+
 		vector<Vector3> verts = data->GetVertices();
 		vector<Triangle> tris = data->GetTriangles();
 		vector<Vector3> norms = data->GetNormals();
 
-		INode *inode = ImportCollisionMesh(verts, tris, norms, parent);
+		INode *inode = ImportCollisionMesh(verts, tris, norms, tm, parent);
 		CreatebhkCollisionModifier(inode, bv_type_shapes, HavokMaterial(NP_DEFAULT_HVK_MATERIAL));
 		ImportBase(body, shape, parent, inode);
 		AddShape(rbody, inode);

@@ -185,6 +185,7 @@ public:
 	NiNodeRef				makeNode(NiNodeRef &parent, INode *maxNode, bool local=true);
 	NiNodeRef				getNode(const string& name);
 	NiNodeRef				getNode(INode* maxNode);
+	NiNodeRef				findNode(INode* maxNode);
 	// returns true if the node contains collision objects
 	bool					isCollisionGroup(INode *maxNode, bool root=true);
 	// returns true if the node contains meshes

@@ -132,6 +132,8 @@ public:
    INode *CreateHelper(const string& name, Point3 startPos);
    INode *CreateCamera(const string& name);
 
+   INode *CreateImportNode(const char *name, Object *obj, INode* parent);
+
    bool ImportLights(Niflib::NiNodeRef node);
    bool ImportLights(vector<Niflib::NiLightRef> lights);
 

@@ -163,7 +163,11 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	{
 		markAsHandled(node);
 
-		newParent = nodeParent; // always have collision one level up?
+		newParent = Exporter::findNode(node->GetParentNode());
+		if (!newParent)
+			newParent = nodeParent;
+
+		//newParent = nodeParent; // always have collision one level up?
 
 		TimeValue t = 0;
 		Matrix3 tm = getTransform(node, t, local);
@@ -196,8 +200,13 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {
 		newParent = makeNode(nodeParent, node);
    } else {
-		newParent = nodeParent;
+		newParent = Exporter::findNode(node->GetParentNode());
+		if (!newParent)
+			newParent = nodeParent;
    }
+	if (!newParent)
+		newParent = nodeParent;
+
 	for (int i=0; i<node->NumberOfChildren(); i++) 
 	{
 		Result result = exportCollision(newParent, node->GetChildNode(i));
@@ -348,21 +357,26 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 {
 	bhkConvexVerticesShapeRef shape = StaticCast<bhkConvexVerticesShape>(bhkConvexVerticesShape::Create());
 	Point3 center(0.0f, 0.0f, 0.0f);
-	float radius = 0.0f;
-	CalcAxisAlignedSphere(mesh, center, radius);
+	float radius = 0.10f;
+	//CalcAxisAlignedSphere(mesh, center, radius);
 	shape->SetRadius(radius);
 	vector<Vector3> verts, norms;
 	vector<float> dist;
 	int nvert = mesh.getNumVerts();
+	int nface = mesh.getNumFaces();
+
 	verts.resize(nvert);
-	norms.resize(nvert);
-	dist.resize(nvert);
+	norms.resize(nface);
+	dist.resize(nface);
 	for (int i=0; i<nvert; ++i)
 	{
-		Point3& vert = mesh.getVert(i);
-		verts[i] = TOVECTOR3(vert) / Exporter::bhkScaleFactor;
-		norms[i] = TOVECTOR3(mesh.getNormal(i));
-		dist[i] = vert.Length();
+		Point3 vert = mesh.getVert(i) / Exporter::bhkScaleFactor;
+		verts[i] = TOVECTOR3(vert);
+	}
+	for (int i=0; i<nface; ++i)
+	{
+		norms[i] = TOVECTOR3(mesh.getFaceNormal(i));
+		dist[i] = -mesh.FaceCenter(i).Length();
 	}
 	shape->SetVertices(verts);
 	shape->SetNormals(norms);
@@ -458,11 +472,13 @@ bhkShapeRef Exporter::makeCapsuleShape(INode *node, Object *obj, Matrix3& tm)
    Point3 scale = GetScale(tm);
    float s = (scale[0] + scale[1] + scale[2]) / 3.0;
 
-	float radius = 0;
-	float height = 0;
-	IParamArray *params = obj->GetParamBlock();
-	params->GetValue(obj->GetParamBlockIndex(CAPSULE_RADIUS), 0, radius, FOREVER);
-	params->GetValue(obj->GetParamBlockIndex(CAPSULE_HEIGHT), 0, height, FOREVER);
+	float radius = 0.1f;
+	float height = 0.1f;
+	if (IParamBlock2* params = obj->GetParamBlockByID(0))
+	{
+		params->GetValue(CAPSULE_RADIUS, 0, radius, FOREVER);
+		params->GetValue(CAPSULE_HEIGHT, 0, height, FOREVER);
+	}
 
 	bhkCapsuleShapeRef capsule = CreateNiObject<bhkCapsuleShape>();
 

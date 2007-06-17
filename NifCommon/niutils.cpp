@@ -1164,3 +1164,8 @@ Modifier *CreatebhkCollisionModifier(INode* node, int type, HavokMaterial materi
 	}
 	return rbMod;
 }
+
+TSTR GetNodeName(INode* node)
+{
+	return node->GetName();
+}
