@@ -90,12 +90,10 @@ void InitializeLibSettings()
       classDescriptions[nClasses++] = GetNifPropsDesc();
 	  classDescriptions[nClasses++] = GetbhkListObjDesc();
 	  classDescriptions[nClasses++] = GetbhkProxyObjDesc();
-#ifdef USE_UNSUPPORTED_CODE
       classDescriptions[nClasses++] = GetbhkRigidBodyModifierDesc();
       classDescriptions[nClasses++] = GetbhkSphereDesc();
       classDescriptions[nClasses++] = GetbhkCapsuleDesc();
       classDescriptions[nClasses++] = GetbhkBoxDesc();
-#endif
    }
    if ( GetIniValue<bool>("NifFurniture", "Enable", true, iniName) ) {
       classDescEnabled[CD_Furniture] = true;

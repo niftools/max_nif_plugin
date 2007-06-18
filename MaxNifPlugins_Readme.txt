@@ -37,7 +37,24 @@
       -----
     o Importer/Exporter
       - Improved Bridge Commander support.
-      - Added more Collision support (bhkRigidBodyModifier, bhkCollisionShape)
+      - Added more Collision support
+        + Modifiers
+          * bhkRigidBody - Modifier
+             This is a modifier which converts a mesh into a collision mesh
+             and is a replacement for the Utility.
+
+        + Helper Objects (Find under Create | Helper | NifTools)
+          * bhkRigidBody
+            Rigid Body reference object.  Place all havok objects in this object.
+          * bhkBox
+            Primitive for a Havok Box
+          * bhkSphere
+            Primitive for a Havok Sphere
+          * bhkCapsule
+              Primitive for a Havok Capsule
+          * bhkCollProxy
+              Makes a collision object from an existing set of objects but does not make the root
+              objects collision objects.
     
       0.2.12
       -----

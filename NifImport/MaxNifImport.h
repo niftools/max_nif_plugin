@@ -26,6 +26,7 @@
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
+#include <meshadj.h>
 //#include <scenetraversal.h> 
 #include <plugapi.h>
 #include <triobj.h> 

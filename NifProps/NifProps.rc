@@ -1158,10 +1158,10 @@ BEGIN
     IDS_RB_MOD_PANEL2       "Sphere"
     IDS_RB_MOD_PANEL3       "Capsule"
     IDS_RB_MOD_PANEL4       "Proxy Mesh"
-    IDS_RB_LIST             "bhkListShape"
-    IDS_RB_LIST_CLASS       "bhkListShape"
-    IDS_RB_PROXY            "bhkCollisionProxy"
-    IDS_RB_PROXY_CLASS      "bhkCollisionProxy"
+    IDS_RB_LIST             "bhkRigidBody"
+    IDS_RB_LIST_CLASS       "bhkRigidBody"
+    IDS_RB_PROXY            "bhkCollProxy"
+    IDS_RB_PROXY_CLASS      "bhkCollProxy"
 END
 
 STRINGTABLE 

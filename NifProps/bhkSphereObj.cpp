@@ -152,7 +152,7 @@ static ParamBlockDesc2 param_blk (
        end,
 
     PB_SEGS, _T("segments"), TYPE_INT, P_ANIMATABLE,	IDS_RB_SEGS,
-       p_default,	   32,
+       p_default,	   16,
        p_range,		MIN_SEGMENTS, MAX_SEGMENTS,
        p_ui, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_SEGMENTS, IDC_SEGSPINNER, 1.0f,
        end,
@@ -304,7 +304,7 @@ void bhkSphereObject::BuildMesh(TimeValue t)
    pblock2->GetValue(PB_RADIUS, t, radius, ivalid);
    pblock2->GetValue(PB_SEGS, t, segs, ivalid);
    pblock2->GetValue(PB_SMOOTH, t, smooth, ivalid);
-   BuildSphere(mesh, radius, segs, smooth, startAng);
+   BuildSphere(mesh, (radius * 7.0f), segs, smooth, startAng);
 }
 
 
@@ -358,7 +358,7 @@ int SphereObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IP
          mat.IdentityMatrix();
          //mat.PreRotateZ(HALFPI);
          p1 = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
-         r = Length(p1-p0);
+         r = Length(p1-p0) / 7.0f;
          mat.SetTrans(p0);
 
          ob->pblock2->SetValue(PB_RADIUS,0,r);

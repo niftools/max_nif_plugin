@@ -28,7 +28,7 @@ HISTORY:
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
-
+const float bhkScaleFactor = 7.0f;
 Class_ID bhkBoxObject_CLASS_ID = Class_ID(0x86e19816, BHKRIGIDBODYCLASS_DESC.PartB());
 
 static ParamBlockDesc2* GetbhkBoxParamBlockDesc();
@@ -294,7 +294,7 @@ void bhkBoxObject::BuildMesh(TimeValue t)
 	pblock2->GetValue(PB_LENGTH,t,l,ivalid);
 	pblock2->GetValue(PB_WIDTH,t,w,ivalid);
 	pblock2->GetValue(PB_HEIGHT,t,h,ivalid);
-	BuildBox(mesh, l, w, h);
+	BuildBox(mesh, (l * bhkScaleFactor * 2), (w * bhkScaleFactor * 2), (h * bhkScaleFactor * 2));
 }
 
 
@@ -373,9 +373,9 @@ int BoxObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPoin
                square = TRUE;
             }
 
-            ob->pblock2->SetValue(PB_WIDTH,0,float(fabs(d.x)));
-            ob->pblock2->SetValue(PB_LENGTH,0,float(fabs(d.y)));
-            ob->pblock2->SetValue(PB_HEIGHT,0,float(fabs(d.z)));
+            ob->pblock2->SetValue(PB_WIDTH,0,float(fabs(d.x / bhkScaleFactor / 2.0f)));
+            ob->pblock2->SetValue(PB_LENGTH,0,float(fabs(d.y / bhkScaleFactor / 2.0f)));
+            ob->pblock2->SetValue(PB_HEIGHT,0,float(fabs(d.z / bhkScaleFactor / 2.0f)));
             ob->pmapParam->Invalidate();										
 
             if (msg==MOUSE_POINT && (Length(sp1-sp0)<3 || Length(d)<0.1f)) {
@@ -401,9 +401,9 @@ int BoxObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPoin
                d.x = d.y = 2.0f * len;					
             }
 
-            ob->pblock2->SetValue(PB_WIDTH,0,float(fabs(d.x)));
-            ob->pblock2->SetValue(PB_LENGTH,0,float(fabs(d.y)));
-            ob->pblock2->SetValue(PB_HEIGHT,0,float(d.z));
+            ob->pblock2->SetValue(PB_WIDTH,0,float(fabs(d.x / bhkScaleFactor / 2.0f)));
+            ob->pblock2->SetValue(PB_LENGTH,0,float(fabs(d.y / bhkScaleFactor / 2.0f)));
+            ob->pblock2->SetValue(PB_HEIGHT,0,float(d.z / bhkScaleFactor / 2.0f));
             ob->pmapParam->Invalidate();				
 
             if (msg==MOUSE_POINT) 

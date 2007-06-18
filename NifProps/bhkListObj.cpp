@@ -552,7 +552,7 @@ int bhkListObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
 
    Matrix3 m3(true);
 
-   float size = 20.0f;
+   float size = 5.0f;
    Point3 pts[5];
    // X
    pts[0] = Point3(-size, 0.0f, 0.0f); pts[1] = Point3(size, 0.0f, 0.0f);

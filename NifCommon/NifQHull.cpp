@@ -156,6 +156,7 @@ void compute_convex_hull(Mesh& mesh, Mesh& outmesh)
 	delete[] points;
 
 	mn.MakeConvex();
+	mn.FillInMesh();
 	mn.EliminateBadVerts(0);
 	mn.Triangulate();
 	mn.OutToTri(outmesh);

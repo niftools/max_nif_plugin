@@ -227,21 +227,6 @@ static float CalcLength(NiNodeRef node, vector<NiAVObjectRef>& children)
    return len;
 }
 
-Matrix3 GetLocalTM(INode *node)
-{
-   if (INode *parent = node->GetParentNode())
-   {
-      Matrix3 parentTM, nodeTM;
-      nodeTM = node->GetNodeTM(0);
-      parent = node->GetParentNode();
-      parentTM = parent->GetNodeTM(0);
-      return nodeTM*Inverse(parentTM);
-   }
-   else
-   {
-      return node->GetNodeTM(0);
-   }
-}
 
 static float CalcLength(INode *bone)
 {
@@ -527,7 +512,8 @@ INode *NifImporter::CreateCamera(const string& name)
       ob->Enable(1);
       ob->NewCamera(0);
       ob->SetFOV(0, TORAD(75.0f));
-      if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
+	  if (INode *n = gi->CreateObjectNode(ob)) {
+      //if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
          n->Hide(TRUE);
          n->BoneAsLine(1);
          return n;
@@ -609,7 +595,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
             Matrix44 tm = parent->GetLocalTransform() * node->GetLocalTransform();
             name = realname;
             len += tm.GetTranslation().Magnitude();
-            parent = parent->GetParent();
+			parent = parent->GetParent();
          }
       }
 

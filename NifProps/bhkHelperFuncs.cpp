@@ -131,7 +131,7 @@ void CalcAxisAlignedSphere(Mesh& mesh, Point3& center, float& radius)
 void CalcCenteredSphere(Mesh& mesh, Point3& center, float& radius)
 {
 	int nv = mesh.getNumVerts();
-	Point3 sum;
+	Point3 sum(0.0f, 0.0f, 0.0f);
 	for (int i=0; i<nv; ++i)
 		sum += mesh.getVert(i);
 	center = sum / float(nv);

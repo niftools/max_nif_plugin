@@ -29,7 +29,7 @@ HISTORY:
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif
-
+const float bhkScaleFactor = 7.0f;
 Class_ID BHKCAPSULEOBJECT_CLASS_ID = Class_ID(0x7f8f629a, BHKRIGIDBODYCLASS_DESC.PartB());
 
 class bhkCapsuleObject : public SimpleObject2
@@ -291,7 +291,7 @@ void bhkCapsuleObject::BuildMesh(TimeValue t)
    }
    else
    {
-      BuildScubaMesh(mesh, segs, smooth, hsegs, radius2, radius1, length);
+      BuildScubaMesh(mesh, segs, smooth, hsegs, radius2*bhkScaleFactor, radius1*bhkScaleFactor, length*bhkScaleFactor);
    }
 }
 

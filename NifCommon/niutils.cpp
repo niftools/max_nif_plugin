@@ -1169,3 +1169,19 @@ TSTR GetNodeName(INode* node)
 {
 	return node->GetName();
 }
+
+Matrix3 GetLocalTM(INode *node)
+{
+	if (INode *parent = node->GetParentNode())
+	{
+		Matrix3 parentTM, nodeTM;
+		nodeTM = node->GetNodeTM(0);
+		parent = node->GetParentNode();
+		parentTM = parent->GetNodeTM(0);
+		return nodeTM*Inverse(parentTM);
+	}
+	else
+	{
+		return node->GetNodeTM(0);
+	}
+}

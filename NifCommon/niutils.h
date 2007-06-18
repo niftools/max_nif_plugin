@@ -428,4 +428,6 @@ Modifier *CreatebhkCollisionModifier(INode* node, int type, Niflib::HavokMateria
 
 void GetIniFileName(char *iniName);
 
+Matrix3 GetLocalTM(INode *node);
+
 #endif // _NIUTILS_H_

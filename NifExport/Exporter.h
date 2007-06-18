@@ -238,12 +238,25 @@ public:
 	bhkShapeRef				makebhkBoxShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makebhkSphereShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makebhkCapsuleShape(INode *node, Object *obj, Matrix3& tm);
-	bhkShapeRef				makeProxyShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makeConvexShape(INode *node, Object* obj, Matrix3& tm);
-	bhkShapeRef				makeModifierShape(INode *node, Object* obj, Modifier* mod, Matrix3& tm);
 
 	Ref<bhkConvexVerticesShape> makeConvexShape(Mesh& mesh, Matrix3& tm);
 	Ref<bhkNiTriStripsShape>	makeTriStripsShape(Mesh& mesh, Matrix3& sm);
+
+	bhkShapeRef				makeProxyShape(INode *node, Object *obj, Matrix3& tm);
+	bhkShapeRef				makeProxyBoxShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeProxySphereShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeProxyConvexShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeProxyTriStripShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeProxyPackedTriStripShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
+
+	bhkShapeRef				makeModifierShape(INode *node, Object* obj, Modifier* mod, Matrix3& tm);
+	bhkShapeRef				makeModBoxShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModSphereShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModCapsuleShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModConvexShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModTriStripShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModPackedTriStripShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
 
 	/* skin export */
 	bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);
