@@ -74,10 +74,10 @@ Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|ma
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9}{\}plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 32bit\enu\plugcfg"; Components: "max9"; Flags: ignoreversion;
 
-Source: "Staging\x64\Release - Max 9\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
-Source: "Staging\x64\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
-Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
-Source: "Staging\x64\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+Source: "Staging\Release - Max 9 - x64\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
+Source: "Staging\Release - Max 9 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
 
 ;Source: "src\*"; DestDir: "{reg:HKLM\SOFTWARE\Bethesda Softworks\Oblivion,Path|{pf}{\}Bethesda Softworks\Oblivion}\Data\niftools";  Components: "src"; Flags: ignoreversion recursesubdirs;
 

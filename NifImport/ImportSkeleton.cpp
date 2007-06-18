@@ -474,8 +474,13 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
                setMAXScriptValue(o->GetReference(0), "width", 0, width);
                setMAXScriptValue(o->GetReference(0), "height", 0, width);
             }
+#if VERSION_3DSMAX > ((6000<<16)+(15<<8)+0) // Version 6
             n->BoneAsLine(1);
             n->ShowBone(2);
+#else
+			//n->BoneAsLine(1);
+			n->ShowBone(1);
+#endif
          }
          return result.n;
       }
