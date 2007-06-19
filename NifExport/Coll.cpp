@@ -239,6 +239,7 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 	float resti = NP_DEFAULT_HVK_RESTITUTION;
 	float pendepth = NP_DEFAULT_HVK_PENETRATION_DEPTH;
 	Vector3 center(0,0,0);
+	BOOL transenable = TRUE;
 
 	if (bhkRigidBodyInterface *irb = (bhkRigidBodyInterface *)node->GetObjectRef()->GetInterface(BHKRIGIDBODYINTERFACE_DESC))
 	{
@@ -253,6 +254,7 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 		maxlinvel = irb->GetMaxLinearVelocity(0);
 		pendepth = irb->GetPenetrationDepth(0);
 		maxangvel = irb->GetMaxAngularVelocity(0);
+		transenable = irb->GetEnableTransform(0);
 	}
 	else if (npIsCollision(node))
 	{
@@ -295,8 +297,8 @@ bhkRigidBodyRef Exporter::makeCollisionBody(INode *node)
 
 
 	// setup body
-	bhkRigidBodyRef body = CreateNiObject<bhkRigidBodyT>();
-
+	bhkRigidBodyRef body = transenable ? CreateNiObject<bhkRigidBodyT>() : CreateNiObject<bhkRigidBody>();
+	
 	body->SetLayer(OblivionLayer(lyr));
 	body->SetLayerCopy(OblivionLayer(lyr));
 	body->SetMotionSystem(MotionSystem(msys));

@@ -105,6 +105,7 @@ public:
    void BuildColStrips();
    void BuildColPackedStrips();
    void BuildColConvex();
+   void BuildOptimize(Mesh&mesh);
 
    void UpdateUI();
 
@@ -145,69 +146,20 @@ extern HINSTANCE hInstance;
 enum { list_params, bv_mesh, };  // pblock2 ID
 enum 
 { 
-   PB_MATERIAL,
-   PB_MESHLIST,
-   PB_BOUND_TYPE,
-   PB_CENTER,
+   PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER,
+   PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, 
 };
 
-enum { list_params_panel, };
+enum { list_params_panel, opt_params, };
 
 enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
-
-class ProxyBVTypePBAccessor : public PBAccessor
-{ 
-public:
-	void Get(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid)
-	{
-		bhkProxyObject* p = (bhkProxyObject*)owner;
-		switch (id)
-		{
-		case PB_CENTER:
-			v.p = const_cast<Point3*>(&p->proxyPos);
-			break;
-		}
-	}
-
-	void Set(PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t)    // set from v
-	{
-		bhkProxyObject* p = (bhkProxyObject*)owner;
-		switch (id)
-		{
-		case PB_BOUND_TYPE:
-			{
-				switch (v.i)
-				{ 
-				case bv_type_none:
-					// Delete mesh.
-					//p->BuildEmpty();
-					break;
-
-				case bv_type_shapes: // Shapes
-					//p->BuildColBox();
-					//BuildBox(mesh,,,)
-					break;
-
-				case bv_type_packed: // Packed
-					//BuildSphere();
-					break;
-
-				case bv_type_convex: // Capsule
-					//BuildScubaMesh();
-					break;
-				}
-			}
-		}
-	}
-};
-
-static ProxyBVTypePBAccessor bv_type_accessor;
 
 static ParamBlockDesc2 param_blk ( 
     list_params, _T("parameters"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, 0,
     //rollout
-    1,
+    2,
     list_params, IDD_PROXYPARAM1, IDS_PARAMS, 0, 0, NULL, 
+	opt_params,		IDD_RB_MOD_PANEL1, IDS_OPT_PARAMS, 0, 0, NULL,
 
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
@@ -218,7 +170,6 @@ static ParamBlockDesc2 param_blk (
 	  p_default, 		0, 
 	  p_range, 			0, 4, 
 	  p_ui, 			list_params,	TYPE_RADIO, 5, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX,
-	  p_accessor,		&bv_type_accessor,
 	  end,
 
 	PB_MESHLIST,   _T("meshProxy"),  TYPE_INODE_TAB,		0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_MESHLIST,
@@ -226,9 +177,41 @@ static ParamBlockDesc2 param_blk (
 	  end,
 
     PB_CENTER,   _T("center"),  TYPE_POINT3,  P_TRANSIENT,	IDS_CENTER,
-	  p_accessor,		&bv_type_accessor,
 	  end,
 
+
+	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
+	  p_default, 	FALSE, 
+	  p_ui,			opt_params, TYPE_SINGLECHEKBOX, IDC_OPT_ENABLE,
+	  end,
+
+	PB_FACETHRESH,	_T("faceThresh"),	TYPE_FLOAT, P_RESET_DEFAULT, IDS_OPT_FACETHRESH,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 90.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_FACETHRESH, IDC_OPT_FACETHRESHSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+	PB_EDGETHRESH,		_T("edgeThresh"),		TYPE_FLOAT, 0, IDS_OPT_EDGETHRESH,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 90.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_EDGETHRESH, IDC_OPT_EDGETHRESHSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+	PB_BIAS,		_T("bias"),		TYPE_FLOAT, 0, IDS_OPT_BIAS,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 1.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_BIAS, IDC_OPT_BIASSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+	PB_MAXEDGE,		_T("maxEdge"),		TYPE_FLOAT, 0, IDS_OPT_MAXEDGE,
+	  p_default, 	0.0f, 
+	  p_range, 		0.0f, 1000.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_MAXEDGE, IDC_OPT_MAXEDGESPIN, SPIN_AUTOSCALE,
+	  p_uix,		opt_params,
+	  end,
     end
     );
 
@@ -497,6 +480,7 @@ void bhkProxyObject::BuildMesh(TimeValue t)
 
 	case bv_type_convex: // Capsule
 		BuildColConvex();
+		
 		//BuildScubaMesh();
 		break;
 	}
@@ -743,6 +727,7 @@ void bhkProxyObject::BuildColStrips()
 			}
 		}
 	}
+	BuildOptimize(proxyMesh);
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
 }
@@ -775,6 +760,26 @@ void bhkProxyObject::BuildColConvex()
 	}
 	compute_convex_hull(proxyMesh, proxyMesh);
 
+	BuildOptimize(proxyMesh);
+
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
+}
+
+
+void bhkProxyObject::BuildOptimize(Mesh& mesh)
+{
+	BOOL enable = FALSE;
+	pblock2->GetValue(PB_OPT_ENABLE, 0, enable, FOREVER, 0);
+	if (enable)
+	{
+		float maxedge, facethresh, edgethresh, bias;
+		pblock2->GetValue(PB_MAXEDGE, 0, maxedge, FOREVER, 0);
+		pblock2->GetValue(PB_FACETHRESH, 0, facethresh, FOREVER, 0);
+		pblock2->GetValue(PB_EDGETHRESH, 0, edgethresh, FOREVER, 0);
+		pblock2->GetValue(PB_BIAS, 0, bias, FOREVER, 0);
+
+		DWORD flags = OPTIMIZE_AUTOEDGE;
+		mesh.Optimize(facethresh, edgethresh, bias, maxedge, flags, NULL);
+	}
 }

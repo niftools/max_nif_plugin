@@ -22,6 +22,11 @@
 #define IDC_RDO_SPHERE                  1119
 #define IDC_RDO_CAPSULE                 1120
 #define IDC_RDO_PROXY_MESH              1121
+#define IDC_OPT_FACETHRESH              1141
+#define IDC_OPT_FACETHRESHSPIN          1142
+#define IDC_OPT_EDGETHRESH              1143
+#define IDC_OPT_EDGETHRESHSPIN          1144
+#define IDC_OPT_ENABLE                  1146
 #define IDC_ED_POS1_X                   1700
 #define IDC_SP_POS1_X                   1701
 #define IDC_ED_POS1_Y                   1702
@@ -41,8 +46,13 @@
 #define IDC_RDO_STRIPS_SHAPE            1716
 #define IDC_RDO_PACKED_STRIPS           1717
 #define IDC_RDO_CONVEX                  1718
+#define IDC_TRANS_ENABLE                1719
 #define IDC_LENGTHEDIT                  3009
 #define IDC_WIDTHEDIT                   3010
+#define IDC_OPT_BIAS                    6007
+#define IDC_OPT_BIASSPIN                6008
+#define IDC_OPT_MAXEDGESPIN             6010
+#define IDC_OPT_MAXEDGE                 7009
 #define IDD_PANEL                       11001
 #define IDS_LIBDESCRIPTION              11001
 #define IDC_LBL_BSXFLAGS                11001
@@ -126,8 +136,14 @@
 #define IDS_RB_LIST_CLASS               11053
 #define IDS_RB_PROXY                    11054
 #define IDS_RB_PROXY_CLASS              11055
-#define IDS_CENTER_X                    11056
 #define IDS_CENTER                      11056
+#define IDS_OPT_MAXEDGE                 11057
+#define IDS_OPT_FACETHRESH              11058
+#define IDS_OPT_EDGETHRESH              11059
+#define IDS_OPT_BIAS                    11060
+#define IDS_OPT_PARAMS                  11061
+#define IDS_OPT_ENABLE                  11062
+#define IDS_TRANS_ENABLE                11063
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -173,9 +189,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        105
+#define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1719
+#define _APS_NEXT_CONTROL_VALUE         1720
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

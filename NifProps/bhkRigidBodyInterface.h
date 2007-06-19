@@ -67,6 +67,9 @@ public:
    virtual void		SetQualityType(int value, TimeValue time) = 0;
    virtual int		   GetQualityType(TimeValue time, Interval& valid = FOREVER) const = 0 ;
 
+   virtual void		SetEnableTransform(BOOL value, TimeValue time) = 0;
+   virtual BOOL		GetEnableTransform(TimeValue time, Interval& valid = FOREVER) const = 0 ;
+
    //Function Publishing System
    enum {  
       get_material, set_material,  enum_material,
@@ -81,6 +84,7 @@ public:
       get_penetrationdepth, set_penetrationdepth,  
       get_motionsystem, set_motionsystem, enum_motionsystem,
       get_qualitytype, set_qualitytype,  enum_qualitytype,
+	  get_enabletransform, set_enabletransform,  
    };
 
    //Function Map For Mixin Interface
@@ -98,6 +102,7 @@ public:
       PROP_TFNS(get_penetrationdepth, GetPenetrationDepth, set_penetrationdepth, SetPenetrationDepth, TYPE_FLOAT);
       PROP_TFNS(get_motionsystem, GetMotionSystem, set_motionsystem, SetMotionSystem, TYPE_INT);
       PROP_TFNS(get_qualitytype, GetQualityType, set_qualitytype, SetQualityType, TYPE_INT);
+	  PROP_TFNS(get_enabletransform, GetEnableTransform, set_enabletransform, SetEnableTransform, TYPE_BOOL);
    END_FUNCTION_MAP
 
    FPInterfaceDesc* GetDesc();    // <-- must implement 
@@ -121,6 +126,7 @@ enum RigidBodyParamIndicies
    PB_RB_PENETRATION_DEPTH,
    PB_RB_MOTION_SYSTEM,
    PB_RB_QUALITY_TYPE,
+   PB_RB_ENABLE_TRANS,
 };
 
 class bhkRigidBodyIfcHelper : public bhkRigidBodyInterface
@@ -168,6 +174,9 @@ public:
 
    virtual void		SetQualityType(int value, TimeValue time);
    virtual int		   GetQualityType(TimeValue time, Interval& valid = FOREVER) const ;
+
+   virtual void		SetEnableTransform(BOOL value, TimeValue time);
+   virtual BOOL		GetEnableTransform(TimeValue time, Interval& valid = FOREVER) const;
 
    virtual FPInterfaceDesc* GetDesc() { return GetbhkRigidBodyInterfaceDesc(); }
    

@@ -1,5 +1,5 @@
-                        MaxPlugins 0.2.13
-                        ================
+                        MaxPlugins 0.2.14
+                        =================
 
  
     This plugin currently consists of an exporter, importer and a utility 
@@ -33,6 +33,11 @@
 
     Change log
     ----------
+      0.2.13
+      -----
+    o Properties
+      - Add Optimize option to proxy and modifier
+    
       0.2.13
       -----
     o Importer/Exporter

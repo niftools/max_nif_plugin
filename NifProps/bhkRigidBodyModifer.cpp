@@ -79,6 +79,7 @@ public:
 	void BuildColStrips(Mesh& mesh);
 	void BuildColPackedStrips(Mesh& mesh);
 	void BuildColConvex(Mesh& mesh);
+	void BuildOptimize(Mesh& mesh);
 
 	void			SelectionSetChanged(Interface *ip,IUtil *iu);
 
@@ -168,8 +169,9 @@ class bhkRigidBodyModifierClassDesc : public ClassDesc2
 
 
 // Parameter and ParamBlock IDs
-enum { havok_params, bv_box, bv_sphere, bv_capsule, bv_mesh};  // pblock ID
-enum { PB_BOUND_TYPE, PB_MATERIAL, };
+enum { havok_params, opt_params, bv_box, bv_sphere, bv_capsule, bv_mesh};  // pblock ID
+enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, };
+
 enum { havok_params_panel, };
 
 enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
@@ -177,8 +179,9 @@ enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shape
 static ParamBlockDesc2 havok_param_blk ( 
    havok_params, _T("BoundingVolumes"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, PBLOCK_REF,
    //rollout
-    1,
+    2,
     havok_params,	IDD_RB_MOD_PANEL,  IDS_PARAMS, 0, 0, NULL, 
+	opt_params,		IDD_RB_MOD_PANEL1, IDS_OPT_PARAMS, 0, 0, NULL,
 
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_DEFAULT_HVK_MATERIAL,
@@ -188,6 +191,39 @@ static ParamBlockDesc2 havok_param_blk (
 	  p_default, 		bv_type_shapes, 
 	  p_range, 		0, 5, 
 	  p_ui, 			havok_params,	TYPE_RADIO, 6, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX,
+	  end,
+
+	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
+	  p_default, 	FALSE, 
+	  p_ui,			opt_params, TYPE_SINGLECHEKBOX, IDC_OPT_ENABLE,
+	  end,
+  
+	PB_FACETHRESH,	_T("faceThresh"),	TYPE_FLOAT, P_RESET_DEFAULT, IDS_OPT_FACETHRESH,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 90.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_FACETHRESH, IDC_OPT_FACETHRESHSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+	PB_EDGETHRESH,		_T("edgeThresh"),		TYPE_FLOAT, 0, IDS_OPT_EDGETHRESH,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 90.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_EDGETHRESH, IDC_OPT_EDGETHRESHSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+    PB_BIAS,		_T("bias"),		TYPE_FLOAT, 0, IDS_OPT_BIAS,
+	  p_default, 	0.1f, 
+	  p_range, 		0.0f, 1.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_BIAS, IDC_OPT_BIASSPIN, 0.01f,
+	  p_uix,		opt_params,
+	  end,
+
+	PB_MAXEDGE,		_T("maxEdge"),		TYPE_FLOAT, 0, IDS_OPT_MAXEDGE,
+	  p_default, 	0.0f, 
+	  p_range, 		0.0f, 1000.0f, 
+	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_MAXEDGE, IDC_OPT_MAXEDGESPIN, SPIN_AUTOSCALE,
+	  p_uix,		opt_params,
 	  end,
 
    end,
@@ -363,6 +399,7 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 
 	case bv_type_shapes: // Shapes
 		BuildColStrips(proxyMesh);
+		BuildOptimize(proxyMesh);
 		break;
 
 	//case bv_type_packed: // Packed
@@ -372,9 +409,12 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 
 	case bv_type_convex: // Capsule
 		BuildColConvex(proxyMesh);
+		BuildOptimize(proxyMesh);
 		//BuildScubaMesh();
 		break;
 	}
+	
+	//
 	proxyMesh.buildNormals();
 
 	if (needsDelete) {
@@ -390,18 +430,18 @@ void bhkRigidBodyModifier::NotifyInputChanged(Interval changeInt, PartID partID,
 
 }
 
-struct ParamMapInfo
-{
-	MapID mapid;
-	DWORD idd;
-	DWORD ids;
-};
-static ParamMapInfo pminfo[] = {
-	{bv_box,		IDD_RB_MOD_PANEL1,	IDS_RB_MOD_PANEL1},
-	{bv_sphere,	IDD_RB_MOD_PANEL2,	IDS_RB_MOD_PANEL2},
-	{bv_capsule,IDD_RB_MOD_PANEL3,	IDS_RB_MOD_PANEL3},
-	{bv_mesh,	IDD_RB_MOD_PANEL4,	IDS_RB_MOD_PANEL4},
-};
+//struct ParamMapInfo
+//{
+//	MapID mapid;
+//	DWORD idd;
+//	DWORD ids;
+//};
+//static ParamMapInfo pminfo[] = {
+//	{bv_box,		IDD_RB_MOD_PANEL1,	IDS_RB_MOD_PANEL1},
+//	{bv_sphere,	IDD_RB_MOD_PANEL2,	IDS_RB_MOD_PANEL2},
+//	{bv_capsule,IDD_RB_MOD_PANEL3,	IDS_RB_MOD_PANEL3},
+//	{bv_mesh,	IDD_RB_MOD_PANEL4,	IDS_RB_MOD_PANEL4},
+//};
 
 void bhkRigidBodyModifier::UpdateBVDialogs()
 {
@@ -607,4 +647,21 @@ void bhkRigidBodyModifier::BuildColConvex(Mesh& mesh)
 	extern void compute_convex_hull(Mesh& mesh, Mesh& outmesh);
 
 	compute_convex_hull(mesh, mesh);
+}
+
+void bhkRigidBodyModifier::BuildOptimize(Mesh& mesh)
+{
+	BOOL enable = FALSE;
+	pblock->GetValue(PB_OPT_ENABLE, 0, enable, FOREVER, 0);
+	if (enable)
+	{
+		float maxedge, facethresh, edgethresh, bias;
+		pblock->GetValue(PB_MAXEDGE, 0, maxedge, FOREVER, 0);
+		pblock->GetValue(PB_FACETHRESH, 0, facethresh, FOREVER, 0);
+		pblock->GetValue(PB_EDGETHRESH, 0, edgethresh, FOREVER, 0);
+		pblock->GetValue(PB_BIAS, 0, bias, FOREVER, 0);
+
+		DWORD flags = OPTIMIZE_AUTOEDGE;
+		mesh.Optimize(facethresh, edgethresh, bias, maxedge, flags, NULL);
+	}
 }

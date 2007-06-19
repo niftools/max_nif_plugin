@@ -42,6 +42,7 @@ FPInterfaceDesc thebhkRigidBodyInterface(
       bhkRigidBodyInterface::get_penetrationdepth, bhkRigidBodyInterface::get_penetrationdepth, _T("PenetrationDepth"), 0, TYPE_FLOAT,
       bhkRigidBodyInterface::get_motionsystem, bhkRigidBodyInterface::set_motionsystem, _T("MotionSystem"), 0, TYPE_ENUM, bhkRigidBodyInterface::enum_motionsystem,
       bhkRigidBodyInterface::get_qualitytype, bhkRigidBodyInterface::set_qualitytype, _T("QualityType"), 0, TYPE_ENUM, bhkRigidBodyInterface::enum_qualitytype,
+	  bhkRigidBodyInterface::get_enabletransform, bhkRigidBodyInterface::set_enabletransform, _T("EnableTransform"), 0, TYPE_BOOL, 
    enums,
       bhkRigidBodyInterface::enum_material, 31,
          "Stone", 0,
@@ -234,6 +235,13 @@ static ParamUIDesc descRigidBodyParam[] = {
    IDC_ED_PENETRATION_DEPTH,IDC_SP_PENETRATION_DEPTH,
    0, 10,
    SPIN_AUTOSCALE),
+
+   // Enable Transform
+   ParamUIDesc(
+   PB_RB_ENABLE_TRANS,
+   TYPE_SINGLECHEKBOX,
+   IDC_TRANS_ENABLE),
+
 };
 const int descRigidBodyParamLength = _countof(descRigidBodyParam);
 
@@ -250,6 +258,7 @@ static ParamBlockDescID gRigidBlockParamDesc[] = {
    { TYPE_FLOAT, NULL, FALSE, PB_RB_PENETRATION_DEPTH },
    { TYPE_INT, NULL, FALSE, PB_RB_MOTION_SYSTEM },
    { TYPE_INT, NULL, FALSE, PB_RB_QUALITY_TYPE },
+   { TYPE_BOOL, NULL, FALSE, PB_RB_ENABLE_TRANS },
 };
 const int descRigidBodyDescIDLength = _countof(gRigidBlockParamDesc);
 
@@ -368,6 +377,7 @@ bhkRigidBodyIfcHelper::bhkRigidBodyIfcHelper()
    rbpblock->SetValue(PB_RB_PENETRATION_DEPTH,0,NP_DEFAULT_HVK_PENETRATION_DEPTH);
    rbpblock->SetValue(PB_RB_MOTION_SYSTEM,0,NP_DEFAULT_HVK_MOTION_SYSTEM);
    rbpblock->SetValue(PB_RB_QUALITY_TYPE,0,NP_DEFAULT_HVK_QUALITY_TYPE);
+   rbpblock->SetValue(PB_RB_ENABLE_TRANS,0,TRUE);
 
 }
 
@@ -553,4 +563,16 @@ int bhkRigidBodyIfcHelper::GetQualityType(TimeValue time, Interval& valid) const
    int value = NP_DEFAULT_HVK_QUALITY_TYPE;
    rbpblock->GetValue(PB_RB_QUALITY_TYPE,time,value,valid);
    return value;
+}
+
+void bhkRigidBodyIfcHelper::SetEnableTransform(BOOL value, TimeValue time)
+{
+	rbpblock->SetValue(PB_RB_ENABLE_TRANS,time,value);
+}
+
+BOOL bhkRigidBodyIfcHelper::GetEnableTransform(TimeValue time, Interval& valid) const
+{
+	BOOL value = TRUE;
+	rbpblock->GetValue(PB_RB_ENABLE_TRANS,time,value,valid);
+	return value;
 }
