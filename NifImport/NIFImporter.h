@@ -144,6 +144,7 @@ public:
    INode *FindNode(Niflib::NiObjectNETRef node);
 
    INode *GetNode(Niflib::NiNodeRef node);
+   INode *GetNode(Niflib::NiObjectNETRef obj);
    string GetSkeleton(AppSettings *appSettings);
 
    bool ShowDialog();

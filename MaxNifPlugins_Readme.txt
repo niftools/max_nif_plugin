@@ -33,6 +33,13 @@
 
     Change log
     ----------
+      0.2.14
+      -----
+    o Exporter
+      - Fix a number of issues with bhkConvexShape and bhkRigidBody
+    o Importer
+      - Introduce Morph animation support
+      
       0.2.13
       -----
     o Properties

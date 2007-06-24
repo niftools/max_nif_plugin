@@ -280,6 +280,17 @@ INode *NifImporter::GetNode(Niflib::NiNodeRef node)
 	return FindNode(node);
 }
 
+INode *NifImporter::GetNode(Niflib::NiObjectNETRef obj)
+{
+	if (obj->IsDerivedType(NiNode::TYPE)) {
+		NiNodeRef node = StaticCast<NiNode>(obj);
+		if (INode *n = GetNode(node)) {
+			return n;
+		}
+	}
+	return gi->GetINodeByName(obj->GetName().c_str());
+}
+
 bool NifImporter::DoImport()
 {
    bool ok = true;
@@ -353,7 +364,7 @@ bool NifImporter::DoImport()
                importedNodes.begin(), importedNodes.end(), results.begin());
             for (vector<string>::iterator itr = results.begin(); itr != end; ++itr){
                if (INode *node = gi->GetINodeByName((*itr).c_str())){
-                  node->Delete(0, TRUE);
+				   gi->DeleteNode(node, FALSE);
                }
             }
          }

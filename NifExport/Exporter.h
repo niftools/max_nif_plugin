@@ -282,6 +282,8 @@ public:
 	int countNodes(INode *node);
 	bool isSkeletonRoot(INode *node);
 	void ApplyAllSkinOffsets( NiAVObjectRef & root );
+	void sortVector3(vector<Vector3>& vector);
+	void sortFloat4(vector<Float4>& vector);
 
 	/* Progress Bar stuff */
 	enum ProgressSection

@@ -1114,7 +1114,6 @@ void GetIniFileName(char *iniName)
 	}
 }
 
-
 Modifier *GetbhkCollisionModifier(INode* node)
 {
 	extern Class_ID BHKRIGIDBODYMODIFIER_CLASS_ID;
@@ -1184,4 +1183,46 @@ Matrix3 GetLocalTM(INode *node)
 	{
 		return node->GetNodeTM(0);
 	}
+}
+
+Modifier *GetMorpherModifier(INode* node)
+{
+	const Class_ID MORPHERMODIFIER_CLASS_ID(0x17bb6854, 0xa5cba2a3);
+
+	Object* pObj = node->GetObjectRef();
+	if (!pObj) return NULL;
+	while (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	{
+		IDerivedObject* pDerObj = (IDerivedObject *)(pObj);
+		int Idx = 0;
+		while (Idx < pDerObj->NumModifiers())
+		{
+			// Get the modifier. 
+			Modifier* mod = pDerObj->GetModifier(Idx);
+			if (mod->ClassID() == MORPHERMODIFIER_CLASS_ID)
+			{
+				return mod;
+			}
+			Idx++;
+		}
+		pObj = pDerObj->GetObjRef();
+	}
+	return NULL;
+}
+
+Modifier *CreateMorpherModifier(INode* node)
+{
+	const Class_ID MORPHERMODIFIER_CLASS_ID(0x17bb6854, 0xa5cba2a3);
+
+	Modifier *mod = GetMorpherModifier(node);
+	if (mod == NULL)
+	{
+		IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
+		mod = (Modifier*) CreateInstance(OSM_CLASS_ID, MORPHERMODIFIER_CLASS_ID);
+		dobj->SetAFlag(A_LOCK_TARGET);
+		dobj->AddModifier(mod);
+		dobj->ClearAFlag(A_LOCK_TARGET);
+		node->SetObjectRef(dobj);
+	}
+	return mod;
 }

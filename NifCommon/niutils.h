@@ -430,4 +430,7 @@ void GetIniFileName(char *iniName);
 
 Matrix3 GetLocalTM(INode *node);
 
+extern Modifier *GetMorpherModifier(INode* node);
+extern Modifier *CreateMorpherModifier(INode* node);
+
 #endif // _NIUTILS_H_

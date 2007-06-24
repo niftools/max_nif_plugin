@@ -552,3 +552,61 @@ void Exporter::ApplyAllSkinOffsets( NiAVObjectRef & root ) {
       }
    }
 } 
+
+struct SortVectorEquivalence
+{
+	inline bool operator()(const Vector3& lhs, const Vector3& rhs) const
+	{
+		float diff = lhs.x - rhs.x;
+		if (diff < 0)
+			return true;
+		if (diff == 0)
+		{
+			diff = lhs.y - rhs.y;
+			if (diff < 0)
+				return true;
+			if (diff == 0)
+			{
+				diff = lhs.z - rhs.z;
+				if (diff < 0)
+					return true;
+			}
+		}
+		return false;
+	}
+	inline bool operator()(const Float4& lhs, const Float4& rhs) const
+	{
+		float diff = lhs[0] - rhs[0];
+		if (diff < 0)
+			return true;
+		if (diff == 0)
+		{
+			diff = lhs[1] - rhs[1];
+			if (diff < 0)
+				return true;
+			if (diff == 0)
+			{
+				diff = lhs[2] - rhs[2];
+				if (diff < 0)
+					return true;
+				if (diff == 0)
+				{
+					diff = lhs[3] - rhs[3];
+					if (diff < 0)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+};
+
+void Exporter::sortVector3(vector<Vector3>& vector)
+{
+	std::stable_sort(vector.begin(), vector.end(), SortVectorEquivalence());
+}
+
+void Exporter::sortFloat4(vector<Float4>& vector)
+{
+	std::stable_sort(vector.begin(), vector.end(), SortVectorEquivalence());
+}

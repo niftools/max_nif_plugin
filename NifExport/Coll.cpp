@@ -184,9 +184,11 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 			Vector3 trans; Matrix33 rm; float scale;
 			rm4.Decompose(trans, rm, scale);
 
-			QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
-			body->SetRotation(q);
-			body->SetTranslation(trans / Exporter::bhkScaleFactor);
+			body->SetTranslation(TOVECTOR3(Point3(0.0f, 0.0f, 0.0f)));
+			body->SetRotation(TOQUATXYZW(Quat()));
+			//QuaternionXYZW q = TOQUATXYZW(rm.AsQuaternion());
+			//body->SetRotation(q);
+			//body->SetTranslation(trans / Exporter::bhkScaleFactor);
 
 			bhkShapeRef shape = makeCollisionShape(node, tm, body);
 			if (shape)
@@ -367,27 +369,31 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 	float radius = 0.10f;
 	//CalcAxisAlignedSphere(mesh, center, radius);
 	shape->SetRadius(radius);
-	vector<Vector3> verts, norms;
-	vector<float> dist;
+	vector<Vector3> verts;
+	vector<Float4> norms;
 	int nvert = mesh.getNumVerts();
 	int nface = mesh.getNumFaces();
 
 	verts.resize(nvert);
 	norms.resize(nface);
-	dist.resize(nface);
 	for (int i=0; i<nvert; ++i)
 	{
-		Point3 vert = mesh.getVert(i) / Exporter::bhkScaleFactor;
+		Point3 vert = mesh.getVert(i) / Exporter::bhkScaleFactor * tm;
 		verts[i] = TOVECTOR3(vert);
 	}
 	for (int i=0; i<nface; ++i)
 	{
-		norms[i] = TOVECTOR3(mesh.getFaceNormal(i));
-		dist[i] = -mesh.FaceCenter(i).Length();
+		Float4 &value = norms[i];
+		Point3 &pt = mesh.getFaceNormal(i);
+		value[0] = pt.x;
+		value[1] = pt.y;
+		value[2] = pt.z;
+		value[3] = -mesh.FaceCenter(i).Length();
 	}
+	sortVector3(verts);
+	sortFloat4(norms);
 	shape->SetVertices(verts);
-	shape->SetNormals(norms);
-	shape->SetDistToCenter(dist);
+	shape->SetNormalsAndDist(norms);
 	return shape;
 }
 

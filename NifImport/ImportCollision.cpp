@@ -108,7 +108,7 @@ bool NifImporter::ImportCollision(NiNodeRef node)
 				   Matrix3 tm(true);
 				   if (!ci.ImportShape(body, rbody, shape, node, tm))
 				   {
-					   body->Delete(0, 1);
+					   gi->DeleteNode(body, FALSE);
 				   }
 			   }
 		   }

@@ -475,4 +475,12 @@ bool GetTranslationKeys(Control *c, vector<Vector3Key> keys, const vector<float>
    return false;
 }
 
+void ScaleKey(FloatKey& key, float mult) {
+	key.data *= mult;
+}
 
+void ScaleKeys(vector<FloatKey>&keys, float mult) {
+	for (int i=0, n = keys.size(); i<n; ++i) {
+		ScaleKey(keys[i], mult);
+	}
+}

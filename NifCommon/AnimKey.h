@@ -206,3 +206,6 @@ extern void JoinKeys(vector<Vector3Key>&keys, vector<FloatKey>&xkeys, vector<Flo
 typedef Key<string> KeyTextValue;
 
 bool GetTranslationKeys(Control *c, vector<Vector3Key> keys, const vector<float>& times, float timeOffset=0.0f);
+
+extern void ScaleKeys(vector<FloatKey>&keys, float mult);
+extern void ScaleKey(FloatKey& key, float mult);

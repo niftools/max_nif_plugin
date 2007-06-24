@@ -14,6 +14,7 @@ HISTORY:
 #if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
 #  include <IFrameTagManager.h>
 #endif
+#include <maxscrpt/strings.h>
 #include <notetrck.h>
 #include "MaxNifImport.h"
 #include "NIFImporter.h"
@@ -31,6 +32,12 @@ HISTORY:
 #include <obj/NiKeyframeData.h>
 #include <obj/NiStringPalette.h>
 #include <obj/NiBSplineCompTransformInterpolator.h>
+#include <obj/NiGeomMorpherController.h>
+#include <obj/NiMorphData.h>
+#include <obj/NiBSplineCompFloatInterpolator.h>
+#include <obj/NiFloatInterpolator.h>
+#include <obj/NiFloatData.h>
+#include "niutils.h"
 using namespace Niflib;
 
 const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
@@ -81,15 +88,27 @@ struct AnimationImport
    bool AddValues(Control *c, NiKeyframeDataRef data, float time);
    bool AddBiped(Control *c, NiKeyframeDataRef data, float time);
 
+   bool AddValues(NiInterpolatorRef interp, IParamBlock* pblock, float time);
+
    Control* MakePosition(Control *tmCont, Class_ID clsid);
    Control* MakePositionXYZ(Control *tmCont, Class_ID clsid);
    Control* MakeRotation(Control *tmCont, Class_ID rotClsid, Class_ID rollClsid);
    Control* MakeScale(Control *tmCont, Class_ID clsid);
+   Control* MakeFloat(IParamBlock* pblock, int idx, Class_ID clsid);
 
+   
    Control* GetTMController(const string& name);
+   Control* GetTMController(NiObjectNETRef node);
    Matrix3 GetTM(const string& name, TimeValue t = 0);
 
    bool GetTransformData(ControllerLink& lnk, string name, NiKeyframeDataRef& outData, Point3& p, Quat& q, float& s);
+
+   bool ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, float time);
+   INode* CreateGeoMesh(const vector<Vector3>& verts, const vector<Triangle>& tris, Matrix3& tm, INode *parent);
+
+   void MorpherBuildFromNode(Modifier* mod, int index, INode *target);
+   void MorpherSetName(Modifier* mod, int index, TSTR& name);
+   void MorpherRebuild(Modifier* mod, int index);
 };
 
 bool NifImporter::ImportAnimation()
@@ -485,26 +504,69 @@ bool KFMImporter::ImportAnimation()
             name = name.substr(0, name.length() - 9);
          }
 
-         Control *c = ai.GetTMController(name);
-         if (NULL == c)
-            continue;
+		 string type = (*lnk).controllerType;
+		 if (type.empty()) {
+			 NiStringPaletteRef strings = lnk->stringPalette;
+			 type = strings->GetSubStr((*lnk).controllerTypeOffset);
+		 }
+		 if (type.empty())
+			 continue;
 
-         INode *n = gi->GetINodeByName(name.c_str());
+		 if (strmatch(type, "NiTransformController"))
+		 {
+			 Control *c = ai.GetTMController(name);
+			 if (NULL == c)
+				 continue;
 
-         if ((*lnk).priority_ != 0.0f) {
-            npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
-         }
+			 INode *n = gi->GetINodeByName(name.c_str());
 
-         NiKeyframeDataRef data;
-         Point3 p; Quat q; float s;
-         if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-            PosRotScaleNode(n, p, q, s, prsDefault, 0);
-            if (ai.AddValues(c, data, time)) {
-               minTime = min(minTime, start);
-               maxTime = max(maxTime, stop);
-               ok = true;
-            }
-         }
+			 if ((*lnk).priority_ != 0.0f) {
+				 npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
+			 }
+
+			 NiKeyframeDataRef data;
+			 Point3 p; Quat q; float s;
+			 if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
+				 PosRotScaleNode(n, p, q, s, prsDefault, 0);
+				 if (ai.AddValues(c, data, time)) {
+					 minTime = min(minTime, start);
+					 maxTime = max(maxTime, stop);
+					 ok = true;
+				 }
+			 }
+		 }
+		 else if (strmatch(type, "NiGeomMorpherController"))
+		 {
+			 string var2 = (*lnk).variable2;
+			 if (var2.empty()) {
+				 if (NiStringPaletteRef strings = lnk->stringPalette)
+					 var2 = strings->GetSubStr((*lnk).variableOffset2);
+			 }
+			 if (!var2.empty())
+			 {
+				 if (INode *n = gi->GetINodeByName(name.c_str()))
+				 {
+					 if (Modifier* mod = GetMorpherModifier(n))
+					 {
+						 int idx = -1;
+						 for (int i=1; i<=100; ++i) {
+							 if (strmatch(var2, mod->SubAnimName(i))) {
+								 idx = i;
+								 break;
+							 }
+						 }
+						 if (idx != -1)
+						 {
+							 if (ai.AddValues(lnk->interpolator, (IParamBlock*)mod->GetReference(idx), time)) {
+								 minTime = min(minTime, start);
+								 maxTime = max(maxTime, stop);
+								 ok = true;
+							 }
+						 }
+					 }
+				 }
+			 }
+		 }
       }
       if (maxTime > minTime && maxTime > 0.0f)
          time += (maxTime-minTime) + FramesIncrement;
@@ -578,7 +640,7 @@ bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyfr
             s = FloatNegINF;
             return true;
          }
-      }
+	  }
    }
    return false;
 }
@@ -595,6 +657,18 @@ Control *AnimationImport::GetTMController(const string& name)
       return NULL;
 
    return c;
+}
+
+Control *AnimationImport::GetTMController(NiObjectNETRef obj)
+{
+	if (obj->IsDerivedType(NiNode::TYPE))
+	{
+		NiNodeRef node = StaticCast<NiNode>(obj);
+		if (INode *n = ni.GetNode(node)) {
+			return n->GetTMController();
+		}
+	}
+	return GetTMController(obj->GetName().c_str());
 }
 
 Matrix3 AnimationImport::GetTM(const string& name, TimeValue t)
@@ -628,28 +702,33 @@ bool AnimationImport::AddValues(vector<NiObjectNETRef>& nodes)
 
 bool AnimationImport::AddValues(NiObjectNETRef nref)
 {
-   Control *c = GetTMController(nref->GetName().c_str());
-   if (NULL == c)
-      return false;
-
    if (NiTextKeyExtraDataRef keydata = SelectFirstObjectOfType<NiTextKeyExtraData>(nref->GetExtraData())) {
       ni.AddNoteTracks(0.0f, string(), nref->GetName(), keydata, false);
    }
 
+   bool ok = false;
    float time = 0.0f;
    list< NiTimeControllerRef > clist = nref->GetControllers();
    if (NiTransformControllerRef tc = SelectFirstObjectOfType<NiTransformController>(clist)) {
       if (NiTransformInterpolatorRef interp = tc->GetInterpolator()) {
          if (NiTransformDataRef data = interp->GetData()) {
-            return AddValues(c, data, time);
+			 if (Control *c = GetTMController(nref))
+	            ok |= AddValues(c, data, time);
          }
       }
    } else if (NiKeyframeControllerRef kf = SelectFirstObjectOfType<NiKeyframeController>(clist)) {
       if (NiKeyframeDataRef kfData = kf->GetData()) {
-         return AddValues(c, kfData, time);
+		  if (Control *c = GetTMController(nref))
+	         ok |= AddValues(c, kfData, time);
       }
    }
-   return false;
+   if (NiGeomMorpherControllerRef gmc = SelectFirstObjectOfType<NiGeomMorpherController>(clist)) {
+	   if (INode *n = ni.GetNode(nref)) {
+		   ok |= ImportGeoMorph(n, gmc, time);
+	   }
+   }
+
+   return ok;
 }
 
 bool AnimationImport::AddValues(Control *c, NiKeyframeDataRef data, float time)
@@ -818,6 +897,23 @@ Control* AnimationImport::MakeScale(Control *tmCont, Class_ID clsid)
    }
    return NULL;
 }
+Control* AnimationImport::MakeFloat(IParamBlock* pblock, int idx, Class_ID clsid)
+{
+	Interface *ip = ni.gi;
+	if (Control *c = pblock->GetController(idx)) {
+		if (c->ClassID()!=clsid) {
+			if (Control *tmpCtrl = (Control*)ip->CreateInstance(CTRL_SCALE_CLASS_ID, clsid)){
+				pblock->SetController(idx, tmpCtrl);
+				if (pblock->GetController(idx) != tmpCtrl)
+					tmpCtrl->DeleteThis();
+				else
+					c = tmpCtrl;
+			}
+		}
+		return c;
+	}
+	return NULL;
+}
 
 Control* AnimationImport::MakePosition(Control *tmCont, Class_ID clsid)
 {
@@ -871,3 +967,349 @@ bool AnimationImport::AddBiped(Control *c, NiKeyframeDataRef data, float time)
    return false;
 }
 #endif
+
+bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, float time)
+{
+	NiObjectNETRef target = ctrl->GetTarget();
+	if (!target->IsDerivedType(NiTriBasedGeom::TYPE))
+		return false;
+	NiTriBasedGeomRef parentGeom = StaticCast<NiTriBasedGeom>(target);
+	NiMorphDataRef data = ctrl->GetData();
+	if (data == NULL)
+		return false;
+	vector<NiInterpolatorRef> interpolators = ctrl->GetInterpolators();
+	int nmorphs = data->GetMorphCount();
+	if ((interpolators.size() > nmorphs) || nmorphs == 0)
+		return false;
+	NiGeometryDataRef geoData = parentGeom->GetData();
+	int nBaseVerts = geoData->GetVertexCount();
+	vector<Triangle> tris;
+	vector<Vector3> baseVerts;
+	if (geoData->IsDerivedType(NiTriShapeData::TYPE)) {
+		NiTriShapeDataRef triShapeData = StaticCast<NiTriShapeData>(geoData);
+		if (triShapeData == NULL)
+			return false;
+		tris = triShapeData->GetTriangles();
+	} else if (geoData->IsDerivedType(NiTriStripsData::TYPE)) {
+		NiTriStripsDataRef triStripData = StaticCast<NiTriStripsData>(geoData);
+		if (triStripData == NULL)
+			return false;
+		tris = triStripData->GetTriangles();
+	} else {
+		return false;
+	}
+	Matrix3 tm = TOMATRIX3(parentGeom->GetLocalTransform());
+	tm.Invert();
+	//tm.NoRot(); tm.NoTrans(); // Leave scale.  Parent to owner mesh
+
+	Modifier *mod = CreateMorpherModifier(n);
+	n->EvalWorldState(0, TRUE);
+
+	// Create meshes for morph
+	for (int i=0; i<nmorphs; ++i)
+	{
+		string frameName = (ni.nifVersion >= VER_10_1_0_106) ? data->GetFrameName(i) : FormatString("Frame #%d", i);
+		vector<Vector3> verts = data->GetMorphVerts(i);
+		if (verts.size() != nBaseVerts)
+			continue;
+
+		// All verts after the first index are differentials
+		if (i == 0)
+		{
+			baseVerts = verts;
+		}
+		else
+		{
+			for (int j=0; j<nBaseVerts; ++j)
+				verts[j] += baseVerts[j];
+		}
+
+		TSTR name(frameName.c_str());
+		INode *geoNode = CreateGeoMesh(verts, tris, tm, n);
+		geoNode->SetName(FormatText("Morph: %s", name));
+
+		MorpherBuildFromNode(mod, i+1, geoNode);
+		MorpherSetName(mod, i+1, name);
+		n->EvalWorldState(0, TRUE);
+
+		AddValues(interpolators[i], (IParamBlock*)mod->GetReference(i+1), time);
+	}
+	return false;
+}
+
+bool AnimationImport::AddValues(NiInterpolatorRef interp, IParamBlock* pblock, float time)
+{
+	bool retval = false;
+	// Handle Translation
+	//
+	KeyType keyType = UNKNOWN_KEY;
+	vector<FloatKey> keys;
+	if (interp->IsDerivedType(NiFloatInterpolator::TYPE)) {
+		if (NiFloatDataRef data = StaticCast<NiFloatInterpolator>(interp)->GetData())
+		{
+			keyType = data->GetKeyType();
+			keys = data->GetKeys();
+		}
+	} else if (interp->IsDerivedType(NiBSplineCompFloatInterpolator::TYPE)) {
+		NiBSplineCompFloatInterpolatorRef bsfi = StaticCast<NiBSplineCompFloatInterpolator>(interp);
+		int npoints = bsfi->GetNumControlPt();
+		if (npoints > 3) {
+			keyType = QUADRATIC_KEY;
+			keys = bsfi->SampleKeys(npoints, 3);
+		}			
+	}
+	if (keyType != UNKNOWN_KEY)
+	{
+		ScaleKeys(keys, 100.0f);
+		switch (keyType)
+		{
+		case LINEAR_KEY:
+			if (Control *subCtrl = MakeFloat(pblock, 0, Class_ID(LININTERP_FLOAT_CLASS_ID,0))) {
+				MergeKeys<ILinFloatKey, FloatKey>(subCtrl, keys, time);
+				retval |= true;
+			}
+			break;
+		case QUADRATIC_KEY:
+		case XYZ_ROTATION_KEY:
+			if (Control *subCtrl = MakeFloat(pblock, 0, Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0))) {
+				MergeKeys<IBezFloatKey, FloatKey>(subCtrl, keys, time);
+				retval |= true;
+			}
+			break;
+		case TBC_KEY:
+			if (Control *subCtrl = MakeFloat(pblock, 0, Class_ID(TCBINTERP_FLOAT_CLASS_ID,0))) {
+				MergeKeys<ITCBFloatKey, FloatKey>(subCtrl, keys, time);
+				retval |= true;
+			}
+			break;
+		}
+	}
+	return retval;
+}
+
+INode *AnimationImport::CreateGeoMesh(
+	const vector<Vector3>& verts, 
+	const vector<Triangle>& tris,
+	Matrix3& tm,
+	INode *parent
+	)
+{
+	INode *returnNode = NULL;
+	if ( ImpNode *node = ni.i->CreateNode() )
+	{
+		TriObject *triObject = CreateNewTriObject();
+		node->Reference(triObject);
+
+		Mesh& mesh = triObject->GetMesh();
+		INode *tnode = node->GetINode();
+
+		// Vertex info
+		{
+			int nVertices = verts.size();
+			mesh.setNumVerts(nVertices);
+			for (int i=0; i < nVertices; ++i){
+				const Vector3& v = verts[i];
+				mesh.verts[i].Set(v.x, v.y, v.z);
+			}
+		}
+
+		// Triangles and texture vertices
+		ni.SetTriangles(mesh, tris);
+
+		//MNMesh mn(mesh);
+		//mn.OutToTri(mesh);
+		mesh.checkNormals(TRUE);
+
+		// Wireframe Red color
+		StdMat2 *collMat = NewDefaultStdMat();
+		collMat->SetDiffuse(Color(0.0f, 1.0f, 0.0f), 0);
+		collMat->SetWire(TRUE);
+		collMat->SetFaceted(TRUE);
+		ni.gi->GetMaterialLibrary().Add(collMat);
+		tnode->SetMtl(collMat);
+		tnode->SetRenderable(FALSE);
+		tnode->SetPrimaryVisibility(FALSE);
+		tnode->SetSecondaryVisibility(FALSE);
+		tnode->SetWireColor( RGB(0,255,0) );
+
+		returnNode = node->GetINode();
+		
+		//PosRotScaleNode(returnNode, tm, prsDefault, 0);
+		if (parent != NULL)
+			parent->AttachChild(tnode, 1);
+	}
+	return returnNode;
+}
+
+// CallMaxscript
+// Send the string to maxscript 
+//
+void AnimationImport::MorpherBuildFromNode(Modifier* mod, int index, INode *target)
+{
+	// Magic initialization stuff for maxscript.
+	static bool script_initialized = false;
+	if (!script_initialized) {
+		init_MAXScript();
+		script_initialized = TRUE;
+	}
+	init_thread_locals();
+	push_alloc_frame();
+	six_value_locals(name, fn, mod, index, target, result);
+	save_current_frames();
+	trace_back_active = FALSE;
+
+	try	{
+		// Create the name of the maxscript function we want.
+		// and look it up in the global names
+		vl.name = Name::intern(_T("WM3_MC_BuildFromNode"));
+		vl.fn = globals->get(vl.name);
+
+		// For some reason we get a global thunk back, so lets
+		// check the cell which should point to the function.
+		// Just in case if it points to another global thunk
+		// try it again.
+		while (vl.fn != NULL && is_globalthunk(vl.fn))
+			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
+		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
+			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
+
+		// Now we should have a MAXScriptFunction, which we can
+		// call to do the actual conversion. If we didn't
+		// get a MAXScriptFunction, we can't convert.
+		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
+			Value* args[3];
+
+			// Ok. WM3_MC_BuildFromNode takes three parameters
+			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
+			args[1] = vl.index = Integer::intern(index);
+			args[2] = vl.target = MAXNode::intern(target);
+
+			// Call the function and save the result.
+			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 3);
+		}
+	} catch (...) {
+		clear_error_source_data();
+		restore_current_frames();
+		MAXScript_signals = 0;
+		if (progress_bar_up)
+			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+	}
+
+	// Magic Max Script stuff to clear the frame and locals.
+	pop_value_locals();
+	pop_alloc_frame();
+}
+
+void AnimationImport::MorpherSetName(Modifier* mod, int index, TSTR& name)
+{
+	// Magic initialization stuff for maxscript.
+	static bool script_initialized = false;
+	if (!script_initialized) {
+		init_MAXScript();
+		script_initialized = TRUE;
+	}
+	init_thread_locals();
+	push_alloc_frame();
+	six_value_locals(name, fn, mod, index, value, result);
+	save_current_frames();
+	trace_back_active = FALSE;
+	String* value = new String(name);
+
+	try	{
+		// Create the name of the maxscript function we want.
+		// and look it up in the global names
+		vl.name = Name::intern(_T("WM3_MC_SetName"));
+		vl.fn = globals->get(vl.name);
+
+		// For some reason we get a global thunk back, so lets
+		// check the cell which should point to the function.
+		// Just in case if it points to another global thunk
+		// try it again.
+		while (vl.fn != NULL && is_globalthunk(vl.fn))
+			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
+		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
+			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
+
+		// Now we should have a MAXScriptFunction, which we can
+		// call to do the actual conversion. If we didn't
+		// get a MAXScriptFunction, we can't convert.
+		// class_tag(MAXScriptFunction)
+		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
+			Value* args[3];
+
+			// Ok. WM3_MC_BuildFromNode takes three parameters
+			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
+			args[1] = vl.index = Integer::intern(index);
+			args[2] = vl.value = value;
+
+			// Call the function and save the result.
+			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 3);
+		}
+	} catch (...) {
+		value->collect();
+		clear_error_source_data();
+		restore_current_frames();
+		MAXScript_signals = 0;
+		if (progress_bar_up)
+			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+	}
+
+	// Magic Max Script stuff to clear the frame and locals.
+	pop_value_locals();
+	pop_alloc_frame();
+}
+
+void AnimationImport::MorpherRebuild(Modifier* mod, int index)
+{
+	// Magic initialization stuff for maxscript.
+	static bool script_initialized = false;
+	if (!script_initialized) {
+		init_MAXScript();
+		script_initialized = TRUE;
+	}
+	init_thread_locals();
+	push_alloc_frame();
+	five_value_locals(name, fn, mod, index, result);
+	save_current_frames();
+	trace_back_active = FALSE;
+	try	{
+		// Create the name of the maxscript function we want.
+		// and look it up in the global names
+		vl.name = Name::intern(_T("WM3_MC_Rebuild"));
+		vl.fn = globals->get(vl.name);
+
+		// For some reason we get a global thunk back, so lets
+		// check the cell which should point to the function.
+		// Just in case if it points to another global thunk
+		// try it again.
+		while (vl.fn != NULL && is_globalthunk(vl.fn))
+			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
+		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
+			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
+
+		// Now we should have a MAXScriptFunction, which we can
+		// call to do the actual conversion. If we didn't
+		// get a MAXScriptFunction, we can't convert.
+		// class_tag(MAXScriptFunction)
+		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
+			Value* args[2];
+
+			// Ok. WM3_MC_BuildFromNode takes three parameters
+			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
+			args[1] = vl.index = Integer::intern(index);
+
+			// Call the function and save the result.
+			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 2);
+		}
+	} catch (...) {
+		clear_error_source_data();
+		restore_current_frames();
+		MAXScript_signals = 0;
+		if (progress_bar_up)
+			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
+	}
+
+	// Magic Max Script stuff to clear the frame and locals.
+	pop_value_locals();
+	pop_alloc_frame();
+}

@@ -18,7 +18,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 	if (!bmTex)
       return;
 
-	 if (Exporter::mNifVersionInt <= VER_4_0_0_0)
+	 if (Exporter::mNifVersionInt >= VER_4_0_0_0)
 	 {
 		 NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();
 		 texProp->SetApplyMode(APPLY_MODULATE);
