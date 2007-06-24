@@ -36,6 +36,11 @@ HISTORY:
 #include <obj/NiBSplineCompTransformInterpolator.h>
 #include <obj/NiDefaultAVObjectPalette.h>
 #include <obj/NiMultiTargetTransformController.h>
+#include <obj/NiGeomMorpherController.h>
+#include <obj/NiMorphData.h>
+#include <obj/NiBSplineCompFloatInterpolator.h>
+#include <obj/NiFloatInterpolator.h>
+#include <obj/NiFloatData.h>
 using namespace Niflib;
 
 const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
@@ -241,6 +246,35 @@ bool Exporter::isNodeTracked(INode *node)
    return false;
 }
 
+Exporter::Result Exporter::scanForAnimation(INode *node)
+{   
+	if (NULL == node) 
+		return Exporter::Skip;
+
+	// Ideally check for Morph: targets
+#if VERSION_3DSMAX >= ((8000<<16)+(15<<8)+0) // Version 8+
+	if (Modifier * mod = GetMorpherModifier(node)){
+		int idx = -1;
+		for (int i=1; i<=100; ++i) {
+			if (MorpherIsActive(mod, i) && MorpherHasData(mod, i)) {
+				TSTR str = MorpherGetName(mod, i);
+				int nodes = MorpherNumProgMorphs(mod, i);
+				for (int j=1; j<=nodes; j++)
+				{
+					if (INode *morph = MorpherGetProgMorph(mod, i, j))
+					{
+						markAsHandled(morph);
+					}
+				}
+			}
+		}
+	}
+	for (int i=0; i<node->NumberOfChildren(); i++) {
+		scanForIgnore(node->GetChildNode(i));
+	}
+#endif
+	return Exporter::Ok;
+}
 
 static bool HasKeys(Control *c)
 {

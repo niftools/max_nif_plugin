@@ -5114,6 +5114,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\NifCommon\nimorph.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\NifCommon\niutils.cpp"
 					>
 				</File>

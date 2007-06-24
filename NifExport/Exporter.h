@@ -169,6 +169,8 @@ public:
 	bool					isCollision(INode *node);
 	bool					isHandled(INode *node);
 	bool					markAsHandled(INode* node);
+	Result					scanForAnimation(INode* node);
+	Result					scanForIgnore(INode *node);
 
 	/* utility functions */
 	Mtl						*getMaterial(INode *node, int subMtl);

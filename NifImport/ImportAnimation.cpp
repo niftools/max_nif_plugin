@@ -105,10 +105,6 @@ struct AnimationImport
 
    bool ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, float time);
    INode* CreateGeoMesh(const vector<Vector3>& verts, const vector<Triangle>& tris, Matrix3& tm, INode *parent);
-
-   void MorpherBuildFromNode(Modifier* mod, int index, INode *target);
-   void MorpherSetName(Modifier* mod, int index, TSTR& name);
-   void MorpherRebuild(Modifier* mod, int index);
 };
 
 bool NifImporter::ImportAnimation()
@@ -550,7 +546,7 @@ bool KFMImporter::ImportAnimation()
 					 {
 						 int idx = -1;
 						 for (int i=1; i<=100; ++i) {
-							 if (strmatch(var2, mod->SubAnimName(i))) {
+							 if (strmatch(var2, MorpherGetName(mod, i))) {
 								 idx = i;
 								 break;
 							 }
@@ -1131,6 +1127,7 @@ INode *AnimationImport::CreateGeoMesh(
 		tnode->SetPrimaryVisibility(FALSE);
 		tnode->SetSecondaryVisibility(FALSE);
 		tnode->SetWireColor( RGB(0,255,0) );
+		tnode->SetUserPropBool("np_ignore", TRUE);
 
 		returnNode = node->GetINode();
 		
@@ -1141,175 +1138,3 @@ INode *AnimationImport::CreateGeoMesh(
 	return returnNode;
 }
 
-// CallMaxscript
-// Send the string to maxscript 
-//
-void AnimationImport::MorpherBuildFromNode(Modifier* mod, int index, INode *target)
-{
-	// Magic initialization stuff for maxscript.
-	static bool script_initialized = false;
-	if (!script_initialized) {
-		init_MAXScript();
-		script_initialized = TRUE;
-	}
-	init_thread_locals();
-	push_alloc_frame();
-	six_value_locals(name, fn, mod, index, target, result);
-	save_current_frames();
-	trace_back_active = FALSE;
-
-	try	{
-		// Create the name of the maxscript function we want.
-		// and look it up in the global names
-		vl.name = Name::intern(_T("WM3_MC_BuildFromNode"));
-		vl.fn = globals->get(vl.name);
-
-		// For some reason we get a global thunk back, so lets
-		// check the cell which should point to the function.
-		// Just in case if it points to another global thunk
-		// try it again.
-		while (vl.fn != NULL && is_globalthunk(vl.fn))
-			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
-		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
-			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
-
-		// Now we should have a MAXScriptFunction, which we can
-		// call to do the actual conversion. If we didn't
-		// get a MAXScriptFunction, we can't convert.
-		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
-			Value* args[3];
-
-			// Ok. WM3_MC_BuildFromNode takes three parameters
-			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
-			args[1] = vl.index = Integer::intern(index);
-			args[2] = vl.target = MAXNode::intern(target);
-
-			// Call the function and save the result.
-			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 3);
-		}
-	} catch (...) {
-		clear_error_source_data();
-		restore_current_frames();
-		MAXScript_signals = 0;
-		if (progress_bar_up)
-			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
-	}
-
-	// Magic Max Script stuff to clear the frame and locals.
-	pop_value_locals();
-	pop_alloc_frame();
-}
-
-void AnimationImport::MorpherSetName(Modifier* mod, int index, TSTR& name)
-{
-	// Magic initialization stuff for maxscript.
-	static bool script_initialized = false;
-	if (!script_initialized) {
-		init_MAXScript();
-		script_initialized = TRUE;
-	}
-	init_thread_locals();
-	push_alloc_frame();
-	six_value_locals(name, fn, mod, index, value, result);
-	save_current_frames();
-	trace_back_active = FALSE;
-	String* value = new String(name);
-
-	try	{
-		// Create the name of the maxscript function we want.
-		// and look it up in the global names
-		vl.name = Name::intern(_T("WM3_MC_SetName"));
-		vl.fn = globals->get(vl.name);
-
-		// For some reason we get a global thunk back, so lets
-		// check the cell which should point to the function.
-		// Just in case if it points to another global thunk
-		// try it again.
-		while (vl.fn != NULL && is_globalthunk(vl.fn))
-			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
-		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
-			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
-
-		// Now we should have a MAXScriptFunction, which we can
-		// call to do the actual conversion. If we didn't
-		// get a MAXScriptFunction, we can't convert.
-		// class_tag(MAXScriptFunction)
-		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
-			Value* args[3];
-
-			// Ok. WM3_MC_BuildFromNode takes three parameters
-			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
-			args[1] = vl.index = Integer::intern(index);
-			args[2] = vl.value = value;
-
-			// Call the function and save the result.
-			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 3);
-		}
-	} catch (...) {
-		value->collect();
-		clear_error_source_data();
-		restore_current_frames();
-		MAXScript_signals = 0;
-		if (progress_bar_up)
-			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
-	}
-
-	// Magic Max Script stuff to clear the frame and locals.
-	pop_value_locals();
-	pop_alloc_frame();
-}
-
-void AnimationImport::MorpherRebuild(Modifier* mod, int index)
-{
-	// Magic initialization stuff for maxscript.
-	static bool script_initialized = false;
-	if (!script_initialized) {
-		init_MAXScript();
-		script_initialized = TRUE;
-	}
-	init_thread_locals();
-	push_alloc_frame();
-	five_value_locals(name, fn, mod, index, result);
-	save_current_frames();
-	trace_back_active = FALSE;
-	try	{
-		// Create the name of the maxscript function we want.
-		// and look it up in the global names
-		vl.name = Name::intern(_T("WM3_MC_Rebuild"));
-		vl.fn = globals->get(vl.name);
-
-		// For some reason we get a global thunk back, so lets
-		// check the cell which should point to the function.
-		// Just in case if it points to another global thunk
-		// try it again.
-		while (vl.fn != NULL && is_globalthunk(vl.fn))
-			vl.fn = static_cast<GlobalThunk*>(vl.fn)->cell;
-		while (vl.fn != NULL && is_constglobalthunk(vl.fn))
-			vl.fn = static_cast<ConstGlobalThunk*>(vl.fn)->cell;
-
-		// Now we should have a MAXScriptFunction, which we can
-		// call to do the actual conversion. If we didn't
-		// get a MAXScriptFunction, we can't convert.
-		// class_tag(MAXScriptFunction)
-		if (vl.fn != NULL && vl.fn->tag == class_tag(Primitive)) {
-			Value* args[2];
-
-			// Ok. WM3_MC_BuildFromNode takes three parameters
-			args[0] = vl.mod = MAXModifier::intern(mod);	// The original material
-			args[1] = vl.index = Integer::intern(index);
-
-			// Call the function and save the result.
-			vl.result = static_cast<Primitive*>(vl.fn)->apply(args, 2);
-		}
-	} catch (...) {
-		clear_error_source_data();
-		restore_current_frames();
-		MAXScript_signals = 0;
-		if (progress_bar_up)
-			MAXScript_interface->ProgressEnd(), progress_bar_up = FALSE;
-	}
-
-	// Magic Max Script stuff to clear the frame and locals.
-	pop_value_locals();
-	pop_alloc_frame();
-}

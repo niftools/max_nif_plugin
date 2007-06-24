@@ -430,7 +430,16 @@ void GetIniFileName(char *iniName);
 
 Matrix3 GetLocalTM(INode *node);
 
+// Morph related routines in nimorph.cpp
 extern Modifier *GetMorpherModifier(INode* node);
 extern Modifier *CreateMorpherModifier(INode* node);
+extern void MorpherBuildFromNode(Modifier* mod, int index, INode *target);
+extern void MorpherSetName(Modifier* mod, int index, TSTR& name);
+extern void MorpherRebuild(Modifier* mod, int index);
+extern TSTR MorpherGetName(Modifier* mod, int index);
+extern bool MorpherIsActive(Modifier* mod, int index);
+extern bool MorpherHasData(Modifier* mod, int index);
+extern int MorpherNumProgMorphs(Modifier* mod, int index);
+extern INode *MorpherGetProgMorph(Modifier* mod, int index, int morphIdx);
 
 #endif // _NIUTILS_H_

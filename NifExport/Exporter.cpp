@@ -113,7 +113,9 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
    }
 
    // Always Scan for Collision Nodes first
+   scanForIgnore(node);
    scanForCollision(node);
+   scanForAnimation(node);
 
    mNiRoot = root;
    if (mSelectedOnly) {

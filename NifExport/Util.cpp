@@ -610,3 +610,20 @@ void Exporter::sortFloat4(vector<Float4>& vector)
 {
 	std::stable_sort(vector.begin(), vector.end(), SortVectorEquivalence());
 }
+
+Exporter::Result Exporter::scanForIgnore(INode *node)
+{   
+	if (NULL == node) 
+		return Exporter::Skip;
+
+	BOOL ignore = FALSE;
+	if (node->GetUserPropBool("np_ignore", ignore))
+	{
+		markAsHandled(node);
+	}
+	for (int i=0; i<node->NumberOfChildren(); i++) {
+		scanForIgnore(node->GetChildNode(i));
+	}
+	return Exporter::Ok;
+}
+
