@@ -975,8 +975,26 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 		return false;
 	vector<NiInterpolatorRef> interpolators = ctrl->GetInterpolators();
 	int nmorphs = data->GetMorphCount();
-	if ((interpolators.size() > nmorphs) || nmorphs == 0)
-		return false;
+	if (ni.nifVersion >= VER_10_1_0_106)
+	{
+		if ((interpolators.size() > nmorphs) || nmorphs == 0)
+			return false;
+	}
+	else
+	{
+		for (int i=0; i<nmorphs; i++)
+		{
+			if (NiFloatInterpolatorRef interp = new NiFloatInterpolator())
+			{
+				NiFloatDataRef fdata = new NiFloatData();
+				fdata->SetKeyType( data->GetMorphKeyType(i) );
+				fdata->SetKeys( data->GetMorphKeys(i) );
+				interp->SetFloatValue(FloatNegINF);
+				interp->SetData(fdata);
+				interpolators.push_back(interp);
+			}
+		}
+	}
 	NiGeometryDataRef geoData = parentGeom->GetData();
 	int nBaseVerts = geoData->GetVertexCount();
 	vector<Triangle> tris;
@@ -986,11 +1004,13 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 		if (triShapeData == NULL)
 			return false;
 		tris = triShapeData->GetTriangles();
+		baseVerts = triShapeData->GetVertices();
 	} else if (geoData->IsDerivedType(NiTriStripsData::TYPE)) {
 		NiTriStripsDataRef triStripData = StaticCast<NiTriStripsData>(geoData);
 		if (triStripData == NULL)
 			return false;
 		tris = triStripData->GetTriangles();
+		baseVerts = triStripData->GetVertices();
 	} else {
 		return false;
 	}
@@ -1002,23 +1022,15 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 	n->EvalWorldState(0, TRUE);
 
 	// Create meshes for morph
-	for (int i=0; i<nmorphs; ++i)
+	for (int i=1; i<nmorphs; ++i) // Skip first morph as its the baseline
 	{
 		string frameName = (ni.nifVersion >= VER_10_1_0_106) ? data->GetFrameName(i) : FormatString("Frame #%d", i);
 		vector<Vector3> verts = data->GetMorphVerts(i);
 		if (verts.size() != nBaseVerts)
 			continue;
 
-		// All verts after the first index are differentials
-		if (i == 0)
-		{
-			baseVerts = verts;
-		}
-		else
-		{
-			for (int j=0; j<nBaseVerts; ++j)
-				verts[j] += baseVerts[j];
-		}
+		for (int j=0; j<nBaseVerts; ++j)
+			verts[j] += baseVerts[j];
 
 		TSTR name(frameName.c_str());
 		INode *geoNode = CreateGeoMesh(verts, tris, tm, n);

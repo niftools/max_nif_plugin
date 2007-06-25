@@ -275,7 +275,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
             // Create node if using Extra Nodes or if exporting with anim and node has key values
             newParent = makeNode(nodeParent, node, local);
          } else {
-            // Else dont create a node
+            // Else don't create a node
             newParent = nodeParent;
          }
          // No need to export meshes when NIF is not exported.

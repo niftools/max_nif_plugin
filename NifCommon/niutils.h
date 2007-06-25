@@ -441,5 +441,6 @@ extern bool MorpherIsActive(Modifier* mod, int index);
 extern bool MorpherHasData(Modifier* mod, int index);
 extern int MorpherNumProgMorphs(Modifier* mod, int index);
 extern INode *MorpherGetProgMorph(Modifier* mod, int index, int morphIdx);
+extern void MorpherGetMorphVerts(Modifier* mod, int index, vector<Niflib::Vector3>& verts);
 
 #endif // _NIUTILS_H_

@@ -124,8 +124,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 6|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -331,8 +331,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 6|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -538,8 +538,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 7|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -745,8 +745,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 7|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -952,8 +952,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 8|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -1159,8 +1159,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 8|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -1364,8 +1364,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 5|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -1572,8 +1572,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 5|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -1780,8 +1780,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 9|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -1988,8 +1988,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 9|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -2198,8 +2198,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -2406,8 +2406,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -2612,8 +2612,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - gmax|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -2820,8 +2820,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - gmax|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -3028,8 +3028,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4.2|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -3236,8 +3236,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4.2|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) $(PlatformName)\"
+			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
+			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"

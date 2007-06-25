@@ -64,8 +64,7 @@ struct AnimationExport
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
    Interval GetTimeRange(INode *n);
-   void GetTimeRange(Control *n, Interval& range);
-
+   void GetTimeRange(Control *c, Interval& range);
 
    Exporter &ne;
    Interval range;
@@ -205,6 +204,7 @@ NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
    }
    return accumNode;
 }
+
 Exporter::Result Exporter::doAnimExport(NiControllerSequenceRef root)
 {
    AnimationExport animExporter(*this);
@@ -247,7 +247,7 @@ bool Exporter::isNodeTracked(INode *node)
 }
 
 Exporter::Result Exporter::scanForAnimation(INode *node)
-{   
+{
 	if (NULL == node) 
 		return Exporter::Skip;
 
@@ -602,7 +602,7 @@ Control *AnimationExport::GetTMController(INode *n)
    return c;
 }
 
-void AnimationExport::GetTimeRange(Control *c, Interval& range)
+static void GetTimeRange(Control *c, Interval& range)
 {
    if (IKeyControl *ikeys = GetKeyControlInterface(c)){
       int n = ikeys->GetNumKeys();
@@ -620,6 +620,11 @@ void AnimationExport::GetTimeRange(Control *c, Interval& range)
       }
    }
 }
+void AnimationExport::GetTimeRange(Control *c, Interval& range)
+{
+	::GetTimeRange(c, range);
+}
+
 
 Interval AnimationExport::GetTimeRange(INode *node)
 {
@@ -1056,3 +1061,109 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
    }
    return ok;
 }
+
+Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector3>& baseVerts, NiObjectNETRef owner)
+{
+	// Check for morphs
+	//if ( mExportType != NIF_WO_ANIM ) 
+	if (mod != NULL)
+	{
+		if (mod->IsEnabled()) {
+			NiGeomMorpherControllerRef ctrl = new NiGeomMorpherController();
+			NiMorphDataRef data = new NiMorphData();
+			vector<NiInterpolatorRef> interpolators;
+			vector<int> indices;
+			for (int i=1; i<100; ++i) {
+				if (MorpherHasData(mod, i) && MorpherIsActive(mod, i)) {
+					indices.push_back(i);
+				}
+			}
+			data->SetMorphCount( indices.size() + 1);
+			data->SetFrameName(0, string("Base"));
+			data->SetMorphKeyType(0, LINEAR_KEY);
+
+			Interval range; range.SetEmpty();
+			
+			int nbaseverts = baseVerts.size();
+			data->SetVertexCount( nbaseverts );
+			data->SetMorphVerts(0, baseVerts);
+			if (NiFloatInterpolatorRef interp = new NiFloatInterpolator())
+			{
+				NiFloatDataRef fdata = new NiFloatData();
+				vector<FloatKey> keys;
+				keys.resize(2);
+				data->SetMorphKeyType(0, LINEAR_KEY);
+				data->SetMorphKeys(0, keys);
+				fdata->SetKeyType(LINEAR_KEY);
+				fdata->SetKeys(keys);
+				interp->SetFloatValue(FloatNegINF);
+				interp->SetData(fdata);
+				interpolators.push_back(interp);
+			}
+
+			for (int i=0; i<indices.size(); ++i) {
+				int idx = indices[i];
+				if (IParamBlock* pblock = (IParamBlock*)mod->GetReference(idx)) {
+					if (Control *c = pblock->GetController(0)) {
+						GetTimeRange(c, range);
+					}
+				}
+			}
+
+			for (int i=0; i<indices.size(); ++i) {
+				int idx = indices[i];
+
+				IParamBlock* pblock = (IParamBlock*)mod->GetReference(idx);
+				TSTR name = MorpherGetName(mod, idx);
+				data->SetFrameName(i+1, string(name));
+
+				KeyType keyType = LINEAR_KEY;
+				vector<FloatKey> keys;
+				if (Control *c = pblock->GetController(0)) {
+					if (c->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
+						GetKeys<FloatKey, ILinFloatKey>(c, keys, range);
+						keyType = LINEAR_KEY;
+					} else if (c->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
+						GetKeys<FloatKey, IBezFloatKey>(c, keys, range);
+						keyType = QUADRATIC_KEY;
+					} else if (c->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
+						GetKeys<FloatKey, ITCBFloatKey>(c, keys, range);
+						keyType = TBC_KEY;
+					} else {
+						GetKeys<FloatKey, IBezFloatKey>(c, keys, range);
+						keyType = QUADRATIC_KEY;
+					}
+				}
+				ScaleKeys(keys, 1.0f/100.0f);
+				if (NiFloatInterpolatorRef interp = new NiFloatInterpolator())
+				{
+					NiFloatDataRef fdata = new NiFloatData();
+					data->SetMorphKeyType(i+1, keyType);
+					data->SetMorphKeys(i+1, keys);
+					fdata->SetKeyType(keyType);
+					fdata->SetKeys(keys);
+					interp->SetFloatValue(FloatNegINF);
+					interp->SetData(fdata);
+					interpolators.push_back(interp);
+				}
+
+				vector<Vector3> verts;
+				MorpherGetMorphVerts(mod, idx, verts);
+				for (int j=0; j<verts.size(); j++)
+					verts[j] = verts[j] - baseVerts[j];
+				data->SetMorphVerts(i+1, verts);
+			}
+			ctrl->SetData(data);
+			if (Exporter::mNifVersionInt >= VER_10_1_0_106)
+				ctrl->SetInterpolators(interpolators);
+			ctrl->SetFlags( 0x000C );
+			ctrl->SetFrequency(1.0f);
+			ctrl->SetPhase(0.0f);
+			ctrl->SetStartTime( 0.0f );
+			ctrl->SetStopTime( FrameToTime( range.Duration()-1 ) );
+			owner->AddController(ctrl);
+		}
+	}
+	return Exporter::Ok;
+}
+

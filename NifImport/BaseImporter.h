@@ -72,7 +72,7 @@ public:
       webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org");
       wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max");
 
-	  nifVersion = Niflib::GetNifVersion(this->path);
+	  nifVersion = Niflib::GetNifVersion(this->name);
 
       // Load ini settings
       iniFileValid = false;

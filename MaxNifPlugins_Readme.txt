@@ -36,10 +36,11 @@
       0.2.14
       -----
     o Exporter
-      - Fix a number of issues with bhkConvexShape and bhkRigidBody
-    o Importer
-      - Introduce Morph animation support
-      
+      - Fix issues with bhkConvexShape and bhkRigidBody
+    o Exporter/Importer
+      - Introduce Morpher animation support
+         
+          
       0.2.13
       -----
     o Properties

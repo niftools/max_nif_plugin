@@ -207,7 +207,7 @@ public:
 	// adds a face to a face group
 	void					addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors);
 	// creates face groups from faces with same sub material id
-	bool					splitMesh(INode *node, Mesh *, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors);
+	bool					splitMesh(INode *node, Mesh &, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors, bool noSplit);
 	// creates a NiTriStrips or NiTriShape hierarchy from a face group
 	NiTriBasedGeomRef makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp, bool exportStrips);
 	// splits mesh and converts it into nif blocks
@@ -271,6 +271,7 @@ public:
 	bool isNodeKeyed(INode *node);
 	Ref<NiTimeController> CreateController(INode *node, Interval range);
 	static void InitializeTimeController(Ref<NiTimeController> ctrl, NiNodeRef parent);
+	Result exportGeomMorpherControl(Modifier* mod, vector<Niflib::Vector3>& verts, NiObjectNETRef owner);
 
 	/* misc export */
 	bool exportUPB(NiNodeRef &root, INode *node);
