@@ -82,8 +82,8 @@ MaxNifImport::MaxNifImport()
    GetIniFileName(iniName);
    iniFileName = iniName;
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName.c_str());
-   webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org", iniFileName.c_str());
-   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max", iniFileName.c_str());
+   webSite = GetIniValue<TSTR>("System", "Website", "http://niftools.sourceforge.net", iniFileName.c_str());
+   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://niftools.sourceforge.net/wiki/3ds_Max", iniFileName.c_str());
 }
 
 MaxNifImport::~MaxNifImport() 

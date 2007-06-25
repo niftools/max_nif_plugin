@@ -69,8 +69,8 @@ public:
          }
       }
 
-      webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org");
-      wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max");
+      webSite = GetIniValue<TSTR>("System", "Website", "http://niftools.sourceforge.net");
+      wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://niftools.sourceforge.net/wiki/3ds_Max");
 
 	  nifVersion = Niflib::GetNifVersion(this->name);
 

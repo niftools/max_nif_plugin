@@ -287,8 +287,8 @@ NifExport::NifExport()
    shortDescription = GetIniValue<TSTR>("System", "ShortDescription", "Netimmerse/Gamebryo", iniFileName);
    fileVersion = GetFileVersion(NULL);
 
-   webSite = GetIniValue<TSTR>("System", "Website", "http://www.niftools.org", iniFileName);
-   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://www.niftools.org/wiki/index.php/3ds_Max", iniFileName);
+   webSite = GetIniValue<TSTR>("System", "Website", "http://niftools.sourceforge.net", iniFileName);
+   wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://niftools.sourceforge.net/wiki/3ds_Max", iniFileName);
 }
 
 NifExport::~NifExport() 
@@ -328,17 +328,17 @@ const TCHAR *NifExport::AuthorName()
 
 const TCHAR *NifExport::CopyrightMessage() 
 {	
-	return _T("http://www.niftools.org");
+	return _T("http://niftools.sourceforge.net");
 }
 
 const TCHAR *NifExport::OtherMessage1() 
 {		
-	return _T("http://www.niftools.org");
+	return _T("http://niftools.sourceforge.net");
 }
 
 const TCHAR *NifExport::OtherMessage2() 
 {		
-	return _T("http://www.niftools.org");
+	return _T("http://niftools.sourceforge.net");
 }
 
 unsigned int NifExport::Version()
