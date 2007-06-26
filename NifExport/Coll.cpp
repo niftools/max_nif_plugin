@@ -540,7 +540,8 @@ bhkShapeRef Exporter::makebhkBoxShape(INode *node, Object *obj, Matrix3& tm)
 
 		box->SetMaterial(HavokMaterial(mtl));
 
-		Matrix3 tm = GetLocalTM(node);
+		Matrix3 tm = node->GetObjectTM(0);
+		//tm.SetTrans(tm.GetTrans() / Exporter::bhkScaleFactor);
 		if (tm.IsIdentity())
 		{
 			retval = StaticCast<bhkShape>(box);
@@ -576,7 +577,8 @@ bhkShapeRef	Exporter::makebhkSphereShape(INode *node, Object *obj, Matrix3& tm)
 		shape->SetRadius(radius);
 		shape->SetMaterial(HavokMaterial(mtl));
 
-		Matrix3 tm = GetLocalTM(node);
+		Matrix3 tm = node->GetObjectTM(0);
+		tm.SetTrans(tm.GetTrans() / Exporter::bhkScaleFactor);
 		if (tm.IsIdentity())
 		{
 			retval = StaticCast<bhkShape>(shape);
@@ -615,7 +617,7 @@ bhkShapeRef	Exporter::makebhkCapsuleShape(INode *node, Object *obj, Matrix3& tm)
 		shape->SetRadius2(radius2);
 		shape->SetMaterial(HavokMaterial(mtl));
 
-		Matrix3 tm = GetLocalTM(node);
+		Matrix3 tm = node->GetObjectTM(0);
 		Point3 center = tm.GetTrans();
 
 		Matrix3 rot = tm;
