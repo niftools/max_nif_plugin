@@ -93,6 +93,7 @@ var sVersion: String;
     i: Integer;
     UsagePage: TInputOptionWizardPage;
     OBDataDirPage: TInputDirWizardPage;
+    OBSIDataDirPage: TInputDirWizardPage;
     MWDataDirPage: TInputDirWizardPage;
     Civ4DataDirPage: TInputDirWizardPage;
     DAoCDataDirPage: TInputDirWizardPage;
@@ -139,12 +140,13 @@ begin
     Result := True;
     case Page.ID of
       OBDataDirPage.ID: Result    := not UsagePage.Values[0];
-      MWDataDirPage.ID: Result    := not UsagePage.Values[1];
-      Civ4DataDirPage.ID: Result  := not UsagePage.Values[2];
-      DAoCDataDirPage.ID: Result  := not UsagePage.Values[3];
-      FFDataDirPage.ID: Result    := not UsagePage.Values[4];
-      FF3RDataDirPage.ID: Result  := not UsagePage.Values[5];
-      BCDataDirPage.ID: Result    := not UsagePage.Values[6];
+      OBSIDataDirPage.ID: Result  := not UsagePage.Values[1];
+      MWDataDirPage.ID: Result    := not UsagePage.Values[2];
+      Civ4DataDirPage.ID: Result  := not UsagePage.Values[3];
+      DAoCDataDirPage.ID: Result  := not UsagePage.Values[4];
+      FFDataDirPage.ID: Result    := not UsagePage.Values[5];
+      FF3RDataDirPage.ID: Result  := not UsagePage.Values[6];
+      BCDataDirPage.ID: Result    := not UsagePage.Values[7];
     end;
 end;
 
@@ -158,6 +160,7 @@ begin
     'Please specify which games you wish to add custom directories for, then click Next.',
     False, False);
   UsagePage.Add('Oblivion');
+  UsagePage.Add('Oblivion: Shivering Isles');
   UsagePage.Add('Morrowind');
   UsagePage.Add('Civilization 4');
   UsagePage.Add('Dark Age of Camelot');
@@ -174,7 +177,15 @@ begin
   OBDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
   OBDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
 
-  MWDataDirPage := CreateInputDirPage(OBDataDirPage.ID,
+  OBSIDataDirPage := CreateInputDirPage(OBDataDirPage.ID,
+    'Select Oblivion Shivering Isles Data Directory', 'Where are the extracted Oblivion data files located?',
+    'Select the folders in which 3ds Max should look for files, then click Next.',
+    False, '');
+  OBSIDataDirPage.OnShouldSkipPage := @DataDirPage_ShouldSkipPage;
+  OBSIDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
+  OBSIDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
+
+  MWDataDirPage := CreateInputDirPage(OBSIDataDirPage.ID,
     'Select Morrowind Data Directory', 'Where are the extracted Morrowind data files located?',
     'Select the folders in which 3ds Max should look for files, then click Next.',
     False, '');
@@ -224,15 +235,18 @@ begin
 
   { Set default values, using settings that were stored last time if possible }
   UsagePage.Values[0] := GetPrevDataBool('bOB', False);
-  UsagePage.Values[1] := GetPrevDataBool('bMW', False);
-  UsagePage.Values[2] := GetPrevDataBool('bCiv4', False);
-  UsagePage.Values[3] := GetPrevDataBool('bDAoC', False);
-  UsagePage.Values[4] := GetPrevDataBool('bFF', False);
-  UsagePage.Values[5] := GetPrevDataBool('bFF3R', False);
-  UsagePage.Values[6] := GetPrevDataBool('bBC', False);
+  UsagePage.Values[1] := GetPrevDataBool('bOBSI', False);
+  UsagePage.Values[2] := GetPrevDataBool('bMW', False);
+  UsagePage.Values[3] := GetPrevDataBool('bCiv4', False);
+  UsagePage.Values[4] := GetPrevDataBool('bDAoC', False);
+  UsagePage.Values[5] := GetPrevDataBool('bFF', False);
+  UsagePage.Values[6] := GetPrevDataBool('bFF3R', False);
+  UsagePage.Values[7] := GetPrevDataBool('bBC', False);
 
   OBDataDirPage.Values[0] := GetPreviousData('OBModelDir', '');
   OBDataDirPage.Values[1] := GetPreviousData('OBTexDir', '');
+  OBSIDataDirPage.Values[0] := GetPreviousData('OBSIModelDir', '');
+  OBSIDataDirPage.Values[1] := GetPreviousData('OBSITexDir', '');
   MWDataDirPage.Values[0] := GetPreviousData('MWModelDir', '');
   MWDataDirPage.Values[1] := GetPreviousData('MWTexDir', '');
   Civ4DataDirPage.Values[0] := GetPreviousData('Civ4ModelDir', '');
@@ -255,15 +269,18 @@ var
 begin
   { Store the settings so we can restore them next time }
   SetPrevDataString(PreviousDataKey, 'bOB',   UsagePage.Values[0]);
-  SetPrevDataString(PreviousDataKey, 'bMW',   UsagePage.Values[1]);
-  SetPrevDataString(PreviousDataKey, 'bCiv4', UsagePage.Values[2]);
-  SetPrevDataString(PreviousDataKey, 'bDAoC', UsagePage.Values[3]);
-  SetPrevDataString(PreviousDataKey, 'bFF',   UsagePage.Values[4]);
-  SetPrevDataString(PreviousDataKey, 'bFF3R', UsagePage.Values[5]);
-  SetPrevDataString(PreviousDataKey, 'bBC',   UsagePage.Values[6]);
+  SetPrevDataString(PreviousDataKey, 'bOBSI', UsagePage.Values[1]);
+  SetPrevDataString(PreviousDataKey, 'bMW',   UsagePage.Values[2]);
+  SetPrevDataString(PreviousDataKey, 'bCiv4', UsagePage.Values[3]);
+  SetPrevDataString(PreviousDataKey, 'bDAoC', UsagePage.Values[4]);
+  SetPrevDataString(PreviousDataKey, 'bFF',   UsagePage.Values[5]);
+  SetPrevDataString(PreviousDataKey, 'bFF3R', UsagePage.Values[6]);
+  SetPrevDataString(PreviousDataKey, 'bBC',   UsagePage.Values[7]);
 
   SetPreviousData(PreviousDataKey, 'OBModelDir', OBDataDirPage.Values[0]);
   SetPreviousData(PreviousDataKey, 'OBTexDir', OBDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'OBSIModelDir', OBSIDataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'OBSITexDir', OBSIDataDirPage.Values[1]);
   SetPreviousData(PreviousDataKey, 'MWModelDir', MWDataDirPage.Values[0]);
   SetPreviousData(PreviousDataKey, 'MWTexDir', MWDataDirPage.Values[1]);
   SetPreviousData(PreviousDataKey, 'Civ4ModelDir', Civ4DataDirPage.Values[0]);
@@ -410,22 +427,32 @@ begin
       if UsagePage.Values[0] then begin {Oblivion}
         SetIniString('Oblivion', 'MeshRootPath', OBDataDirPage.Values[0], iniFile);
         SetIniString('Oblivion', 'TextureRootPath', OBDataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[1] then begin
+      end
+      if UsagePage.Values[1] then begin
+        SetIniString('Oblivion', 'IslesMeshRootPath', OBSIDataDirPage.Values[0], iniFile);
+        SetIniString('Oblivion', 'IslesTextureRootPath', OBSIDataDirPage.Values[1], iniFile);
+      end
+      if UsagePage.Values[2] then begin
         SetIniString('Morrowind', 'MeshRootPath', MWDataDirPage.Values[0], iniFile);
         SetIniString('Morrowind', 'TextureRootPath', MWDataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[2] then begin
+      end
+      if UsagePage.Values[3] then begin
         SetIniString('Civilization 4', 'MeshRootPath', Civ4DataDirPage.Values[0], iniFile);
         SetIniString('Civilization 4', 'TextureRootPath', Civ4DataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[3] then begin
+      end
+      if UsagePage.Values[4] then begin
         SetIniString('Dark Age of Camelot', 'MeshRootPath', DAoCDataDirPage.Values[0], iniFile);
         SetIniString('Dark Age of Camelot', 'TextureRootPath', DAoCDataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[4] then begin
+      end
+      if UsagePage.Values[5] then begin
         SetIniString('Freedom Force', 'MeshRootPath', FFDataDirPage.Values[0], iniFile);
         SetIniString('Freedom Force', 'TextureRootPath', FFDataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[5] then begin
+      end
+      if UsagePage.Values[6] then begin
         SetIniString('Freedom Force vs. the 3rd Reich', 'MeshRootPath', FF3RDataDirPage.Values[0], iniFile);
         SetIniString('Freedom Force vs. the 3rd Reich', 'TextureRootPath', FF3RDataDirPage.Values[1], iniFile);
-      end else if UsagePage.Values[6] then begin
+      end
+      if UsagePage.Values[7] then begin
         SetIniString('Star Trek: Bridge Commander', 'MeshRootPath', BCDataDirPage.Values[0], iniFile);
         SetIniString('Star Trek: Bridge Commander', 'TextureRootPath', BCDataDirPage.Values[1], iniFile);
       end;
