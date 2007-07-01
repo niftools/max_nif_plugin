@@ -576,3 +576,30 @@ BOOL bhkRigidBodyIfcHelper::GetEnableTransform(TimeValue time, Interval& valid) 
 	rbpblock->GetValue(PB_RB_ENABLE_TRANS,time,value,valid);
 	return value;
 }
+
+const USHORT kRBChunkSelLevel = 0x8000;
+IOResult bhkRigidBodyIfcHelper::RBSave(ISave *isave)
+{
+	IOResult res;
+
+	isave->BeginChunk(kRBChunkSelLevel);
+	res = rbpblock->Save(isave);
+	isave->EndChunk();
+
+	return res;
+}
+
+IOResult bhkRigidBodyIfcHelper::RBLoad(ILoad *iload)
+{
+	IOResult res;
+	while (IO_OK==(res=iload->OpenChunk())) {
+		switch(iload->CurChunkID())  {
+		case kRBChunkSelLevel:
+			res = rbpblock->Load(iload);
+			break;
+		}
+		iload->CloseChunk();
+		if (res!=IO_OK) return res;
+	}
+	return IO_OK;
+}

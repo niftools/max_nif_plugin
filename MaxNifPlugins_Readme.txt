@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.14
+                        MaxPlugins 0.2.15
                         =================
 
  
@@ -33,15 +33,32 @@
 
     Change log
     ----------
+      0.2.15
+      -----
+    o Props
+      - Resolve issue with bhkRigidBody object not saving and restoring data
+    o Exporter/Importer
+      - Resolve many issues with transforms and bhk shapes.
+    o Exporter
+      - Fix crash when exporting animations.
+      - Fix issue with exporting Skin data causing missing vertexes in nifskope
+      - Fix issue with exporting textkeys for morrowind and geomorph faces
+         (Requires import to not ignore root node and selected export of that node)
+      - Add animation export support for accumulate transforms (translation only)
+      - Fix some issues with geometry Morpher exporter with bad UV data.
+    o Importer
+      - Fixed issue with not ignoring root node when option unchecked
+      - Fixed issue of bhkRigidBody object not importing data properly
+      - Set Accumulate Transforms to accumulate y-data by default
+    
       0.2.14
       -----
     o Exporter
       - Fix issues with bhkConvexShape and bhkRigidBody
     o Exporter/Importer
       - Introduce Morpher animation support
-         
-          
-      0.2.13
+      
+      0.2.13.1
       -----
     o Properties
       - Add Optimize option to proxy and modifier

@@ -325,6 +325,10 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 		grp.uvs.resize(nv);
 		grp.vnorms.resize(nv);
 
+		Matrix3 texm;
+		getTextureMatrix(texm, getMaterial(node, 0));
+		texm *= flip;
+
 		for (int face=0; face<nf; ++face) {
 			for (int vi=0; vi<3; ++vi) {
 				int idx = mesh.faces[face].getVert(vi);
@@ -341,21 +345,25 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 				else
 					norm = getVertexNormal(&mesh, face, mesh.getRVertPtr(idx));
 #endif
+				Point3 uv;
+				if (mesh.tVerts && mesh.tvFace) {
+					uv = mesh.tVerts[ mesh.tvFace[ face ].t[ vi ]] * texm;
+					uv.y += 1.0f;
+				}
+
 				if (grp.vidx[idx] == idx){
 					ASSERT(grp.verts[idx] == TOVECTOR3(mesh.getVert(idx)));
 					//ASSERT(vg.norm == norm);
-					Point3 uv = mesh.getTVert(idx);
+					//Point3 uv = mesh.getTVert(idx);
 					if (mesh.getNumTVerts() > 0)
 					{
-						uv.y = -uv.y;
 						ASSERT(grp.uvs[idx].u == uv.x && grp.uvs[idx].v == uv.y);
 					}
 				} else {
 					grp.vidx[idx] = idx;
 					grp.verts[idx] = TOVECTOR3(mesh.getVert(idx));
-					Point3 uv = (mesh.getNumTVerts() > 0) ? mesh.getTVert(idx) : Point3(0.0f,0.0f,0.0f);
 					grp.uvs[idx].u = uv.x;
-					grp.uvs[idx].v = -uv.y;
+					grp.uvs[idx].v = uv.y;
 					grp.vnorms[idx] = TOVECTOR3(norm);
 				}
 			}

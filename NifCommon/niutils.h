@@ -348,7 +348,7 @@ static inline Niflib::Matrix33 TOMATRIX33(const Matrix3 &tm, bool invert = false
 }
 
 static inline Matrix3 TOMATRIX3(Niflib::Vector3& trans, Niflib::QuaternionXYZW quat, float scale){
-	Matrix3 tm, qm;
+	Matrix3 tm(true), qm;
 	Quat q(quat.x, quat.y, quat.z, quat.w);
 	q.MakeMatrix(qm);
 	tm.SetTranslate(TOPOINT3(trans));

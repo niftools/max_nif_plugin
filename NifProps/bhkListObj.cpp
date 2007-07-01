@@ -98,6 +98,9 @@ public:
    BOOL OKtoDisplay(TimeValue t);
    void InvalidateUI();
 
+   virtual IOResult Save(ISave *isave);
+   virtual IOResult Load(ILoad *iload);		
+
    int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
    //int HitTest(TimeValue t, INode *inode, int type, int crossing, int flags, IPoint2 *p, ViewExp *vpt);
 
@@ -571,3 +574,24 @@ int bhkListObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
    gw->setRndLimits(rlim);
    return 0;
 }
+
+const USHORT kModChunkSelLevel = 0x0100;
+
+IOResult bhkListObject::Save(ISave *isave)
+{
+	IOResult res;
+	res = SimpleObject2::Save(isave);
+	if (res == IO_OK)
+		res = RBSave(isave);
+	return res;
+}
+
+IOResult bhkListObject::Load(ILoad *iload)
+{
+	IOResult res;
+	res = SimpleObject2::Load(iload);
+	if (res == IO_OK)
+		res = RBLoad(iload);
+	return res;
+}
+

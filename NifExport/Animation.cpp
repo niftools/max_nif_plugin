@@ -59,12 +59,13 @@ struct AnimationExport
 
    bool doExport(NiControllerSequenceRef seq);
    bool doExport(NiControllerManagerRef ctrl, INode *node);
-   bool exportController(INode *node, bool hasAccum);
+   bool exportController(INode *node, Exporter::AccumType accumType);
    Control *GetTMController(INode* node);
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
    Interval GetTimeRange(INode *n);
    void GetTimeRange(Control *c, Interval& range);
+   bool splitAccum(NiTransformDataRef base, NiTransformDataRef accum, Exporter::AccumType accumType);
 
    Exporter &ne;
    Interval range;
@@ -372,6 +373,8 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
    NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
    seq->SetTextKey(textKeyData);
 
+   Exporter::AccumType accumType = Exporter::AT_NONE;
+
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
 #if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
@@ -411,7 +414,22 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
                               seq->SetName(*itr);
                            } else if (strmatch("-loop", *itr)) {
                               seq->SetCycleType(CYCLE_LOOP);
-                           }
+						   } else if (strmatch("-at", *itr)) {
+							   if (++itr == args.end()) break;
+							   string type = (*itr);
+							   if (strmatch(type, "none")) {
+								   accumType = Exporter::AT_NONE;
+							   } else {
+								   for (int j=0; j<type.size(); ++j) {
+									   if (tolower(type[j]) == 'x')
+										   accumType = Exporter::AccumType(accumType | Exporter::AT_X);
+									   else if (tolower(type[j]) == 'y')
+										   accumType = Exporter::AccumType(accumType | Exporter::AT_Y);
+									   else if (tolower(type[j]) == 'z')
+										   accumType = Exporter::AccumType(accumType | Exporter::AT_Z);
+								   }
+							   }
+						   }
                         }
                      } else if ( wildmatch("end*", key->note) ) {
                         range.SetEnd( key->time );
@@ -439,7 +457,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
 
    // Now let the fun begin.
 
-   return exportController(node, true);
+   return exportController(node, accumType);
 }
 
 bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
@@ -452,6 +470,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
    vector<NiControllerSequenceRef> seqs;
    vector<StringKey> textKeys;
    NiControllerSequenceRef curSeq;
+   Exporter::AccumType accumType = Exporter::AT_FORCE;
 
    // Populate Text keys and Sequence information from note tracks
    if (Exporter::mUseTimeTags) {
@@ -528,7 +547,22 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
                               curSeq->SetName(*itr);
                            } else if (strmatch("-loop", *itr)) {
                               curSeq->SetCycleType(CYCLE_LOOP);
-                           }
+						   } else if (strmatch("-at", *itr)) {
+							   if (++itr == args.end()) break;
+							   string type = (*itr);
+							   if (strmatch(type, "none")) {
+								   accumType = Exporter::AT_NONE;
+							   } else {
+								   for (int j=0; j<type.size(); ++j) {
+									   if (tolower(type[j]) == 'x')
+										   accumType = Exporter::AccumType( accumType | Exporter::AT_X );
+									   else if (tolower(type[j]) == 'y')
+										   accumType = Exporter::AccumType( accumType | Exporter::AT_Y );
+									   else if (tolower(type[j]) == 'z')
+										   accumType = Exporter::AccumType( accumType | Exporter::AT_Z );
+								   }
+							   }
+						   }
                         }
                      }
 
@@ -571,7 +605,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
       this->range = this->ranges[this->seq];
 
       // Now let the fun begin.
-      bool ok = exportController(node, true);
+      bool ok = exportController(node, accumType);
    }
 
    // Set objects with animation
@@ -688,16 +722,16 @@ Interval AnimationExport::GetTimeRange(INode *node)
 NiTimeControllerRef Exporter::CreateController(INode *node, Interval range)
 {
    AnimationExport ae(*this);
+   if (Exporter::mExportType == Exporter::NIF_WO_KF && isNodeTracked(node)) {
+	   NiNodeRef ninode = getNode(node);
+	   vector<StringKey> textKeys;
+	   if (GetTextKeys(node, textKeys, range)) {
+		   NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+		   ninode->AddExtraData(StaticCast<NiExtraData>(textKeyData), Exporter::mNifVersionInt);
+		   textKeyData->SetKeys(textKeys);
+	   }
+   }
    if ( NiTimeControllerRef tc = ae.exportController(node, range, false) ) {
-      if (Exporter::mExportType == Exporter::NIF_WO_KF && isNodeTracked(node)) {
-         NiNodeRef ninode = getNode(node);
-         vector<StringKey> textKeys;
-         if (GetTextKeys(node, textKeys, range)) {
-            NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
-            ninode->AddExtraData(StaticCast<NiExtraData>(textKeyData), Exporter::mNifVersionInt);
-            textKeyData->SetKeys(textKeys);
-         }
-      }
       return tc;
    }
    return NiTimeControllerRef();
@@ -994,7 +1028,54 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
    return timeControl;
 }
 
-bool AnimationExport::exportController(INode *node, bool hasAccum)
+bool AnimationExport::splitAccum(NiTransformDataRef base, NiTransformDataRef accum, Exporter::AccumType accumType)
+{
+	vector<Vector3Key> baseTrans = base->GetTranslateKeys();
+	vector<Vector3Key> accmTrans; accmTrans.resize( baseTrans.size() );
+	accum->SetTranslateType( base->GetTranslateType() );
+
+	for (int i=0, n=baseTrans.size(); i<n; ++i) {
+		accmTrans[i] = baseTrans[i];
+		accmTrans[i].data = Vector3(0.0f, 0.0f, 0.0f);
+		if (accumType & Exporter::AT_X) {
+			swap(accmTrans[i].data.x, baseTrans[i].data.x);
+		}
+		if (accumType & Exporter::AT_Y) {
+			swap(accmTrans[i].data.y, baseTrans[i].data.y);
+		}
+		if (accumType & Exporter::AT_Z) {
+			swap(accmTrans[i].data.z, baseTrans[i].data.z);
+		}
+	}
+	base->SetTranslateKeys(accmTrans);
+	accum->SetTranslateKeys(baseTrans);
+
+	// Rotate
+	accum->SetRotateType( base->GetRotateType() );
+	accum->SetQuatRotateKeys( base->GetQuatRotateKeys() );
+	base->SetQuatRotateKeys( vector<QuatKey>() );
+
+	accum->SetXRotateType( base->GetXRotateType() );
+	accum->SetXRotateKeys( base->GetXRotateKeys() );
+	base->SetXRotateKeys( vector<FloatKey>() );
+
+	accum->SetYRotateType( base->GetYRotateType() );
+	accum->SetYRotateKeys( base->GetYRotateKeys() );
+	base->SetYRotateKeys( vector<FloatKey>() );
+
+	accum->SetZRotateType( base->GetZRotateType() );
+	accum->SetZRotateKeys( base->GetZRotateKeys() );
+	base->SetZRotateKeys( vector<FloatKey>() );
+
+	// Scale
+	accum->SetScaleType( base->GetScaleType() );
+	accum->SetScaleKeys( base->GetScaleKeys() );
+	base->SetScaleKeys( vector<FloatKey>() );
+
+	return true;
+}
+
+bool AnimationExport::exportController(INode *node, Exporter::AccumType accumType)
 {
    bool ok = true;
 
@@ -1015,7 +1096,7 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
          seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), priority);
 
          // Handle NonAccum 
-         if (Exporter::mAllowAccum && hasAccum)
+		 if (Exporter::mAllowAccum && accumType != Exporter::AT_NONE)
          {
             NiTransformInterpolatorRef interp = DynamicCast<NiTransformInterpolator>(interpControl->GetInterpolator());
             NiNodeRef accnode = ne.getNode( FormatString("%s NonAccum", node->GetName()) );
@@ -1032,10 +1113,16 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
                accinterp->SetScale( 1.0f );
                accinterp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
 
-               // Transfer entire data to accum node
                if (interp != NULL) {
-                  accinterp->SetData( interp->GetData() );
-                  interp->SetData( NiTransformDataRef() );
+				   NiTransformDataRef accumData = new NiTransformData();
+				   // Transfer entire data to accum node
+				   if ((accumType & Exporter::AT_XYZ) == Exporter::AT_XYZ) {
+					   accinterp->SetData( interp->GetData() );
+					   interp->SetData( accumData );
+				   } else {
+					   accinterp->SetData( accumData );
+					   splitAccum(interp->GetData(), accumData, accumType);
+				   }
                }
                seq->AddInterpolator(StaticCast<NiSingleInterpController>(acccontrol), Exporter::mDefaultPriority);
 
@@ -1057,7 +1144,7 @@ bool AnimationExport::exportController(INode *node, bool hasAccum)
    for (int i=0, n=node->NumberOfChildren(); ok && i<n; ++i)
    {
       INode *child = node->GetChildNode(i);
-      ok |= exportController(child, false);
+	  ok |= exportController(child, Exporter::AT_NONE);
    }
    return ok;
 }
@@ -1069,6 +1156,7 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 	if (mod != NULL)
 	{
 		if (mod->IsEnabled()) {
+			
 			NiGeomMorpherControllerRef ctrl = new NiGeomMorpherController();
 			NiMorphDataRef data = new NiMorphData();
 			vector<NiInterpolatorRef> interpolators;
@@ -1109,6 +1197,15 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 					}
 				}
 			}
+
+			//// Root text keys ???
+			//NiNodeRef ninode = this->mNiRoot;
+			//vector<StringKey> textKeys;
+			//if (GetTextKeys(mI->GetRootNode(), textKeys, range)) {
+			//	NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
+			//	ninode->AddExtraData(StaticCast<NiExtraData>(textKeyData), Exporter::mNifVersionInt);
+			//	textKeyData->SetKeys(textKeys);
+			//}
 
 			for (int i=0; i<indices.size(); ++i) {
 				int idx = indices[i];

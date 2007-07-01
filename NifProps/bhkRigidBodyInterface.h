@@ -179,6 +179,9 @@ public:
    virtual BOOL		GetEnableTransform(TimeValue time, Interval& valid = FOREVER) const;
 
    virtual FPInterfaceDesc* GetDesc() { return GetbhkRigidBodyInterfaceDesc(); }
+
+   virtual IOResult RBSave(ISave *isave);
+   virtual IOResult RBLoad(ILoad *iload);
    
 protected:
    IParamBlock* rbpblock;

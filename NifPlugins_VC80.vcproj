@@ -1709,7 +1709,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
 				Optimization="0"
-				InlineFunctionExpansion="2"
+				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="C:\3dsmax9\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
 				GeneratePreprocessedFile="0"
@@ -5027,6 +5027,26 @@
 				</File>
 				<File
 					RelativePath=".\NifExport\NvTriStrip\VertexCache.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Header Files"
+				>
+				<File
+					RelativePath=".\NifExport\Exporter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifExport\NifExport.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifExport\pch.h"
+					>
+				</File>
+				<File
+					RelativePath=".\NifExport\resource.h"
 					>
 				</File>
 			</Filter>
@@ -8854,6 +8874,10 @@
 				RelativePath=".\NifPlugins\pch.h"
 				>
 			</File>
+			<File
+				RelativePath=".\NifPlugins\resource.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="NifImport"
@@ -8951,30 +8975,6 @@
 				</File>
 			</Filter>
 		</Filter>
-		<Filter
-			Name="Header Files"
-			>
-			<File
-				RelativePath=".\NifExport\Exporter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NifExport\NifExport.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NifExport\pch.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NifExport\resource.h"
-				>
-			</File>
-		</Filter>
-		<File
-			RelativePath=".\NifPlugins\resource.h"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>

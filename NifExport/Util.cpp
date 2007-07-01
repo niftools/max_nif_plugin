@@ -118,10 +118,8 @@ NiNodeRef Exporter::getNode(INode* maxNode)
 	NodeToNodeMap::iterator itr = mNodeMap.find(maxNode);
 	if (itr != mNodeMap.end())
 		return (*itr).second;
-	NiNodeRef node = CreateNiObject<NiNode>();
-	node->SetName(name);
+	NiNodeRef node = getNode(name);
 	mNodeMap[maxNode] = node;
-	mNameMap[name] = node;
 	return node;
 }
 NiNodeRef Exporter::getNode(const string& name)
@@ -150,14 +148,11 @@ NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 
 	exportUPB(node, maxNode);
 
-	if (node->GetParent() == NULL) {
+	// Normal Embedded Animation 
+	if (mExportType == NIF_WO_KF)
+		CreateController(maxNode, Interval());
 
-		// Normal Embedded Animation 
-		if (mExportType == NIF_WO_KF)
-			CreateController(maxNode, Interval());
-
-		parent->AddChild(DynamicCast<NiAVObject>(node));
-	}
+	parent->AddChild(DynamicCast<NiAVObject>(node));
 
 	return node;
 }
@@ -492,7 +487,7 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
       }
       if (addBone)
       {
-         list.push_back( getNode(child->GetName()) );
+         list.push_back( getNode(child) );
       }
       getChildNodes(child, list);
    }
@@ -502,7 +497,7 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
 
 bool Exporter::exportPrn(NiNodeRef &obj, INode *node) {
    // Export Prn Text strings for any parent bones if parent is root
-   if (mSupportPrnStrings) {
+	if (mSupportPrnStrings && Exporter::mNifVersionInt >= VER_10_0_1_0) {
       if (INode *parentNode = node->GetParentNode()){
          string parentName = parentNode->GetName();
          NiStringExtraDataRef strings = new NiStringExtraData();	

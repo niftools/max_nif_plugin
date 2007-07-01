@@ -331,10 +331,10 @@ bool NifImporter::DoImport()
       if (root->IsDerivedType(NiNode::TYPE))
       {
          NiNodeRef rootNode = root;
-		 RegisterNode(root, gi->GetRootNode());
 
 		 if (importBones) {
 			 if (ignoreRootNode || strmatch(rootNode->GetName(), "Scene Root")) {
+				 RegisterNode(root, gi->GetRootNode());
 				 ImportBones(DynamicCast<NiNode>(rootNode->GetChildren()));
 			 } else {
 				 ImportBones(rootNode);

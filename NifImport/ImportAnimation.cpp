@@ -115,9 +115,12 @@ bool NifImporter::ImportAnimation()
    if (nodes.empty())
       return false;
 
-   NiNodeRef rootNode = root;
    AnimationImport ai(*this);
-   return ai.AddValues(DynamicCast<NiObjectNET>(rootNode->GetChildren()));
+   vector<NiObjectNETRef> roots;
+   roots.push_back(root);
+   return ai.AddValues(roots);
+   //NiNodeRef rootNode = root;
+   //return ai.AddValues(DynamicCast<NiObjectNET>(rootNode->GetChildren()));
 }
 
 static vector<ControllerLink>::iterator FindLink(string name, vector<ControllerLink>& links)
@@ -360,13 +363,18 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                   if (args.empty()) continue;
                   bool hasName = false;
                   bool hasLoop = false;
+				  bool hasAt = false;
                   for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
                      if (strmatch("-name", *itr)) {
                         if (++itr == args.end()) break;                       
                         hasName = true;
                      } else if (strmatch("-loop", *itr)) {
                         hasLoop = true;
-                     }
+					 } else if (strmatch("-at", *itr)) {
+						 if (++itr == args.end()) break;
+						 hasAt = true;
+					 }
+
                   }
                   if (!hasName) {
                      if (name.empty())
@@ -377,6 +385,10 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                   if (!hasLoop && loop) {
                      args.push_back("-loop");
                   }
+				  if (!hasAt) {
+					  args.push_back("-at");
+					  args.push_back("y");
+				  }
 
                   string line = JoinCommandLine(args);
                   NoteKey *key = new NoteKey(t, line.c_str(), 0);
@@ -417,13 +429,17 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                   if (args.empty()) continue;
                   bool hasName = false;
                   bool hasLoop = loop;
+				  bool hasAt = false;
                   for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
                      if (strmatch("-name", *itr)) {
                         if (++itr == args.end()) break;                       
                         hasName = true;
                      } else if (strmatch("-loop", *itr)) {
                         hasLoop = true;
-                     }
+					 } else if (strmatch("-at", *itr)) {
+						 if (++itr == args.end()) break;
+						 hasAt = true;
+					 }
                   }
                   if (!hasName) {
                      string name = FormatString("EMPTY_SEQUENCE_AT_%df", int(t * FramesPerSecond / TicksPerFrame) );
@@ -433,7 +449,10 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
                   if (!hasLoop) {
                      args.push_back("-loop");
                   }
-
+				  if (!hasAt) {
+					  args.push_back("-at");
+					  args.push_back("y");
+				  }
                   string line = JoinCommandLine(args);
                   script += FormatText("addNoteKey nt (%d/ticksPerFrame) \"%s\"\n", t, line.c_str());
                } else {

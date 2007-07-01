@@ -9,6 +9,7 @@ namespace Niflib
 
    class bhkConvexVerticesShape;
    class bhkNiTriStripsShape;
+   class bhkPackedNiTriStripsShape;
 
 }
 using namespace Niflib;
@@ -40,6 +41,16 @@ public:
 		MULTI_KF_WITH_NIF = 4,
 		MULTI_KF_WO_NIF = 5,
 		NIF_WITH_MGR = 6,
+	};
+	enum AccumType
+	{
+		AT_NONE = 0,
+		AT_X = 0x01,
+		AT_Y = 0x02,
+		AT_Z = 0x04,
+
+		AT_XYZ = AT_X | AT_Y | AT_Z,
+		AT_FORCE = 0x80000000,
 	};
 
 	// Callback for post-processing instructions
@@ -244,6 +255,7 @@ public:
 
 	Ref<bhkConvexVerticesShape> makeConvexShape(Mesh& mesh, Matrix3& tm);
 	Ref<bhkNiTriStripsShape>	makeTriStripsShape(Mesh& mesh, Matrix3& sm);
+	Ref<bhkPackedNiTriStripsShape>	makePackedTriStripsShape(Mesh& mesh, Matrix3& sm);
 
 	bhkShapeRef				makeProxyShape(INode *node, Object *obj, Matrix3& tm);
 	bhkShapeRef				makeProxyBoxShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm);
