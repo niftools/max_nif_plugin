@@ -6,7 +6,7 @@ AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2007, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-0.2.15.0
+OutputBaseFilename=niftools-max-plugins-0.2.15.1
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,7 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=0.2.15.0
+VersionInfoVersion=0.2.15.1
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -473,9 +473,4 @@ begin
       FixPathInINI('max9x64');
   end;
 end;
-
-[Code]
-function RegDisableReflectionKey(B: Integer): Integer;
-external 'RegDisableReflectionKey@Advapi32.dll stdcall';
-
 
