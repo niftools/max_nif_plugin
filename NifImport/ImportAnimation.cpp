@@ -31,7 +31,7 @@ HISTORY:
 #include <obj/NiKeyframeController.h>
 #include <obj/NiKeyframeData.h>
 #include <obj/NiStringPalette.h>
-#include <obj/NiBSplineCompTransformInterpolator.h>
+#include <obj/NiBSplineTransformInterpolator.h>
 #include <obj/NiGeomMorpherController.h>
 #include <obj/NiMorphData.h>
 #include <obj/NiBSplineCompFloatInterpolator.h>
@@ -613,7 +613,7 @@ bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyfr
             s = interp->GetScale();
             return true;
          }
-      } else if (NiBSplineCompTransformInterpolatorRef interp = lnk.interpolator) {
+      } else if (NiBSplineTransformInterpolatorRef interp = lnk.interpolator) {
          int npoints = interp->GetNumControlPt();
 
          if (npoints > 3)

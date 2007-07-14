@@ -33,7 +33,7 @@ HISTORY:
 #include <obj/NiKeyframeController.h>
 #include <obj/NiKeyframeData.h>
 #include <obj/NiStringPalette.h>
-#include <obj/NiBSplineCompTransformInterpolator.h>
+#include <obj/NiBSplineTransformInterpolator.h>
 #include <obj/NiDefaultAVObjectPalette.h>
 #include <obj/NiMultiTargetTransformController.h>
 #include <obj/NiGeomMorpherController.h>

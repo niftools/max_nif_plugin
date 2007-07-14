@@ -715,7 +715,7 @@ bhkShapeRef Exporter::makeTriStripsShape(INode *node, Matrix3& tm)
 	shape->SetNumDataLayers(1);
 	shape->SetOblivionLayer(0, OblivionLayer(lyr));
 
-	int mtl;
+	int mtl = NP_DEFAULT_HVK_MATERIAL;
 	npGetProp(node, NP_HVK_MATERIAL, mtl, NP_DEFAULT_HVK_MATERIAL);
 	shape->SetMaterial(HavokMaterial(mtl));
 
