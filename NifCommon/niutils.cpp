@@ -661,9 +661,15 @@ void BuildFileNameMap(NameValueCollection & collection, const TCHAR *root, const
                   PathCombine(buffer, path, FindFileData.cFileName);
                   GetLongPathName(buffer, buffer, MAX_PATH);
                   PathRemoveExtension(FindFileData.cFileName);
-                  PathRelativePathTo(buffer2, root, FILE_ATTRIBUTE_DIRECTORY, buffer, FILE_ATTRIBUTE_NORMAL);
-                  TCHAR *p = buffer2; while (*p == '\\') ++p;
-                  collection.insert(KeyValuePair(FindFileData.cFileName, p));					
+                  if (PathRelativePathTo(buffer2, root, FILE_ATTRIBUTE_DIRECTORY, buffer, FILE_ATTRIBUTE_NORMAL))
+				  {
+					  TCHAR *p = buffer2; while (*p == '\\') ++p;
+					  collection.insert(KeyValuePair(FindFileData.cFileName, p));					
+				  }
+				  else
+				  {
+					  collection.insert(KeyValuePair(FindFileData.cFileName, buffer));
+				  }
                }
             }
          }
