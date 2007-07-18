@@ -128,10 +128,13 @@ static vector<ControllerLink>::iterator FindLink(string name, vector<ControllerL
    for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); )
    {
       string target = (*lnk).targetName;
-      if (target.empty()) {
+      if (target.empty() && (*lnk).nodeNameOffset >= 0) {
          NiStringPaletteRef strings = lnk->stringPalette;
          target = strings->GetSubStr((*lnk).nodeNameOffset);
       }
+	  if (target.empty()) {
+		  name = (*lnk).nodeName;
+	  }
       if (target == name) {
          return lnk;
       }
@@ -506,10 +509,13 @@ bool KFMImporter::ImportAnimation()
       for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk)
       {
          string name = (*lnk).targetName;
-         if (name.empty()) {
+         if (name.empty() && (*lnk).nodeNameOffset >= 0) {
             NiStringPaletteRef strings = lnk->stringPalette;
             name = strings->GetSubStr((*lnk).nodeNameOffset);
          }
+		 if (name.empty()) {
+			 name = (*lnk).nodeName;
+		 }
          if (name.empty())
             continue;
 
