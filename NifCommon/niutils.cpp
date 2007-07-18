@@ -349,6 +349,8 @@ string GetIndirectValue(LPCSTR path)
          if (*valueName == '\"' || *valueName == '\'') ++valueName;
          if (*end == '\"' || *end == '\'') *end-- = 0;
          Trim(valueName);
+		 if (strlen(valueName) == 0)
+			 valueName = NULL;
 
          LPTSTR keyEnd = _tcschr(p, '\\');
          if (keyEnd != NULL) {
