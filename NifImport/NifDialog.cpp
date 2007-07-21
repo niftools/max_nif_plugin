@@ -79,6 +79,15 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
                EnableWindow(GetDlgItem(hWnd, IDC_CHK_BIPED), FALSE);
                EnableWindow(GetDlgItem(hWnd, IDC_CHK_REM_BONES), FALSE);
             }
+
+			// Weld Threshold
+			TSTR weldThresh; weldThresh.printf("%g", imp->weldVertexThresh);
+			CheckDlgButton(hWnd, IDC_CHK_WELD, imp->weldVertices);
+			EnableWindow(GetDlgItem(hWnd, IDC_CHK_WELD), TRUE);
+
+			SetDlgItemText(hWnd, IDC_EDIT_WELDTHRESH, weldThresh);
+			EnableWindow(GetDlgItem(hWnd, IDC_EDIT_WELDTHRESH), imp->weldVertices);
+
             ConvertStaticToHyperlink(hWnd, IDC_LBL_LINK);
             ConvertStaticToHyperlink(hWnd, IDC_LBL_WIKI);
          }
@@ -130,6 +139,11 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
                   GetDlgItemText(hWnd, IDC_ED_SKELETON, tmp, MAX_PATH);
                   imp->skeleton = tmp;
 
+				  // Weld Threshold
+				  imp->weldVertices = IsDlgButtonChecked(hWnd, IDC_CHK_WELD)? true : false;
+				  GetDlgItemText(hWnd, IDC_EDIT_WELDTHRESH, tmp, MAX_PATH);
+				  if (strlen(tmp) > 0) imp->weldVertexThresh = atof(tmp);
+
                   EndDialog(hWnd, dlgRes=IDOK);
                   return TRUE;
 
@@ -167,6 +181,10 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
                      }
                   }
                   break;
+
+			   case IDC_CHK_WELD:
+				   EnableWindow(GetDlgItem(hWnd, IDC_EDIT_WELDTHRESH), IsDlgButtonChecked(hWnd, IDC_CHK_WELD));
+				   break;
 
                case IDC_LBL_LINK:
                   ShellExecute(hWnd, "open", imp->webSite, NULL, NULL, SW_SHOWNORMAL);

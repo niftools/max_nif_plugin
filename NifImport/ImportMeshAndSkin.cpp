@@ -12,6 +12,7 @@ HISTORY:
 **********************************************************************/
 #include "stdafx.h"
 #include "MaxNifImport.h"
+#include <meshdelta.h>
 #include "istdplug.h"
 #if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
 #  include "MeshNormalSpec.h"
@@ -112,9 +113,10 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
       mesh.RemoveDegenerateFaces();
    if (removeIllegalFaces)
       mesh.RemoveIllegalFaces();
-
    if (enableSkinSupport)
       ImportSkin(node, triGeom);
+   if (weldVertices)
+	   WeldVertices(mesh);
 
    i->AddNodeToScene(node);   
 
@@ -422,6 +424,8 @@ bool NifImporter::ImportMultipleGeometry(NiNodeRef parent, vector<NiTriBasedGeom
       mesh.RemoveDegenerateFaces();
    if (removeIllegalFaces)
       mesh.RemoveIllegalFaces();
+   if (weldVertices)
+	   WeldVertices(mesh);
    if (enableAutoSmooth)
       mesh.AutoSmooth(TORAD(autoSmoothAngle), FALSE, FALSE);
    return ok;
@@ -687,4 +691,14 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
       skinMod->EnableModInViews();
    }
    return ok;
+}
+
+void NifImporter::WeldVertices(Mesh& mesh)
+{
+	MeshDelta tmd(mesh);
+	BitArray vTempSel;
+	vTempSel.SetSize(mesh.getNumVerts());
+	vTempSel.SetAll();
+	tmd.WeldByThreshold(mesh, vTempSel, weldVertexThresh);
+	tmd.Apply(mesh);
 }

@@ -174,6 +174,8 @@ void NifImporter::LoadIniSettings()
    mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
    importUPB = GetIniValue(NifImportSection, "ImportUPB", true);
    ignoreRootNode = GetIniValue(NifImportSection, "IgnoreRootNode", true);
+   weldVertices = GetIniValue(NifImportSection, "WeldVertices", false);
+   weldVertexThresh = GetIniValue(NifImportSection, "WeldVertexThresh", 0.01f);
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -254,6 +256,9 @@ void NifImporter::SaveIniSettings()
    SetIniValue(AnimImportSection, "ClearAnimation", clearAnimation);
    SetIniValue(AnimImportSection, "AddNoteTracks", addNoteTracks);
    SetIniValue(AnimImportSection, "AddTimeTags", addTimeTags);
+   SetIniValue(NifImportSection, "WeldVertices", weldVertices);
+   SetIniValue(NifImportSection, "WeldVertexThresh", weldVertexThresh);
+
 
    SetIniValue<string>(NifImportSection, "CurrentApp", autoDetect ? "AUTO" : appSettings->Name );
 }

@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.15
+                        MaxPlugins 0.2.16
                         =================
 
  
@@ -33,6 +33,19 @@
 
     Change log
     ----------
+      0.2.16
+      -----
+    o All
+      - Add support for Loki, Pro Cycling Manager (version 10.2.0.0)
+      - Add support for Megami Tensei: Imagine (version 20.1.0.3)
+      - Add support for Emerge Demo (versions 20.3.0.3 and 20.3.0.6)
+    o Importer
+      - Add Weld Vertices option
+    o Exporter
+      - Remove veryrxv change because it breaks Oblivion export
+    o Props
+      - Add Clone Mesh button on Collision Modifier and bhk Proxy Object
+      
       0.2.15
       -----
     o Props

@@ -84,6 +84,9 @@ public:
    // Collision settings
    float bhkScaleFactor;
 
+   bool weldVertices;
+   float weldVertexThresh;
+
    vector<Niflib::NiObjectRef> blocks;
    vector<Niflib::NiNodeRef> nodes;
    map<string,int> ctrlCount; // counter for number of controllers referencing a node
@@ -156,6 +159,7 @@ public:
    void ClearAnimation(INode *node);
    bool AddNoteTracks(float time, string name, string target, Niflib::Ref<Niflib::NiTextKeyExtraData> textKeyData, bool loop);
 
+   void WeldVertices(Mesh& mesh);
 
    protected: 
       NifImporter();

@@ -47,6 +47,7 @@
 #define IDC_RDO_PACKED_STRIPS           1717
 #define IDC_RDO_CONVEX                  1718
 #define IDC_TRANS_ENABLE                1719
+#define IDC_BTN_CLONE                   1720
 #define IDC_LENGTHEDIT                  3009
 #define IDC_WIDTHEDIT                   3010
 #define IDC_OPT_BIAS                    6007
@@ -82,6 +83,7 @@
 #define IDC_CB_MATERIAL                 11009
 #define IDS_RB_RIGIDBODY_PARAM          11009
 #define IDD_RB_MOD_PANEL2               11009
+#define IDD_CLONE_PANEL                 11009
 #define IDC_LBL_LAYER                   11010
 #define IDS_RB_CAP_POS1                 11010
 #define IDD_RB_MOD_PANEL3               11010
@@ -144,6 +146,7 @@
 #define IDS_OPT_PARAMS                  11061
 #define IDS_OPT_ENABLE                  11062
 #define IDS_TRANS_ENABLE                11063
+#define IDS_CLONE_PARAMS                11064
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -191,7 +194,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1720
+#define _APS_NEXT_CONTROL_VALUE         1721
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

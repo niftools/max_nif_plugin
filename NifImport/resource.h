@@ -2,6 +2,8 @@
 // Microsoft Visual C++ generated include file.
 // Used by MaxNifImport.rc
 //
+#define IDC_EDIT1                       1003
+#define IDC_EDIT_WELDTHRESH             1003
 #define IDC_CLOSEBUTTON                 10000
 #define IDS_LIBDESCRIPTION              10001
 #define IDC_EDITHEIGHT                  10001
@@ -35,6 +37,7 @@
 #define IDC_CHK_AUTOSMOOTH              10019
 #define IDC_CHK_ILLEGAL                 10020
 #define IDC_STC_SKELETON                10021
+#define IDC_CHK_WELD                    10021
 #define IDC_CHK_REM_BONES               10022
 #define IDC_CHK_CLEARANIM               10023
 #define IDC_CHK_KEYNOTES                10024
@@ -48,7 +51,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        101
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1003
+#define _APS_NEXT_CONTROL_VALUE         1004
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

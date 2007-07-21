@@ -108,6 +108,7 @@ public:
    void BuildOptimize(Mesh&mesh);
 
    void UpdateUI();
+   void CreateMesh();
 
    Modifier *CreateWSMMod(INode *)
    {
@@ -143,23 +144,22 @@ extern HINSTANCE hInstance;
 //--- Parameter map/block descriptors -------------------------------
 
 // Parameter and ParamBlock IDs
-enum { list_params, bv_mesh, };  // pblock2 ID
+enum { list_params, opt_params, clone_params };  // pblock2 ID
 enum 
 { 
    PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER,
    PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, 
 };
 
-enum { list_params_panel, opt_params, };
-
 enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
 
 static ParamBlockDesc2 param_blk ( 
     list_params, _T("parameters"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, 0,
     //rollout
-    2,
+    3,
     list_params, IDD_PROXYPARAM1, IDS_PARAMS, 0, 0, NULL, 
 	opt_params,		IDD_RB_MOD_PANEL1, IDS_OPT_PARAMS, 0, 0, NULL,
+	clone_params,	IDD_CLONE_PANEL,   IDS_CLONE_PARAMS, 0, 0, NULL,
 
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
@@ -368,11 +368,45 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
             so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() );
          }
          break;
+
+	  case IDC_BTN_CLONE:
+		  so->CreateMesh();
+		  break;
       }
       break;	
    }
    return FALSE;
 }
+
+namespace
+{
+	class CloneMeshDlgProc : public ParamMap2UserDlgProc {
+	public:
+		bhkProxyObject *mod;
+		CloneMeshDlgProc(bhkProxyObject* m) {mod = m;}		
+		void DeleteThis() {delete this;}		
+
+		INT_PTR DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+		{
+			switch (msg) 
+			{
+			case WM_COMMAND:
+				switch (LOWORD(wParam))
+				{
+				case IDC_BTN_CLONE:
+					mod->CreateMesh();
+					return TRUE;
+
+				default:
+					return FALSE;
+				}
+			}
+			return FALSE;
+		}
+	};
+
+}
+
 //--- Proxy methods -------------------------------
 
 
@@ -407,6 +441,7 @@ void bhkProxyObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
 
    listDesc.BeginEditParams(ip,this,flags,prev);
    param_blk.SetUserDlgProc(new ProxyParamDlgProc(this));
+   param_blk.SetUserDlgProc(clone_params, new CloneMeshDlgProc(this));
    pmapParam = pblock2->GetMap(list_params);
 
    this->ip = ip;
@@ -781,5 +816,38 @@ void bhkProxyObject::BuildOptimize(Mesh& mesh)
 
 		DWORD flags = OPTIMIZE_AUTOEDGE;
 		mesh.Optimize(facethresh, edgethresh, bias, maxedge, flags, NULL);
+	}
+}
+
+void bhkProxyObject::CreateMesh()
+{
+	if (Interface *gi = this->mIP)
+	{
+		if (const Mesh* pMesh = &this->proxyMesh)
+		{
+			if (TriObject *triObject = CreateNewTriObject())
+			{
+				MNMesh mnmesh(*pMesh);
+				Mesh& mesh = triObject->GetMesh();
+				mnmesh.OutToTri(mesh);
+
+				INode *node = gi->CreateObjectNode(triObject);
+				// Wireframe Red color
+				StdMat2 *collMat = NewDefaultStdMat();
+				collMat->SetDiffuse(Color(1.0f, 0.0f, 0.0f), 0);
+				collMat->SetWire(TRUE);
+				collMat->SetFaceted(TRUE);
+				gi->GetMaterialLibrary().Add(collMat);
+				node->SetMtl(collMat);
+
+				node->SetPrimaryVisibility(FALSE);
+				node->SetSecondaryVisibility(FALSE);
+				node->BoneAsLine(TRUE);
+				node->SetRenderable(FALSE);
+				node->SetWireColor( RGB(255,0,0) );
+
+				gi->SelectNode(node);
+			}
+		}
 	}
 }

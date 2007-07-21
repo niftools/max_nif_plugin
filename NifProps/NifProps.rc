@@ -259,11 +259,11 @@ BEGIN
     RTEXT           "Max Edge Len:",IDC_STATIC,7,71,50,8
 END
 
-IDD_RB_MOD_PANEL2 DIALOGEX 0, 0, 107, 22
+IDD_CLONE_PANEL DIALOGEX 0, 0, 107, 22
 STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Sphere",IDC_STATIC,7,2,77,8
+    PUSHBUTTON      "Clone Mesh",IDC_BTN_CLONE,5,3,98,16
 END
 
 IDD_RB_MOD_PANEL3 DIALOGEX 0, 0, 107, 21
@@ -1193,6 +1193,7 @@ BEGIN
     IDS_OPT_PARAMS          "Optimize Parameters"
     IDS_OPT_ENABLE          "Enable"
     IDS_TRANS_ENABLE        "Enable Transform"
+    IDS_CLONE_PARAMS        "Clone Parameters"
 END
 
 #endif    // English (U.S.) resources
