@@ -103,6 +103,7 @@ public:
 	static bool          mAllowAccum;
 	static string        mCreatorName;
 	static bool          mCollapseTransforms;
+	static bool			 mZeroTransforms;
 	static bool          mFixNormals;
 	static bool          mTangentAndBinormalExtraData;
 	static stringlist    mRotate90Degrees;

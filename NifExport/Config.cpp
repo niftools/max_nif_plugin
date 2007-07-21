@@ -80,7 +80,8 @@ void Exporter::writeConfig(Interface *i)
       //SetIniValue(NifExportSection, "UseTimeTags", mUseTimeTags, iniName);
 
       SetIniValue(NifExportSection, "AllowAccum", mAllowAccum, iniName);
-      SetIniValue(NifExportSection, "CollapseTransforms", mCollapseTransforms, iniName);
+	  SetIniValue(NifExportSection, "CollapseTransforms", mCollapseTransforms, iniName);
+	  SetIniValue(NifExportSection, "ZeroTransforms", mZeroTransforms, iniName);
       SetIniValue(NifExportSection, "FixNormals", mFixNormals, iniName);
       SetIniValue(NifExportSection, "TangentAndBinormalExtraData", mTangentAndBinormalExtraData, iniName);
       SetIniValue(NifExportSection, "UseAlternateStripper", mUseAlternateStripper, iniName);
@@ -153,8 +154,9 @@ void Exporter::readConfig(Interface *i)
 
       //mUseTimeTags = GetIniValue(NifExportSection, "UseTimeTags", false, iniName);
       mAllowAccum = GetIniValue(NifExportSection, "AllowAccum", true, iniName);
-      mCollapseTransforms = GetIniValue(NifExportSection, "CollapseTransforms", false, iniName);
-      mFixNormals = GetIniValue(NifExportSection, "FixNormals", false, iniName);
+	  mCollapseTransforms = GetIniValue(NifExportSection, "CollapseTransforms", false, iniName);
+	  mZeroTransforms = GetIniValue(NifExportSection, "ZeroTransforms", false, iniName);
+	  mFixNormals = GetIniValue(NifExportSection, "FixNormals", false, iniName);
       mTangentAndBinormalExtraData = GetIniValue(NifExportSection, "TangentAndBinormalExtraData", false, iniName);
 
       mUseAlternateStripper = GetIniValue(NifExportSection, "UseAlternateStripper", false, iniName);

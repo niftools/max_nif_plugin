@@ -66,6 +66,8 @@
 #define IDC_CHK_TANGENTS                13498
 #define IDC_CHECK2                      13499
 #define IDC_CHK_COLLAPSE_TRANS          13499
+#define IDC_CHK_COLLAPSE_TRANS2         13500
+#define IDC_CHK_ZERO_TRANS              13500
 
 // Next default values for new objects
 // 

@@ -27,16 +27,15 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 	Mesh *copymesh = NULL;
 	Mesh *mesh = &tri->GetMesh();
 
-	Matrix3 mtx(true);
+	Matrix3 mtx(true), rtx(true);
 	if (Exporter::mCollapseTransforms)
 	{
 		mtx = GetNodeLocalTM(node, t);
-		//if ( fabs(mtx.GetRow(0)[0]) != fabs(mtx.GetRow(1)[1])
-		//   ||fabs(mtx.GetRow(0)[0]) != fabs(mtx.GetRow(2)[2])
-		//   )
+		mtx.NoTrans();
+		Quat q(mtx);
+		q.MakeMatrix(rtx);
+		mesh = copymesh = new Mesh(*mesh);
 		{
-			mtx.NoTrans();    
-			mesh = copymesh = new Mesh(*mesh);     
 			int n = mesh->getNumVerts();
 			for ( unsigned int i = 0; i < n; ++i ) {
 				Point3& vert = mesh->getVert(i);
@@ -49,7 +48,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 				specNorms->CheckNormals();
 				for ( unsigned int i = 0; i < specNorms->GetNumNormals(); ++i ) {
 					Point3& norm = specNorms->Normal(i);
-					norm = (mtx * norm).Normalize();
+					norm = (rtx * norm).Normalize();
 				}
 			}
 #endif
@@ -150,7 +149,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 			shape->SetName(name);
 			shape->SetLocalTransform(tm);
 
-			if (Exporter::mCollapseTransforms) {
+			if (Exporter::mZeroTransforms) {
 				shape->ApplyTransforms();
 			}
 
