@@ -5,6 +5,23 @@
 #include "NifStrings.h"
 #include "NifPlugins.h"
 #include "NifGui.h"
+#include "meshadj.h"
+
+// Includes for WildMagic so we can do the Capsule fitting
+#ifdef USES_WILDMAGIC
+#  ifdef _DEBUG
+#    pragma comment (lib, "Wm4Foundation80d")
+#  else
+#    pragma comment (lib, "Wm4Foundation80")
+#  endif
+#undef PI
+#undef DEG_TO_RAD
+#undef RAD_TO_DEG
+#define WM4PLATFORMS_H
+#define WM4_FOUNDATION_ITEM
+#include <Wm4ContCapsule3.h>
+#define PI (Wm4::Math<double>::PI)
+#endif
 
 using namespace std;
 
@@ -753,4 +770,57 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
 	assert(fc==mesh.numFaces);
 	//	assert(nv==mesh.numVerts);
 	mesh.InvalidateTopologyCache();
+}
+
+// Calculate capsule from mesh.  While radii on the endcaps is possible we do 
+//   currently calculate then differently.
+extern void CalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& r2)
+{
+#ifdef USES_WILDMAGIC
+	int nv = mesh.getNumVerts();
+	Wm4::Vector3<float>* akPoint = new Wm4::Vector3<float>[nv];
+	for (int i=0; i<nv; i++)
+	{
+		Point3& mp = mesh.verts[i];
+		Wm4::Vector3<float>& wp = akPoint[i];
+		wp.X() = mp.x;
+		wp.Y() = mp.y;
+		wp.Z() = mp.z;
+	}
+	Wm4::Capsule3<float> capsule = ContCapsule (nv, akPoint);
+	delete [] akPoint;
+
+	Wm4::Vector3<float> end1 = capsule.Segment.GetPosEnd();
+	Wm4::Vector3<float> end2 = capsule.Segment.GetNegEnd();
+	pt1.Set(end1.X(), end1.Y(), end1.Z());
+	pt2.Set(end2.X(), end2.Y(), end2.Z());
+
+	r1 = r2 = capsule.Radius;
+#endif
+	return;
+}
+
+extern void BuildCapsule(Mesh &mesh, Point3 pt1, Point3 pt2, float r1, float r2)
+{
+	int segs = 12;
+	int hsegs = 1;
+	int smooth = 1;
+
+	float h = (pt1 - pt2).Length();
+
+	Point3 center = ((pt2 + pt1) / 2.0f);
+	Point3 norm = Normalize(pt2 - pt1);
+	Matrix3 mat;
+	MatrixFromNormal(norm,mat);
+	Matrix3 newTM = mat * TransMatrix(center);
+
+	// Build capsule to suggested size
+	BuildScubaMesh(mesh, segs, smooth, hsegs, r1, r2, h);
+
+	// Reorient the capsule.
+	MNMesh mn(mesh);
+	Matrix3 tm(true);
+	tm.Translate(center);
+	mn.Transform(newTM);
+	mn.OutToTri(mesh);
 }

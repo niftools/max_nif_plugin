@@ -421,7 +421,8 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 	bhkConvexVerticesShapeRef shape = StaticCast<bhkConvexVerticesShape>(bhkConvexVerticesShape::Create());
 	Point3 center(0.0f, 0.0f, 0.0f);
 	float radius = 0.10f;
-	//CalcAxisAlignedSphere(mesh, center, radius);
+	CalcCenteredSphere(mesh, center, radius);
+	radius /= Exporter::bhkScaleFactor;
 	shape->SetRadius(radius);
 	vector<Vector3> verts;
 	vector<Float4> norms;
@@ -444,7 +445,7 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 		value[0] = pt.x;
 		value[1] = pt.y;
 		value[2] = pt.z;
-		value[3] = -mesh.FaceCenter(i).Length();
+		value[3] = -(mesh.FaceCenter(i) * tm).Length() / Exporter::bhkScaleFactor;
 	}
 	sortVector3(verts);
 	sortFloat4(norms);

@@ -105,6 +105,7 @@ public:
    void BuildColStrips();
    void BuildColPackedStrips();
    void BuildColConvex();
+   void BuildColCapsule();
    void BuildOptimize(Mesh&mesh);
 
    void UpdateUI();
@@ -151,7 +152,7 @@ enum
    PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, 
 };
 
-enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule };  // pblock ID
 
 static ParamBlockDesc2 param_blk ( 
     list_params, _T("parameters"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, 0,
@@ -168,8 +169,8 @@ static ParamBlockDesc2 param_blk (
 
     PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		0, 
-	  p_range, 			0, 4, 
-	  p_ui, 			list_params,	TYPE_RADIO, 5, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX,
+	  p_range, 			0, 5, 
+	  p_ui, 			list_params,	TYPE_RADIO, 6, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX, IDC_RDO_CAPSULE,
 	  end,
 
 	PB_MESHLIST,   _T("meshProxy"),  TYPE_INODE_TAB,		0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_MESHLIST,
@@ -513,10 +514,13 @@ void bhkProxyObject::BuildMesh(TimeValue t)
 		//BuildSphere();
 		break;
 
-	case bv_type_convex: // Capsule
+	case bv_type_convex:
 		BuildColConvex();
-		
 		//BuildScubaMesh();
+		break;
+
+	case bv_type_capsule:
+		BuildColCapsule();
 		break;
 	}
 }
@@ -796,6 +800,39 @@ void bhkProxyObject::BuildColConvex()
 	compute_convex_hull(proxyMesh, proxyMesh);
 
 	BuildOptimize(proxyMesh);
+
+	proxyPos = Point3::Origin;
+	forceRedraw = true;
+}
+
+void bhkProxyObject::BuildColCapsule()
+{
+	proxyMesh.FreeAll();
+	MeshDelta md(proxyMesh);
+	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
+		INode *tnode = NULL;
+		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+		if (tnode)
+		{
+			ObjectState os = tnode->EvalWorldState(0);
+			Matrix3 wm = tnode->GetNodeTM(0);
+			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
+			if (tri)
+			{
+				Mesh& mesh = tri->GetMesh();
+				MeshDelta tmd (mesh);
+				md.AttachMesh(proxyMesh, mesh, wm, 0);
+				md.Apply(proxyMesh);
+			}
+		}
+	}
+	Point3 pt1 = Point3::Origin;
+	Point3 pt2 = Point3::Origin;
+	float r1 = 0.0;
+	float r2 = 0.0;
+
+	CalcCapsule(proxyMesh, pt1, pt2, r1, r2);
+	BuildCapsule(proxyMesh, pt1, pt2, r1, r2);
 
 	proxyPos = Point3::Origin;
 	forceRedraw = true;

@@ -296,7 +296,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
    {
       return exportLight(nodeParent, node, (GenLight*)os.obj);
    }
-   else if (isMeshGroup(node) && local) // only create node if local
+   else if (isMeshGroup(node) && local && !mSkeletonOnly) // only create node if local
    {
       newParent = makeNode(parent, node, local);
    } 

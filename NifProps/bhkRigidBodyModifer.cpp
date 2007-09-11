@@ -431,12 +431,16 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 		BuildOptimize(proxyMesh);
 		break;
 
+	case bv_type_capsule:
+		BuildColCapsule(proxyMesh);
+		break;
+
 	//case bv_type_packed: // Packed
 	//	BuildColPackedStrips();
 	//	//BuildSphere();
 	//	break;
 
-	case bv_type_convex: // Capsule
+	case bv_type_convex:
 		BuildColConvex(proxyMesh);
 		BuildOptimize(proxyMesh);
 		//BuildScubaMesh();
@@ -649,16 +653,13 @@ void bhkRigidBodyModifier::BuildColSphere(Mesh& mesh)
 
 void bhkRigidBodyModifier::BuildColCapsule(Mesh& mesh)
 {
-	Point3 center = Point3::Origin;
-	float radius = 0.0f;
-	CalcCenteredSphere(mesh, center, radius);
-	BuildSphere(mesh, radius);
+	Point3 pt1 = Point3::Origin;
+	Point3 pt2 = Point3::Origin;
+	float r1 = 0.0;
+	float r2 = 0.0;
 
-	MNMesh mn(mesh);
-	Matrix3 tm(true);
-	tm.Translate(center);
-	mn.Transform(tm);
-	mn.OutToTri(mesh);
+	CalcCapsule(mesh, pt1, pt2, r1, r2);
+	BuildCapsule(mesh, pt1, pt2, r1, r2);
 }
 
 void bhkRigidBodyModifier::BuildColStrips(Mesh& mesh)
