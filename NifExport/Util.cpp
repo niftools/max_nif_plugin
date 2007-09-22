@@ -452,6 +452,7 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
       ObjectState os = node->EvalWorldState(0); 
       bool addBone = false;
       bool local = !mFlattenHierarchy;
+	  bool meshGroup = isMeshGroup(node);
 
       if (node->IsBoneShowing()) 
       {
@@ -459,14 +460,17 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
       }
       else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
       {
+         Class_ID clsid = os.obj->ClassID();
          if (  os.obj 
-            && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
-            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
-            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+            && (  clsid == BONE_OBJ_CLASSID 
+            || clsid == Class_ID(BONE_CLASS_ID,0)
+            || clsid == Class_ID(0x00009125,0) /* Biped Twist Helpers */
             )
             ) 
          {
-            addBone = true;
+			 // skip mesh groups in skeleton only situations
+			 if (!meshGroup || !local || !mSkeletonOnly)
+				addBone = true;
          } 
          else if (!mSkeletonOnly)
          {
@@ -480,7 +484,7 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
          {
             addBone = true;
          }
-         else if (isMeshGroup(node) && local) // only create node if local
+         else if (meshGroup && local && !mSkeletonOnly) // only create node if local
          {
             addBone = true;
          } 

@@ -589,6 +589,9 @@ bhkShapeRef Exporter::makebhkBoxShape(INode *node, Object *obj, Matrix3& tm)
 
 		Vector3 dim(width * scale[0], length * scale[1], height * scale[2]);
 
+		float radius = max( max(dim.x, dim.y), dim.z );
+		box->SetRadius(radius);
+
 		// Adjust translation for center of z axis in box
 		tm.Translate(Point3(0.0, 0.0, dim.z / 2.0));
 		box->SetDimensions(dim);
