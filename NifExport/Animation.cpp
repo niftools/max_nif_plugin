@@ -1250,6 +1250,9 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 			ctrl->SetStartTime( 0.0f );
 			ctrl->SetStopTime( FrameToTime( range.Duration()-1 ) );
 			owner->AddController(ctrl);
+
+			// Update model bounds for target of the controller
+			ctrl->UpdateModelBound();
 		}
 	}
 	return Exporter::Ok;
