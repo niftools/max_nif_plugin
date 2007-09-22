@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Debug_Settings"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+    InlineFunctionExpansion="2"
+		Optimization="2"
+		PreprocessorDefinitions="NDEBUG"
+    DebugInformationFormat="3"
+		MinimalRebuild="false"
+    StringPooling="true"
+    RuntimeLibrary="0"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="1"
+		GenerateDebugInformation="true"
+		ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
+    OptimizeReferences="2"
+    EnableCOMDATFolding="2"
+    SetChecksum="true"
+	/>
+  <Tool
+    Name="VCMIDLTool"
+    PreprocessorDefinitions="NDEBUG"
+  />
+  <Tool
+    Name="VCResourceCompilerTool"
+    PreprocessorDefinitions="NDEBUG"
+  />
+
+  <Tool
+    Name="VCPostBuildEventTool"
+    CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+  />
+
+  </VisualStudioPropertySheet>

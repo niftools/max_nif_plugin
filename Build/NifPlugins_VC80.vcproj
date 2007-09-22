@@ -19,3325 +19,111 @@
 	<Configurations>
 		<Configuration
 			Name="Release - Max 6|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_6.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax6\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax6\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 6|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax6\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax6\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 6|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_6.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax6\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax6\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 6|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax6\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax6\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax6\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 7|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax7\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax7\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 7|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax7\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax7\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 7|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax7\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax7\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 7|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax7\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax7\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax7\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 8|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax8\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax8\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 8|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax8\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax8\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 8|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax8\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax8\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 8|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax8\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax8\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax8\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 5|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax5\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax5\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax5\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 5|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax5\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax5\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax5\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 5|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax5\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax5\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax5\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 5|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax5\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax5\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax5\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 9|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="C:\3dsmax9\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax9\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax9\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 9|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax9\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;USE_BIPED;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax9\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsMax9\maxsdk\x64\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 9|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax9\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="NIFLIB_STATIC_LINK;WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax9\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax9\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 9|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax9\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="NIFLIB_STATIC_LINK;WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_BIPED;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax9\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsMax9\maxsdk\x64\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax4\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax4\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax4\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 4|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax4\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax4\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax4\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax4\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax4\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax4\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 4|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax4\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax4\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax4\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - gmax|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\gmax12\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;GAME_VER;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\gmax12\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\gmax12\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - gmax|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\gmax12\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;GAME_VER;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\gmax12\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\gmax12\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - gmax|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\gmax12\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;GAME_VER;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\gmax12\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\gmax12\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - gmax|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\gmax12\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;GAME_VER;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="false"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\gmax12\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\gmax12\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4.2|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax42\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax42\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax42\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 4.2|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				Optimization="0"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax42\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;USE_UNSUPPORTED_CODE;NIFLIB_STATIC_LINK"
-				GeneratePreprocessedFile="0"
-				MinimalRebuild="true"
-				ExceptionHandling="2"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-				DisableSpecificWarnings="4244;4018"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax42\plugins\NifPlugins.dlu"
-				LinkIncremental="2"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax42\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine=""
-			/>
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4.2|Win32"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
 			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax42\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax42\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax42\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 4.2|x64"
-			OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-			IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-				CommandLine=""
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName="$(OutDir)NifPlugins.tlb"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/LD /Zm200 /FI&quot;$(ProjectDir)NifPlugins\pch.h&quot;"
-				InlineFunctionExpansion="2"
-				AdditionalIncludeDirectories="C:\3dsmax42\maxsdk\include;..\niflib\include;..\niflib;.\NifCommon"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;USE_NIFLIB_TEMPLATE_HELPERS;_USE_MATH_DEFINES;NIFLIB_STATIC_LINK"
-				StringPooling="true"
-				ExceptionHandling="2"
-				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="false"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="$(ProjectDir)NifPlugins\pch.h"
-				WarningLevel="3"
-				SuppressStartupBanner="true"
-				DebugInformationFormat="3"
-				CompileAs="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG;NIFPLUGINS"
-				Culture="1033"
-				AdditionalIncludeDirectories=".\NifCommon"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib comctl32.lib shlwapi.lib core.lib geom.lib gfx.lib mesh.lib maxutil.lib maxscrpt.lib paramblk2.lib bmm.lib mnmath.lib"
-				OutputFile="C:\3dsmax42\plugins\NifPlugins.dlu"
-				LinkIncremental="1"
-				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\3dsmax42\maxsdk\lib;..\niflib\lib"
-				IgnoreDefaultLibraryNames=""
-				ModuleDefinitionFile=".\NifPlugins\NifPlugins.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				SetChecksum="true"
-				BaseAddress="0x16860000"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="set MaxRootDir=$(TargetDir)\..&#x0D;&#x0A;if exist &quot;%MaxRootDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxRootDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -3350,23 +136,23 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\NifProps\bhkHelperInterface.h"
+					RelativePath="..\NifProps\bhkHelperInterface.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkRigidBodyInterface.h"
+					RelativePath="..\NifProps\bhkRigidBodyInterface.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\NifProps.h"
+					RelativePath="..\NifProps\NifProps.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\NifStrings.h"
+					RelativePath="..\NifProps\NifStrings.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\resource.h"
+					RelativePath="..\NifProps\resource.h"
 					>
 				</File>
 			</Filter>
@@ -3374,47 +160,47 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\NifProps\bhkBoxObj.cpp"
+					RelativePath="..\NifProps\bhkBoxObj.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkCapsuleObj.cpp"
+					RelativePath="..\NifProps\bhkCapsuleObj.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkHelperFuncs.cpp"
+					RelativePath="..\NifProps\bhkHelperFuncs.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkHelperFuncs.h"
+					RelativePath="..\NifProps\bhkHelperFuncs.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkHelperInterface.cpp"
+					RelativePath="..\NifProps\bhkHelperInterface.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkListObj.cpp"
+					RelativePath="..\NifProps\bhkListObj.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkProxyObj.cpp"
+					RelativePath="..\NifProps\bhkProxyObj.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkRigidBodyInterface.cpp"
+					RelativePath="..\NifProps\bhkRigidBodyInterface.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkRigidBodyModifer.cpp"
+					RelativePath="..\NifProps\bhkRigidBodyModifer.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\bhkSphereObj.cpp"
+					RelativePath="..\NifProps\bhkSphereObj.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifProps\nifProps.cpp"
+					RelativePath="..\NifProps\nifProps.cpp"
 					>
 				</File>
 			</Filter>
@@ -3422,7 +208,7 @@
 				Name="Resource Files"
 				>
 				<File
-					RelativePath=".\NifProps\NifProps.rc"
+					RelativePath="..\NifProps\NifProps.rc"
 					>
 				</File>
 			</Filter>
@@ -3430,18 +216,10 @@
 				Name="dds"
 				>
 				<File
-					RelativePath=".\NifProps\dds\dds.cpp"
+					RelativePath="..\NifProps\dds\dds.cpp"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3457,23 +235,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3489,23 +251,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3521,14 +267,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 5|Win32"
 						ExcludedFromBuild="true"
 						>
@@ -3537,23 +275,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3601,23 +323,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3633,23 +339,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3658,7 +348,397 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifProps\dds\dds.h"
+					RelativePath="..\NifProps\dds\dds.h"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifProps\dds\dds.rc"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifProps\dds\ddsres.h"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -3914,235 +994,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifProps\dds\dds.rc"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifProps\dds\ddsres.h"
+					RelativePath="..\NifProps\dds\dxtlib.h"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -4398,263 +1250,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifProps\dds\dxtlib.h"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|Win32"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifProps\dds\veroverrides.h"
+					RelativePath="..\NifProps\dds\veroverrides.h"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -4918,15 +1514,15 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\NifFurniture\FurnitureMarkers.h"
+					RelativePath="..\NifFurniture\FurnitureMarkers.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifFurniture\NifFurniture.h"
+					RelativePath="..\NifFurniture\NifFurniture.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifFurniture\resource.h"
+					RelativePath="..\NifFurniture\resource.h"
 					>
 				</File>
 			</Filter>
@@ -4934,7 +1530,7 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\NifFurniture\NifFurniture.cpp"
+					RelativePath="..\NifFurniture\NifFurniture.cpp"
 					>
 				</File>
 			</Filter>
@@ -4942,7 +1538,7 @@
 				Name="Resource Files"
 				>
 				<File
-					RelativePath=".\NifFurniture\NifFurniture.rc"
+					RelativePath="..\NifFurniture\NifFurniture.rc"
 					>
 				</File>
 			</Filter>
@@ -4954,43 +1550,43 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\NifExport\Animation.cpp"
+					RelativePath="..\NifExport\Animation.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Coll.cpp"
+					RelativePath="..\NifExport\Coll.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Config.cpp"
+					RelativePath="..\NifExport\Config.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Exporter.cpp"
+					RelativePath="..\NifExport\Exporter.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\KfExport.cpp"
+					RelativePath="..\NifExport\KfExport.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Mesh.cpp"
+					RelativePath="..\NifExport\Mesh.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\MtlTex.cpp"
+					RelativePath="..\NifExport\MtlTex.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NifExport.cpp"
+					RelativePath="..\NifExport\NifExport.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Strips.cpp"
+					RelativePath="..\NifExport\Strips.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\Util.cpp"
+					RelativePath="..\NifExport\Util.cpp"
 					>
 				</File>
 			</Filter>
@@ -4998,7 +1594,7 @@
 				Name="Resource Files"
 				>
 				<File
-					RelativePath=".\NifExport\NifExport.rc"
+					RelativePath="..\NifExport\NifExport.rc"
 					>
 				</File>
 			</Filter>
@@ -5006,27 +1602,27 @@
 				Name="NvTriStrip"
 				>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\NvTriStrip.cpp"
+					RelativePath="..\NifExport\NvTriStrip\NvTriStrip.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\NvTriStrip.h"
+					RelativePath="..\NifExport\NvTriStrip\NvTriStrip.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\NvTriStripObjects.cpp"
+					RelativePath="..\NifExport\NvTriStrip\NvTriStripObjects.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\NvTriStripObjects.h"
+					RelativePath="..\NifExport\NvTriStrip\NvTriStripObjects.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\VertexCache.cpp"
+					RelativePath="..\NifExport\NvTriStrip\VertexCache.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NvTriStrip\VertexCache.h"
+					RelativePath="..\NifExport\NvTriStrip\VertexCache.h"
 					>
 				</File>
 			</Filter>
@@ -5034,19 +1630,19 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\NifExport\Exporter.h"
+					RelativePath="..\NifExport\Exporter.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\NifExport.h"
+					RelativePath="..\NifExport\NifExport.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\pch.h"
+					RelativePath="..\NifExport\pch.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifExport\resource.h"
+					RelativePath="..\NifExport\resource.h"
 					>
 				</File>
 			</Filter>
@@ -5058,51 +1654,51 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\NifCommon\AnimKey.h"
+					RelativePath="..\NifCommon\AnimKey.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\AppSettings.h"
+					RelativePath="..\NifCommon\AppSettings.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\Hyperlinks.h"
+					RelativePath="..\NifCommon\Hyperlinks.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\IniSection.h"
+					RelativePath="..\NifCommon\IniSection.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\MAX_Mem.h"
+					RelativePath="..\NifCommon\MAX_Mem.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\MAX_MemDirect.h"
+					RelativePath="..\NifCommon\MAX_MemDirect.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifGui.h"
+					RelativePath="..\NifCommon\NifGui.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifPlugins.h"
+					RelativePath="..\NifCommon\NifPlugins.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifVersion.h"
+					RelativePath="..\NifCommon\NifVersion.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\niutils.h"
+					RelativePath="..\NifCommon\niutils.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\objectParams.h"
+					RelativePath="..\NifCommon\objectParams.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\pch.h"
+					RelativePath="..\NifCommon\pch.h"
 					>
 				</File>
 			</Filter>
@@ -5110,35 +1706,35 @@
 				Name="Source Files"
 				>
 				<File
-					RelativePath=".\NifCommon\AnimKey.cpp"
+					RelativePath="..\NifCommon\AnimKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\AppSettings.cpp"
+					RelativePath="..\NifCommon\AppSettings.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\Hyperlinks.cpp"
+					RelativePath="..\NifCommon\Hyperlinks.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifGui.cpp"
+					RelativePath="..\NifCommon\NifGui.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifPlugins.cpp"
+					RelativePath="..\NifCommon\NifPlugins.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\NifQHull.cpp"
+					RelativePath="..\NifCommon\NifQHull.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\nimorph.cpp"
+					RelativePath="..\NifCommon\nimorph.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\niutils.cpp"
+					RelativePath="..\NifCommon\niutils.cpp"
 					>
 				</File>
 			</Filter>
@@ -5150,7 +1746,7 @@
 				Name="qhull"
 				>
 				<File
-					RelativePath=".\NifCommon\qhull\geom.c"
+					RelativePath="..\NifCommon\qhull\geom.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -5410,271 +2006,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\geom.h"
+					RelativePath="..\NifCommon\qhull\geom.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\geom2.c"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\global.c"
+					RelativePath="..\NifCommon\qhull\geom2.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -5934,7 +2270,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\io.c"
+					RelativePath="..\NifCommon\qhull\global.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -6194,11 +2530,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\io.h"
-					>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\mem.c"
+					RelativePath="..\NifCommon\qhull\io.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -6458,275 +2790,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\mem.h"
+					RelativePath="..\NifCommon\qhull\io.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\merge.c"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\merge.h"
-					>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\poly.c"
+					RelativePath="..\NifCommon\qhull\mem.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -6986,271 +3054,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\poly.h"
+					RelativePath="..\NifCommon\qhull\mem.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\poly2.c"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\qhull.c"
+					RelativePath="..\NifCommon\qhull\merge.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -7510,15 +3318,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\qhull.h"
+					RelativePath="..\NifCommon\qhull\merge.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\qhull_a.h"
-					>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\qset.c"
+					RelativePath="..\NifCommon\qhull\poly.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -7778,275 +3582,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\qset.h"
+					RelativePath="..\NifCommon\qhull\poly.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\stat.c"
-					>
-					<FileConfiguration
-						Name="Release - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							CompileAs="2"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\stat.h"
-					>
-				</File>
-				<File
-					RelativePath=".\NifCommon\qhull\user.c"
+					RelativePath="..\NifCommon\qhull\poly2.c"
 					>
 					<FileConfiguration
 						Name="Release - Max 6|Win32"
@@ -8306,7 +3846,1063 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\NifCommon\qhull\user.h"
+					RelativePath="..\NifCommon\qhull\qhull.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\qhull.h"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\qhull_a.h"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\qset.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\qset.h"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\stat.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\stat.h"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\user.c"
+					>
+					<FileConfiguration
+						Name="Release - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							CompileAs="2"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\NifCommon\qhull\user.h"
 					>
 				</File>
 			</Filter>
@@ -8315,7 +4911,7 @@
 			Name="NifPlugins"
 			>
 			<File
-				RelativePath=".\NifPlugins\DllEntry.cpp"
+				RelativePath="..\NifPlugins\DllEntry.cpp"
 				>
 				<FileConfiguration
 					Name="Release - Max 6|Win32"
@@ -8607,11 +5203,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\NifPlugins\NifPlugins.rc"
+				RelativePath="..\NifPlugins\NifPlugins.rc"
 				>
 			</File>
 			<File
-				RelativePath=".\NifPlugins\pch.cpp"
+				RelativePath="..\NifPlugins\pch.cpp"
 				>
 				<FileConfiguration
 					Name="Release - Max 6|Win32"
@@ -8871,11 +5467,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\NifPlugins\pch.h"
+				RelativePath="..\NifPlugins\pch.h"
 				>
 			</File>
 			<File
-				RelativePath=".\NifPlugins\resource.h"
+				RelativePath="..\NifPlugins\resource.h"
 				>
 			</File>
 		</Filter>
@@ -8886,15 +5482,15 @@
 				Name="Header Files"
 				>
 				<File
-					RelativePath=".\NifImport\BaseImporter.h"
+					RelativePath="..\NifImport\BaseImporter.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\resource.h"
+					RelativePath="..\NifImport\resource.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\stdafx.h"
+					RelativePath="..\NifImport\stdafx.h"
 					>
 				</File>
 			</Filter>
@@ -8902,67 +5498,67 @@
 				Name="Importer"
 				>
 				<File
-					RelativePath=".\NifImport\ImportAnimation.cpp"
+					RelativePath="..\NifImport\ImportAnimation.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\ImportCollision.cpp"
+					RelativePath="..\NifImport\ImportCollision.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\ImportLights.cpp"
+					RelativePath="..\NifImport\ImportLights.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\ImportMeshAndSkin.cpp"
+					RelativePath="..\NifImport\ImportMeshAndSkin.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\ImportMtlAndTex.cpp"
+					RelativePath="..\NifImport\ImportMtlAndTex.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\ImportSkeleton.cpp"
+					RelativePath="..\NifImport\ImportSkeleton.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\KfDialog.cpp"
+					RelativePath="..\NifImport\KfDialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\KFImporter.cpp"
+					RelativePath="..\NifImport\KFImporter.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\KFImporter.h"
+					RelativePath="..\NifImport\KFImporter.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\KFMImporter.cpp"
+					RelativePath="..\NifImport\KFMImporter.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\KFMImporter.h"
+					RelativePath="..\NifImport\KFMImporter.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\MaxNifImport.cpp"
+					RelativePath="..\NifImport\MaxNifImport.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\MaxNifImport.h"
+					RelativePath="..\NifImport\MaxNifImport.h"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\NifDialog.cpp"
+					RelativePath="..\NifImport\NifDialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\NIFImport.cpp"
+					RelativePath="..\NifImport\NIFImport.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\NifImport\NIFImporter.h"
+					RelativePath="..\NifImport\NIFImporter.h"
 					>
 				</File>
 			</Filter>
@@ -8970,7 +5566,7 @@
 				Name="Resource Files"
 				>
 				<File
-					RelativePath=".\NifImport\MaxNifImport.rc"
+					RelativePath="..\NifImport\MaxNifImport.rc"
 					>
 				</File>
 			</Filter>

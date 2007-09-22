@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Debug_Settings"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		Optimization="0"
+		PreprocessorDefinitions="_DEBUG"
+		MinimalRebuild="true"
+		BasicRuntimeChecks="3"
+		RuntimeLibrary="1"
+    DebugInformationFormat="3"
+    ATLMinimizesCRunTimeLibraryUsage="false"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="2"
+		GenerateDebugInformation="true"
+		ProgramDatabaseFile="$(IntDir)\$(TargetName).pdb"
+	/>
+  <Tool
+    Name="VCMIDLTool"
+    PreprocessorDefinitions="_DEBUG"
+  />
+  <Tool
+    Name="VCResourceCompilerTool"
+    PreprocessorDefinitions="_DEBUG"
+  />
+</VisualStudioPropertySheet>

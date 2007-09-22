@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Niflib_Settings"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+    AdditionalIncludeDirectories="$(ProjectDir)..\..\niflib\include;$(ProjectDir)..\..\niflib"
+    PreprocessorDefinitions="USE_NIFLIB_TEMPLATE_HELPERS;NIFLIB_STATIC_LINK"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+    AdditionalLibraryDirectories="$(ProjectDir)..\..\niflib\lib"
+  />
+</VisualStudioPropertySheet>
