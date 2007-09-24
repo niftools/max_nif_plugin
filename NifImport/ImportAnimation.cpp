@@ -588,6 +588,29 @@ bool KFMImporter::ImportAnimation()
 				 }
 			 }
 		 }
+		 else if (strmatch(type, "NiKeyframeController"))
+		 {
+			 Control *c = ai.GetTMController(name);
+			 if (NULL == c)
+				 continue;
+
+			 INode *n = gi->GetINodeByName(name.c_str());
+
+			 if ((*lnk).priority_ != 0.0f) {
+				 npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
+			 }
+
+			 NiKeyframeDataRef data;
+			 Point3 p; Quat q; float s;
+			 if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
+				 PosRotScaleNode(n, p, q, s, prsDefault, 0);
+				 if (ai.AddValues(c, data, time)) {
+					 minTime = min(minTime, start);
+					 maxTime = max(maxTime, stop);
+					 ok = true;
+	 			 }
+			 }
+		 }
       }
       if (maxTime > minTime && maxTime > 0.0f)
          time += (maxTime-minTime) + FramesIncrement;
