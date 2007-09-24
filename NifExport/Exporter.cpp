@@ -49,6 +49,7 @@ stringlist Exporter::mRotate90Degrees;
 bool Exporter::mSuppressPrompts = false;
 bool Exporter::mUseAlternateStripper = false;
 float Exporter::bhkScaleFactor = 7.0f;
+int Exporter::mTangentAndBinormalMethod = 0;
 
 static bool IsNodeOrParentSelected(INode *node) {
    if (node == NULL)

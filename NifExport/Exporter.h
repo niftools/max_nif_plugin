@@ -111,6 +111,7 @@ public:
 	static bool          mSuppressPrompts;
 	static bool          mUseAlternateStripper;
 	static float			bhkScaleFactor;
+	static int           mTangentAndBinormalMethod;
 
 	Exporter(Interface *i, AppSettings *appSettings);
 

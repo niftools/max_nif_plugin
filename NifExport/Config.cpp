@@ -84,7 +84,8 @@ void Exporter::writeConfig(Interface *i)
 	  SetIniValue(NifExportSection, "ZeroTransforms", mZeroTransforms, iniName);
       SetIniValue(NifExportSection, "FixNormals", mFixNormals, iniName);
       SetIniValue(NifExportSection, "TangentAndBinormalExtraData", mTangentAndBinormalExtraData, iniName);
-      SetIniValue(NifExportSection, "UseAlternateStripper", mUseAlternateStripper, iniName);
+	  SetIniValue(NifExportSection, "UseAlternateStripper", mUseAlternateStripper, iniName);
+	  SetIniValue(NifExportSection, "TangentAndBinormalMethod", mTangentAndBinormalMethod, iniName);
       
 	  //SetIniValue(CollisionSection, "bhkScaleFactor", bhkScaleFactor, iniName);
 
