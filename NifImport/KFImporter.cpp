@@ -43,6 +43,7 @@ void KFImporter::ReadBlocks()
 
 				   NiControllerSequenceRef seq = new NiControllerSequence();
 				   seq->SetName( helper->GetName() );
+				   seq->SetTargetName( keys.front()->GetData() ); // Set target name as first
 				   seq->SetTextKey( textKey );
 
 				   float start = FLT_MAX, stop = FLT_MIN;

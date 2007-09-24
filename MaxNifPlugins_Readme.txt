@@ -33,6 +33,14 @@
 
     Change log
     ----------
+      0.2.17
+      ------
+    o Importer
+      - Add initial support for Freedom Force animation import
+    
+    o Exporter
+      - Fix Binormal and Tangent export calculations
+      
       0.2.16
       -----
     o All
