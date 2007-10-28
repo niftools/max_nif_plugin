@@ -65,7 +65,7 @@ static void BuildControllerRefList(NiNodeRef node, map<string,int>& ctrlCount)
 
       // Append extra targets.  Goes away if GetRefs eventually returns the extra targets
       if (NiMultiTargetTransformControllerRef multiCtrl = DynamicCast<NiMultiTargetTransformController>(*itr)) {
-         vector<NiNodeRef> extra = multiCtrl->GetExtraTargets();
+         vector<NiNodeRef> extra = DynamicCast<NiNode>( multiCtrl->GetExtraTargets() );
          nlist.insert(nlist.end(), extra.begin(), extra.end());
       }
 

@@ -83,7 +83,7 @@ bool NifImporter::ImportCollision(NiNodeRef node)
    if (!enableCollision)
       return false;
    // Currently only support the Oblivion bhk basic objects
-   NiCollisionObjectRef collObj = node->GetCollisionObject();
+   bhkNiCollisionObjectRef collObj = node->GetCollisionObject();
    if (collObj)
    {
 	   NiObjectRef body = collObj->GetBody();

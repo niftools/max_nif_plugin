@@ -7,7 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		MaxNifPlugins_Readme.txt = MaxNifPlugins_Readme.txt
 		MaxNifTools.ini = MaxNifTools.ini
 		MaxNifTools.iss = MaxNifTools.iss
-		..\docsys\nif.xml = ..\docsys\nif.xml
 		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
 		User_Settings.vsprops = User_Settings.vsprops
 	EndProjectSection

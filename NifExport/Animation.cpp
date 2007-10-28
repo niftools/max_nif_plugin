@@ -185,7 +185,7 @@ NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
          NiMultiTargetTransformControllerRef ctrl = new NiMultiTargetTransformController();
          vector<NiNodeRef> children;
          getChildNodes(node, children);
-         ctrl->SetExtraTargets(children);
+         ctrl->SetExtraTargets( DynamicCast<NiAVObject>(children) );
 		 Exporter::InitializeTimeController(ctrl, parent);
       }
       NiControllerManagerRef mgr = new NiControllerManager();

@@ -125,6 +125,32 @@
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 		</Configuration>
+    
+    
+		<Configuration
+			Name="Debug - Max 2008|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2008|x64"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2008|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2008|x64"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+		</Configuration>    
 	</Configurations>
 	<References>
 	</References>
