@@ -153,7 +153,7 @@ void Exporter::addFace(Triangles &tris, vector<Vector3> &verts, vector<Vector3> 
 
 Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 {
-	if (isHandled(node))
+	if (isHandled(node) || (node->IsHidden() && !mExportHidden))
 		return Exporter::Skip;
 
    ProgressUpdate(Collision, FormatText("'%s' Collision", node->GetName()));
@@ -734,8 +734,8 @@ bhkShapeRef	Exporter::makeConvexShape(INode *node, Object* obj, Matrix3& tm)
 }
 
 Exporter::Result Exporter::scanForCollision(INode *node)
-{   
-   if (NULL == node) 
+{ 
+	if (node == NULL || (node->IsHidden() && !mExportHidden))
       return Exporter::Skip;
    // Get the bhk RigidBody modifier if available and then get the picked node.
    if (Modifier * mod = GetbhkCollisionModifier(node)){
@@ -766,7 +766,7 @@ Exporter::Result Exporter::scanForCollision(INode *node)
 		   for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
 			   INode *tnode = NULL;
 			   pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-			   if (tnode != NULL) {
+			   if (tnode != NULL && (!tnode->IsHidden() || mExportHidden)) {
 				   mCollisionNodes.insert(tnode);
 				   markAsHandled(tnode); // dont process collision since the list will 
 			   }
@@ -857,7 +857,7 @@ bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef bo
 		for (int i = 0; i < nBlocks; i++) {
 			INode *tnode = NULL;
 			pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-			if (tnode != NULL)
+			if (tnode != NULL && (!tnode->IsHidden() || mExportHidden))
 			{
 				bhkShapeRef subshape = makeCollisionShape(tnode, tm, body);
 				if (subshape)
