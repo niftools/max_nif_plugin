@@ -11,6 +11,11 @@
  *>	Copyright (c) 2006, All Rights Reserved.
  **********************************************************************/
 
+#include <notify.h>
+extern void DoNotifyNodeHide(void *param, NotifyInfo *info);
+extern void DoNotifyNodeUnHide(void *param, NotifyInfo *info);
+extern Class_ID BHKLISTOBJECT_CLASS_ID;
+
 extern ClassDesc2* GetMaxNifImportDesc();
 extern ClassDesc2* GetNifExportDesc();
 extern ClassDesc2* GetNifPropsDesc();
@@ -61,6 +66,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 		controlsInit = TRUE;
 		InitCustomControls(hInstance);	// Initialize MAX's custom controls
 		InitCommonControls();			// Initialize Win95 controls
+		RegisterNotification(DoNotifyNodeHide, NULL, NOTIFY_NODE_HIDE); 
+		RegisterNotification(DoNotifyNodeUnHide, NULL, NOTIFY_NODE_UNHIDE); 
 	}
    if (fdwReason == DLL_PROCESS_ATTACH)
       InitializeLibSettings();
@@ -203,3 +210,60 @@ __declspec( dllexport ) ULONG LibVersion()
 {
    return ULONG(libVersion);
 }
+
+static void DoNotifyNodeHide(void *param, NotifyInfo *info)
+{
+	int code = info->intcode;
+	INode *node = (INode*)info->callParam;
+	if (Object* obj = node->GetObjectRef())
+	{
+		// Look for messages in network\Max.log
+		// MAXScript_interface->Log()->LogEntry(SYSLOG_DEBUG, NO_DIALOG, "NifTools Max Plugin", 
+		// 	"Entered DoNotifyNodeHide; node is -%s- and class ID is %ld\n", node->GetName(), obj->ClassID().PartA());
+
+	   if (obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
+	   {
+		   const int PB_MESHLIST = 1;
+		   IParamBlock2* pblock2 = obj->GetParamBlockByID(0);
+		   int nBlocks = pblock2->Count(PB_MESHLIST);
+		   for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++)
+		   {
+			   INode *tnode = NULL;
+			   pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+			   if (tnode != NULL)
+			   {
+				   tnode->Hide(TRUE);
+			   }
+		   }
+	   }
+	}
+}
+
+static void DoNotifyNodeUnHide(void *param, NotifyInfo *info)
+{
+	int code = info->intcode;
+	INode *node = (INode*)info->callParam;
+	if (Object* obj = node->GetObjectRef())
+	{
+		// Look for messages in network\Max.log
+		// MAXScript_interface->Log()->LogEntry(SYSLOG_DEBUG, NO_DIALOG, "NifTools Max Plugin", 
+		// 	"Entered DoNotifyNodeUnHide; node is -%s- and class ID is %ld\n", node->GetName(), obj->ClassID().PartA());
+
+	   if (obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
+	   {
+		   const int PB_MESHLIST = 1;
+		   IParamBlock2* pblock2 = obj->GetParamBlockByID(0);
+		   int nBlocks = pblock2->Count(PB_MESHLIST);
+		   for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++)
+		   {
+			   INode *tnode = NULL;
+			   pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+			   if (tnode != NULL)
+			   {
+				   tnode->Hide(FALSE);
+			   }
+		   }
+	   }
+	}
+}
+
