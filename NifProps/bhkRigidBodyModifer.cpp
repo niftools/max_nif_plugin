@@ -256,6 +256,7 @@ INT_PTR bhkRigidBodyModifierDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND h
 		   Interval valid;
 		   mod->pblock->GetValue( PB_MATERIAL, 0, sel, valid);
 		   mCbMaterial.select( sel );
+		   EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
 
 		   Update(t);
 		   break;

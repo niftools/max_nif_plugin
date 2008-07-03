@@ -350,6 +350,9 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
          Interval valid;
          so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
          mCbMaterial.select( sel );
+		 // Disable all types not currently implemented
+		 EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
+		 EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);
 
          Update(t);
          break;
