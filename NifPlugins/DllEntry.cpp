@@ -12,6 +12,18 @@
  **********************************************************************/
 
 #include <notify.h>
+
+#ifdef USES_HAVOK
+//
+// Math and base include
+#include <Common/Base/hkBase.h>
+#include <Common/Base/System/hkBaseSystem.h>
+#include <Common/Base/Memory/hkThreadMemory.h>
+#include <Common/Base/Memory/Memory/Pool/hkPoolMemory.h>
+#include <Common/Base/System/Error/hkDefaultError.h>
+#endif
+
+
 extern void DoNotifyNodeHide(void *param, NotifyInfo *info);
 extern void DoNotifyNodeUnHide(void *param, NotifyInfo *info);
 extern Class_ID BHKLISTOBJECT_CLASS_ID;
@@ -29,6 +41,8 @@ extern ClassDesc* GetDDSLibClassDesc();
 extern ClassDesc2* GetbhkListObjDesc();
 extern ClassDesc2* GetbhkProxyObjDesc();
 
+static void InitializeHavok();
+static void CloseHavok();
 
 enum ClassDescType
 {
@@ -50,8 +64,6 @@ static int nClasses = 0;
 static ClassDesc2* classDescriptions[20];
 static bool classDescEnabled[CD_Count];
 
-
-
 // This function is called by Windows when the DLL is loaded.  This 
 // function may also be called many times during time critical operations
 // like rendering.  Therefore developers need to be careful what they
@@ -68,10 +80,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 		InitCommonControls();			// Initialize Win95 controls
 		RegisterNotification(DoNotifyNodeHide, NULL, NOTIFY_NODE_HIDE); 
 		RegisterNotification(DoNotifyNodeUnHide, NULL, NOTIFY_NODE_UNHIDE); 
+		InitializeHavok();
 	}
-   if (fdwReason == DLL_PROCESS_ATTACH)
-      InitializeLibSettings();
-			
+	if (fdwReason == DLL_PROCESS_ATTACH)
+		InitializeLibSettings();
+	if (fdwReason == DLL_PROCESS_DETACH)
+		CloseHavok();
 	return (TRUE);
 }
 
@@ -267,3 +281,52 @@ static void DoNotifyNodeUnHide(void *param, NotifyInfo *info)
 	}
 }
 
+#ifdef USES_HAVOK
+static hkThreadMemory* threadMemory = NULL;
+static char* stackBuffer = NULL;
+
+static void HK_CALL errorReport(const char* msg, void*)
+{
+	OutputDebugString(msg);
+}
+
+static void InitializeHavok()
+{
+	// Initialize the base system including our memory system
+	hkPoolMemory* memoryManager = new hkPoolMemory();
+	threadMemory = new hkThreadMemory(memoryManager, 16);
+	hkBaseSystem::init( memoryManager, threadMemory, errorReport );
+	memoryManager->removeReference();
+
+	// We now initialize the stack area to 100k (fast temporary memory to be used by the engine).
+	{
+		int stackSize = 0x100000;
+		stackBuffer = hkAllocate<char>( stackSize, HK_MEMORY_CLASS_BASE);
+		hkThreadMemory::getInstance().setStackArea( stackBuffer, stackSize);
+	}
+}
+
+static void CloseHavok()
+{
+	// Deallocate stack area
+	if (threadMemory)
+	{
+		threadMemory->setStackArea(0, 0);
+		hkDeallocate(stackBuffer);
+
+		threadMemory->removeReference();
+		threadMemory = NULL;
+		stackBuffer = NULL;
+	}
+
+	// Quit base system
+	hkBaseSystem::quit();
+}
+#else
+static void InitializeHavok()
+{
+}
+static void CloseHavok()
+{
+}
+#endif

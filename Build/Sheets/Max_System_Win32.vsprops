@@ -3,11 +3,11 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Max_System_Win32"
-  InheritedPropertySheets=".\Max_System_Default.vsprops;.\Niflib_Settings.vsprops"
+  InheritedPropertySheets=".\Max_System_Default.vsprops;.\Niflib_Settings.vsprops;.\Havok_Settings.vsprops"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-    PreprocessorDefinitions="WIN32"
+    PreprocessorDefinitions="WIN32;_WIN32_WINNT=0x0500"
 	/>
   
 	<Tool

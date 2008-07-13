@@ -8,9 +8,42 @@
 #include "obj/bhkCapsuleShape.h"
 #include "obj/hkPackedNiTriStripsData.h"
 #include "obj/bhkPackedNiTriStripsShape.h"
+#include "obj/bhkMoppBvTreeShape.h"
 
 #include "..\NifProps\bhkHelperFuncs.h"
 #include "..\NifProps\bhkHelperInterface.h"
+
+#ifdef USES_HAVOK
+//
+// Math and base include
+#include <Common/Base/hkBase.h>
+#include <Common/Base/System/hkBaseSystem.h>
+#include <Common/Base/Memory/hkThreadMemory.h>
+#include <Common/Base/Memory/Memory/Pool/hkPoolMemory.h>
+#include <Common/Base/System/Error/hkDefaultError.h>
+#include <Common/Base/Monitor/hkMonitorStream.h>
+
+#include <Common/Base/System/Io/FileSystem/hkFileSystem.h>
+#include <Common/Base/Container/LocalArray/hkLocalBuffer.h>
+//
+#include <Physics/Collide/Shape/Convex/Box/hkpBoxShape.h>
+#include <Physics/Collide/Shape/Convex/ConvexTranslate/hkpConvexTranslateShape.h>
+#include <Physics/Collide/Shape/Convex/ConvexTransform/hkpConvexTransformShape.h>
+#include <Physics/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
+#include <Physics/Collide/Shape/Compound/Collection/List/hkpListShape.h>
+#include <Physics/Collide/Shape/Convex/Capsule/hkpCapsuleShape.h>
+#include <Physics/Collide/Shape/Compound/Tree/Mopp/hkpMoppBvTreeShape.h>
+#include <Physics/Collide/Shape/Compound/Tree/Mopp/hkpMoppUtility.h>
+#include <Physics/Internal/Collide/Mopp/Code/hkpMoppCode.h>
+
+#pragma comment(lib, "hkBase.lib")
+#pragma comment(lib, "hkSerialize.lib")
+#pragma comment(lib, "hkpInternal.lib")
+#pragma comment(lib, "hkpUtilities.lib")
+#pragma comment(lib, "hkpCollide.lib")
+#pragma comment(lib, "hkpConstraintSolver.lib")
+#endif
+
 
 #ifdef _DEBUG
 #include <assert.h>
@@ -33,6 +66,48 @@ enum
 	CAPSULE_RADIUS = 0,
 	CAPSULE_HEIGHT = 1,
 };
+
+
+#ifdef USES_HAVOK
+
+static hkpSimpleMeshShape * ConstructHKMesh( vector<Vector3>& verts, vector<Niflib::Triangle>& tris)
+{
+	hkpSimpleMeshShape * storageMeshShape = new hkpSimpleMeshShape( 0.01f );
+	hkArray<hkVector4> &vertices = storageMeshShape->m_vertices;
+	hkArray<hkpSimpleMeshShape::Triangle> &triangles = storageMeshShape->m_triangles;
+
+	triangles.setSize( 0 );
+	for (unsigned int i=0;i<tris.size();++i) {
+		Niflib::Triangle &tri = tris[i];
+		hkpSimpleMeshShape::Triangle hktri;
+		hktri.m_a = tri[0];
+		hktri.m_b = tri[1];
+		hktri.m_c = tri[2];
+		triangles.pushBack( hktri );
+	}
+
+	vertices.setSize( 0 );
+	for (unsigned int i=0;i<verts.size();++i) {
+		Niflib::Vector3 &vert = verts[i];
+		vertices.pushBack( hkVector4(vert.x, vert.y, vert.z) );
+	}
+	//storageMeshShape->setRadius(1.0f);
+	return storageMeshShape;
+}
+
+static hkpSimpleMeshShape * ConstructHKMesh( NiTriBasedGeomRef shape )
+{
+	NiTriBasedGeomDataRef data = shape->GetData();
+	return ConstructHKMesh(data->GetVertices(), data->GetTriangles());
+}
+
+static hkpSimpleMeshShape * ConstructHKMesh( bhkPackedNiTriStripsShapeRef shape )
+{
+	hkPackedNiTriStripsDataRef data = shape->GetData();
+	return ConstructHKMesh(data->GetVertices(), data->GetTriangles());
+}
+
+#endif
 
 
 /*
@@ -125,7 +200,7 @@ To mimic the "Align to world" behavior, the following code snippet should help:
 
 int Exporter::addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm)
 {
-	for (int i=0; i<verts.size(); i++)
+	for (unsigned int i=0; i<verts.size(); i++)
 	{
 		if (equal(verts[i], pt, mWeldThresh) &&
 			equal(vnorms[i], norm, 0))
@@ -362,6 +437,42 @@ bhkNiTriStripsShapeRef Exporter::makeTriStripsShape(Mesh& mesh, Matrix3& sm)
 	return shape;
 }
 
+#ifdef USES_HAVOK
+static bhkMoppBvTreeShapeRef makeTreeShape(bhkPackedNiTriStripsShapeRef mesh)
+{
+	hkpShapeCollection * list = NULL;
+	bhkMoppBvTreeShapeRef mopp = new bhkMoppBvTreeShape();
+	mopp->SetMaterial( HAV_MAT_WOOD );
+	mopp->SetShape( mesh );
+	list = ConstructHKMesh(mesh);
+
+	hkpMoppCompilerInput mfr;
+	mfr.setAbsoluteFitToleranceOfAxisAlignedTriangles( hkVector4( 0.1f, 0.1f, 0.1f ) );
+
+	vector<Niflib::byte> moppcode;
+	try
+	{
+		hkpMoppCode* code = hkpMoppUtility::buildCode(list, mfr);
+
+		moppcode.resize( code->m_data.getSize() );
+		for (int i=0; i<code->m_data.getSize(); ++i )
+			moppcode[i] = code->m_data[i];
+		mopp->SetMoppCode( moppcode );
+		mopp->SetMoppOrigin( Vector3(code->m_info.m_offset(0), code->m_info.m_offset(1), code->m_info.m_offset(2) ));
+		mopp->SetMoppScale( code->m_info.getScale() );
+
+		code->removeReference();
+	}
+	catch(...)
+	{
+	}
+	list->removeReference();
+
+	return mopp;
+}
+
+#endif
+
 bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matrix3& sm)
 {
 	// Need to separate the vertices based on material.  
@@ -396,9 +507,9 @@ bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matr
 		Triangle& tri = tris[i];
 		norms[i] = TOVECTOR3(mesh.getFaceNormal(i));
 		Face& face = mesh.faces[i];
-		tri[0] = face.getVert(0);
-		tri[1] = face.getVert(1);
-		tri[2] = face.getVert(2);
+		tri[0] = (USHORT)face.getVert(0);
+		tri[1] = (USHORT)face.getVert(1);
+		tri[2] = (USHORT)face.getVert(2);
 	}
 
 	hkPackedNiTriStripsDataRef data = new hkPackedNiTriStripsData();
@@ -410,6 +521,15 @@ bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matr
 	// setup shape
 	bhkPackedNiTriStripsShapeRef shape = new bhkPackedNiTriStripsShape();
 	shape->SetData(data);
+
+	OblivionSubShape subshape;
+	subshape.layer = OL_STATIC;
+	subshape.material = HAV_MAT_WOOD;
+	subshape.numVertices = verts.size();
+
+	vector<OblivionSubShape> subshapes;
+	subshapes.push_back(subshape);
+	shape->SetSubShapes( subshapes );
 	//shape->SetStripsData(0, data);
 	//shape->SetNumDataLayers(1);
 	//shape->SetOblivionLayer(0, OL_STATIC);
@@ -523,7 +643,7 @@ bhkShapeRef Exporter::makeBoxShape(INode *node, Object *obj, Matrix3& tm)
 bhkShapeRef Exporter::makeSphereShape(INode *node, Object *obj, Matrix3& tm)
 {
    Point3 scale = GetScale(tm);
-   float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+   float s = (scale[0] + scale[1] + scale[2]) / 3.0f;
 
 	float radius = 0;
 	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(0))
@@ -544,7 +664,7 @@ bhkShapeRef Exporter::makeSphereShape(INode *node, Object *obj, Matrix3& tm)
 bhkShapeRef Exporter::makeCapsuleShape(INode *node, Object *obj, Matrix3& tm)
 {
    Point3 scale = GetScale(tm);
-   float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+   float s = (scale[0] + scale[1] + scale[2]) / 3.0f;
 
 	float radius = 0.1f;
 	float height = 0.1f;
@@ -576,7 +696,7 @@ bhkShapeRef Exporter::makebhkBoxShape(INode *node, Object *obj, Matrix3& tm)
 	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(box_params))
 	{
 		Point3 scale = GetScale(tm);
-		float s = (scale[0] + scale[1] + scale[2]) / 3.0;
+		float s = (scale[0] + scale[1] + scale[2]) / 3.0f;
 
 		int mtl = 0;
 		float length = 0, width = 0, height = 0;
@@ -823,7 +943,7 @@ bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef bo
 	{
 		if (bhkRigidBodyInterface *irb = (bhkRigidBodyInterface *)node->GetObjectRef()->GetInterface(BHKRIGIDBODYINTERFACE_DESC))
 		{
-			int mass = irb->GetMass(0);
+			float mass = irb->GetMass(0);
 			float frict = irb->GetFriction(0);
 			float resti = irb->GetRestitution(0);
 			int lyr = irb->GetLayer(0);
@@ -907,9 +1027,9 @@ bhkShapeRef Exporter::makeProxyShape(INode *node, Object *obj, Matrix3& tm)
 				case bv_type_shapes:
 					shape = makeProxyTriStripShape(node, obj, mesh, tm);
 					break;
+
 				case bv_type_packed:
-					shape = makeProxyTriStripShape(node, obj, mesh, tm);
-					//shape = makeProxyPackedTriStripShape(node, obj, mesh, tm);
+					shape = makeProxyPackedTriStripShape(node, obj, mesh, tm);
 					break;
 
 				case bv_type_convex: 
@@ -1047,8 +1167,11 @@ bhkShapeRef	Exporter::makeProxyPackedTriStripShape(INode *node, Object *obj, Mes
 
 		Matrix3 ident(true);
 		bhkPackedNiTriStripsShapeRef trishape = makePackedTriStripsShape(localmesh, ident);
-
+#ifdef USES_HAVOK
+		shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+#else
 		shape = StaticCast<bhkShape>(trishape);
+#endif
 	}
 	return shape;
 }
@@ -1057,7 +1180,7 @@ bhkShapeRef	Exporter::makeModifierShape(INode *node, Object* obj, Modifier* mod,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 
 	bhkShapeRef shape;
 
@@ -1107,6 +1230,10 @@ bhkShapeRef	Exporter::makeModifierShape(INode *node, Object* obj, Modifier* mod,
 	case bv_type_convex:
 		shape = makeModConvexShape(node, mod, const_cast<Mesh&>(*mesh), tm);
 		break;
+
+	case bv_type_packed:
+		shape = makeModPackedTriStripShape(node, mod, const_cast<Mesh&>(*mesh), tm);
+		break;
 	}
 	return shape;
 }
@@ -1115,7 +1242,7 @@ bhkShapeRef	Exporter::makeModBoxShape(INode *node, Modifier* mod, Mesh& mesh, Ma
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 	int material = NP_DEFAULT_HVK_MATERIAL;
 
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
@@ -1157,7 +1284,7 @@ bhkShapeRef	Exporter::makeModSphereShape(INode *node, Modifier* mod, Mesh& mesh,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 	int material = NP_DEFAULT_HVK_MATERIAL;
 
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
@@ -1199,7 +1326,7 @@ bhkShapeRef	Exporter::makeModCapsuleShape(INode *node, Modifier* mod, Mesh& mesh
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 	int material = NP_DEFAULT_HVK_MATERIAL;
 
 	node->EvalWorldState(0);
@@ -1246,7 +1373,7 @@ bhkShapeRef	Exporter::makeModConvexShape(INode *node, Modifier* mod, Mesh& mesh,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 	int material = NP_DEFAULT_HVK_MATERIAL;
 
 	Matrix3 ltm = node->GetObjTMAfterWSM(0) * tm;
@@ -1268,7 +1395,7 @@ bhkShapeRef	Exporter::makeModTriStripShape(INode *node, Modifier* mod, Mesh& mes
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 	int material = NP_DEFAULT_HVK_MATERIAL;
 
 	Matrix3 ltm = node->GetObjTMAfterWSM(0) * tm;
@@ -1288,5 +1415,27 @@ bhkShapeRef	Exporter::makeModTriStripShape(INode *node, Modifier* mod, Mesh& mes
 
 bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm)
 {
-	return makeModTriStripShape(node, mod, mesh, tm);
+	enum { havok_params };
+	enum { PB_BOUND_TYPE, PB_MATERIAL, };
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	int material = NP_DEFAULT_HVK_MATERIAL;
+
+	Matrix3 ltm = node->GetObjTMAfterWSM(0) * tm;
+
+	bhkShapeRef shape;
+	if (bhkPackedNiTriStripsShapeRef trishape = makePackedTriStripsShape(mesh, ltm))
+	{
+		//trishape->SetMaterial(HavokMaterial(material));
+		if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
+		{
+			pblock2->GetValue(PB_MATERIAL, 0, material, FOREVER, 0);
+		}
+
+#ifdef USES_HAVOK
+		shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+#else
+		shape = StaticCast<bhkShape>(trishape);
+#endif
+	}
+	return shape;
 }

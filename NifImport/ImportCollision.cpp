@@ -74,7 +74,7 @@ struct CollisionImport
 	   INode *parent
 	   );
 
-   enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+   enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 };
 
 bool NifImporter::ImportCollision(NiNodeRef node)
@@ -567,7 +567,7 @@ bool CollisionImport::ImportPackedNiTriStripsShape(INode *rbody, bhkRigidBodyRef
 		vector<Vector3> norms = data->GetNormals();
 
 		INode *inode = ImportCollisionMesh(verts, tris, norms, tm, parent);
-		CreatebhkCollisionModifier(inode, bv_type_shapes, HavokMaterial(NP_DEFAULT_HVK_MATERIAL));
+		CreatebhkCollisionModifier(inode, bv_type_packed, HavokMaterial(NP_DEFAULT_HVK_MATERIAL));
 		ImportBase(body, shape, parent, inode, ltm);
 		AddShape(rbody, inode);
 		return true;

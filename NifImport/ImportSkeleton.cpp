@@ -683,8 +683,11 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       // Import UPB
       if (bone) ImportUPB(bone, node);
 
-      // Import Havok Collision Data surrounding node
-      ImportCollision(node);
+      // Import Havok Collision Data surrounding node,  
+	  //   unfortunately this causes double import of collision so I'm disabling it for now.
+	 // if (ImportCollision) {
+		//ImportCollision(node);
+	 // }
 
       if (bone && recurse)
       {

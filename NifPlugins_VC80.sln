@@ -4,7 +4,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Niflib", "..\niflib\niflib.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50B67748-0DFB-45B0-BF1F-E80135EE3823}"
 	ProjectSection(SolutionItems) = preProject
-		MaxNifPlugins_Readme.txt = MaxNifPlugins_Readme.txt
 		MaxNifTools.ini = MaxNifTools.ini
 		MaxNifTools.iss = MaxNifTools.iss
 		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
@@ -17,9 +16,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifPlugins", "Build\NifPlug
 	EndProjectSection
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - gmax|Win32 = Debug - gmax|Win32
 		Debug - gmax|x64 = Debug - gmax|x64
+		Debug - Max 2008|Win32 = Debug - Max 2008|Win32
+		Debug - Max 2008|x64 = Debug - Max 2008|x64
 		Debug - Max 4.2|Win32 = Debug - Max 4.2|Win32
 		Debug - Max 4.2|x64 = Debug - Max 4.2|x64
 		Debug - Max 4|Win32 = Debug - Max 4|Win32
@@ -34,8 +39,12 @@ Global
 		Debug - Max 8|x64 = Debug - Max 8|x64
 		Debug - Max 9|Win32 = Debug - Max 9|Win32
 		Debug - Max 9|x64 = Debug - Max 9|x64
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
 		Release - gmax|Win32 = Release - gmax|Win32
 		Release - gmax|x64 = Release - gmax|x64
+		Release - Max 2008|Win32 = Release - Max 2008|Win32
+		Release - Max 2008|x64 = Release - Max 2008|x64
 		Release - Max 4.2|Win32 = Release - Max 4.2|Win32
 		Release - Max 4.2|x64 = Release - Max 4.2|x64
 		Release - Max 4|Win32 = Release - Max 4|Win32
@@ -50,12 +59,18 @@ Global
 		Release - Max 8|x64 = Release - Max 8|x64
 		Release - Max 9|Win32 = Release - Max 9|Win32
 		Release - Max 9|x64 = Release - Max 9|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - gmax|Win32.ActiveCfg = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - gmax|Win32.Build.0 = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - gmax|x64.ActiveCfg = Debug - DLL|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - gmax|x64.Build.0 = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2008|Win32.ActiveCfg = Debug - Static|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2008|Win32.Build.0 = Debug - Static|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2008|x64.ActiveCfg = Debug - Static|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2008|x64.Build.0 = Debug - Static|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|Win32.ActiveCfg = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|Win32.Build.0 = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|x64.ActiveCfg = Debug - DLL|x64
@@ -84,10 +99,17 @@ Global
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 9|Win32.Build.0 = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 9|x64.ActiveCfg = Debug - Static|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 9|x64.Build.0 = Debug - Static|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug|Win32.ActiveCfg = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug|x64.ActiveCfg = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug|x64.Build.0 = Debug - DLL|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - gmax|Win32.ActiveCfg = Release - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - gmax|Win32.Build.0 = Release - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - gmax|x64.ActiveCfg = Release - DLL|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - gmax|x64.Build.0 = Release - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 2008|Win32.ActiveCfg = Release - Static|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 2008|Win32.Build.0 = Release - Static|Win32
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 2008|x64.ActiveCfg = Release - Static|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 2008|x64.Build.0 = Release - Static|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 4.2|Win32.ActiveCfg = Release - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 4.2|Win32.Build.0 = Release - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 4.2|x64.ActiveCfg = Release - DLL|x64
@@ -116,10 +138,17 @@ Global
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 9|Win32.Build.0 = Release - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 9|x64.ActiveCfg = Release - Static|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release - Max 9|x64.Build.0 = Release - Static|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release|Win32.ActiveCfg = Release - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release|x64.ActiveCfg = Release - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Release|x64.Build.0 = Release - DLL|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - gmax|Win32.ActiveCfg = Debug - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - gmax|Win32.Build.0 = Debug - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - gmax|x64.ActiveCfg = Debug - gmax|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - gmax|x64.Build.0 = Debug - gmax|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 2008|Win32.ActiveCfg = Debug - Max 2008|Win32
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 2008|Win32.Build.0 = Debug - Max 2008|Win32
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 2008|x64.ActiveCfg = Debug - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 2008|x64.Build.0 = Debug - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 4.2|Win32.ActiveCfg = Debug - Max 4.2|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 4.2|Win32.Build.0 = Debug - Max 4.2|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 4.2|x64.ActiveCfg = Debug - Max 4.2|x64
@@ -148,10 +177,17 @@ Global
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|Win32.Build.0 = Debug - Max 9|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|x64.ActiveCfg = Debug - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|x64.Build.0 = Debug - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug|Win32.ActiveCfg = Debug - Max 2008|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug|x64.ActiveCfg = Debug - Max 2008|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug|x64.Build.0 = Debug - Max 2008|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|Win32.ActiveCfg = Release - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|Win32.Build.0 = Release - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|x64.ActiveCfg = Release - gmax|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|x64.Build.0 = Release - gmax|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 2008|Win32.ActiveCfg = Release - Max 2008|Win32
+		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 2008|Win32.Build.0 = Release - Max 2008|Win32
+		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 2008|x64.ActiveCfg = Release - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 2008|x64.Build.0 = Release - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 4.2|Win32.ActiveCfg = Release - Max 4.2|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 4.2|Win32.Build.0 = Release - Max 4.2|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 4.2|x64.ActiveCfg = Release - Max 4.2|x64
@@ -180,6 +216,9 @@ Global
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|Win32.Build.0 = Release - Max 9|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|x64.ActiveCfg = Release - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|x64.Build.0 = Release - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release|Win32.ActiveCfg = Release - Max 2008|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release|x64.ActiveCfg = Release - Max 2008|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release|x64.Build.0 = Release - Max 2008|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,4 +28,7 @@
     Name="VCResourceCompilerTool"
     PreprocessorDefinitions="_DEBUG"
   />
+
+  <UserMacro Name="NifBuildType" Value="Debug"/>
+  
 </VisualStudioPropertySheet>

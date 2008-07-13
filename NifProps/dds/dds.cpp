@@ -1,3 +1,4 @@
+#ifdef GAME_VER
 // File ....: dds.cpp
 // ------------------
 // Author...: Sean Palmer
@@ -772,3 +773,5 @@ BOOL WINAPI DllMain(HINSTANCE hDLLInst, DWORD fdwReason, LPVOID lpvReserved)
 }
 
 #endif
+
+#endif //GAME_VER

@@ -2,7 +2,7 @@
 <VisualStudioPropertySheet
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="Debug_Settings"
+	Name="Release_Settings"
 	>
 	<Tool
 		Name="VCCLCompilerTool"
@@ -34,7 +34,9 @@
 
   <Tool
     Name="VCPostBuildEventTool"
-    CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifPlugins_Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(ProjectDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+    CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)license.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)ChangeLog.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Authors.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
   />
+
+  <UserMacro Name="NifBuildType" Value="Release"/>
 
   </VisualStudioPropertySheet>

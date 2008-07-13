@@ -176,7 +176,7 @@ enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_
 
 enum { havok_params_panel, };
 
-enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, };  // pblock ID
+enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
 
 static ParamBlockDesc2 havok_param_blk ( 
    havok_params, _T("BoundingVolumes"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, PBLOCK_REF,
@@ -192,8 +192,8 @@ static ParamBlockDesc2 havok_param_blk (
 
 	PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		bv_type_shapes, 
-	  p_range, 		0, 5, 
-	  p_ui, 			havok_params,	TYPE_RADIO, 6, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX,
+	  p_range, 		0, 6, 
+	  p_ui, 			havok_params,	TYPE_RADIO, 7, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX, IDC_RDO_PACKED_STRIPS,
 	  end,
 
 	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
@@ -436,16 +436,17 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 		BuildColCapsule(proxyMesh);
 		break;
 
-	//case bv_type_packed: // Packed
-	//	BuildColPackedStrips();
-	//	//BuildSphere();
-	//	break;
-
 	case bv_type_convex:
 		BuildColConvex(proxyMesh);
 		BuildOptimize(proxyMesh);
 		//BuildScubaMesh();
 		break;
+
+	case bv_type_packed: // Packed
+		BuildColPackedStrips(proxyMesh);
+		//BuildSphere();
+		break;
+
 	}
 	
 	//

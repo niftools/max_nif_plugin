@@ -20,16 +20,6 @@
 
     Enjoy!
 
-
-    Additional Notes
-    ----------------
-        
-    Set the layer value to "NonCollidable", if you want to be able to walk
-     through your objects, while still being able to activate them.
-
-    If your collision mesh comes out deformed, go to the utilities tab, 
-    choose "Reset XForm" and click "Reset Selected". This should fix it.
-    
     Requirements
     ------------
 
@@ -85,3 +75,14 @@
        - TextureSearchPaths will be recursively scanned for file names that 
          match the extensions (this can be time consuming so keep it to only 
          relevant directories to you).
+
+
+    Additional Notes
+    ----------------
+        
+    Set the layer value to "NonCollidable", if you want to be able to walk
+     through your objects, while still being able to activate them.
+
+    If your collision mesh comes out deformed, go to the utilities tab, 
+    choose "Reset XForm" and click "Reset Selected". This should fix it.
+    
