@@ -35,6 +35,7 @@ enum
 	CAPSULE_HEIGHT = 1,
 };
 
+extern HINSTANCE hInstance;
 class HavokMoppCode
 {
 private:
@@ -61,7 +62,13 @@ public:
 	{
 		if (hMoppLib == NULL)
 		{
-			hMoppLib = LoadLibraryA( "NifMopp.dll" );
+			char curfile[_MAX_PATH];
+			GetModuleFileName(hInstance, curfile, MAX_PATH);
+			PathRemoveFileSpec(curfile);
+			PathAppend(curfile, "NifMopp.dll");
+			hMoppLib = LoadLibraryA( curfile );
+			if (hMoppLib == NULL)
+				hMoppLib = LoadLibraryA( "NifMopp.dll" );
 			GenerateMoppCode = (fnGenerateMoppCode)GetProcAddress( hMoppLib, "GenerateMoppCode" );
 			RetrieveMoppCode = (fnRetrieveMoppCode)GetProcAddress( hMoppLib, "RetrieveMoppCode" );
 			RetrieveMoppScale = (fnRetrieveMoppScale)GetProcAddress( hMoppLib, "RetrieveMoppScale" );

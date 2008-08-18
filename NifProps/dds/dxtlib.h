@@ -16,8 +16,8 @@ Comments:
 
 
 
-#pragma comment(lib, "C:\\Development\\Projects\\NifLib\\niftools\\trunk\\max\\NifProps\\dds\\nvDXTlib.lib")
-//#pragma comment(lib, "C:\\Development\\Projects\\NifLib\\niftools\\trunk\\max\\NifProps\\dds\\nvDXTlib.vc7.lib")
+#pragma comment(lib, "..\\NifProps\\dds\\nvDXTlib.lib")
+//#pragma comment(lib, "..\\NifProps\\dds\\nvDXTlib.vc7.lib")
 
 
 

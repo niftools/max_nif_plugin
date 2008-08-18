@@ -3,7 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50B67748-0DFB-45B0-BF1F-E80135EE3823}"
 	ProjectSection(SolutionItems) = preProject
 		MaxNifTools.ini = MaxNifTools.ini
-		MaxNifTools.iss = MaxNifTools.iss
 		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
 	EndProjectSection
 EndProject

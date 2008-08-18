@@ -1,4 +1,4 @@
-                        MaxPlugins 0.2.16
+                        MaxPlugins 0.2.17
                         =================
 
  
@@ -24,7 +24,7 @@
     ------------
 
       Plugins:
-        3D Studio Max 4.2, 5, 6, 7, 8 and 9
+        3D Studio Max 5, 6, 7, 8, 9, 2008, 2009
         gmax 1.2
 
     Installation
