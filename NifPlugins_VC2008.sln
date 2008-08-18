@@ -1,7 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Niflib", "..\niflib\niflib.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50B67748-0DFB-45B0-BF1F-E80135EE3823}"
 	ProjectSection(SolutionItems) = preProject
 		MaxNifTools.ini = MaxNifTools.ini
@@ -9,7 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifPlugins", "Build\NifPlugins_VC80.vcproj", "{466F2D3E-2663-4583-A05C-128683677617}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Niflib", "..\niflib\niflib_VC2008.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifPlugins", "Build\NifPlugins_VC2008.vcproj", "{466F2D3E-2663-4583-A05C-128683677617}"
 	ProjectSection(ProjectDependencies) = postProject
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E} = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
 	EndProjectSection

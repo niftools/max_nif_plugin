@@ -13,38 +13,6 @@
 #include "..\NifProps\bhkHelperFuncs.h"
 #include "..\NifProps\bhkHelperInterface.h"
 
-#ifdef USES_HAVOK
-//
-// Math and base include
-#include <Common/Base/hkBase.h>
-#include <Common/Base/System/hkBaseSystem.h>
-#include <Common/Base/Memory/hkThreadMemory.h>
-#include <Common/Base/Memory/Memory/Pool/hkPoolMemory.h>
-#include <Common/Base/System/Error/hkDefaultError.h>
-#include <Common/Base/Monitor/hkMonitorStream.h>
-
-#include <Common/Base/System/Io/FileSystem/hkFileSystem.h>
-#include <Common/Base/Container/LocalArray/hkLocalBuffer.h>
-//
-#include <Physics/Collide/Shape/Convex/Box/hkpBoxShape.h>
-#include <Physics/Collide/Shape/Convex/ConvexTranslate/hkpConvexTranslateShape.h>
-#include <Physics/Collide/Shape/Convex/ConvexTransform/hkpConvexTransformShape.h>
-#include <Physics/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
-#include <Physics/Collide/Shape/Compound/Collection/List/hkpListShape.h>
-#include <Physics/Collide/Shape/Convex/Capsule/hkpCapsuleShape.h>
-#include <Physics/Collide/Shape/Compound/Tree/Mopp/hkpMoppBvTreeShape.h>
-#include <Physics/Collide/Shape/Compound/Tree/Mopp/hkpMoppUtility.h>
-#include <Physics/Internal/Collide/Mopp/Code/hkpMoppCode.h>
-
-#pragma comment(lib, "hkBase.lib")
-#pragma comment(lib, "hkSerialize.lib")
-#pragma comment(lib, "hkpInternal.lib")
-#pragma comment(lib, "hkpUtilities.lib")
-#pragma comment(lib, "hkpCollide.lib")
-#pragma comment(lib, "hkpConstraintSolver.lib")
-#endif
-
-
 #ifdef _DEBUG
 #include <assert.h>
 #include <crtdbg.h>
@@ -67,48 +35,80 @@ enum
 	CAPSULE_HEIGHT = 1,
 };
 
-
-#ifdef USES_HAVOK
-
-static hkpSimpleMeshShape * ConstructHKMesh( vector<Vector3>& verts, vector<Niflib::Triangle>& tris)
+class HavokMoppCode
 {
-	hkpSimpleMeshShape * storageMeshShape = new hkpSimpleMeshShape( 0.01f );
-	hkArray<hkVector4> &vertices = storageMeshShape->m_vertices;
-	hkArray<hkpSimpleMeshShape::Triangle> &triangles = storageMeshShape->m_triangles;
+private:
+	typedef int (__stdcall * fnGenerateMoppCode)(int nVerts, Vector3 const* verts, int nTris, Triangle const *tris);
+	typedef int (__stdcall * fnRetrieveMoppCode)(int nBuffer, unsigned char *buffer);
+	typedef int (__stdcall * fnRetrieveMoppScale)(float *value);
+	typedef int (__stdcall * fnRetrieveMoppOrigin)(Vector3 *value);
 
-	triangles.setSize( 0 );
-	for (unsigned int i=0;i<tris.size();++i) {
-		Niflib::Triangle &tri = tris[i];
-		hkpSimpleMeshShape::Triangle hktri;
-		hktri.m_a = tri[0];
-		hktri.m_b = tri[1];
-		hktri.m_c = tri[2];
-		triangles.pushBack( hktri );
+	HMODULE hMoppLib;
+	fnGenerateMoppCode GenerateMoppCode;
+	fnRetrieveMoppCode RetrieveMoppCode;
+	fnRetrieveMoppScale RetrieveMoppScale;
+	fnRetrieveMoppOrigin RetrieveMoppOrigin;
+
+public:
+	HavokMoppCode() : hMoppLib(0), GenerateMoppCode(0), RetrieveMoppCode(0), RetrieveMoppScale(0), RetrieveMoppOrigin(0) {
 	}
 
-	vertices.setSize( 0 );
-	for (unsigned int i=0;i<verts.size();++i) {
-		Niflib::Vector3 &vert = verts[i];
-		vertices.pushBack( hkVector4(vert.x, vert.y, vert.z) );
+	~HavokMoppCode() {
+		if (hMoppLib) FreeLibrary(hMoppLib);
 	}
-	//storageMeshShape->setRadius(1.0f);
-	return storageMeshShape;
-}
 
-static hkpSimpleMeshShape * ConstructHKMesh( NiTriBasedGeomRef shape )
+	bool Initialize()
+	{
+		if (hMoppLib == NULL)
+		{
+			hMoppLib = LoadLibraryA( "NifMopp.dll" );
+			GenerateMoppCode = (fnGenerateMoppCode)GetProcAddress( hMoppLib, "GenerateMoppCode" );
+			RetrieveMoppCode = (fnRetrieveMoppCode)GetProcAddress( hMoppLib, "RetrieveMoppCode" );
+			RetrieveMoppScale = (fnRetrieveMoppScale)GetProcAddress( hMoppLib, "RetrieveMoppScale" );
+			RetrieveMoppOrigin = (fnRetrieveMoppOrigin)GetProcAddress( hMoppLib, "RetrieveMoppOrigin" );
+		}
+		return ( NULL != GenerateMoppCode  && NULL != RetrieveMoppCode 
+			&& NULL != RetrieveMoppScale && NULL != RetrieveMoppOrigin
+			);
+	}
+
+	vector<Niflib::byte> CalculateMoppCode( vector<Niflib::Vector3> const & verts, vector<Niflib::Triangle> const & tris, Niflib::Vector3* origin, float* scale)
+	{
+		vector<Niflib::byte> code;
+		if ( Initialize() )
+		{
+			int len = GenerateMoppCode( verts.size(), &verts[0], tris.size(), &tris[0] );
+			if ( len > 0 )
+			{
+				code.resize( len );
+				if ( 0 != RetrieveMoppCode( len , &code[0] ) )
+				{
+					if ( NULL != scale )
+						RetrieveMoppScale(scale);
+					if ( NULL != origin )
+						RetrieveMoppOrigin(origin);
+				}
+				else
+				{
+					code.clear();
+				}
+			}
+		}
+		return code;
+	}
+} TheHavokCode;
+
+static vector<Niflib::byte> ConstructHKMesh( NiTriBasedGeomRef shape, Niflib::Vector3& origin, float& scale)
 {
 	NiTriBasedGeomDataRef data = shape->GetData();
-	return ConstructHKMesh(data->GetVertices(), data->GetTriangles());
+	return TheHavokCode.CalculateMoppCode(data->GetVertices(), data->GetTriangles(), &origin, &scale);
 }
 
-static hkpSimpleMeshShape * ConstructHKMesh( bhkPackedNiTriStripsShapeRef shape )
+static vector<Niflib::byte> ConstructHKMesh( bhkPackedNiTriStripsShapeRef shape, Niflib::Vector3& origin, float& scale)
 {
 	hkPackedNiTriStripsDataRef data = shape->GetData();
-	return ConstructHKMesh(data->GetVertices(), data->GetTriangles());
+	return TheHavokCode.CalculateMoppCode(data->GetVertices(), data->GetTriangles(), &origin, &scale);
 }
-
-#endif
-
 
 /*
 To mimic the "Reset Transform" and "Reset Scale" behavior, the following code snippet should help:
@@ -437,41 +437,26 @@ bhkNiTriStripsShapeRef Exporter::makeTriStripsShape(Mesh& mesh, Matrix3& sm)
 	return shape;
 }
 
-#ifdef USES_HAVOK
 static bhkMoppBvTreeShapeRef makeTreeShape(bhkPackedNiTriStripsShapeRef mesh)
 {
-	hkpShapeCollection * list = NULL;
 	bhkMoppBvTreeShapeRef mopp = new bhkMoppBvTreeShape();
 	mopp->SetMaterial( HAV_MAT_WOOD );
 	mopp->SetShape( mesh );
-	list = ConstructHKMesh(mesh);
 
-	hkpMoppCompilerInput mfr;
-	mfr.setAbsoluteFitToleranceOfAxisAlignedTriangles( hkVector4( 0.1f, 0.1f, 0.1f ) );
-
-	vector<Niflib::byte> moppcode;
 	try
 	{
-		hkpMoppCode* code = hkpMoppUtility::buildCode(list, mfr);
-
-		moppcode.resize( code->m_data.getSize() );
-		for (int i=0; i<code->m_data.getSize(); ++i )
-			moppcode[i] = code->m_data[i];
+		Niflib::Vector3 offset;
+		float scale;
+		vector<Niflib::byte> moppcode = ConstructHKMesh(mesh, offset, scale);
 		mopp->SetMoppCode( moppcode );
-		mopp->SetMoppOrigin( Vector3(code->m_info.m_offset(0), code->m_info.m_offset(1), code->m_info.m_offset(2) ));
-		mopp->SetMoppScale( code->m_info.getScale() );
-
-		code->removeReference();
+		mopp->SetMoppOrigin( offset );
+		mopp->SetMoppScale( scale );
 	}
 	catch(...)
 	{
 	}
-	list->removeReference();
-
 	return mopp;
 }
-
-#endif
 
 bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matrix3& sm)
 {
@@ -1167,11 +1152,10 @@ bhkShapeRef	Exporter::makeProxyPackedTriStripShape(INode *node, Object *obj, Mes
 
 		Matrix3 ident(true);
 		bhkPackedNiTriStripsShapeRef trishape = makePackedTriStripsShape(localmesh, ident);
-#ifdef USES_HAVOK
-		shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
-#else
-		shape = StaticCast<bhkShape>(trishape);
-#endif
+		if ( TheHavokCode.Initialize() )
+			shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+		else
+			shape = StaticCast<bhkShape>(trishape);
 	}
 	return shape;
 }
@@ -1431,11 +1415,10 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *node, Modifier* mod, Mes
 			pblock2->GetValue(PB_MATERIAL, 0, material, FOREVER, 0);
 		}
 
-#ifdef USES_HAVOK
-		shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
-#else
-		shape = StaticCast<bhkShape>(trishape);
-#endif
+		if ( TheHavokCode.Initialize() )
+			shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+		else
+			shape = StaticCast<bhkShape>(trishape);
 	}
 	return shape;
 }

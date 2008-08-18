@@ -6,7 +6,7 @@ AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2007, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-0.2.16.0
+OutputBaseFilename=niftools-max-plugins-0.2.17.0
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,7 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=0.2.16.0
+VersionInfoVersion=0.2.17.0
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -36,7 +36,9 @@ Name: "max6"; Description: "3ds Max 6"; Types: custom;
 Name: "max7"; Description: "3ds Max 7"; Types: custom;
 Name: "max8"; Description: "3ds Max 8"; Types: custom;
 Name: "max9"; Description: "3ds Max 9 (Win32)"; Types: custom;
-Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
+;Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
+Name: "max2008"; Description: "3ds Max 2008 (Win32)"; Types: custom;
+Name: "max2009"; Description: "3ds Max 2009 (Win32)"; Types: custom;
 ;Name: "src"; Description: "Program Source";
 
 [Files]
@@ -74,10 +76,20 @@ Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|ma
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9}{\}plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "Staging\Release - Max 9\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 32bit\enu\plugcfg"; Components: "max9"; Flags: ignoreversion;
 
-Source: "Staging\Release - Max 9 - x64\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 9 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
-Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
-Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 9 - x64\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
+; Source: "Staging\Release - Max 9 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 9 - x64\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+
+Source: "Staging\Release - Max 2008\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max10}"; Components: "max10"; Flags: isreadme ignoreversion;
+Source: "Staging\Release - Max 2008\NifPlugins.dlu"; DestDir: "{code:InstallPath|max10}{\}plugins"; Components: "max10"; Flags: ignoreversion;
+Source: "Staging\Release - Max 2008\MaxNifTools.ini"; DestDir: "{code:InstallPath|max10}{\}plugcfg"; Components: "max10"; Flags: ignoreversion;
+Source: "Staging\Release - Max 2008\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2008 - 32bit\enu\plugcfg"; Components: "max10"; Flags: ignoreversion;
+
+Source: "Staging\Release - Max 2009\MaxNifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max11}"; Components: "max11"; Flags: isreadme ignoreversion;
+Source: "Staging\Release - Max 2009\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
+Source: "Staging\Release - Max 2009\MaxNifTools.ini"; DestDir: "{code:InstallPath|max11}{\}plugcfg"; Components: "max11"; Flags: ignoreversion;
+Source: "Staging\Release - Max 2009\MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2009 - 32bit\enu\plugcfg"; Components: "max11"; Flags: ignoreversion;
 
 ;Source: "src\*"; DestDir: "{reg:HKLM\SOFTWARE\Bethesda Softworks\Oblivion,Path|{pf}{\}Bethesda Softworks\Oblivion}\Data\niftools";  Components: "src"; Flags: ignoreversion recursesubdirs;
 
@@ -103,7 +115,7 @@ var sVersion: String;
 
 function InitializeSetup(): Boolean;
 begin
-  sVersion := '0.2.16';
+  sVersion := '0.2.17';
   Result := True;
 end;
 
@@ -347,6 +359,52 @@ begin
           if Length(Result) = 0 then
             Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 9}{\}plugcfg');
         end;
+    'max10': 
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'Installdir', Result) then begin
+                break;
+              end;
+            end;
+          end;
+          if (Length(Result) = 0) then
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2008}{\}plugcfg');
+        end;
+    'max10x64':
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+                break;              
+            end;
+          end;
+          if Length(Result) = 0 then
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2008}{\}plugcfg');
+        end;
+    'max11': 
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'Installdir', Result) then begin
+                break;
+              end;
+            end;
+          end;
+          if (Length(Result) = 0) then
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2009}{\}plugcfg');
+        end;
+    'max11x64':
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+                break;              
+            end;
+          end;
+          if Length(Result) = 0 then
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2009}{\}plugcfg');
+        end;
     else
       Result := '';
   end;
@@ -387,6 +445,34 @@ begin
               break;              
           end;
         end;
+    '3ds Max 2008 (Win32)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
+    '3ds Max 2008 (x64)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
+    '3ds Max 2009 (Win32)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
+    '3ds Max 2009 (x64)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
     else
       Result := '';
   end;
@@ -399,6 +485,14 @@ begin
     if IsWin64() and (Param = '3ds Max 9 (Win32)') then
        Result := False;
     if not IsWin64() and (Param = '3ds Max 9 (x64)') then
+       Result := False;
+    if IsWin64() and (Param = '3ds Max 2008 (Win32)') then
+       Result := False;
+    if not IsWin64() and (Param = '3ds Max 2008 (x64)') then
+       Result := False;
+    if IsWin64() and (Param = '3ds Max 2009 (Win32)') then
+       Result := False;
+    if not IsWin64() and (Param = '3ds Max 2009 (x64)') then
        Result := False;
   end;
 end;
@@ -471,6 +565,10 @@ begin
       FixPathInINI('max8');
       FixPathInINI('max9');
       FixPathInINI('max9x64');
+      FixPathInINI('max10');
+      FixPathInINI('max10x64');
+      FixPathInINI('max11');
+      FixPathInINI('max11x64');
   end;
 end;
 
