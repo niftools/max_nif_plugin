@@ -9,7 +9,7 @@
 
 // Includes for WildMagic so we can do the Capsule fitting
 #ifdef USES_WILDMAGIC
-#  ifdef _MSC_VER >= 1500
+#  if _MSC_VER >= 1500
 #    ifdef _DEBUG
 #      pragma comment (lib, "Wm4Foundation90d")
 #    else
