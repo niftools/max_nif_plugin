@@ -444,10 +444,10 @@ bhkNiTriStripsShapeRef Exporter::makeTriStripsShape(Mesh& mesh, Matrix3& sm)
 	return shape;
 }
 
-static bhkMoppBvTreeShapeRef makeTreeShape(bhkPackedNiTriStripsShapeRef mesh)
+static bhkMoppBvTreeShapeRef makeTreeShape(bhkPackedNiTriStripsShapeRef mesh, Niflib::HavokMaterial mtl)
 {
 	bhkMoppBvTreeShapeRef mopp = new bhkMoppBvTreeShape();
-	mopp->SetMaterial( HAV_MAT_WOOD );
+	mopp->SetMaterial( mtl );
 	mopp->SetShape( mesh );
 
 	try
@@ -1160,7 +1160,7 @@ bhkShapeRef	Exporter::makeProxyPackedTriStripShape(INode *node, Object *obj, Mes
 		Matrix3 ident(true);
 		bhkPackedNiTriStripsShapeRef trishape = makePackedTriStripsShape(localmesh, ident);
 		if ( TheHavokCode.Initialize() )
-			shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+			shape = StaticCast<bhkShape>( makeTreeShape(trishape, (Niflib::HavokMaterial)mtl) );
 		else
 			shape = StaticCast<bhkShape>(trishape);
 	}
@@ -1423,7 +1423,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *node, Modifier* mod, Mes
 		}
 
 		if ( TheHavokCode.Initialize() )
-			shape = StaticCast<bhkShape>( makeTreeShape(trishape) );
+			shape = StaticCast<bhkShape>( makeTreeShape(trishape, (Niflib::HavokMaterial)material) );
 		else
 			shape = StaticCast<bhkShape>(trishape);
 	}
