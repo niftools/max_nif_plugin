@@ -9,10 +9,18 @@
 
 // Includes for WildMagic so we can do the Capsule fitting
 #ifdef USES_WILDMAGIC
-#  ifdef _DEBUG
-#    pragma comment (lib, "Wm4Foundation80d")
+#  ifdef _MSC_VER >= 1500
+#    ifdef _DEBUG
+#      pragma comment (lib, "Wm4Foundation90d")
+#    else
+#      pragma comment (lib, "Wm4Foundation90")
+#    endif
 #  else
-#    pragma comment (lib, "Wm4Foundation80")
+#    ifdef _DEBUG
+#      pragma comment (lib, "Wm4Foundation80d")
+#    else
+#      pragma comment (lib, "Wm4Foundation80")
+#    endif
 #  endif
 #undef PI
 #undef DEG_TO_RAD
