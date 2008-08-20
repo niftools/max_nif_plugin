@@ -9911,7 +9911,23 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
+					Name="Debug - Max 2008|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release - Max 2008|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2008|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -9927,7 +9943,23 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
+					Name="Debug - Max 2009|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Release - Max 2009|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2009|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

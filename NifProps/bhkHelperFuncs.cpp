@@ -8,7 +8,7 @@
 #include "meshadj.h"
 
 // Includes for WildMagic so we can do the Capsule fitting
-#ifdef USES_WILDMAGIC
+#if defined(USES_WILDMAGIC) && !defined(_M_X64)
 #  if _MSC_VER >= 1500
 #    ifdef _DEBUG
 #      pragma comment (lib, "Wm4Foundation90d")
@@ -784,7 +784,7 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
 //   currently calculate then differently.
 extern void CalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& r2)
 {
-#ifdef USES_WILDMAGIC
+#if defined(USES_WILDMAGIC) && !defined(_M_X64)
 	int nv = mesh.getNumVerts();
 	Wm4::Vector3<float>* akPoint = new Wm4::Vector3<float>[nv];
 	for (int i=0; i<nv; i++)

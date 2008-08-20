@@ -40,6 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 	>
   <!--
   Uncomment the following to enable compiling with WildMagic 4.
+  -->
 
   <Tool
 		Name="VCCLCompilerTool"
@@ -50,9 +51,9 @@ POSSIBILITY OF SUCH DAMAGE.
 		Name="VCLinkerTool"
     AdditionalLibraryDirectories="$(WildMagic4SDKDir)\Library\Debug\;$(WildMagic4SDKDir)\Library\Release\"
   />
-  <UserMacro Name="WildMagic4Dir" Value="$(ProgramFiles)\GeometricTools\WildMagic4\"/>
+  
+  <UserMacro Name="WildMagic4Dir" Value="C:\Development\Libraries\GeometricTools\WildMagic4\"/>
   <UserMacro Name="WildMagic4SDKDir" Value="$(WildMagic4Dir)SDK\"/>
-  -->
   
   <!--
   Uncomment and fix the below settings to match your machine or define the macros in your 
