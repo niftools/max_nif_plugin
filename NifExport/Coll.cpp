@@ -516,7 +516,7 @@ bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matr
 
 	OblivionSubShape subshape;
 	subshape.layer = OL_STATIC;
-	subshape.material = HAV_MAT_WOOD;
+	subshape.material = HAV_MAT_STONE;
 	subshape.numVertices = verts.size();
 
 	vector<OblivionSubShape> subshapes;
@@ -537,7 +537,7 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 	radius /= Exporter::bhkScaleFactor;
 	shape->SetRadius(radius);
 	vector<Vector3> verts;
-	vector<Float4> norms;
+	vector<Vector4> norms;
 	int nvert = mesh.getNumVerts();
 	int nface = mesh.getNumFaces();
 	mesh.checkNormals(FALSE);
@@ -552,7 +552,7 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 	}
 	for (int i=0; i<nface; ++i)
 	{
-		Float4 &value = norms[i];
+		Vector4 &value = norms[i];
 		Point3 &pt = mesh.getFaceNormal(i);
 		value[0] = pt.x;
 		value[1] = pt.y;
@@ -560,7 +560,7 @@ bhkConvexVerticesShapeRef Exporter::makeConvexShape(Mesh& mesh, Matrix3& tm)
 		value[3] = -(mesh.FaceCenter(i) * tm).Length() / Exporter::bhkScaleFactor;
 	}
 	sortVector3(verts);
-	sortFloat4(norms);
+	sortVector4(norms);
 	shape->SetVertices(verts);
 	shape->SetNormalsAndDist(norms);
 	return shape;
@@ -573,7 +573,9 @@ bhkShapeRef Exporter::makeCollisionShape(INode *node, Matrix3& tm, bhkRigidBodyR
 	
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t); 
-	if (os.obj->ClassID() == SCUBA_CLASS_ID)
+	if (node->IsGroupHead())
+		shape = makeModPackedTriStripShape(node, tm);
+	else if (os.obj->ClassID() == SCUBA_CLASS_ID)
 		shape = makeCapsuleShape(node, os.obj, tm);
 	else if (os.obj->ClassID() == Class_ID(BOXOBJ_CLASS_ID, 0))
 		shape = makeBoxShape(node, os.obj, tm);
@@ -845,23 +847,38 @@ bhkShapeRef	Exporter::makeConvexShape(INode *node, Object* obj, Matrix3& tm)
 	return shape;
 }
 
+static void AccumulateNodesFromGroup(INode *node, INodeTab& map)
+{
+	map.Append(1, &node);
+	if (node->IsGroupHead()) {
+		for (int i=0; i<node->NumberOfChildren(); i++)
+			AccumulateNodesFromGroup( node->GetChildNode(i), map );	
+	}
+}
+
 Exporter::Result Exporter::scanForCollision(INode *node)
 { 
 	if (node == NULL || (node->IsHidden() && !mExportHidden))
       return Exporter::Skip;
    // Get the bhk RigidBody modifier if available and then get the picked node.
+
+	TSTR nodeName = node->GetName();
    if (Modifier * mod = GetbhkCollisionModifier(node)){
       if (IParamBlock2* pblock = (IParamBlock2*)mod->GetReference(0)) {
          if (INode *collMesh = pblock->GetINode(0, 0)) {
             mCollisionNodes.insert(collMesh);
          } else {
-            if (mSceneCollisionNode != NULL) {
-               if (mExportCollision) {
-                  throw runtime_error("There are more than one Collision mesh found at the Scene Level.");
-               }
-            } else {
-               mSceneCollisionNode = node;
-            }
+			 if ( node->IsGroupMember() ){
+				 // skip groups ???
+			 } else {
+				if (mSceneCollisionNode != NULL) {
+				   if (mExportCollision) {
+					  throw runtime_error("There are more than one Collision mesh found at the Scene Level.");
+				   }
+				} else {
+				   mSceneCollisionNode = node;
+				}
+			 }
          }
       }
    }
@@ -872,6 +889,8 @@ Exporter::Result Exporter::scanForCollision(INode *node)
 	   {
 		   mCollisionNodes.insert(node);
 
+		   // process all children of groups as collision
+		   INodeTab map;
 		   const int PB_MESHLIST = 1;
 		   IParamBlock2* pblock2 = obj->GetParamBlockByID(0);
 		   int nBlocks = pblock2->Count(PB_MESHLIST);
@@ -879,9 +898,14 @@ Exporter::Result Exporter::scanForCollision(INode *node)
 			   INode *tnode = NULL;
 			   pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
 			   if (tnode != NULL && (!tnode->IsHidden() || mExportHidden)) {
-				   mCollisionNodes.insert(tnode);
-				   markAsHandled(tnode); // dont process collision since the list will 
+				   AccumulateNodesFromGroup(tnode, map);
 			   }
+		   }
+		   for (int i=0; i<map.Count(); i++) {
+			   INode *cnode = map[i];
+			   if (!node->IsGroupHead())
+				   mCollisionNodes.insert(cnode);
+			   markAsHandled(cnode); // dont process collision since the list will 
 		   }
 	   }
 	   else if (obj->SuperClassID() == HELPER_CLASS_ID &&
@@ -898,6 +922,7 @@ Exporter::Result Exporter::scanForCollision(INode *node)
 		   }
 	   }
    }
+   // process legacy collision 
    if (npIsCollision(node))
    {
 	   mCollisionNodes.insert(node);
@@ -973,7 +998,15 @@ bhkShapeRef Exporter::makeListShape(INode *node, Matrix3& tm, bhkRigidBodyRef bo
 			{
 				bhkShapeRef subshape = makeCollisionShape(tnode, tm, body);
 				if (subshape)
+				{
+					// set the material of the tree to same as list
+					if (subshape->IsDerivedType(bhkMoppBvTreeShape::TYPE))
+					{
+						bhkMoppBvTreeShapeRef tree = DynamicCast<bhkMoppBvTreeShape>(subshape);
+						tree->SetMaterial( shape->GetMaterial() );
+					}
 					shapes.push_back(subshape);
+				}
 			}
 		}
 		shape->SetSubShapes(shapes);
@@ -1401,6 +1434,118 @@ bhkShapeRef	Exporter::makeModTriStripShape(INode *node, Modifier* mod, Mesh& mes
 		}
 		shape = StaticCast<bhkShape>(trishape);
 	}
+	return shape;
+}
+
+bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *tnode, Matrix3& tm)
+{
+	INodeTab map;
+	AccumulateNodesFromGroup(tnode, map);
+
+	// Need to separate the vertices based on material.  
+	typedef vector<Triangle> Triangles;
+
+	// setup shape data
+	vector<Vector3> verts;
+	vector<Vector3> norms;
+	Triangles		tris;
+	int voff = 0;
+
+	int material = NP_DEFAULT_HVK_MATERIAL;
+
+	vector<OblivionSubShape> subshapes;
+
+	for (int i=0; i<map.Count(); ++i) {
+
+		INode *node = map[i];
+
+		// skip group heads
+		if (node->IsGroupHead())
+			continue;
+
+
+		ObjectState os = node->EvalWorldState(0);
+
+		enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
+		enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
+		enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+
+		int layer = NP_DEFAULT_HVK_LAYER;
+		int filter = NP_DEFAULT_HVK_FILTER;
+		Mesh *mesh = NULL;
+
+		if ( Modifier* mod = GetbhkCollisionModifier(node) )
+		{
+			if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params)) {
+				pblock2->GetValue(PB_MATERIAL, 0, material, FOREVER, 0);
+				pblock2->GetValue(PB_FILTER, 0, filter, FOREVER, 0);
+				pblock2->GetValue(PB_LAYER, 0, layer, FOREVER, 0);
+			}
+
+			if (bhkHelperInterface* bhkHelp = (bhkHelperInterface*)mod->GetInterface(BHKHELPERINTERFACE_DESC))
+				mesh = const_cast<Mesh*>(bhkHelp->GetMesh());
+		}
+		else
+		{
+			if (TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0)))
+				mesh = const_cast<Mesh*>(&tri->GetMesh());
+		}
+		if (mesh == NULL)
+			continue;
+
+		Matrix3 ltm = node->GetObjTMAfterWSM(0) * tm;
+		int vi[3];
+		if (TMNegParity(ltm)) {
+			vi[0] = 2; vi[1] = 1; vi[2] = 0;
+		} else {
+			vi[0] = 0; vi[1] = 1; vi[2] = 2;
+		}
+
+		int nvert = mesh->getNumVerts();
+		int nface = mesh->getNumFaces();
+		mesh->buildNormals();
+
+		for (int i=0; i<nvert; ++i)
+		{
+			Point3 vert = (mesh->getVert(i) * tm) / Exporter::bhkScaleFactor;
+			verts.push_back( TOVECTOR3(vert) );
+		}
+		for (int i=0; i<nface; ++i)
+		{
+			norms.push_back( TOVECTOR3(mesh->getFaceNormal(i)) );
+
+			Triangle tri;
+			Face& face = mesh->faces[i];
+			tri[0] = (USHORT)face.getVert(0) + voff;
+			tri[1] = (USHORT)face.getVert(1) + voff;
+			tri[2] = (USHORT)face.getVert(2) + voff;
+			tris.push_back(tri);
+		}
+		voff += nvert;
+
+
+		OblivionSubShape subshape;
+		subshape.layer = OblivionLayer(layer);
+		subshape.material = HavokMaterial(material);
+		subshape.colFilter = filter;
+		subshape.numVertices = nvert;
+		subshapes.push_back(subshape);
+	}
+
+	hkPackedNiTriStripsDataRef data = new hkPackedNiTriStripsData();
+	data->SetNumFaces( tris.size() );
+	data->SetVertices(verts);
+	data->SetTriangles(tris);
+	data->SetNormals(norms);
+
+	// setup shape
+	bhkPackedNiTriStripsShapeRef shape = new bhkPackedNiTriStripsShape();
+	shape->SetData(data);
+
+	shape->SetSubShapes( subshapes );
+
+	if ( TheHavokCode.Initialize() )
+		return StaticCast<bhkShape>( makeTreeShape(shape, (Niflib::HavokMaterial)material) );
 	return shape;
 }
 

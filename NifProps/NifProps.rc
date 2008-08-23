@@ -13,8 +13,7 @@
 #define DLLNAME "NifProps.dlu"  // DLL Name
 #define DLLDESCRIPTION "3ds Max Nif Reactor Properites Plugin"
 #include "..\nifcommon\nifversion.rc"  
-#endif
-
+#endif
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -52,7 +51,6 @@ END
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
-
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -315,6 +313,17 @@ BEGIN
     CONTROL         "Add",IDC_ADD,"CustButton",WS_TABSTOP,4,201,47,12
     CONTROL         "Remove",IDC_REMOVE,"CustButton",WS_TABSTOP,56,201,46,12
     CONTROL         "Capsule",IDC_RDO_CAPSULE,"Button",BS_AUTORADIOBUTTON,8,99,80,10
+END
+
+IDD_RB_MOD_PANEL5 DIALOGEX 0, 0, 107, 42
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD | WS_VISIBLE
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Layer:",IDC_LBL_MATERIAL,"Static",SS_LEFTNOWORDWRAP | SS_CENTERIMAGE | WS_GROUP,3,4,83,8
+    COMBOBOX        IDC_CB_LAYER,1,15,103,157,CBS_DROPDOWNLIST | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Filter:",IDC_STATIC,4,30,18,8
+    CONTROL         "",IDC_ED_FILTER,"CustEdit",WS_DISABLED | WS_TABSTOP,33,29,43,10
+    CONTROL         "",IDC_SP_FILTER,"SpinnerControl",WS_DISABLED,76,29,7,10
 END
 
 
@@ -1040,76 +1049,6 @@ BEGIN
     0
 END
 
-IDD_RB_MOD_PANEL DLGINIT
-BEGIN
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x7453, 0x6e6f, 0x0065, 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x6c43, 0x746f, 0x0068, 
-    IDC_CB_MATERIAL, 0x403, 5, 0
-0x6944, 0x7472, "\000" 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x6c47, 0x7361, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x7247, 0x7361, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x654d, 0x6174, 0x006c, 
-    IDC_CB_MATERIAL, 0x403, 8, 0
-0x724f, 0x6167, 0x696e, 0x0063, 
-    IDC_CB_MATERIAL, 0x403, 5, 0
-0x6b53, 0x6e69, "\000" 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x6157, 0x6574, 0x0072, 
-    IDC_CB_MATERIAL, 0x403, 5, 0
-0x6f57, 0x646f, "\000" 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6548, 0x7661, 0x2079, 0x7453, 0x6e6f, 0x0065, 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6548, 0x7661, 0x2079, 0x654d, 0x6174, 0x006c, 
-    IDC_CB_MATERIAL, 0x403, 11, 0
-0x6548, 0x7661, 0x2079, 0x6f57, 0x646f, "\000" 
-    IDC_CB_MATERIAL, 0x403, 6, 0
-0x6843, 0x6961, 0x006e, 
-    IDC_CB_MATERIAL, 0x403, 5, 0
-0x6e53, 0x776f, "\000" 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x7453, 0x6e6f, 0x2065, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x6c43, 0x746f, 0x2068, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6944, 0x7472, 0x5320, 0x6174, 0x7269, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x6c47, 0x7361, 0x2073, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x7247, 0x7361, 0x2073, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x654d, 0x6174, 0x206c, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 15, 0
-0x724f, 0x6167, 0x696e, 0x2063, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6b53, 0x6e69, 0x5320, 0x6174, 0x7269, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x6157, 0x6574, 0x2072, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6f57, 0x646f, 0x5320, 0x6174, 0x7269, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 19, 0
-0x6548, 0x7661, 0x2079, 0x7453, 0x6e6f, 0x2065, 0x7453, 0x6961, 0x7372, 
-"\000" 
-    IDC_CB_MATERIAL, 0x403, 19, 0
-0x6548, 0x7661, 0x2079, 0x654d, 0x6174, 0x206c, 0x7453, 0x6961, 0x7372, 
-"\000" 
-    IDC_CB_MATERIAL, 0x403, 18, 0
-0x6548, 0x7661, 0x2079, 0x6f57, 0x646f, 0x5320, 0x6174, 0x7269, 0x0073, 
-
-    IDC_CB_MATERIAL, 0x403, 13, 0
-0x6843, 0x6961, 0x206e, 0x7453, 0x6961, 0x7372, "\000" 
-    IDC_CB_MATERIAL, 0x403, 12, 0
-0x6e53, 0x776f, 0x5320, 0x6174, 0x7269, 0x0073, 
-    IDC_CB_MATERIAL, 0x403, 9, 0
-0x6c45, 0x7665, 0x7461, 0x726f, "\000" 
-    0
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1198,6 +1137,8 @@ BEGIN
     IDS_OPT_ENABLE          "Enable"
     IDS_TRANS_ENABLE        "Enable Transform"
     IDS_CLONE_PARAMS        "Clone Parameters"
+    IDS_DS_FILTER           "Filter"
+    IDS_LIST_SUBSHAPEPROPS  "Subshape Properties"
 END
 
 #endif    // English (U.S.) resources
@@ -1210,8 +1151,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
-
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 

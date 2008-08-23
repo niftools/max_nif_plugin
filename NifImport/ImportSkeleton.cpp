@@ -93,12 +93,14 @@ bool NifImporter::HasSkeleton()
 
 bool NifImporter::IsBiped()
 {
-   if (hasSkeleton){
+   if (HasSkeleton()){
       NiNodeRef rootNode = root;
       if (rootNode){
          list<NiExtraDataRef> extraData = rootNode->GetExtraData();
          if (!extraData.empty()) {
-            return ( SelectFirstObjectOfType<BSBound>(extraData) != NULL );
+			 if ( BSXFlagsRef flags = SelectFirstObjectOfType<BSXFlags>(extraData) ) {
+				 return (flags->GetData() & 0x4);
+			 }
          }
       }
    }
@@ -685,9 +687,9 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
 
       // Import Havok Collision Data surrounding node,  
 	  //   unfortunately this causes double import of collision so I'm disabling it for now.
-	 // if (ImportCollision) {
-		//ImportCollision(node);
-	 // }
+	  if (enableCollision && node->GetParent()) {
+		ImportCollision(node);
+	  }
 
       if (bone && recurse)
       {

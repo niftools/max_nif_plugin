@@ -4495,15 +4495,15 @@
 					>
 				</File>
 				<File
+					RelativePath="..\NifCommon\niutils.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\NifCommon\niutils.h"
 					>
 				</File>
 				<File
 					RelativePath="..\NifCommon\objectParams.h"
-					>
-				</File>
-				<File
-					RelativePath="..\NifCommon\pch.h"
 					>
 				</File>
 			</Filter>
@@ -4536,10 +4536,6 @@
 				</File>
 				<File
 					RelativePath="..\NifCommon\nimorph.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\NifCommon\niutils.cpp"
 					>
 				</File>
 			</Filter>
@@ -6940,6 +6936,10 @@
 				</File>
 				<File
 					RelativePath="..\NifCommon\qhull\merge.h"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\pch.h"
 					>
 				</File>
 				<File

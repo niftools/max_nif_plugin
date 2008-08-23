@@ -273,6 +273,7 @@ public:
 	bhkShapeRef				makeModConvexShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
 	bhkShapeRef				makeModTriStripShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
 	bhkShapeRef				makeModPackedTriStripShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm);
+	bhkShapeRef				makeModPackedTriStripShape(INode *tnode, Matrix3& tm);
 
 	/* skin export */
 	bool makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t);
@@ -300,7 +301,7 @@ public:
 	bool isSkeletonRoot(INode *node);
 	void ApplyAllSkinOffsets( NiAVObjectRef & root );
 	void sortVector3(vector<Vector3>& vector);
-	void sortFloat4(vector<Float4>& vector);
+	void sortVector4(vector<Vector4>& vector);
 
 	/* Progress Bar stuff */
 	enum ProgressSection

@@ -8,11 +8,11 @@ NifTools MaxPlugin
     o All
       - Correct project so Max 2008 is properly supported.
       - Update license to reflect that its a BSD license
+      - Update to latest version of niflib
       
     o Importer
       - Add initial support for Freedom Force animation import
       - Add support for importing Collision as Packed TriStrip as appropriate
-      - Remove code which was causing collision to be imported twice in some models
     
     o Exporter
       - Fix Binormal and Tangent export calculations
@@ -21,6 +21,10 @@ NifTools MaxPlugin
         bhkMoppBvTreeShape uses the Havok SDK to generate efficient collision models
         which is supperior to bhkNiTriStripsShape.
         This feature will not be available for max x64 builds.
+      - Add more support for grouped nodes referenced in a bhkRigidBody
+        
+    o Props
+      - Add additional settings on bhkRigidBodyModifier for bhkPacked
       
       0.2.16
       -----

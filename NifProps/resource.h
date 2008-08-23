@@ -48,6 +48,8 @@
 #define IDC_RDO_CONVEX                  1718
 #define IDC_TRANS_ENABLE                1719
 #define IDC_BTN_CLONE                   1720
+#define IDC_ED_FILTER                   1721
+#define IDC_SP_FILTER                   1722
 #define IDC_LENGTHEDIT                  3009
 #define IDC_WIDTHEDIT                   3010
 #define IDC_OPT_BIAS                    6007
@@ -97,6 +99,7 @@
 #define IDS_DS_FRICTION                 11013
 #define IDD_PROXYPARAM1                 11013
 #define IDS_DS_RESTITUTION              11014
+#define IDD_RB_MOD_PANEL5               11014
 #define IDS_DS_LINEAR_DAMPING           11015
 #define IDS_DS_ANGULAR_DAMPING          11016
 #define IDS_DS_MAX_LINEAR_VELOCITY      11017
@@ -147,6 +150,8 @@
 #define IDS_OPT_ENABLE                  11062
 #define IDS_TRANS_ENABLE                11063
 #define IDS_CLONE_PARAMS                11064
+#define IDS_DS_FILTER                   11065
+#define IDS_LIST_SUBSHAPEPROPS          11066
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -192,9 +197,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        106
+#define _APS_NEXT_RESOURCE_VALUE        108
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1721
+#define _APS_NEXT_CONTROL_VALUE         1723
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

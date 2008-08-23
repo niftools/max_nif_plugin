@@ -294,9 +294,22 @@ static inline Point3 TOPOINT3(const Niflib::Vector3& v){
    return Point3(v.x, v.y, v.z);
 }
 
+static inline Point3 TOPOINT3(const Niflib::Vector4& v){
+	return Point3(v.x, v.y, v.z);
+}
+
 static inline Niflib::Vector3 TOVECTOR3(const Point3& v){
    return Niflib::Vector3(v.x, v.y, v.z);
 }
+
+static inline Niflib::Vector3 TOVECTOR3(const Niflib::Vector4& v){
+	return Niflib::Vector3(v.x, v.y, v.z);
+}
+
+static inline Niflib::Vector4 TOVECTOR4(const Point3& v, float w = 0.0){
+	return Niflib::Vector4(v.x, v.y, v.z, w);
+}
+
 
 static inline Quat TOQUAT(const Niflib::Quaternion& q, bool inverse = false){
    Quat qt(q.x, q.y, q.z, q.w);
@@ -424,7 +437,13 @@ void CollapseGeomTransforms(std::vector<Niflib::NiTriBasedGeomRef>& shapes);
 void FixNormals(std::vector<Niflib::Triangle>& tris, std::vector<Niflib::Vector3>& verts, std::vector<Niflib::Vector3>& norms);
 
 Modifier *GetbhkCollisionModifier(INode* node);
-Modifier *CreatebhkCollisionModifier(INode* node, int type, Niflib::HavokMaterial material);
+Modifier *CreatebhkCollisionModifier(
+	INode* node
+	, int type
+	, Niflib::HavokMaterial material
+	, Niflib::OblivionLayer layer
+	, byte filter
+	);
 
 void GetIniFileName(char *iniName);
 

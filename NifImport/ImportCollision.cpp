@@ -135,7 +135,7 @@ bool CollisionImport::ImportRigidBody(bhkRigidBodyRef body, INode* node)
    float maxlinvel = body->GetMaxLinearVelocity();
    float maxangvel = body->GetMaxAngularVelocity();
    float pendepth = body->GetPenetrationDepth();
-   Vector3 center = body->GetCenter();
+   Vector3 center = TOVECTOR3(body->GetCenter());
 
    // Update node
    npSetProp(node, NP_HVK_LAYER, lyr);
@@ -174,7 +174,7 @@ INode* CollisionImport::CreateRigidBody(bhkRigidBodyRef body, INode *parent, Mat
 	float maxlinvel = body->GetMaxLinearVelocity();
 	float maxangvel = body->GetMaxAngularVelocity();
 	float pendepth = body->GetPenetrationDepth();
-	Vector3 center = body->GetCenter();
+	Vector4 center = body->GetCenter();
 
 	SimpleObject2* listObj = (SimpleObject2*)ni.gi->CreateInstance(HELPER_CLASS_ID, BHKLISTOBJECT_CLASS_ID);
 	if (listObj != NULL) 
@@ -393,7 +393,7 @@ bool CollisionImport::ImportSphere(INode *rbody, bhkRigidBodyRef body, bhkSphere
          // Need to "Affect Pivot Only" and "Center to Object" first
          n->CenterPivot(0, FALSE);
 #endif
-		 CreatebhkCollisionModifier(n, bv_type_sphere, shape->GetMaterial());
+		 CreatebhkCollisionModifier(n, bv_type_sphere, shape->GetMaterial(), OL_UNIDENTIFIED, 0);
 		 
 		 ImportBase(body, shape, parent, n, tm);
 		 AddShape(rbody, n);
@@ -494,7 +494,7 @@ bool CollisionImport::ImportCapsule(INode *rbody, bhkRigidBodyRef body, bhkCapsu
 
 		  // Need to reposition the Capsule so that caps are rotated correctly for pts given
 
-		  CreatebhkCollisionModifier(n, bv_type_capsule, shape->GetMaterial());
+		  CreatebhkCollisionModifier(n, bv_type_capsule, shape->GetMaterial(), OL_UNIDENTIFIED, 0);
 		  ImportBase(body, shape, parent, n, tm);
 		  AddShape(rbody, n);
 		  return true;
@@ -515,7 +515,7 @@ bool CollisionImport::ImportConvexVertices(INode *rbody, bhkRigidBodyRef body, b
 	vector<Triangle> tris = compute_convex_hull(verts);
 	returnNode = ImportCollisionMesh(verts, tris, norms, ltm, parent);
 
-	CreatebhkCollisionModifier(returnNode, bv_type_convex, shape->GetMaterial());
+	CreatebhkCollisionModifier(returnNode, bv_type_convex, shape->GetMaterial(), OL_UNIDENTIFIED, 0);
 	ImportBase(body, shape, parent, returnNode, tm);
 	AddShape(rbody, returnNode);
 	return true;
@@ -543,7 +543,7 @@ bool CollisionImport::ImportTriStripsShape(INode *rbody, bhkRigidBodyRef body, b
 		NiTriStripsRef triShape = new NiTriStrips();
 		vector<Triangle> tris = triShapeData->GetTriangles();
 		ni.ImportMesh(node, triObject, triShape, triShapeData, tris);
-		CreatebhkCollisionModifier(inode, bv_type_shapes, shape->GetMaterial());
+		CreatebhkCollisionModifier(inode, bv_type_shapes, shape->GetMaterial(), OL_UNIDENTIFIED, 0);
 		ImportBase(body, shape, parent, inode, tm);
 		AddShape(rbody, inode);
 		return true;
@@ -566,10 +566,73 @@ bool CollisionImport::ImportPackedNiTriStripsShape(INode *rbody, bhkRigidBodyRef
 		vector<Triangle> tris = data->GetTriangles();
 		vector<Vector3> norms = data->GetNormals();
 
-		INode *inode = ImportCollisionMesh(verts, tris, norms, tm, parent);
-		CreatebhkCollisionModifier(inode, bv_type_packed, HavokMaterial(NP_DEFAULT_HVK_MATERIAL));
-		ImportBase(body, shape, parent, inode, ltm);
-		AddShape(rbody, inode);
+		vector<Niflib::OblivionSubShape> subshapes = shape->GetSubShapes();
+		if (subshapes.size() == 0)
+		{
+			// Is this possible?
+			INode *inode = ImportCollisionMesh(verts, tris, norms, tm, parent);
+			CreatebhkCollisionModifier(inode, bv_type_packed, HavokMaterial(NP_DEFAULT_HVK_MATERIAL), OL_UNIDENTIFIED, 0);
+			ImportBase(body, shape, parent, inode, ltm);
+			AddShape(rbody, inode);
+		}
+		else
+		{
+			unsigned int voff = 0;
+			unsigned int toff = 0;
+
+			INodeTab nodes;
+			for (int i = 0, n = subshapes.size(); i<n; ++i) {
+				Niflib::OblivionSubShape& s = subshapes[i];
+				
+				vector<Vector3> subverts;
+				vector<Triangle> subtris;
+				vector<Vector3> subnorms;
+				
+				subverts.reserve(s.numVertices);
+				for (unsigned int v=voff; v < (voff + s.numVertices); ++v) {
+					subverts.push_back( verts[v] );
+				}
+				unsigned int vend = (voff + s.numVertices );
+
+				// TODO: Fix algorithm.  I do not know how to split the triangles here
+				//       Basically, greedily take all triangles until next subshape
+				//       This is not correct but seems to work with most meshes tested.
+				subtris.reserve( s.numVertices / 2 );
+				subnorms.reserve( s.numVertices / 2 );
+				while ( toff < tris.size() ){
+					Triangle t = tris[toff];
+					if ( t.v1 >= vend || t.v2 >= vend || t.v3 >= vend )
+						break;
+					// remove offset for mesh
+					t.v1 -= voff; t.v2 -= voff; t.v3 -= voff;
+					subtris.push_back( t );	
+					subnorms.push_back( norms[toff] );	
+					++toff;
+				}
+				voff += s.numVertices;
+
+				INode *inode = ImportCollisionMesh(subverts, subtris, subnorms, tm, parent);
+
+				CreatebhkCollisionModifier(inode, bv_type_packed, HavokMaterial(s.material), s.layer, s.colFilter);
+				ImportBase(body, shape, parent, inode, ltm);
+
+				if (n > 1)
+					inode->SetName( FormatText("%s:%d", "OblivionSubShape", i).data() );
+
+				nodes.Append(1, &inode);
+			}
+			// TODO: Group nodes on import
+			if (  nodes.Count() > 1 )
+			{
+				TSTR shapeName = "bhkPackedNiTriStripsShape";
+				INode *group = ni.gi->GroupNodes(&nodes, &shapeName, 0);			
+				AddShape(rbody, group);
+			}
+			else if (  nodes.Count() == 1 )
+			{
+				AddShape(rbody, nodes[0]);
+			}
+		}
 		return true;
 	}
 

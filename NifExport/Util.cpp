@@ -605,7 +605,7 @@ void Exporter::sortVector3(vector<Vector3>& vector)
 	std::stable_sort(vector.begin(), vector.end(), SortVectorEquivalence());
 }
 
-void Exporter::sortFloat4(vector<Float4>& vector)
+void Exporter::sortVector4(vector<Vector4>& vector)
 {
 	std::stable_sort(vector.begin(), vector.end(), SortVectorEquivalence());
 }

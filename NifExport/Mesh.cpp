@@ -560,7 +560,7 @@ void InitializeRigidBody(bhkRigidBodyRef body, INode *node)
 
    Matrix3 tm = node->GetObjTMAfterWSM(0);
    body->SetRotation( TOQUATXYZW(Quat(tm)) );
-   body->SetTranslation( TOVECTOR3(tm.GetTrans() / 7.0f) );
+   body->SetTranslation( TOVECTOR4(tm.GetTrans() / 7.0f) );
 }
 
 NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)

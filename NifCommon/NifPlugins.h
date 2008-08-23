@@ -44,7 +44,7 @@ using Niflib::Vector3;
 #define NP_ANM_PRI							_T("np_anm_pri")
 
 /* default values */
-#define NP_DEFAULT_HVK_MATERIAL				9
+#define NP_DEFAULT_HVK_MATERIAL				0
 #define NP_DEFAULT_HVK_LAYER				1
 #define NP_DEFAULT_HVK_LINEAR_DAMPING		0.1f
 #define NP_DEFAULT_HVK_ANGULAR_DAMPING		0.05f
@@ -53,6 +53,7 @@ using Niflib::Vector3;
 #define NP_DEFAULT_HVK_PENETRATION_DEPTH	0.15f
 #define NP_DEFAULT_HVK_MOTION_SYSTEM		7
 #define NP_DEFAULT_HVK_QUALITY_TYPE			1
+#define NP_DEFAULT_HVK_FILTER				0
 
 #define NP_DEFAULT_ANM_PRI	0.0f
 

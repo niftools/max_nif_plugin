@@ -171,8 +171,8 @@ class bhkRigidBodyModifierClassDesc : public ClassDesc2
 
 
 // Parameter and ParamBlock IDs
-enum { havok_params, opt_params, clone_params};  // pblock ID
-enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, };
+enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
+enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
 
 enum { havok_params_panel, };
 
@@ -181,10 +181,11 @@ enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shape
 static ParamBlockDesc2 havok_param_blk ( 
    havok_params, _T("BoundingVolumes"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, PBLOCK_REF,
    //rollout
-    3,
+    4,
     havok_params,	IDD_RB_MOD_PANEL,  IDS_PARAMS, 0, 0, NULL, 
 	opt_params,		IDD_RB_MOD_PANEL1, IDS_OPT_PARAMS, 0, 0, NULL,
 	clone_params,	IDD_CLONE_PANEL,   IDS_CLONE_PARAMS, 0, 0, NULL,
+	subshape_params,	IDD_RB_MOD_PANEL5,   IDS_LIST_SUBSHAPEPROPS, 0, 0, NULL,
 
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_DEFAULT_HVK_MATERIAL,
@@ -222,6 +223,18 @@ static ParamBlockDesc2 havok_param_blk (
 	  p_uix,		opt_params,
 	  end,
 
+	PB_LAYER, _T("layer"), TYPE_INT, P_ANIMATABLE,	IDS_DS_LAYER,
+	  p_default,	NP_DEFAULT_HVK_LAYER,
+	  end,
+
+	PB_FILTER, _T("filter"), TYPE_INT, P_ANIMATABLE,	IDS_DS_FILTER,
+	  p_default,	NP_DEFAULT_HVK_FILTER,
+	  p_range, 		0, 255, 
+	  p_ui,			subshape_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ED_FILTER, IDC_SP_FILTER, 0.01f,
+	  p_uix,		subshape_params,
+	  end,
+
+
    end,
    end
    );
@@ -256,8 +269,10 @@ INT_PTR bhkRigidBodyModifierDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND h
 		   Interval valid;
 		   mod->pblock->GetValue( PB_MATERIAL, 0, sel, valid);
 		   mCbMaterial.select( sel );
-		   EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
 
+#if defined(USES_WILDMAGIC) && !defined(_M_X64)
+				EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
+#endif
 		   Update(t);
 		   break;
 	   }
@@ -312,6 +327,58 @@ namespace
 		}
 		return FALSE;
 	}
+
+
+	// Controller for subshape properies: layer and filter
+	class SubShapeDlgProc : public ParamMap2UserDlgProc {
+	public:
+		bhkRigidBodyModifier *mod;
+		NpComboBox		mCbLayer;
+		SubShapeDlgProc(bhkRigidBodyModifier* m) {mod = m;}		
+		INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);		
+		void DeleteThis() {delete this;}		
+	};
+
+	INT_PTR SubShapeDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+	{
+		switch (msg) 
+		{
+		case WM_INITDIALOG:
+			{
+				mCbLayer.init(GetDlgItem(hWnd, IDC_CB_LAYER));
+				for (const char **str = NpHvkLayerNames; *str; ++str)
+					mCbLayer.add(*str);
+
+				int sel = NP_DEFAULT_HVK_LAYER;
+				Interval valid;
+				mod->pblock->GetValue( PB_LAYER, 0, sel, valid);
+				mCbLayer.select( sel );
+
+
+
+				Update(t);
+				break;
+			}
+
+		case WM_DESTROY:
+			break;
+
+		case WM_COMMAND:
+			switch (LOWORD(wParam))
+			{
+			case IDC_CB_LAYER:
+				if (HIWORD(wParam)==CBN_SELCHANGE) {
+					mod->pblock->SetValue( PB_MATERIAL, 0, mCbLayer.selection() );
+				}
+				break;
+
+			default:
+				return FALSE;
+			}
+		}		
+		return FALSE;
+	}
+	
 }
 
 //--- bhkRigidBodyModifier -------------------------------------------------------
@@ -524,6 +591,7 @@ void bhkRigidBodyModifier::BeginEditParams(IObjParam  *ip, ULONG flags,Animatabl
    bhkRigidBodyModifierDesc.BeginEditParams(ip,this,flags,prev);
    havok_param_blk.SetUserDlgProc(havok_params, new bhkRigidBodyModifierDlgProc(this));
    havok_param_blk.SetUserDlgProc(clone_params, new CloneMeshDlgProc(this));
+   havok_param_blk.SetUserDlgProc(subshape_params, new SubShapeDlgProc(this));
 
 	//pmapParam = pblock->GetMap(havok_params);
 	//UpdateBVDialogs();

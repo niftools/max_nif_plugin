@@ -93,6 +93,7 @@ void NifImporter::Initialize()
       skeleton = GetSkeleton(appSettings);
       importSkeleton = (appSettings != NULL) ? appSettings->useSkeleton : false;
       importSkeleton &= hasSkeleton;
+	  importSkeleton &= !isBiped;
 
       // Guess that the skeleton is the same one in the current directory
       if (importSkeleton && !defaultSkeletonName.empty()) {
