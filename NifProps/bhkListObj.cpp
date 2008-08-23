@@ -294,14 +294,14 @@ INT_PTR ListParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg
    {
    case WM_INITDIALOG: 
       {
-         mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
-         for (const char **str = NpHvkMaterialNames; *str; ++str)
-            mCbMaterial.add(*str);
-
-         int sel = NP_DEFAULT_HVK_MATERIAL;
-         Interval valid;
-         so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
-         mCbMaterial.select( sel );
+		  mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
+		  mCbMaterial.add("<Default>");
+		  for (const char **str = NpHvkMaterialNames; *str; ++str)
+			  mCbMaterial.add(*str);
+		  Interval valid;
+		  int sel = NP_INVALID_HVK_MATERIAL;
+		  so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
+		  mCbMaterial.select( sel + 1 );
 
          Update(t);
          break;

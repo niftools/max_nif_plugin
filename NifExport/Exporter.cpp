@@ -145,11 +145,11 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
          Result result = exportNodes(root, selectedRoots[i]);
          if (result != Ok && result != Skip)
             return result;
-         //if (mExportCollision) {
-         //   result = exportCollision(root, selectedRoots[i]);
-         //   if (result != Ok)
-         //      return result;
-         //}
+         if (mExportCollision) {
+            result = exportCollision(root, selectedRoots[i]);
+            if (result != Ok)
+               return result;
+         }
       }
       // Always Zero out root transforms
       vector<NiAVObjectRef> children = root->GetChildren();

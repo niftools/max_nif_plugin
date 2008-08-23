@@ -24,7 +24,7 @@ NifTools MaxPlugin
       - Add more support for grouped nodes referenced in a bhkRigidBody
         
     o Props
-      - Add additional settings on bhkRigidBodyModifier for bhkPacked
+      - Add additional settings on bhkRigidBodyModifier for bhkPackedTriShapes (layer and colfilter)
       
       0.2.16
       -----

@@ -98,28 +98,30 @@ static const char *NpHvkLayerNames[] =
 
 static const char *NpHvkMotionSystems[] =
 {
-	"Keyframed",
-	"Box (2)",
-	"Sphere (2)",
-	"Sphere (3)",
-	"Box (4)",
-	"Box (5)",
-	"Keyframed (6)",
-	"Keyframed (7)",
-	"Box",
-	"Keyframed?",
+	"0: Invalid",
+	"1: Dynamic",
+	"2: Sphere",
+	"3: Sphere Inertia",
+	"4: Box",
+	"5: Box Stabilized",
+	"6: Keyframed",
+	"7: Fixed",
+	"8: Thin Box",
+	"9: Character",
 	NULL
 };
 
 static const char *NpHvkQualityTypes[] =
 {
-	"Moving",
-	"Fixed",
-	"Keyframed",
-	"Moving(?)",
-	"Critical",
-	"Bullet",
-	"User",
-	"Null",
+	"0: Invalid",
+	"1: Fixed",
+	"2: Keyframed",
+	"3: Debris",
+	"4: Moving"
+	"5: Critical",
+	"6: Bullet",
+	"7: User",
+	"8: Character",
+	"9: Keyframed Report",
 	NULL
 };
