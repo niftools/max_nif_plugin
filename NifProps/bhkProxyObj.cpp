@@ -369,7 +369,7 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
       {
       case IDC_CB_MATERIAL:
          if (HIWORD(wParam)==CBN_SELCHANGE) {
-            so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() );
+            so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() - 1 );
          }
          break;
 
