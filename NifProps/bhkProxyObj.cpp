@@ -145,11 +145,12 @@ extern HINSTANCE hInstance;
 //--- Parameter map/block descriptors -------------------------------
 
 // Parameter and ParamBlock IDs
-enum { list_params, opt_params, clone_params };  // pblock2 ID
+enum { list_params, opt_params, clone_params, subshape_params };  // pblock2 ID
 enum 
 { 
    PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER,
    PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, 
+   PB_LAYER, PB_FILTER, 
 };
 
 enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule };  // pblock ID
@@ -157,10 +158,11 @@ enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex
 static ParamBlockDesc2 param_blk ( 
     list_params, _T("parameters"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, 0,
     //rollout
-    3,
+    4,
     list_params, IDD_PROXYPARAM1, IDS_PARAMS, 0, 0, NULL, 
 	opt_params,		IDD_RB_MOD_PANEL1, IDS_OPT_PARAMS, 0, 0, NULL,
 	clone_params,	IDD_CLONE_PANEL,   IDS_CLONE_PARAMS, 0, 0, NULL,
+	subshape_params,	IDD_RB_MOD_PANEL5,   IDS_LIST_SUBSHAPEPROPS, 0, 0, NULL,
 
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
@@ -213,6 +215,18 @@ static ParamBlockDesc2 param_blk (
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_MAXEDGE, IDC_OPT_MAXEDGESPIN, SPIN_AUTOSCALE,
 	  p_uix,		opt_params,
 	  end,
+
+	PB_LAYER, _T("layer"), TYPE_INT, P_ANIMATABLE,	IDS_DS_LAYER,
+	  p_default,	NP_DEFAULT_HVK_LAYER,
+	  end,
+
+    PB_FILTER, _T("filter"), TYPE_INT, P_ANIMATABLE,	IDS_DS_FILTER,
+	  p_default,	NP_DEFAULT_HVK_FILTER,
+	  p_range, 		0, 255, 
+	  p_ui,			subshape_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ED_FILTER, IDC_SP_FILTER, 0.01f,
+	  p_uix,		subshape_params,
+	  end,
+
     end
     );
 
@@ -351,8 +365,10 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
 		  so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
 		  mCbMaterial.select( sel + 1 );
 		 // Disable all types not currently implemented
+#if defined(USES_WILDMAGIC)
 		 EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
-		 EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);
+#endif
+		 //EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);
 
          Update(t);
          break;
@@ -409,6 +425,54 @@ namespace
 		}
 	};
 
+
+	// Controller for subshape properies: layer and filter
+	class SubShapeDlgProc : public ParamMap2UserDlgProc {
+	public:
+		bhkProxyObject *mod;
+		NpComboBox		mCbLayer;
+		SubShapeDlgProc(bhkProxyObject* m) {mod = m;}		
+		INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);		
+		void DeleteThis() {delete this;}		
+	};
+
+	INT_PTR SubShapeDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+	{
+		switch (msg) 
+		{
+		case WM_INITDIALOG:
+			{
+				mCbLayer.init(GetDlgItem(hWnd, IDC_CB_LAYER));
+				for (const char **str = NpHvkLayerNames; *str; ++str)
+					mCbLayer.add(*str);
+
+				int sel = NP_DEFAULT_HVK_LAYER;
+				Interval valid;
+				mod->pblock2->GetValue( PB_LAYER, 0, sel, valid);
+				mCbLayer.select( sel );
+
+				Update(t);
+				break;
+			}
+
+		case WM_DESTROY:
+			break;
+
+		case WM_COMMAND:
+			switch (LOWORD(wParam))
+			{
+			case IDC_CB_LAYER:
+				if (HIWORD(wParam)==CBN_SELCHANGE) {
+					mod->pblock2->SetValue( PB_LAYER, 0, mCbLayer.selection() );
+				}
+				break;
+
+			default:
+				return FALSE;
+			}
+		}		
+		return FALSE;
+	}
 }
 
 //--- Proxy methods -------------------------------
@@ -446,6 +510,7 @@ void bhkProxyObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
    listDesc.BeginEditParams(ip,this,flags,prev);
    param_blk.SetUserDlgProc(new ProxyParamDlgProc(this));
    param_blk.SetUserDlgProc(clone_params, new CloneMeshDlgProc(this));
+   param_blk.SetUserDlgProc(subshape_params, new SubShapeDlgProc(this));
    pmapParam = pblock2->GetMap(list_params);
 
    this->ip = ip;

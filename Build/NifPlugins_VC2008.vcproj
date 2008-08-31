@@ -4495,10 +4495,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\NifCommon\niutils.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\NifCommon\niutils.h"
 					>
 				</File>
@@ -4536,6 +4532,10 @@
 				</File>
 				<File
 					RelativePath="..\NifCommon\nimorph.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\NifCommon\niutils.cpp"
 					>
 				</File>
 			</Filter>

@@ -6,7 +6,7 @@ AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2008, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-0.2.17.3
+OutputBaseFilename=niftools-max-plugins-0.2.17.5
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,7 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=0.2.17.3
+VersionInfoVersion=0.2.17.5
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe

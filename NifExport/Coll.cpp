@@ -953,10 +953,6 @@ bool Exporter::isCollision(INode *node)
 
 static void AccumulateSubShapesFromGroup(INode *node, INodeTab& packedShapes, INodeTab& otherShapes)
 {
-	enum { havok_params };
-	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
-
 	ObjectState os = node->EvalWorldState(0); 
 	if (node->IsGroupHead()) {
 		for (int i=0; i<node->NumberOfChildren(); i++)
@@ -969,15 +965,32 @@ static void AccumulateSubShapesFromGroup(INode *node, INodeTab& packedShapes, IN
 		|| (os.obj->ClassID() == bhkSphereObject_CLASS_ID)
 		|| (os.obj->ClassID() == BHKCAPSULEOBJECT_CLASS_ID)
 		|| (os.obj->ClassID() == BHKLISTOBJECT_CLASS_ID)
-		|| (os.obj->ClassID() == BHKPROXYOBJECT_CLASS_ID)
 		)
 	{
 		otherShapes.Append(1, &node);
+	}
+	else if (os.obj->ClassID() == BHKPROXYOBJECT_CLASS_ID)
+	{
+		enum { list_params, bv_mesh, };  // pblock2 ID
+		enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, };
+		enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+
+		int type = bv_type_none;
+		if (IParamBlock2* pblock2 = os.obj->GetParamBlockByID(list_params))
+			pblock2->GetValue(PB_BOUND_TYPE, 0, type, FOREVER, 0);
+		if (type == bv_type_packed)
+			packedShapes.Insert(0, 1, &node);
+		else
+			otherShapes.Insert(0, 1, &node);
 	}
 	else if (os.obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
 	{
 		if (Modifier* mod = GetbhkCollisionModifier(node))
 		{
+			enum { havok_params };
+			enum { PB_BOUND_TYPE, PB_MATERIAL, };
+			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+
 			int type = bv_type_none;
 			if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
 				pblock2->GetValue(PB_BOUND_TYPE, 0, type, FOREVER, 0);
@@ -1532,23 +1545,45 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 
 		ObjectState os = node->EvalWorldState(0);
 
-		enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
-		enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
-		enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
-
 		int layer = NP_DEFAULT_HVK_LAYER;
 		int filter = NP_DEFAULT_HVK_FILTER;
 		Mesh *mesh = NULL;
 
-		if ( Modifier* mod = GetbhkCollisionModifier(node) )
+		bool bNodeTransform = true; 
+		if (os.obj->ClassID() == BHKPROXYOBJECT_CLASS_ID)
 		{
+			enum { list_params, bv_mesh, };  // pblock2 ID
+			enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
+			enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+
+			int type = bv_type_none;
+			if (IParamBlock2* pblock2 = os.obj->GetParamBlockByID(list_params))
+			{
+				pblock2->GetValue(PB_BOUND_TYPE, 0, type, FOREVER, 0);
+				if (type == bv_type_packed)
+				{
+					material = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
+					if ( material < 0 ) material = mtlDefault;
+					pblock2->GetValue(PB_FILTER, 0, filter, FOREVER, 0);
+					pblock2->GetValue(PB_LAYER, 0, layer, FOREVER, 0);
+					if (TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0)))
+						mesh = const_cast<Mesh*>(&tri->GetMesh());
+					bNodeTransform = false;
+				}
+			}
+		}
+		else if ( Modifier* mod = GetbhkCollisionModifier(node) )
+		{
+			enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
+			enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
+			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+
 			if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params)) {
 				material = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
 				if ( material < 0 ) material = mtlDefault;
 				pblock2->GetValue(PB_FILTER, 0, filter, FOREVER, 0);
 				pblock2->GetValue(PB_LAYER, 0, layer, FOREVER, 0);
 			}
-
 			if (bhkHelperInterface* bhkHelp = (bhkHelperInterface*)mod->GetInterface(BHKHELPERINTERFACE_DESC))
 				mesh = const_cast<Mesh*>(bhkHelp->GetMesh());
 		}
@@ -1560,7 +1595,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 		if (mesh == NULL)
 			continue;
 
-		Matrix3 ltm = node->GetObjTMAfterWSM(0) * tm;
+		Matrix3 ltm = (node->GetObjTMAfterWSM(0) * tm);
 		int vi[3];
 		if (TMNegParity(ltm)) {
 			vi[0] = 2; vi[1] = 1; vi[2] = 0;
