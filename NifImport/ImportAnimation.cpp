@@ -643,7 +643,7 @@ bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyfr
             return true;
          }
       } else if (NiBSplineTransformInterpolatorRef interp = lnk.interpolator) {
-         int npoints = interp->GetNumControlPt();
+         int npoints = interp->GetNumControlPoints();
 
          if (npoints > 3)
          {
@@ -1108,7 +1108,7 @@ bool AnimationImport::AddValues(NiInterpolatorRef interp, IParamBlock* pblock, f
 		}
 	} else if (interp->IsDerivedType(NiBSplineCompFloatInterpolator::TYPE)) {
 		NiBSplineCompFloatInterpolatorRef bsfi = StaticCast<NiBSplineCompFloatInterpolator>(interp);
-		int npoints = bsfi->GetNumControlPt();
+		int npoints = bsfi->GetNumControlPoints();
 		if (npoints > 3) {
 			keyType = QUADRATIC_KEY;
 			keys = bsfi->SampleKeys(npoints, 3);
