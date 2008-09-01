@@ -541,8 +541,8 @@ bool KFMImporter::ImportAnimation()
 
 			 INode *n = gi->GetINodeByName(name.c_str());
 
-			 if ((*lnk).priority_ != 0.0f) {
-				 npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
+			 if ((*lnk).priority != 0.0f) {
+				 npSetProp(n, NP_ANM_PRI, (*lnk).priority);
 			 }
 
 			 NiKeyframeDataRef data;
@@ -596,8 +596,8 @@ bool KFMImporter::ImportAnimation()
 
 			 INode *n = gi->GetINodeByName(name.c_str());
 
-			 if ((*lnk).priority_ != 0.0f) {
-				 npSetProp(n, NP_ANM_PRI, (*lnk).priority_);
+			 if ((*lnk).priority != 0.0f) {
+				 npSetProp(n, NP_ANM_PRI, (*lnk).priority);
 			 }
 
 			 NiKeyframeDataRef data;
