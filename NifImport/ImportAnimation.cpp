@@ -561,7 +561,7 @@ bool KFMImporter::ImportAnimation()
 			 string var2 = (*lnk).variable2;
 			 if (var2.empty()) {
 				 if (NiStringPaletteRef strings = lnk->stringPalette)
-					 var2 = strings->GetSubStr((*lnk).variableOffset2);
+					 var2 = strings->GetSubStr((*lnk).variable2Offset);
 			 }
 			 if (!var2.empty())
 			 {
