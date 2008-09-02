@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winres.h"
 
 #ifndef NIFPLUGINS
 #define DLLNAME "NifExporter.dle"  // DLL Name
@@ -65,7 +65,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include ""winrex.h""\r\n"
     "\r\n"
     "#ifndef NIFPLUGINS\r\n"
     "#define DLLNAME ""NifExporter.dle""  // DLL Name\r\n"

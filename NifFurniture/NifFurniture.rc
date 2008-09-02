@@ -7,7 +7,7 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winres.h"
 
 #ifndef NIFPLUGINS
 #define DLLNAME "NifFurniture.dlu"  // DLL Name
@@ -66,7 +66,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include ""winres.h""\r\n"
     "\r\n"
     "#ifndef NIFPLUGINS\r\n"
     "#define DLLNAME ""NifFurniture.dlu""  // DLL Name\r\n"

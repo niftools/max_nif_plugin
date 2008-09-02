@@ -365,7 +365,7 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
 		  so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
 		  mCbMaterial.select( sel + 1 );
 		 // Disable all types not currently implemented
-#if defined(USES_WILDMAGIC)
+#if !defined(USES_WILDMAGIC) || defined(_M_X64)
 		 EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), FALSE);
 #endif
 		 //EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);

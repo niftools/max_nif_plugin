@@ -7,13 +7,14 @@
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "winres.h"
 
 #ifndef NIFPLUGINS
 #define DLLNAME "NifProps.dlu"  // DLL Name
 #define DLLDESCRIPTION "3ds Max Nif Reactor Properites Plugin"
 #include "..\nifcommon\nifversion.rc"  
-#endif
+#endif
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
@@ -65,7 +66,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""afxres.h""\r\n"
+    "#include ""winres.h""\r\n"
     "\r\n"
     "#ifndef NIFPLUGINS\r\n"
     "#define DLLNAME ""NifProps.dlu""  // DLL Name\r\n"
@@ -1151,7 +1152,8 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
+
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
