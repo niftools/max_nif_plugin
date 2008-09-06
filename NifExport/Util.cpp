@@ -64,16 +64,26 @@ void Exporter::convertMatrix(Matrix33 &dst, const Matrix3 &src)
 
 Matrix3 Exporter::getTransform(INode *node, TimeValue t, bool local)
 {
-   Matrix3 tm = node->GetObjTMAfterWSM(t);
-   if (local)
-   {
-      INode *parent = node->GetParentNode();
-      if (parent != NULL) {
-         Matrix3 pm = parent->GetObjTMAfterWSM(t);
-         pm.Invert();
-         tm *= pm;
-      }
-   }
+	Matrix3 tm = node->GetNodeTM(t);
+	if (local)
+	{
+		INode *parent = node->GetParentNode();
+		if (parent != NULL) {
+			Matrix3 pm = parent->GetNodeTM(t);
+			pm.Invert();
+			tm *= pm;
+		}
+	}
+   //Matrix3 tm = node->GetObjTMAfterWSM(t);
+   //if (local)
+   //{
+   //   INode *parent = node->GetParentNode();
+   //   if (parent != NULL) {
+   //      Matrix3 pm = parent->GetObjTMAfterWSM(t);
+   //      pm.Invert();
+   //      tm *= pm;
+   //   }
+   //}
    return tm;
 }
 
@@ -625,4 +635,5 @@ Exporter::Result Exporter::scanForIgnore(INode *node)
 	}
 	return Exporter::Ok;
 }
+
 

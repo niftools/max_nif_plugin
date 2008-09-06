@@ -141,7 +141,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       if (mExportType == NIF_WO_ANIM)
          progressMax[Animation] = progressMax[Geometry];
      
-      for (int i=0; i<selectedRoots.size(); i++){
+      for (size_t i=0; i<selectedRoots.size(); i++){
          Result result = exportNodes(root, selectedRoots[i]);
          if (result != Ok && result != Skip)
             return result;
@@ -153,7 +153,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
       }
       // Always Zero out root transforms
       vector<NiAVObjectRef> children = root->GetChildren();
-      for (int i=0; i<children.size(); ++i){
+      for (size_t i=0; i<children.size(); ++i){
          children[i]->SetLocalTransform(Matrix44::IDENTITY);
       }
 
@@ -230,87 +230,95 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 // Primary recursive decent routine
 Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 {
-   TSTR nodeName = node->GetName();
-   //bool coll = npIsCollision(node);
-   bool coll = isCollision(node);
+	TSTR nodeName = node->GetName();
+	ProgressUpdate(Geometry, FormatText("'%s' Geometry", nodeName.data()));
+	//bool coll = npIsCollision(node);
+	bool coll = isCollision(node);
+	// Abort if is a collision node or is hidden and we are not exporting hidden
+	if (coll ||	(node->IsHidden() && !mExportHidden) || isHandled(node))
+		return Skip;
 
-   ProgressUpdate(Geometry, FormatText("'%s' Geometry", nodeName.data()));
+	bool local = !mFlattenHierarchy;
+	NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
 
-   // Abort if is a collision node or is hidden and we are not exporting hidden
-   if (coll ||	(node->IsHidden() && !mExportHidden) || isHandled(node))
-      return Skip;
+	NiNodeRef newParent;
+	TimeValue t = 0;
+	ObjectState os = node->EvalWorldState(t);
 
-   bool local = !mFlattenHierarchy;
-   NiNodeRef nodeParent = mFlattenHierarchy ? mNiRoot : parent;
+	if (nodeName == TSTR("Bip01 R ForeTwist"))
+	{
+		nodeName = nodeName;
+	}
 
-   NiNodeRef newParent;
-   TimeValue t = 0;
-   ObjectState os = node->EvalWorldState(t); 
 
-   // Always skip bones and bipeds
-   SClass_ID scid = node->SuperClassID();
-   Class_ID ncid = node->ClassID();
-   TSTR nodeClass; node->GetClassName(nodeClass);
-   if (node->IsBoneShowing())
-      newParent = exportBone(nodeParent, node);
-   else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
-   {
-      TSTR objClass;
-      os.obj->GetClassName(objClass);
-      SClass_ID oscid = os.obj->SuperClassID();
-      Class_ID oncid = os.obj->ClassID();
-      if (  os.obj 
-         && (  os.obj->ClassID() == BONE_OBJ_CLASSID 
-            || os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
-            || os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
-            )
-         ) 
-      {
-         newParent = exportBone(nodeParent, node);
-      } 
-      else if (!mSkeletonOnly)
-      {
-         if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
-            // Create Node + Accum if has Start Track
-            newParent = createAccumNode( makeNode(nodeParent, node, local) , node);
-         } else if ( mExportExtraNodes || (mExportType != NIF_WO_ANIM && isNodeKeyed(node) ) ) {
-            // Create node if using Extra Nodes or if exporting with anim and node has key values
-            newParent = makeNode(nodeParent, node, local);
-         } else {
-            // Else don't create a node
-            newParent = nodeParent;
-         }
-         // No need to export meshes when NIF is not exported.
-         if (mExportType != SINGLE_KF_WO_NIF && mExportType != MULTI_KF_WO_NIF)
-         {
-            Result result = exportMesh(newParent, node, t);
-            if (result != Ok)
-               return result;
-         }
-      }
-   }
-   else if (mExportCameras && os.obj && os.obj->SuperClassID()==CAMERA_CLASS_ID)
-   {
-      newParent = makeNode(nodeParent, node, local);
-   }
-   else if (mExportLights && os.obj && os.obj->SuperClassID()==LIGHT_CLASS_ID)
-   {
-      return exportLight(nodeParent, node, (GenLight*)os.obj);
-   }
-   else if (isMeshGroup(node) && local && !mSkeletonOnly) // only create node if local
-   {
-      newParent = makeNode(parent, node, local);
-   } 
-   else
-      newParent = parent;
+	// Always skip bones and bipeds
+	SClass_ID scid = node->SuperClassID();
+	Class_ID ncid = node->ClassID();
+	//TSTR nodeClass; node->GetClassName(nodeClass);
+	if (node->IsBoneShowing())
+		newParent = exportBone(nodeParent, node);
+	else if (os.obj && os.obj->SuperClassID()==GEOMOBJECT_CLASS_ID)
+	{
+		//TSTR objClass;
+		//os.obj->GetClassName(objClass);
+		SClass_ID oscid = os.obj->SuperClassID();
+		Class_ID oncid = os.obj->ClassID();
+		if (  os.obj 
+			&& (  os.obj->ClassID() == BONE_OBJ_CLASSID 
+			|| os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
+			|| os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */
+			)
+			) 
+		{
+			newParent = exportBone(nodeParent, node);
+		} 
+		else if (os.obj->ClassID() == SKELOBJ_CLASS_ID)
+		{
+			// ignore skeleton objects
+		}
+		else if (!mSkeletonOnly)
+		{
+			if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+				// Create Node + Accum if has Start Track
+				newParent = createAccumNode( makeNode(nodeParent, node, local) , node);
+			} else if ( mExportExtraNodes || (mExportType != NIF_WO_ANIM && isNodeKeyed(node) ) ) {
+				// Create node if using Extra Nodes or if exporting with anim and node has key values
+				newParent = makeNode(nodeParent, node, local);
+			} else {
+				// Else don't create a node
+				newParent = nodeParent;
+			}
+			// No need to export meshes when NIF is not exported.
+			if (mExportType != SINGLE_KF_WO_NIF && mExportType != MULTI_KF_WO_NIF)
+			{
+				Result result = exportMesh(newParent, node, t);
+				if (result != Ok)
+					return result;
+			}
+		}
+	}
+	else if (mExportCameras && os.obj && os.obj->SuperClassID()==CAMERA_CLASS_ID)
+	{
+		newParent = makeNode(nodeParent, node, local);
+	}
+	else if (mExportLights && os.obj && os.obj->SuperClassID()==LIGHT_CLASS_ID)
+	{
+		return exportLight(nodeParent, node, (GenLight*)os.obj);
+	}
+	else if (isMeshGroup(node) && local && !mSkeletonOnly) // only create node if local
+	{
+		newParent = makeNode(parent, node, local);
+	} 
+	else
+		newParent = parent;
 
-   for (int i=0; i<node->NumberOfChildren(); i++) 
-   {
-      Result result = exportNodes(newParent, node->GetChildNode(i));
-      if (result!=Ok && result!=Skip)
-         return result;
-   }
-   return Ok;
+	for (int i=0; i<node->NumberOfChildren(); i++) 
+	{
+		Result result = exportNodes(newParent, node->GetChildNode(i));
+		if (result!=Ok && result!=Skip)
+			return result;
+	}
+	return Ok;
 }
 
 void Exporter::ProgressUpdate(ProgressSection section, const TCHAR *s)

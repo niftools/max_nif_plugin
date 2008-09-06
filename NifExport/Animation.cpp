@@ -411,7 +411,7 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
 							   if (strmatch(type, "none")) {
 								   accumType = Exporter::AT_NONE;
 							   } else {
-								   for (int j=0; j<type.size(); ++j) {
+								   for (size_t j=0; j<type.size(); ++j) {
 									   if (tolower(type[j]) == 'x')
 										   accumType = Exporter::AccumType(accumType | Exporter::AT_X);
 									   else if (tolower(type[j]) == 'y')
@@ -544,7 +544,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
 							   if (strmatch(type, "none")) {
 								   accumType = Exporter::AT_NONE;
 							   } else {
-								   for (int j=0; j<type.size(); ++j) {
+								   for (size_t j=0; j<type.size(); ++j) {
 									   if (tolower(type[j]) == 'x')
 										   accumType = Exporter::AccumType( accumType | Exporter::AT_X );
 									   else if (tolower(type[j]) == 'y')
@@ -615,35 +615,45 @@ Control *AnimationExport::GetTMController(INode *n)
    Control *c = n->GetTMController();
    if (NULL == c)
       return NULL;
-
-#ifdef USE_BIPED
-   // ignore bipeds for now.
-   if ( (c->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) 
-      ||(c->ClassID() == BIPBODY_CONTROL_CLASS_ID) 
-      ||(c->ClassID() == FOOTPRINT_CLASS_ID))
-      return NULL;
-#endif
-
    return c;
 }
 
 static void GetTimeRange(Control *c, Interval& range)
 {
-   if (IKeyControl *ikeys = GetKeyControlInterface(c)){
-      int n = ikeys->GetNumKeys();
-      for (int i=0; i<n; ++i){
-         AnyKey buf; IKey *key = (IKey*)buf;
-         ikeys->GetKey(i, key);
-         if (range.Empty()) {
-            range.SetInstant(key->time);
-         } else {
-            if (key->time < range.Start())
-               range.SetStart(key->time);
-            if (key->time > range.End())
-               range.SetEnd(key->time);
-         }
-      }
-   }
+	//Class_ID cID = tmCont->ClassID();
+	//if ( (cID == BIPSLAVE_CONTROL_CLASS_ID) 
+	//	|| (cID == BIPBODY_CONTROL_CLASS_ID) 
+	//	|| (cID == FOOTPRINT_CLASS_ID) )
+	{
+		int iNumKeys = c->NumKeys();
+		for (int i = 0; i < iNumKeys; i++) {
+			TimeValue t = c->GetKeyTime(i);
+			if (range.Empty()) {
+				range.SetInstant(t);
+			} else {
+				if (t < range.Start())
+					range.SetStart(t);
+				if (t > range.End())
+					range.SetEnd(t);
+			}
+		}
+	}
+
+   //if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+   //   int n = ikeys->GetNumKeys();
+   //   for (int i=0; i<n; ++i){
+   //      AnyKey buf; IKey *key = (IKey*)buf;
+   //      ikeys->GetKey(i, key);
+   //      if (range.Empty()) {
+   //         range.SetInstant(key->time);
+   //      } else {
+   //         if (key->time < range.Start())
+   //            range.SetStart(key->time);
+   //         if (key->time > range.End())
+   //            range.SetEnd(key->time);
+   //      }
+   //   }
+   //}
 }
 void AnimationExport::GetTimeRange(Control *c, Interval& range)
 {
@@ -811,6 +821,91 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          timeControl->SetStartTime( 0.0f );
          timeControl->SetStopTime( FrameToTime( range.Duration()-1 ) );
 
+		 if (range.Empty() || (range.Start() == range.End()))
+			 return timeControl;
+
+#ifdef USE_BIPED
+		 MAX_heapchk();_heapchk();
+		 Class_ID cID = tmCont->ClassID();
+		 if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
+		 {
+			 TSTR name = node->NodeName();
+			 if (name == TSTR("Bip01 R ForeTwist"))
+			 {
+				 name = name;
+			 }
+			 // query MAX for the number of keyframes
+			 int iNumKeys = tmCont->NumKeys();
+
+			 vector<Vector3Key> posKeys;
+			 vector<QuatKey> rotKeys;
+			 TimeValue interval = (range.End() - range.Start()) / TicksPerFrame;
+			 for (TimeValue t = range.Start(); t <= range.End(); t += interval)
+			 {
+				 //TimeValue t = tmCont->GetKeyTime(i);
+				 Matrix3 tm = ne.getTransform(node, t, true);
+				 Vector3Key p;
+				 QuatKey q;
+				 q.time = p.time = FrameToTime(t);
+				 p.data = TOVECTOR3(tm.GetTrans());
+				 q.data = TOQUAT( Quat(tm), true );
+				 posKeys.push_back( p );
+				 rotKeys.push_back( q );
+			 }
+
+			 // Dont really know what else to use since I cant get anything but the raw data.
+			 data->SetTranslateType(LINEAR_KEY);
+			 data->SetTranslateKeys(posKeys);
+			 data->SetQuatRotateKeys(rotKeys);
+			 //data->SetScaleKeys();
+			 if (iNumKeys != 0) { // if no changes set the base transform
+				 keepData = true;
+			 }
+			 MAX_heapchk();_heapchk();
+		 }
+		 else if (cID == BIPBODY_CONTROL_CLASS_ID) 
+		 {
+			 Animatable* vert = tmCont->SubAnim(VERTICAL_SUBANIM);
+			 Animatable* horiz = tmCont->SubAnim(HORIZONTAL_SUBANIM);
+			 Animatable* rot = tmCont->SubAnim(ROTATION_SUBANIM);
+			 int iVertKeys = vert->NumKeys();
+			 int iHorizKeys = horiz->NumKeys();
+			 int iRotKeys = rot->NumKeys();
+
+			 // merge vertical and horizontal. rotation stands alone
+			 vector<Vector3Key> posKeys;
+			 vector<QuatKey> rotKeys;
+			 set<TimeValue> times;
+			 for (int i = 0; i < iVertKeys; i++)
+				 times.insert(vert->GetKeyTime(i));
+			 for (int i = 0; i < iHorizKeys; i++)
+				 times.insert(horiz->GetKeyTime(i));
+			 for (set<TimeValue>::iterator itr = times.begin(); itr != times.end(); ++itr)
+			 {
+				 TimeValue t = *itr;
+				 Matrix3 tm = ne.getTransform(node, t, true);
+				 Vector3Key p;
+				 p.time = FrameToTime(t+range.Start());
+				 p.data = TOVECTOR3(tm.GetTrans());
+				 posKeys.push_back( p );
+			 }
+			 for (int i = 0; i < iRotKeys; i++)
+			 {
+				 TimeValue t = rot->GetKeyTime(i);
+				 Matrix3 tm = ne.getTransform(node, t, true);
+				 QuatKey q;
+				 q.time = FrameToTime(t+range.Start());
+				 q.data = TOQUAT( Quat(tm), false );
+				 rotKeys.push_back( q );
+			 }
+			 if (posKeys.size() != 0 || rotKeys.size() != 0) { // if no changes set the base transform
+				 keepData = true;
+			 }
+
+		 }
+#endif
+
+
          //if (validity.InInterval(range))
          //{
          //   // Valid for entire interval.  i.e. no changes
@@ -819,7 +914,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          //   interp->SetRotation( TOQUAT( Quat(tm) ) );
          //   seq->AddInterpolator(StaticCast<NiSingleInterpController>(control));
          //}
-         //else
+         else
          {
             if (Control *c = tmCont->GetPositionController()) 
             {
@@ -1005,15 +1100,14 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                   //scale = Average(GetScale(tm));
                }           
             }
-
-            // only add transform data object if data actually is present
-            if (!keepData) {
-               ninode->RemoveController(timeControl);
-               timeControl = NULL;
-            } else {
-               objRefs.insert( StaticCast<NiAVObject>(ninode) );
-            }
          }
+		 // only add transform data object if data actually is present
+		 if (!keepData) {
+			 ninode->RemoveController(timeControl);
+			 timeControl = NULL;
+		 } else {
+			 objRefs.insert( StaticCast<NiAVObject>(ninode) );
+		 }
       }
    }
    return timeControl;
@@ -1084,7 +1178,7 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
          // Get Priority from node
          float priority;
          npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
-         seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), priority);
+		 seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), (Niflib::byte)priority);
 
          // Handle NonAccum 
 		 if (Exporter::mAllowAccum && accumType != Exporter::AT_NONE)
@@ -1115,7 +1209,7 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
 					   splitAccum(interp->GetData(), accumData, accumType);
 				   }
                }
-               seq->AddInterpolator(StaticCast<NiSingleInterpController>(acccontrol), Exporter::mDefaultPriority);
+               seq->AddInterpolator(StaticCast<NiSingleInterpController>(acccontrol), (Niflib::byte)Exporter::mDefaultPriority);
 
                accnode->RemoveController(acccontrol);
             }
@@ -1180,7 +1274,7 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 				interpolators.push_back(interp);
 			}
 
-			for (int i=0; i<indices.size(); ++i) {
+			for (size_t i=0; i<indices.size(); ++i) {
 				int idx = indices[i];
 				if (IParamBlock* pblock = (IParamBlock*)mod->GetReference(idx)) {
 					if (Control *c = pblock->GetController(0)) {
@@ -1198,7 +1292,7 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 			//	textKeyData->SetKeys(textKeys);
 			//}
 
-			for (int i=0; i<indices.size(); ++i) {
+			for (size_t i=0; i<indices.size(); ++i) {
 				int idx = indices[i];
 
 				IParamBlock* pblock = (IParamBlock*)mod->GetReference(idx);
@@ -1237,7 +1331,7 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 
 				vector<Vector3> verts;
 				MorpherGetMorphVerts(mod, idx, verts);
-				for (int j=0; j<verts.size(); j++)
+				for (size_t j=0; j<verts.size(); j++)
 					verts[j] = verts[j] - baseVerts[j];
 				data->SetMorphVerts(i+1, verts);
 			}

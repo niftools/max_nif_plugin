@@ -207,13 +207,13 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 
             Exporter::mExportType = Exporter::ExportType(SendDlgItemMessage(hWnd, IDC_CBO_ANIM_TYPE, CB_GETCURSEL, 0, 0));
             GetDlgItemText(hWnd, IDC_ED_PRIORITY2, tmp, MAX_PATH);
-            Exporter::mDefaultPriority = atof(tmp);
+            Exporter::mDefaultPriority = (float)atof(tmp);
 
             GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
             Exporter::mTexPrefix = tmp;
 
             GetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp, MAX_PATH);
-            Exporter::mWeldThresh = atof(tmp);
+            Exporter::mWeldThresh = (float)atof(tmp);
 
             Exporter::mAllowAccum = IsDlgButtonChecked(hWnd, IDC_CHK_ALLOW_ACCUM);
 
@@ -363,32 +363,43 @@ static DWORD WINAPI dummyProgress(LPVOID arg) {
 
 int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
 {
-   TSTR title = FormatText("Exporting '%s'...", PathFindFileName(name));
-   i->PushPrompt(title);
-   if (!suppressPrompts)
-      i->ProgressStart(title, TRUE, dummyProgress, NULL);
 	try
 	{
-      DoExportInternal(name, ei, i, suppressPrompts, options);
-   }
-   catch (Exporter::CancelExporterException&)
-   {
-      // Special user cancellation exception
-   }
-   catch (exception &e)
-   {
-      if (!suppressPrompts)
-         MessageBox(NULL, e.what(), "Export Error", MB_OK);
-   }
-   catch (...)
-   {
-      if (!suppressPrompts)
-         MessageBox(NULL, "Unknown error.", "Export Error", MB_OK);
-   }
-   i->PopPrompt();
-   if (!suppressPrompts)
-      i->ProgressEnd();
-   return true;
+		MAX_set_sbh_threshold(0);
+		MAX_heapchk();
+		_heapchk();
+		TSTR title = FormatText("Exporting '%s'...", PathFindFileName(name));
+		i->PushPrompt(title);
+		if (!suppressPrompts)
+			i->ProgressStart(title, TRUE, dummyProgress, NULL);
+		DoExportInternal(name, ei, i, suppressPrompts, options);
+		MAX_heapchk();
+		_heapchk();
+	}
+	catch (Exporter::CancelExporterException&)
+	{
+		// Special user cancellation exception
+	}
+	catch (exception &e)
+	{
+		if (!suppressPrompts)
+			MessageBox(NULL, e.what(), "Export Error", MB_OK);
+	}
+	catch (...)
+	{
+		if (!suppressPrompts)
+			MessageBox(NULL, "Unknown error.", "Export Error", MB_OK);
+	}
+	try
+	{
+		i->PopPrompt();
+		if (!suppressPrompts)
+			i->ProgressEnd();
+	}
+	catch (...)
+	{
+	}
+	return true;
 }
 
 int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL suppressPrompts, DWORD options)
