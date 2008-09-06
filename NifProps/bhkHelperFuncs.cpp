@@ -7,30 +7,6 @@
 #include "NifGui.h"
 #include "meshadj.h"
 
-// Includes for WildMagic so we can do the Capsule fitting
-#if defined(USES_WILDMAGIC) && !defined(_M_X64)
-#  if _MSC_VER >= 1500
-#    ifdef _DEBUG
-#      pragma comment (lib, "Wm4Foundation90d")
-#    else
-#      pragma comment (lib, "Wm4Foundation90")
-#    endif
-#  else
-#    ifdef _DEBUG
-#      pragma comment (lib, "Wm4Foundation80d")
-#    else
-#      pragma comment (lib, "Wm4Foundation80")
-#    endif
-#  endif
-#undef PI
-#undef DEG_TO_RAD
-#undef RAD_TO_DEG
-#define WM4PLATFORMS_H
-#define WM4_FOUNDATION_ITEM
-#include <Wm4ContCapsule3.h>
-#define PI (Wm4::Math<double>::PI)
-#endif
-
 using namespace std;
 
 #define MAKE_QUAD(na,nb,nc,nd,sm,b) {MakeQuad(nverts,&(mesh.faces[nf]),na, nb, nc, nd, sm, b);nf+=2;}
@@ -115,14 +91,14 @@ void CalcAxisAlignedSphere(Mesh& mesh, Point3& center, float& radius)
 	//--Calculate center & radius--//
 
 	//Set lows and highs to first vertex
-	int nv = mesh.getNumVerts();
+	size_t nv = mesh.getNumVerts();
 
 	Point3 lows = mesh.getVert(0);
 	Point3 highs = mesh.getVert(0);
 
 	//Iterate through the vertices, adjusting the stored values
 	//if a vertex with lower or higher values is found
-	for ( unsigned int i = 0; i < nv; ++i ) {
+	for ( size_t i = 0; i < nv; ++i ) {
 		const Point3 & v = mesh.getVert(i);
 
 		if ( v.x > highs.x ) highs.x = v.x;
@@ -142,7 +118,7 @@ void CalcAxisAlignedSphere(Mesh& mesh, Point3& center, float& radius)
 	//The radius will be the largest distance from the center
 	Point3 diff;
 	float dist2(0.0f), maxdist2(0.0f);
-	for ( unsigned int i = 0; i < nv; ++i ) {
+	for ( size_t i = 0; i < nv; ++i ) {
 		const Point3 & v = mesh.getVert(i);
 
 		diff = center - v;
@@ -780,32 +756,104 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
 	mesh.InvalidateTopologyCache();
 }
 
+
+
+extern HINSTANCE hInstance;
+class MagicCode
+{
+private:
+	struct Triangle { int a, b, c; };
+	typedef int (__stdcall * fnCalcCapsule)
+	    (int nverts, const Point3 *verts, 
+		Point3& pt1, Point3& pt2, float& r1, float& r2);
+
+	typedef void (__stdcall * fnCalcMassProps)
+	(	int nverts, const Point3* verts, 
+		int ntris, const Triangle* tris,
+		int iBodyCoords, float &rfMass,
+		Point3& rkCenter, Matrix3& rkInertia);
+
+	HMODULE hMagicLib;
+	fnCalcCapsule CalcCapsule;
+	fnCalcMassProps CalcMassProps;
+
+public:
+	MagicCode() : hMagicLib(0), CalcCapsule(0), CalcMassProps(0) {
+	}
+
+	~MagicCode() {
+		if (hMagicLib) FreeLibrary(hMagicLib);
+	}
+
+	bool Initialize()
+	{
+		if (hMagicLib == NULL)
+		{
+			char curfile[_MAX_PATH];
+			GetModuleFileName(hInstance, curfile, MAX_PATH);
+			PathRemoveFileSpec(curfile);
+			PathAppend(curfile, "NifMagic.dll");
+			hMagicLib = LoadLibraryA( curfile );
+			if (hMagicLib == NULL)
+				hMagicLib = LoadLibraryA( "Nifmagic.dll" );
+			CalcCapsule = (fnCalcCapsule)GetProcAddress( hMagicLib, "CalcCapsule" );
+			CalcMassProps = (fnCalcMassProps)GetProcAddress( hMagicLib, "CalcMassProps" );
+		}
+		return ( NULL != CalcCapsule && NULL != CalcMassProps );
+	}
+
+	void DoCalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& r2)
+	{
+		if ( Initialize() )
+		{
+			CalcCapsule( mesh.getNumVerts(), &mesh.verts[0], pt1, pt2, r1, r2);
+		}
+	}
+
+	void DoCalcMassProps( Mesh &mesh,
+		bool bBodyCoords, float &rfMass,
+		Point3& rkCenter, Matrix3& rkInertia)
+	{
+		vector<Triangle> tris;
+		tris.resize(mesh.getNumFaces());
+		for (int i=0; i<mesh.getNumFaces(); ++i)
+		{
+			Triangle& tri = tris[i];
+			Face& face = mesh.faces[i];
+			tri.a = face.getVert(0);
+			tri.b = face.getVert(1);
+			tri.c = face.getVert(2);
+		}
+		CalcMassProps( mesh.getNumVerts(), &mesh.verts[0]
+			, tris.size(), &tris[0]
+			, bBodyCoords ? 1 : 0, rfMass, rkCenter, rkInertia );
+	}
+
+} TheMagicCode;
+
+extern bool CanCalcCapsule()
+{
+	return TheMagicCode.Initialize();
+}
+
 // Calculate capsule from mesh.  While radii on the endcaps is possible we do 
 //   currently calculate then differently.
 extern void CalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& r2)
 {
-#if defined(USES_WILDMAGIC) && !defined(_M_X64)
-	int nv = mesh.getNumVerts();
-	Wm4::Vector3<float>* akPoint = new Wm4::Vector3<float>[nv];
-	for (int i=0; i<nv; i++)
-	{
-		Point3& mp = mesh.verts[i];
-		Wm4::Vector3<float>& wp = akPoint[i];
-		wp.X() = mp.x;
-		wp.Y() = mp.y;
-		wp.Z() = mp.z;
-	}
-	Wm4::Capsule3<float> capsule = ContCapsule (nv, akPoint);
-	delete [] akPoint;
+	TheMagicCode.DoCalcCapsule(mesh, pt1, pt2, r1, r2);
+}
 
-	Wm4::Vector3<float> end1 = capsule.Segment.GetPosEnd();
-	Wm4::Vector3<float> end2 = capsule.Segment.GetNegEnd();
-	pt1.Set(end1.X(), end1.Y(), end1.Z());
-	pt2.Set(end2.X(), end2.Y(), end2.Z());
 
-	r1 = r2 = capsule.Radius;
-#endif
-	return;
+extern bool CanCalcMassProps()
+{
+	return TheMagicCode.Initialize();
+}
+
+extern void CalcMassProps( Mesh &mesh,
+							bool bBodyCoords, float &rfMass,
+							Point3& rkCenter, Matrix3& rkInertia)
+{
+	TheMagicCode.DoCalcMassProps(mesh, bBodyCoords, rfMass, rkCenter, rkInertia);
 }
 
 extern void BuildCapsule(Mesh &mesh, Point3 pt1, Point3 pt2, float r1, float r2)

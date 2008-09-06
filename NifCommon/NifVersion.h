@@ -17,11 +17,11 @@ HISTORY:
 * Define the major, minor, build, patch version numbers
 */
 #define VERSION_MAJOR_INT  0
-#define VERSION_MINOR_INT  2
-#define VERSION_BUILD_INT  17
-#define VERSION_PATCH_INT  7
+#define VERSION_MINOR_INT  3
+#define VERSION_BUILD_INT  0
+#define VERSION_PATCH_INT  0
 
-#define VERSION_STRING "0, 2, 17, 7"
+#define VERSION_STRING "0, 3, 0, 0"
 
 //#define DEF_VERSION_STRING(a,b,c,d) #a ", " #b ", " #c ", " #d
 //#define VERSION_STRING DEF_VERSION_STRING(a,b,c,d)

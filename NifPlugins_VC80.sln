@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		MaxNifTools.ini = MaxNifTools.ini
 		MaxNifTools.iss = MaxNifTools.iss
 		NifPlugins_Development_Readme.txt = NifPlugins_Development_Readme.txt
+		User_Settings.vsprops = User_Settings.vsprops
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifPlugins", "Build\NifPlugins_VC80.vcproj", "{466F2D3E-2663-4583-A05C-128683677617}"

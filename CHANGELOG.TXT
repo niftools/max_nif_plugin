@@ -3,6 +3,11 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      0.3.0
+      ------
+    o All
+      Alter usage of the WildMagic for easier use in development and deployment
+    
       0.2.17
       ------
     o All

@@ -82,3 +82,8 @@ and redistributed under the following conditions:
 MaxNifTools uses Havok®.  ©Copyright 1999-2008 Havok.com Inc. (and its Licensors). 
   All Rights Reserved.  See www.havok.com for details.
   
+=======================================================================
+
+NifMagic uses WildMagic 4.7. WildMagic 4.7 is open source and is covered 
+  by the GNU Lesser General Public License (LGPL). 
+ 

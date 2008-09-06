@@ -38,21 +38,6 @@ POSSIBILITY OF SUCH DAMAGE.
 	Version="8.00"
 	Name="User_Settings"
 	>
-  <!--
-  Uncomment the following to enable compiling with WildMagic 4.
-
-  <Tool
-		Name="VCCLCompilerTool"
-    PreprocessorDefinitions="USES_WILDMAGIC"
-    AdditionalIncludeDirectories="$(WildMagic4SDKDir)\Include"
-  />
-	<Tool
-		Name="VCLinkerTool"
-    AdditionalLibraryDirectories="$(WildMagic4SDKDir)\Library\Debug\;$(WildMagic4SDKDir)\Library\Release\"
-  />
-  <UserMacro Name="WildMagic4Dir" Value="$(ProgramFiles)\GeometricTools\WildMagic4\"/>
-  <UserMacro Name="WildMagic4SDKDir" Value="$(WildMagic4Dir)SDK\"/>
-  -->
   
   <!--
   Uncomment and fix the below settings to match your machine or define the macros in your 
