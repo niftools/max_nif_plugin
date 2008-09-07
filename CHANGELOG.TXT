@@ -6,7 +6,11 @@ NifTools MaxPlugin
       0.3.0
       ------
     o All
-      Alter usage of the WildMagic for easier use in development and deployment
+      - Alter usage of the WildMagic for easier use in development and deployment
+      
+    o Exporter
+      - Better support for Biped animation
+      - Initial support for mass, center of mass, and inertia tensor calculations
     
       0.2.17
       ------

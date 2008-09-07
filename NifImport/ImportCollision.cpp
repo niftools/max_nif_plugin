@@ -26,6 +26,7 @@ HISTORY:
 #include "obj\bhkTransformShape.h"
 #include "..\NifProps\bhkRigidBodyInterface.h"
 #include "NifPlugins.h"
+#include "nifqhull.h"
 
 using namespace Niflib;
 
@@ -504,15 +505,13 @@ bool CollisionImport::ImportCapsule(INode *rbody, bhkRigidBodyRef body, bhkCapsu
 #endif
 }
 
-extern vector<Triangle> compute_convex_hull(const vector<Vector3>& verts);
-
 bool CollisionImport::ImportConvexVertices(INode *rbody, bhkRigidBodyRef body, bhkConvexVerticesShapeRef shape, INode *parent, Matrix3& tm)
 {
 	Matrix3 ltm(true);
 	INode *returnNode = NULL;
 	vector<Vector3> verts = shape->GetVertices();
 	vector<Vector3> norms = shape->GetNormals();
-	vector<Triangle> tris = compute_convex_hull(verts);
+	vector<Triangle> tris = NifQHull::compute_convex_hull(verts);
 	returnNode = ImportCollisionMesh(verts, tris, norms, ltm, parent);
 
 	CreatebhkCollisionModifier(returnNode, bv_type_convex, shape->GetMaterial(), OL_UNIDENTIFIED, 0);

@@ -294,6 +294,8 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 				bhkCollisionObjectRef co = new bhkCollisionObject();
 				co->SetBody(DynamicCast<NiObject>(body));
 				newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
+
+				body->UpdateMassCenterInertia(1.0f, true, body->GetMass()); 
 			}
 		}
 	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {
