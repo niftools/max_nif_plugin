@@ -51,6 +51,17 @@ bool Exporter::mUseAlternateStripper = false;
 float Exporter::bhkScaleFactor = 7.0f;
 int Exporter::mTangentAndBinormalMethod = 0;
 
+#ifndef FOOTPRINT_CLASS_ID
+#  define FOOTPRINT_CLASS_ID Class_ID(0x3011,0)        
+#endif
+#ifndef SKELOBJ_CLASS_ID
+#  define SKELOBJ_CLASS_ID Class_ID(0x9125, 0)
+#endif
+#ifdef BIPED_CLASS_ID
+#  define BIPED_CLASS_ID Class_ID(0x9155, 0)
+#endif
+
+
 static bool IsNodeOrParentSelected(INode *node) {
    if (node == NULL)
       return false;

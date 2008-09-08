@@ -295,7 +295,8 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 				co->SetBody(DynamicCast<NiObject>(body));
 				newParent->SetCollisionObject(DynamicCast<NiCollisionObject>(co));
 
-				body->UpdateMassCenterInertia(1.0f, true, body->GetMass()); 
+				if ( body->GetMass() != 0.0 )
+					body->UpdateMassProperties(1.0f, true, body->GetMass()); 
 			}
 		}
 	} else if (isCollisionGroup(node) && !mFlattenHierarchy) {

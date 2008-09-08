@@ -365,16 +365,11 @@ int	NifExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL 
 {
 	try
 	{
-		MAX_set_sbh_threshold(0);
-		MAX_heapchk();
-		_heapchk();
 		TSTR title = FormatText("Exporting '%s'...", PathFindFileName(name));
 		i->PushPrompt(title);
 		if (!suppressPrompts)
 			i->ProgressStart(title, TRUE, dummyProgress, NULL);
 		DoExportInternal(name, ei, i, suppressPrompts, options);
-		MAX_heapchk();
-		_heapchk();
 	}
 	catch (Exporter::CancelExporterException&)
 	{

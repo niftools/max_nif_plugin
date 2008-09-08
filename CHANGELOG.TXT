@@ -3,14 +3,15 @@ NifTools MaxPlugin
 
     Change log
     ----------
-      0.3.0
+      3.0.0
       ------
     o All
+      - New versioning scheme - jump straight to 3.0
       - Alter usage of the WildMagic for easier use in development and deployment
       
     o Exporter
-      - Better support for Biped animation
-      - Initial support for mass, center of mass, and inertia tensor calculations
+      - Improved support for Biped animation export (twists still problem)
+      - Havok supported calculation for center of mass, and inertia tensor calculations
     
       0.2.17
       ------

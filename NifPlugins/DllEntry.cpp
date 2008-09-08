@@ -42,6 +42,7 @@ enum ClassDescType
 };
 
 static void InitializeLibSettings();
+static void InitializeHavok();
 
 HINSTANCE hInstance;
 static int controlsInit = FALSE;
@@ -111,6 +112,7 @@ void InitializeLibSettings()
 #ifdef GAME_VER
    classDescriptions[nClasses++] = (ClassDesc2 *)GetDDSLibClassDesc();
 #endif
+   InitializeHavok();
 }
 
 // This function returns a string that describes the DLL and where the user
@@ -262,5 +264,34 @@ static void DoNotifyNodeUnHide(void *param, NotifyInfo *info)
 			   }
 		   }
 	   }
+	}
+}
+
+#include "Inertia.h"
+static void InitializeHavok()
+{
+	char curfile[_MAX_PATH];
+	GetModuleFileName(hInstance, curfile, MAX_PATH);
+	PathRemoveFileSpec(curfile);
+	PathAppend(curfile, "NifMopp.dll");
+	HMODULE hNifHavok = LoadLibraryA( curfile );
+	if (hNifHavok == NULL)
+		hNifHavok = LoadLibraryA( "NifMopp.dll" );
+	if ( hNifHavok != NULL )
+	{
+		Niflib::Inertia::SetCalcMassPropertiesBox( 
+			(Niflib::Inertia::fnCalcMassPropertiesBox)GetProcAddress(hNifHavok, "CalcMassPropertiesBox") );
+
+		Niflib::Inertia::SetCalcMassPropertiesSphere( 
+			(Niflib::Inertia::fnCalcMassPropertiesSphere)GetProcAddress(hNifHavok, "CalcMassPropertiesSphere") );
+
+		Niflib::Inertia::SetCalcMassPropertiesCapsule( 
+			(Niflib::Inertia::fnCalcMassPropertiesCapsule)GetProcAddress(hNifHavok, "CalcMassPropertiesCapsule") );
+
+		Niflib::Inertia::SetCalcMassPropertiesPolyhedron( 
+			(Niflib::Inertia::fnCalcMassPropertiesPolyhedron)GetProcAddress(hNifHavok, "CalcMassPropertiesPolyhedron") );
+
+		Niflib::Inertia::SetCombineMassProperties( 
+			(Niflib::Inertia::fnCombineMassProperties)GetProcAddress(hNifHavok, "CombineMassProperties") );
 	}
 }
