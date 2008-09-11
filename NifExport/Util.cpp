@@ -6,6 +6,10 @@
 #include <obj/NiSpotLight.h>
 #include <obj/NiTimeController.h>
 
+#ifndef FOOTPRINT_CLASS_ID
+#  define FOOTPRINT_CLASS_ID Class_ID(0x3011,0)        
+#endif
+
 bool Exporter::TMNegParity(const Matrix3 &m)
 {
 	return (DotProd(CrossProd(m.GetRow(0),m.GetRow(1)),m.GetRow(2))<0.0)?true:false;
@@ -464,7 +468,13 @@ void Exporter::getChildNodes(INode *node, vector<NiNodeRef>& list)
       bool local = !mFlattenHierarchy;
 	  bool meshGroup = isMeshGroup(node);
 
-      if (node->IsBoneShowing()) 
+	  TSTR nodeName = node->GetName();
+
+	  if (wildmatch("Bip?? Footsteps", nodeName))
+	  {
+		  addBone = false;
+	  }
+      else if (node->IsBoneShowing()) 
       {
          addBone = true;
       }

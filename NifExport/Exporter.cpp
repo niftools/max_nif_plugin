@@ -256,7 +256,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t);
 
-	if (nodeName == TSTR("Bip01 R ForeTwist"))
+	if (nodeName == TSTR("Bip01 Footsteps"))
 	{
 		nodeName = nodeName;
 	}
@@ -274,7 +274,11 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 		//os.obj->GetClassName(objClass);
 		SClass_ID oscid = os.obj->SuperClassID();
 		Class_ID oncid = os.obj->ClassID();
-		if (  os.obj 
+		if (wildmatch("Bip?? Footsteps", nodeName))
+		{
+			// ignore footsteps
+		}
+		else if (  os.obj 
 			&& (  os.obj->ClassID() == BONE_OBJ_CLASSID 
 			|| os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)
 			|| os.obj->ClassID() == Class_ID(0x00009125,0) /* Biped Twist Helpers */

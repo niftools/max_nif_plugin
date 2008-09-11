@@ -825,7 +825,6 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 return timeControl;
 
 #ifdef USE_BIPED
-		 MAX_heapchk();_heapchk();
 		 Class_ID cID = tmCont->ClassID();
 		 if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
 		 {
@@ -856,12 +855,12 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 // Dont really know what else to use since I cant get anything but the raw data.
 			 data->SetTranslateType(LINEAR_KEY);
 			 data->SetTranslateKeys(posKeys);
+			 data->SetRotateType(QUADRATIC_KEY);
 			 data->SetQuatRotateKeys(rotKeys);
 			 //data->SetScaleKeys();
 			 if (iNumKeys != 0) { // if no changes set the base transform
 				 keepData = true;
 			 }
-			 MAX_heapchk();_heapchk();
 		 }
 		 else if (cID == BIPBODY_CONTROL_CLASS_ID) 
 		 {
@@ -895,9 +894,14 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 				 Matrix3 tm = ne.getTransform(node, t, true);
 				 QuatKey q;
 				 q.time = FrameToTime(t+range.Start());
-				 q.data = TOQUAT( Quat(tm), false );
+				 q.data = TOQUAT( Quat(tm), true );
 				 rotKeys.push_back( q );
 			 }
+			 // Dont really know what else to use since I cant get anything but the raw data.
+			 data->SetTranslateType(LINEAR_KEY);
+			 data->SetTranslateKeys(posKeys);
+			 data->SetRotateType(QUADRATIC_KEY);
+			 data->SetQuatRotateKeys(rotKeys);
 			 if (posKeys.size() != 0 || rotKeys.size() != 0) { // if no changes set the base transform
 				 keepData = true;
 			 }

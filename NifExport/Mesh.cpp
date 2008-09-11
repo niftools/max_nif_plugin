@@ -565,138 +565,139 @@ void InitializeRigidBody(bhkRigidBodyRef body, INode *node)
 
 NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 {
-   bool local = !mFlattenHierarchy;
-   NiNodeRef newParent = makeNode(parent, node, local);
+	bool local = !mFlattenHierarchy;
+	NiNodeRef newParent = makeNode(parent, node, local);
 
-   // Special Skeleton Only handling routines
-   if (mSkeletonOnly)
-   {
-      InitializeTimeController(new NiTransformController(), newParent);
+	// Special Skeleton Only handling routines
+	if (mSkeletonOnly)
+	{
+		if (Exporter::mNifVersionInt >= VER_10_0_1_0)
+			InitializeTimeController(new NiTransformController(), newParent);
 
-      bool isBoneRoot = false;
-      if (mIsBethesda)
-      {
-         // Check for Bone Root
-         TSTR upb;
-         node->GetUserPropBuffer(upb);
-         stringlist tokens = TokenizeString(upb.data(), "\r\n", true);
-         for (stringlist::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
-            string& line = (*itr);
-            if (wildmatch("*#", line)) { // ends with #
-               stringlist bonelod = TokenizeString(line.c_str(), "#", true);
-               for (stringlist::iterator token = bonelod.begin(); token != bonelod.end(); ++token) {
-                  if (wildmatch("??BoneLOD", (*token).c_str())) {
-                     if (++token == bonelod.end()) 
-                        break;
-                     if (strmatch("BoneRoot", (*token).c_str())) {
-                        isBoneRoot = true;
-                        NiBSBoneLODControllerRef boneCtrl = new NiBSBoneLODController();
-                        InitializeTimeController(boneCtrl, newParent);
-                        FillBoneController(this, boneCtrl, node);
-                        break;
-                     }
-                  }
-               }
-            }
-         }
-         
-         if (!isBoneRoot)
-            InitializeTimeController(new bhkBlendController(), newParent);
+		bool isBoneRoot = false;
+		if (mIsBethesda)
+		{
+			// Check for Bone Root
+			TSTR upb;
+			node->GetUserPropBuffer(upb);
+			stringlist tokens = TokenizeString(upb.data(), "\r\n", true);
+			for (stringlist::iterator itr = tokens.begin(); itr != tokens.end(); ++itr) {
+				string& line = (*itr);
+				if (wildmatch("*#", line)) { // ends with #
+					stringlist bonelod = TokenizeString(line.c_str(), "#", true);
+					for (stringlist::iterator token = bonelod.begin(); token != bonelod.end(); ++token) {
+						if (wildmatch("??BoneLOD", (*token).c_str())) {
+							if (++token == bonelod.end()) 
+								break;
+							if (strmatch("BoneRoot", (*token).c_str())) {
+								isBoneRoot = true;
+								NiBSBoneLODControllerRef boneCtrl = new NiBSBoneLODController();
+								InitializeTimeController(boneCtrl, newParent);
+								FillBoneController(this, boneCtrl, node);
+								break;
+							}
+						}
+					}
+				}
+			}
 
-         if (mGenerateBoneCollision)
-         {
-            Matrix3 tm = node->GetObjTMAfterWSM(0);
+			if (!isBoneRoot)
+				InitializeTimeController(new bhkBlendController(), newParent);
 
-            bhkShapeRef shape;
-            int nc = node->NumberOfChildren();
-            if (nc == 0) {
-               // Nothing
-            } else if (nc == 1) {
-               // Capsule
-               INode *child = node->GetChildNode(0);
-               Matrix3 ctm = Inverse(tm) * child->GetObjTMAfterWSM(0);
-               float len = ctm.GetTrans().Length();
-               float boxLen = mBoundingBox.Width().Length();
-               float ratio = len / boxLen;
-               if ( ratio < 0.05 ) {
-                  // do nothing
-               } else if ( ratio < 0.15 ) {
-                  // Perpendicular Capsule
-                  Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
-                  Matrix3 rtm = tm * RotateXMatrix( TORAD(90) );
-                  rtm.SetTranslate(center);
+			if (mGenerateBoneCollision)
+			{
+				Matrix3 tm = node->GetObjTMAfterWSM(0);
 
-                  Point3 pt1 = VectorTransform( Point3(len, 0.0f, 0.0f), rtm );
-                  Point3 pt2 = VectorTransform( Point3(-len, 0.0f, 0.0f), rtm );
-                  float radius = len / 7.0f / 2.0f ;
+				bhkShapeRef shape;
+				int nc = node->NumberOfChildren();
+				if (nc == 0) {
+					// Nothing
+				} else if (nc == 1) {
+					// Capsule
+					INode *child = node->GetChildNode(0);
+					Matrix3 ctm = Inverse(tm) * child->GetObjTMAfterWSM(0);
+					float len = ctm.GetTrans().Length();
+					float boxLen = mBoundingBox.Width().Length();
+					float ratio = len / boxLen;
+					if ( ratio < 0.05 ) {
+						// do nothing
+					} else if ( ratio < 0.15 ) {
+						// Perpendicular Capsule
+						Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
+						Matrix3 rtm = tm * RotateXMatrix( TORAD(90) );
+						rtm.SetTranslate(center);
 
-                  bhkCapsuleShapeRef capsule = new bhkCapsuleShape();
-                  capsule->SetRadius( radius );
-                  capsule->SetRadius1( radius );
-                  capsule->SetRadius2( radius );
-                  capsule->SetFirstPoint( TOVECTOR3(pt1 / 7.0f) );
-                  capsule->SetSecondPoint( TOVECTOR3(pt2 / 7.0f) );
-                  capsule->SetMaterial(HAV_MAT_SKIN);
+						Point3 pt1 = VectorTransform( Point3(len, 0.0f, 0.0f), rtm );
+						Point3 pt2 = VectorTransform( Point3(-len, 0.0f, 0.0f), rtm );
+						float radius = len / 7.0f / 2.0f ;
 
-                  shape = StaticCast<bhkShape>(capsule);
-               } else {
-                  // Normal Capsule
-                  Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
-               }
-            } else {
-               // Sphere
-               float radius = 0.0f;
-               CalcBoundingSphere(node,tm.GetTrans(), radius, 0);
+						bhkCapsuleShapeRef capsule = new bhkCapsuleShape();
+						capsule->SetRadius( radius );
+						capsule->SetRadius1( radius );
+						capsule->SetRadius2( radius );
+						capsule->SetFirstPoint( TOVECTOR3(pt1 / 7.0f) );
+						capsule->SetSecondPoint( TOVECTOR3(pt2 / 7.0f) );
+						capsule->SetMaterial(HAV_MAT_SKIN);
 
-               bhkSphereShapeRef sphere = new bhkSphereShape();
-               sphere->SetRadius(radius / 7.0f);
-               sphere->SetMaterial(HAV_MAT_SKIN);
-               shape = StaticCast<bhkShape>(sphere);
-            }
+						shape = StaticCast<bhkShape>(capsule);
+					} else {
+						// Normal Capsule
+						Point3 center = (ctm.GetTrans() / 2.0f) + tm.GetTrans();
+					}
+				} else {
+					// Sphere
+					float radius = 0.0f;
+					CalcBoundingSphere(node,tm.GetTrans(), radius, 0);
 
-            if (shape)
-            {
-               bhkBlendCollisionObjectRef blendObj = new bhkBlendCollisionObject();
-               bhkRigidBodyRef body = new bhkRigidBody();
+					bhkSphereShapeRef sphere = new bhkSphereShape();
+					sphere->SetRadius(radius / 7.0f);
+					sphere->SetMaterial(HAV_MAT_SKIN);
+					shape = StaticCast<bhkShape>(sphere);
+				}
 
-               InitializeRigidBody(body, node);
-               body->SetMotionSystem(MotionSystem(6));
-               body->SetQualityType(MO_QUAL_KEYFRAMED);
-               body->SetShape( StaticCast<bhkShape>(shape) );
-               blendObj->SetBody( StaticCast<NiObject>(body) );
-               newParent->SetCollisionObject( StaticCast<NiCollisionObject>(blendObj) );
-            }
-         }
-      }
+				if (shape)
+				{
+					bhkBlendCollisionObjectRef blendObj = new bhkBlendCollisionObject();
+					bhkRigidBodyRef body = new bhkRigidBody();
 
-      if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
-         NiNodeRef accumNode = createAccumNode(newParent, node);
+					InitializeRigidBody(body, node);
+					body->SetMotionSystem(MotionSystem(6));
+					body->SetQualityType(MO_QUAL_KEYFRAMED);
+					body->SetShape( StaticCast<bhkShape>(shape) );
+					blendObj->SetBody( StaticCast<NiObject>(body) );
+					newParent->SetCollisionObject( StaticCast<NiCollisionObject>(blendObj) );
+				}
+			}
+		}
 
-         // Transfer collision object to accum and create blend on accum
-         if (mIsBethesda) {
-            InitializeTimeController(new bhkBlendController(), accumNode);
-            accumNode->SetCollisionObject(newParent->GetCollisionObject());
-            newParent->SetCollisionObject( NiCollisionObjectRef() );
-         }        
-         newParent = accumNode;
-      } else if (isSkeletonRoot(node)) {
-         newParent = createAccumNode(newParent, node);
-      }
-   }
-   else // normal handling
-   {
-      // Check for Accum Root using 
-      if (mExportType == NIF_WO_KF){
-         // Add controllers
-         if (Exporter::mAllowAccum) {
-            newParent = createAccumNode(newParent, node);
-         }
-      } else if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
-         newParent = createAccumNode(newParent, node);
-      } else if (isSkeletonRoot(node)) {
-         newParent = createAccumNode(newParent, node);
-      }
-   }
+		if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+			NiNodeRef accumNode = createAccumNode(newParent, node);
 
-   return newParent;
+			// Transfer collision object to accum and create blend on accum
+			if (mIsBethesda) {
+				InitializeTimeController(new bhkBlendController(), accumNode);
+				accumNode->SetCollisionObject(newParent->GetCollisionObject());
+				newParent->SetCollisionObject( NiCollisionObjectRef() );
+			}        
+			newParent = accumNode;
+		} else if (isSkeletonRoot(node)) {
+			newParent = createAccumNode(newParent, node);
+		}
+	}
+	else // normal handling
+	{
+		// Check for Accum Root using 
+		if (mExportType == NIF_WO_KF){
+			// Add controllers
+			if (Exporter::mAllowAccum) {
+				newParent = createAccumNode(newParent, node);
+			}
+		} else if (mExportType != NIF_WO_ANIM && isNodeTracked(node)) {
+			newParent = createAccumNode(newParent, node);
+		} else if (isSkeletonRoot(node)) {
+			newParent = createAccumNode(newParent, node);
+		}
+	}
+
+	return newParent;
 }
