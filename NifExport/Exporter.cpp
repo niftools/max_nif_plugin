@@ -278,6 +278,18 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 		{
 			// ignore footsteps
 		}
+		else if (Exporter::mNifVersionInt <= VER_4_2_2_0 && strmatch("Bounding Box", nodeName))
+		{
+			// Morrowind style 
+			newParent = exportBone(nodeParent, node);
+			Box3 b; CalcBoundingBox(node, b, 1);
+			BoundingBox bb; bb.unknownInt = 1;
+			bb.rotation = Matrix33::IDENTITY;
+			bb.radius = TOVECTOR3( b.Width() / 2.0f );
+			bb.translation = newParent->GetLocalTranslation(); //Vector3(0.0f, 0.0f, bb.radius[2]);
+			newParent->SetBoundingBox(bb);
+			newParent->SetCollisionMode( NiAVObject::CT_BOUNDINGBOX );
+		}
 		else if (  os.obj 
 			&& (  os.obj->ClassID() == BONE_OBJ_CLASSID 
 			|| os.obj->ClassID() == Class_ID(BONE_CLASS_ID,0)

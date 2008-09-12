@@ -66,7 +66,7 @@ void Exporter::convertMatrix(Matrix33 &dst, const Matrix3 &src)
 			r2.x, r2.y, r2.z);
 }
 
-Matrix3 Exporter::getTransform(INode *node, TimeValue t, bool local)
+Matrix3 Exporter::getNodeTransform(INode *node, TimeValue t, bool local)
 {
 	Matrix3 tm = node->GetNodeTM(t);
 	if (local)
@@ -78,22 +78,27 @@ Matrix3 Exporter::getTransform(INode *node, TimeValue t, bool local)
 			tm *= pm;
 		}
 	}
-   //Matrix3 tm = node->GetObjTMAfterWSM(t);
-   //if (local)
-   //{
-   //   INode *parent = node->GetParentNode();
-   //   if (parent != NULL) {
-   //      Matrix3 pm = parent->GetObjTMAfterWSM(t);
-   //      pm.Invert();
-   //      tm *= pm;
-   //   }
-   //}
+	return tm;
+}
+
+Matrix3 Exporter::getObjectTransform(INode *node, TimeValue t, bool local)
+{
+   Matrix3 tm = node->GetObjTMAfterWSM(t);
+   if (local)
+   {
+      INode *parent = node->GetParentNode();
+      if (parent != NULL) {
+         Matrix3 pm = parent->GetNodeTM(t);
+         pm.Invert();
+         tm *= pm;
+      }
+   }
    return tm;
 }
 
 void Exporter::nodeTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local)
 {
-	Matrix3 tm = getTransform(node, t, local);
+	Matrix3 tm = getNodeTransform(node, t, local);
 	convertMatrix(rot, tm);
 	trans.Set(tm.GetTrans().x, tm.GetTrans().y, tm.GetTrans().z);
 }
@@ -353,7 +358,7 @@ Exporter::Result Exporter::exportLight(NiNodeRef parent, INode *node, GenLight* 
 
    niLight->SetName(node->GetName());
 
-   Matrix3 tm = getTransform(node, t, !mFlattenHierarchy);
+   Matrix3 tm = getObjectTransform(node, t, !mFlattenHierarchy);
    niLight->SetLocalTransform( TOMATRIX4(tm, false) );
 
    niLight->SetDimmer( light->GetIntensity(0) );

@@ -842,7 +842,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 for (TimeValue t = range.Start(); t <= range.End(); t += interval)
 			 {
 				 //TimeValue t = tmCont->GetKeyTime(i);
-				 Matrix3 tm = ne.getTransform(node, t, true);
+				 Matrix3 tm = ne.getNodeTransform(node, t, true);
 				 Vector3Key p;
 				 QuatKey q;
 				 q.time = p.time = FrameToTime(t);
@@ -855,7 +855,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 // Dont really know what else to use since I cant get anything but the raw data.
 			 data->SetTranslateType(LINEAR_KEY);
 			 data->SetTranslateKeys(posKeys);
-			 data->SetRotateType(QUADRATIC_KEY);
+			 data->SetRotateType(LINEAR_KEY);
 			 data->SetQuatRotateKeys(rotKeys);
 			 //data->SetScaleKeys();
 			 if (iNumKeys != 0) { // if no changes set the base transform
@@ -882,7 +882,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 for (set<TimeValue>::iterator itr = times.begin(); itr != times.end(); ++itr)
 			 {
 				 TimeValue t = *itr;
-				 Matrix3 tm = ne.getTransform(node, t, true);
+				 Matrix3 tm = ne.getNodeTransform(node, t, true);
 				 Vector3Key p;
 				 p.time = FrameToTime(t+range.Start());
 				 p.data = TOVECTOR3(tm.GetTrans());
@@ -891,7 +891,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 for (int i = 0; i < iRotKeys; i++)
 			 {
 				 TimeValue t = rot->GetKeyTime(i);
-				 Matrix3 tm = ne.getTransform(node, t, true);
+				 Matrix3 tm = ne.getNodeTransform(node, t, true);
 				 QuatKey q;
 				 q.time = FrameToTime(t+range.Start());
 				 q.data = TOQUAT( Quat(tm), true );
@@ -900,7 +900,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 			 // Dont really know what else to use since I cant get anything but the raw data.
 			 data->SetTranslateType(LINEAR_KEY);
 			 data->SetTranslateKeys(posKeys);
-			 data->SetRotateType(QUADRATIC_KEY);
+			 data->SetRotateType(LINEAR_KEY);
 			 data->SetQuatRotateKeys(rotKeys);
 			 if (posKeys.size() != 0 || rotKeys.size() != 0) { // if no changes set the base transform
 				 keepData = true;

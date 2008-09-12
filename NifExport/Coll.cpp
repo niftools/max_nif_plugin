@@ -264,7 +264,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 		if (body)
 		{
 			bool hasTrans = (body->IsDerivedType(bhkRigidBodyT::TYPE));
-			Matrix3 tm = getTransform(node, t, false); // has transform
+			Matrix3 tm = getNodeTransform(node, t, false); // has transform
 			Matrix3 pm = TOMATRIX3(newParent->GetWorldTransform());
 			tm = tm * Inverse(pm);
 
@@ -276,7 +276,7 @@ Exporter::Result Exporter::exportCollision(NiNodeRef &parent, INode *node)
 			body->SetTranslation(trans / Exporter::bhkScaleFactor);
 
 			if (hasTrans) {
-				tm = getTransform(node, t, false);
+				tm = getNodeTransform(node, t, false);
 				tm.NoScale();
 				tm.Invert();
 			} else {
