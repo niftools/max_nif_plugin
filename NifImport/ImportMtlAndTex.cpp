@@ -75,6 +75,11 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
                }
             }
          }
+		 if (showTextures) {
+			 bmpTex->SetMtlFlag(MTL_TEX_DISPLAY_ENABLED, TRUE);
+			 bmpTex->ActivateTexDisplay(TRUE);
+			 bmpTex->NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+		 }
 
          return bmpTex;
       }
@@ -103,6 +108,12 @@ Texmap* NifImporter::CreateTexture(NiTexturePropertyRef texSrc)
 
 			bmpTex->SetFilterType(FILTER_PYR); 
 
+			if (showTextures) {
+				bmpTex->SetMtlFlag(MTL_TEX_DISPLAY_ENABLED, TRUE);
+				bmpTex->ActivateTexDisplay(TRUE);
+				bmpTex->NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+			}
+
 			if (UVGen *uvGen = bmpTex->GetTheUVGen()){
 				uvGen->SetTextureTiling(0);
 			}
@@ -127,8 +138,9 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 
       StdMat2 *m = NewDefaultStdMat();
       m->SetName(matRef->GetName().c_str());
-      if (showTextures)
+	  if (showTextures) {
          m->SetMtlFlag(MTL_DISPLAY_ENABLE_FLAGS, TRUE);
+	  }
 
       // try the civ4 shader first then default back to normal shaders
       if (ImportCiv4Shader(node, avObject, m)) {
@@ -177,8 +189,10 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
                   m->SetSubTexmap(ID_AM, tex);
             }
          } else if (texRef->HasTexture(BASE_MAP)) {
-            if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP)))
+			 if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP))) {
                m->SetSubTexmap(ID_DI, tex);
+			   if (showTextures) gi->ActivateTexture(tex,m);
+			 }
          } 
          // Handle Bump map
          if (texRef->HasTexture(BUMP_MAP)) {

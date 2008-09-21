@@ -99,6 +99,12 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
          }
       }
    }
+   if (Exporter::mNifVersionInt >= VER_20_0_0_4)
+   {
+	   td.source->SetPixelLayout( PIX_LAY_DEFAULT );
+	   td.source->SetMipMapFormat( MIP_FMT_DEFAULT );
+	   td.source->SetAlphaFormat( ALPHA_DEFAULT );
+   }
 
    // Get file name and check if it matches the "app" settings in the ini file
    TSTR mapPath;
@@ -150,7 +156,7 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
 		mtlProp->SetEmissiveColor(Color3(c.r, c.g, c.b));
 
 		mtlProp->SetTransparency(1);
-		mtlProp->SetGlossiness(mtl->GetShininess() * 100.0);
+		mtlProp->SetGlossiness(mtl->GetShininess() * 100.0f);
 		name = (char*)mtl->GetName();
 
       if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )

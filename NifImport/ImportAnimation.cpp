@@ -1025,7 +1025,7 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 	int nmorphs = data->GetMorphCount();
 	if (ni.nifVersion >= VER_10_1_0_106)
 	{
-		if ((interpolators.size() > nmorphs) || nmorphs == 0)
+		if ((interpolators.size() < nmorphs) || nmorphs == 0)
 			return false;
 	}
 	else
@@ -1098,6 +1098,9 @@ bool AnimationImport::AddValues(NiInterpolatorRef interp, IParamBlock* pblock, f
 	bool retval = false;
 	// Handle Translation
 	//
+	if (interp == NULL)
+		return false;
+
 	KeyType keyType = UNKNOWN_KEY;
 	vector<FloatKey> keys;
 	if (interp->IsDerivedType(NiFloatInterpolator::TYPE)) {

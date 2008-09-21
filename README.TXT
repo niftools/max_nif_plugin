@@ -1,4 +1,4 @@
-                        MaxPlugins 3.0.1
+                        MaxPlugins 3.0.3
                         =================
 
  

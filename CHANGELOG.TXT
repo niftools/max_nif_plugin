@@ -8,6 +8,10 @@ NifTools MaxPlugin
     o All
       - New versioning scheme - jump straight to 3.0
       - Alter usage of the WildMagic for easier use in development and deployment
+      - Updated version of niflib for better NIF support
+      
+    o Importer
+      - Improved support for newer NIFs from Florensia
       
     o Exporter
       - Improved support for Biped animation export (twists still problem)
