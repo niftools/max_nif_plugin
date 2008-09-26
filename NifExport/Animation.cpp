@@ -1238,7 +1238,7 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
    return ok;
 }
 
-Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector3>& baseVerts, NiObjectNETRef owner)
+Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector3>& baseVerts, vector<int>& baseVertIdx, NiObjectNETRef owner)
 {
 	// Check for morphs
 	//if ( mExportType != NIF_WO_ANIM ) 
@@ -1333,10 +1333,24 @@ Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector
 					interpolators.push_back(interp);
 				}
 
-				vector<Vector3> verts;
-				MorpherGetMorphVerts(mod, idx, verts);
-				for (size_t j=0; j<verts.size(); j++)
-					verts[j] = verts[j] - baseVerts[j];
+				vector<Vector3> morphMaxVerts, verts;
+				MorpherGetMorphVerts(mod, idx, morphMaxVerts);
+				// Here's the deal with morphs and sub-meshes. The morpher mod contains
+				// in each stage ALL of the vertices of the original mesh before splitting.
+				// It also contains only the verts as listed in Max; additional verts created
+				// here in the plugin are not included. Additionally the verts are ordered by their
+				// index in Max; e.g. index 0 has the coordinates of vertex #1 as shown in the Select
+				// Poly modifier for that mesh in Max. The baseVerts set may include those
+				// dupe verts and also may not include some of the verts in the morpher mod.
+				// Thi is where the vertex index list comes in. For each baseVert in the list,
+				// the corresponding Max index is gotten; that integer is then used to index into
+				// the morph verts array.
+				for (size_t j = 0; j < baseVerts.size(); j++)
+				{
+					int vertMaxIdx = baseVertIdx[j];
+					Vector3 morphPoint = morphMaxVerts[vertMaxIdx] - baseVerts[j];
+					verts.push_back(morphPoint);
+				}
 				data->SetMorphVerts(i+1, verts);
 			}
 			ctrl->SetData(data);

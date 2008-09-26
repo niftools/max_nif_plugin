@@ -108,7 +108,8 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 	Result result = Ok;
 
 	Modifier* geomMorpherMod = GetMorpherModifier(node);
-	bool noSplit = (NULL != geomMorpherMod);
+	bool noSplit = FALSE;
+//	bool noSplit = (NULL != geomMorpherMod);
 
 	while (1)
 	{
@@ -159,7 +160,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 
 			if (geomMorpherMod) {
 				vector<Vector3> verts = shape->GetData()->GetVertices();
-				exportGeomMorpherControl(geomMorpherMod, verts, shape);
+				exportGeomMorpherControl(geomMorpherMod, verts, shape->GetData()->GetVertexIndices(), shape);
 				shape->GetData()->SetConsistencyFlags(CT_VOLATILE);
 			}
 
@@ -195,6 +196,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	}
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
+   data->SetVertexIndices(grp.vidx);
 
 	if (grp.uvs.size() > 0)
 	{

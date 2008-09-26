@@ -288,7 +288,7 @@ public:
 	bool isNodeKeyed(INode *node);
 	Ref<NiTimeController> CreateController(INode *node, Interval range);
 	static void InitializeTimeController(Ref<NiTimeController> ctrl, NiNodeRef parent);
-	Result exportGeomMorpherControl(Modifier* mod, vector<Niflib::Vector3>& verts, NiObjectNETRef owner);
+	Result exportGeomMorpherControl(Modifier* mod, vector<Niflib::Vector3>& verts, vector<int>& baseVertIdx, NiObjectNETRef owner);
 
 	/* misc export */
 	bool exportUPB(NiNodeRef &root, INode *node);
