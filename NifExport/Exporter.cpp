@@ -60,7 +60,9 @@ int Exporter::mTangentAndBinormalMethod = 0;
 #ifdef BIPED_CLASS_ID
 #  define BIPED_CLASS_ID Class_ID(0x9155, 0)
 #endif
-
+#ifndef SPLINEIKSOLVER_CLASS_ID
+#  define SPLINEIKSOLVER_CLASS_ID	Class_ID(0x72d01454, 0x65b8b595)
+#endif
 
 static bool IsNodeOrParentSelected(INode *node) {
    if (node == NULL)
@@ -79,162 +81,164 @@ Exporter::Exporter(Interface *i, AppSettings *appSettings)
 
 Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 {
-   root->SetName("Scene Root");
+	root->SetName("Scene Root");
 
-   int nifVersion = ParseVersionString(Exporter::mNifVersion);
-   mIsBethesda = (nifVersion == VER_20_0_0_5 || nifVersion == VER_20_0_0_4) && (Exporter::mNifUserVersion == 11);
+	int nifVersion = ParseVersionString(Exporter::mNifVersion);
+	mIsBethesda = (nifVersion == VER_20_0_0_5 || nifVersion == VER_20_0_0_4) && (Exporter::mNifUserVersion == 11);
 
-   if (mUseTimeTags && nifVersion >= VER_20_0_0_4) {
-      throw runtime_error("Time tag sequences are not supported for version 20.0.0.4 or higher.");
-   }
+	if (mUseTimeTags && nifVersion >= VER_20_0_0_4) {
+		throw runtime_error("Time tag sequences are not supported for version 20.0.0.4 or higher.");
+	}
 
-   if (!Exporter::mSelectedOnly)
-   {
-      CalcBoundingBox(node, mBoundingBox);
+	if (!Exporter::mSelectedOnly)
+	{
+		if (mIsBethesda)
+		{
+			if (mSkeletonOnly)
+			{
+				CalcBoundingBox(node, mBoundingBox);
 
-      if (mIsBethesda)
-      {
-         if (mSkeletonOnly)
-         {
-            BSBoundRef bsb = CreateNiObject<BSBound>();
-            bsb->SetName("BBX");    
-            bsb->SetCenter( TOVECTOR3(mBoundingBox.Center()) );
-            bsb->SetDimensions( TOVECTOR3(mBoundingBox.Width() / 2.0f) );
-            root->AddExtraData(DynamicCast<NiExtraData>(bsb));
+				BSBoundRef bsb = CreateNiObject<BSBound>();
+				bsb->SetName("BBX");    
+				bsb->SetCenter( TOVECTOR3(mBoundingBox.Center()) );
+				bsb->SetDimensions( TOVECTOR3(mBoundingBox.Width() / 2.0f) );
+				root->AddExtraData(DynamicCast<NiExtraData>(bsb));
 
-            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-            bsx->SetName("BSX");
-			bsx->SetData( 0x00000007 );
-            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-         }
-         else if (mExportType != NIF_WO_ANIM)
-         {
-            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-            bsx->SetName("BSX");
-            bsx->SetData( 0x00000003 );
-            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-         }
-         else if (mExportCollision)
-         {
-            BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
-            bsx->SetName("BSX");
-            bsx->SetData( 0x00000002 );
-            root->AddExtraData(DynamicCast<NiExtraData>(bsx));
-         }
-      }
-      exportUPB(root, node);
-   }
+				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+				bsx->SetName("BSX");
+				bsx->SetData( 0x00000007 );
+				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+			}
+			else if (mExportType != NIF_WO_ANIM)
+			{
+				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+				bsx->SetName("BSX");
+				bsx->SetData( 0x00000003 );
+				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+			}
+			else if (mExportCollision)
+			{
+				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
+				bsx->SetName("BSX");
+				bsx->SetData( 0x00000002 );
+				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
+			}
+		}
+		exportUPB(root, node);
+	}
 
-   // Always Scan for Collision Nodes first
-   scanForIgnore(node);
-   scanForCollision(node);
-   scanForAnimation(node);
+	// Always Scan for Collision Nodes first
+	scanForIgnore(node);
+	scanForCollision(node);
+	scanForAnimation(node);
 
-   mNiRoot = root;
-   if (mSelectedOnly) {
-      int count = 0;
-      int n = mI->GetSelNodeCount();
-      vector<INode*> selectedRoots;
-      for (int i=0; i<n; ++i) {
-         INode * selNode = mI->GetSelNode(i);
-         if (!IsNodeOrParentSelected(selNode->GetParentNode())) {
-            selectedRoots.push_back(selNode);
-            count += countNodes(selNode);
-         }
-      }
-      if (selectedRoots.size() == 0) {
-         throw runtime_error("No Nodes have been selected for Export.");
-      }
+	mNiRoot = root;
+	if (mSelectedOnly) {
+		int count = 0;
+		int n = mI->GetSelNodeCount();
+		vector<INode*> selectedRoots;
+		for (int i=0; i<n; ++i) {
+			INode * selNode = mI->GetSelNode(i);
+			if (!IsNodeOrParentSelected(selNode->GetParentNode())) {
+				selectedRoots.push_back(selNode);
+				count += countNodes(selNode);
+			}
+		}
+		if (selectedRoots.size() == 0) {
+			throw runtime_error("No Nodes have been selected for Export.");
+		}
 
-      progressMax[Geometry] = progressMax[Skin] = count;
-      if (mExportCollision)
-         progressMax[Collision] = progressMax[Geometry];
-      if (mExportType == NIF_WO_ANIM)
-         progressMax[Animation] = progressMax[Geometry];
-     
-      for (size_t i=0; i<selectedRoots.size(); i++){
-         Result result = exportNodes(root, selectedRoots[i]);
-         if (result != Ok && result != Skip)
-            return result;
-         if (mExportCollision) {
-            result = exportCollision(root, selectedRoots[i]);
-            if (result != Ok)
-               return result;
-         }
-      }
-      // Always Zero out root transforms
-      vector<NiAVObjectRef> children = root->GetChildren();
-      for (size_t i=0; i<children.size(); ++i){
-         children[i]->SetLocalTransform(Matrix44::IDENTITY);
-      }
+		progressMax[Geometry] = progressMax[Skin] = count;
+		if (mExportCollision)
+			progressMax[Collision] = progressMax[Geometry];
+		if (mExportType == NIF_WO_ANIM)
+			progressMax[Animation] = progressMax[Geometry];
 
-      // Fix Used Nodes that where never properly initialized.  Happens normally during select export
-      for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
-         NiNodeRef bone = (*itr).second;
-         if (bone->GetParent() == NULL) {
-            if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
-               makeNode(root, boneNode, false);
-            }
-         }
-      }
+		for (size_t i=0; i<selectedRoots.size(); i++){
+			Result result = exportNodes(root, selectedRoots[i]);
+			if (result != Ok && result != Skip)
+				return result;
+			if (mExportCollision) {
+				result = exportCollision(root, selectedRoots[i]);
+				if (result != Ok)
+					return result;
+			}
+		}
+		// Always Zero out root transforms
+		vector<NiAVObjectRef> children = root->GetChildren();
+		for (size_t i=0; i<children.size(); ++i){
+			children[i]->SetLocalTransform(Matrix44::IDENTITY);
+		}
 
-      // Special case when exporting a single branch, use first child as scene root
-      if (selectedRoots.size() == 1 ) {
-         vector<NiNodeRef> childnodes = DynamicCast<NiNode>(root->GetChildren());
-         if (childnodes.size() == 1) {
-            NiNodeRef child = childnodes[0];
-            root->RemoveChild(child);
-            root = child;
-            mNiRoot = root;
-            exportPrn(root, selectedRoots[0]);
-         }
-      }
+		// Fix Used Nodes that were never properly initialized.  Happens normally during select export
+		for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
+			NiNodeRef bone = (*itr).second;
+			if (bone->GetParent() == NULL) {
+				if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
+					makeNode(root, boneNode, false);
+				}
+			}
+		}
 
-   } else {
-      // Estimate progress bar
-      int count = countNodes(node);
-      progressMax[Geometry] = progressMax[Skin] = count;
-      if (mExportCollision)
-         progressMax[Collision] = progressMax[Geometry];
-      if (mExportType == NIF_WO_ANIM)
-         progressMax[Animation] = progressMax[Geometry];
+		// Special case when exporting a single branch, use first child as scene root
+		if (selectedRoots.size() == 1 ) {
+			vector<NiNodeRef> childnodes = DynamicCast<NiNode>(root->GetChildren());
+			if (childnodes.size() == 1) {
+				NiNodeRef child = childnodes[0];
+				root->RemoveChild(child);
+				root = child;
+				mNiRoot = root;
+				exportPrn(root, selectedRoots[0]);
+			}
+		}
 
-      // Normal export
-      Result result = exportNodes(root, node);
-      if (result != Ok)
-         return result;
+	} else {
+		// Estimate progress bar
+		int count = countNodes(node);
+		progressMax[Geometry] = progressMax[Skin] = count;
+		if (mExportCollision)
+			progressMax[Collision] = progressMax[Geometry];
+		if (mExportType == NIF_WO_ANIM)
+			progressMax[Animation] = progressMax[Geometry];
 
-      // Fix Used Nodes that where never properly initialized.  Happens normally during select export
-      for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
-         NiNodeRef bone = (*itr).second;
-         if (bone->GetParent() == NULL) {
-            if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
-               makeNode(root, boneNode, false);
-            }
-         }
-      }
+		// Calc Global Animation Range
 
-      if (mExportCollision) {
-         result = exportCollision(root, node);
-         if (result != Ok)
-            return result;
-      }
-   }
+		// Normal export
+		Result result = exportNodes(root, node);
+		if (result != Ok)
+			return result;
 
-   // handle post export callbacks (like skin)
-   progressMax[Skin] = mPostExportCallbacks.size();
-   for (CallbackList::iterator cb = mPostExportCallbacks.begin(); cb != mPostExportCallbacks.end(); cb = mPostExportCallbacks.erase(cb)) {
-      ProgressUpdate(Skin, NULL);
-      (*cb)->execute();
-      delete (*cb);
-   }
-   // Remove unreferenced Bones
-   if (mRemoveUnreferencedBones)
-      removeUnreferencedBones(mNiRoot);
-   if (mSortNodesToEnd)
-      sortNodes(mNiRoot);
-   ApplyAllSkinOffsets(StaticCast<NiAVObject>(mNiRoot));
-   root = mNiRoot;
+		// Fix Used Nodes that where never properly initialized.  Happens normally during select export
+		for (NodeMap::iterator itr = mNameMap.begin(); itr != mNameMap.end(); ++itr) {
+			NiNodeRef bone = (*itr).second;
+			if (bone->GetParent() == NULL) {
+				if (INode* boneNode = mI->GetINodeByName((*itr).first.c_str())) {
+					makeNode(root, boneNode, false);
+				}
+			}
+		}
+
+		if (mExportCollision) {
+			result = exportCollision(root, node);
+			if (result != Ok)
+				return result;
+		}
+	}
+
+	// handle post export callbacks (like skin)
+	progressMax[Skin] = mPostExportCallbacks.size();
+	for (CallbackList::iterator cb = mPostExportCallbacks.begin(); cb != mPostExportCallbacks.end(); cb = mPostExportCallbacks.erase(cb)) {
+		ProgressUpdate(Skin, NULL);
+		(*cb)->execute();
+		delete (*cb);
+	}
+	// Remove unreferenced Bones
+	if (mRemoveUnreferencedBones)
+		removeUnreferencedBones(mNiRoot);
+	if (mSortNodesToEnd)
+		sortNodes(mNiRoot);
+	ApplyAllSkinOffsets(StaticCast<NiAVObject>(mNiRoot));
+	root = mNiRoot;
 	return Ok;
 }
 
@@ -332,7 +336,7 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 	{
 		return exportLight(nodeParent, node, (GenLight*)os.obj);
 	}
-	else if (isMeshGroup(node) && local && !mSkeletonOnly) // only create node if local
+   else if (isMeshGroup(node) && local && !mSkeletonOnly) // only create node if local
 	{
 		newParent = makeNode(parent, node, local);
 	} 

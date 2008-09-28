@@ -1,4 +1,4 @@
-                        MaxPlugins 3.0.3
+                        MaxPlugins 3.0.5
                         =================
 
  
@@ -38,9 +38,8 @@
     gmax notes:
        NifPlugins.dlu goes in gmax\plugin folder
        MaxNifTools.ini goes in gmax\plugCFG folder
-       nifgmax.exe goes in gmax folder where gmax.exe is located.
-
-       You must start gmax with the nifgmax.exe, NOT the gmax.exe.
+       winmm.dll goes in gmax folder where gmax.exe is located.
+         Do not place it in the windows system folder.
         
     Usage
     -----
@@ -54,10 +53,10 @@
           and then link them to the bhkRigidBody.
           
       Exporter:
-        Export files using "File->Export->Gambryo File (*.nif)".
+        Export files using "File | Export | Netimmerse/Gamebryo (*.NIF, *.KF)".
 
       Importer:
-        Import files using "File->Import->Netimmerse/Gamebryo(*.NIF)"
+        Import files using "File | Import | Netimmerse/Gamebryo (*.NIF, *.KF)"
   
       Settings:
         Its recommended that you edit the MaxNifTools.ini file to adjust 

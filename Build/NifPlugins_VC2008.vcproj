@@ -5285,6 +5285,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\MaxNifTools.iss"
+			>
+		</File>
+		<File
 			RelativePath="..\README.TXT"
 			>
 		</File>

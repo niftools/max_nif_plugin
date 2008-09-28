@@ -6,7 +6,7 @@ AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2008, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-3.0.4.0
+OutputBaseFilename=niftools-max-plugins-3.0.5
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,7 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=3.0.4.0
+VersionInfoVersion=3.0.5
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -49,7 +49,7 @@ Source: "ChangeLog.txt"; DestDir: "{app}"; Flags: isreadme ignoreversion;
 Source: "Readme.txt"; DestDir: "{app}"; Flags: isreadme ignoreversion;
 
 ;Source: "Staging\Release - gmax\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - gmax\nifgmax.exe"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: ignoreversion;
+Source: "Staging\Release - gmax\winmm.dll"; DestDir: "{code:InstallPath|gmax12}"; Components: "gmax12"; Flags: ignoreversion;
 Source: "Staging\Release - gmax\NifPlugins.dlu"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|gmax12}{\}plugcfg"; Components: "gmax12"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|gmax12}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
@@ -130,11 +130,11 @@ Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max1
 
 ;Source: "src\*"; DestDir: "{reg:HKLM\SOFTWARE\Bethesda Softworks\Oblivion,Path|{pf}{\}Bethesda Softworks\Oblivion}\Data\niftools";  Components: "src"; Flags: ignoreversion recursesubdirs;
 
-[Icons]
-Name: "{commondesktop}\nif-gmax"; Filename: "{code:InstallPath|gmax12}\nifgmax.exe"; Components: "gmax12"; Tasks: desktopicon; WorkingDir: "{code:InstallPath|gmax12}"; Flags: createonlyiffileexists;
+;[Icons]
+;Name: "{commondesktop}\nif-gmax"; Filename: "{code:InstallPath|gmax12}\nifgmax.exe"; Components: "gmax12"; Tasks: desktopicon; WorkingDir: "{code:InstallPath|gmax12}"; Flags: createonlyiffileexists;
 
-[Tasks]
-Name: desktopicon; Description: "Create shortcut for nifgmax on Desktop"; Components: "gmax12";
+;[Tasks]
+;Name: desktopicon; Description: "Create shortcut for nifgmax on Desktop"; Components: "gmax12";
 
 
 [Code]
@@ -152,7 +152,7 @@ var sVersion: String;
 
 function InitializeSetup(): Boolean;
 begin
-  sVersion := '3.0.4.0';
+  sVersion := '3.0.5';
   Result := True;
 end;
 

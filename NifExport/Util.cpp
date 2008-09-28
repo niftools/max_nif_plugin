@@ -137,7 +137,10 @@ NiNodeRef Exporter::getNode(INode* maxNode)
 	NodeToNodeMap::iterator itr = mNodeMap.find(maxNode);
 	if (itr != mNodeMap.end())
 		return (*itr).second;
-	NiNodeRef node = getNode(name);
+	//NiNodeRef node = getNode(name);
+	NiNodeRef node = CreateNiObject<NiNode>();
+	node->SetName(name);
+	mNameMap[name] = node;
 	mNodeMap[maxNode] = node;
 	return node;
 }
@@ -155,8 +158,17 @@ NiNodeRef Exporter::getNode(const string& name)
 NiNodeRef Exporter::makeNode(NiNodeRef &parent, INode *maxNode, bool local)
 {
 	string name = (char*)maxNode->GetName();
-	NiNodeRef node = getNode(maxNode);
 
+	// Leave now if node has already been seen
+	NodeToNodeMap::iterator itr = mNodeMap.find(maxNode);
+	if (itr != mNodeMap.end())
+		return (*itr).second;
+
+	NiNodeRef node = CreateNiObject<NiNode>();
+	node->SetName(name);
+	mNodeMap[maxNode] = mNameMap[name] = node;
+
+	// apply scale now?
 	Matrix33 rot;
 	Vector3 trans;
 	TimeValue t = 0;

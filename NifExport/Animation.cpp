@@ -21,6 +21,7 @@ HISTORY:
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
+#include <iiksys.h>
 
 #include <obj/NiControllerSequence.h>
 #include <obj/NiControllerManager.h>
@@ -51,6 +52,9 @@ enum {
    IPOS_W_REF	=	3,
 };
 
+static void GetTimeRange(Control *c, Interval& range);
+static Interval GetTimeRange(INode *node);
+
 struct AnimationExport
 {
    AnimationExport(Exporter& parent) : ne(parent) {}
@@ -63,10 +67,11 @@ struct AnimationExport
    Control *GetTMController(INode* node);
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
-   Interval GetTimeRange(INode *n);
-   void GetTimeRange(Control *c, Interval& range);
    bool splitAccum(NiTransformDataRef base, NiTransformDataRef accum, Exporter::AccumType accumType);
+   void GetTimeRange(Control *c, Interval& range);
+   Interval GetTimeRange(INode *node);
 
+   static Interval globalRange;
    Exporter &ne;
    Interval range;
    NiControllerSequenceRef seq;
@@ -74,6 +79,7 @@ struct AnimationExport
    set<NiAVObjectRef> objRefs;
    map<NiControllerSequenceRef, Interval> ranges;
 };
+Interval AnimationExport::globalRange;
 
 bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
 {
@@ -135,6 +141,31 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
    }
    return !textKeys.empty();
 }
+
+
+// Callback interface to register a Skin after entire structure is built due to 
+//    constraints in the nif library
+struct SampledAnimationCallback : public Exporter::NiCallback
+{  
+   Exporter *     owner;
+   // Common Data
+   INode*         maxNode;
+   NiNodeRef      nifNode;
+   Interval       maxRange;
+
+   // Either keyframe or transform must be present and will have the time frame
+   NiKeyframeControllerRef keyframeController;
+   NiTransformControllerRef transformController;
+   NiTransformInterpolatorRef transformInterp;
+   vector<Vector3Key> posKeys;
+   vector<QuatKey> rotKeys;
+   vector<float> scaleKeys;
+
+   SampledAnimationCallback(Exporter *Owner) : owner(Owner) {}
+   virtual ~SampledAnimationCallback() {}
+   virtual Exporter::Result execute();
+};
+
 
 void Exporter::InitializeTimeController(NiTimeControllerRef ctrl, NiNodeRef parent)
 {
@@ -243,6 +274,23 @@ Exporter::Result Exporter::scanForAnimation(INode *node)
 	if (NULL == node) 
 		return Exporter::Skip;
 
+   Interval nodeRange = GetTimeRange(node);
+   if (!nodeRange.Empty())
+   {
+      if (  AnimationExport::globalRange.Empty() 
+         || nodeRange.Start() < AnimationExport::globalRange.Start()
+         )
+      {
+         AnimationExport::globalRange.SetStart(nodeRange.Start());
+      }
+      if (  AnimationExport::globalRange.Empty() 
+         || nodeRange.End() > AnimationExport::globalRange.End()
+         )
+      {
+         AnimationExport::globalRange.SetEnd(nodeRange.End());
+      }
+   }
+
 	// Ideally check for Morph: targets
 #if VERSION_3DSMAX >= ((8000<<16)+(15<<8)+0) // Version 8+
 	if (Modifier * mod = GetMorpherModifier(node)){
@@ -261,10 +309,11 @@ Exporter::Result Exporter::scanForAnimation(INode *node)
 			}
 		}
 	}
-	for (int i=0; i<node->NumberOfChildren(); i++) {
-		scanForIgnore(node->GetChildNode(i));
-	}
 #endif
+
+   for (int i=0; i<node->NumberOfChildren(); i++) {
+      scanForAnimation(node->GetChildNode(i));
+   }
 	return Exporter::Ok;
 }
 
@@ -655,13 +704,8 @@ static void GetTimeRange(Control *c, Interval& range)
    //   }
    //}
 }
-void AnimationExport::GetTimeRange(Control *c, Interval& range)
-{
-	::GetTimeRange(c, range);
-}
 
-
-Interval AnimationExport::GetTimeRange(INode *node)
+static Interval GetTimeRange(INode *node)
 {
    Interval range;
    range.SetEmpty();
@@ -719,6 +763,35 @@ Interval AnimationExport::GetTimeRange(INode *node)
    }
    return range;
 }
+
+void AnimationExport::GetTimeRange(Control *c, Interval& range)
+{
+   ::GetTimeRange(c, range);
+}
+
+Interval AnimationExport::GetTimeRange(INode *node)
+{
+   Interval range = ::GetTimeRange(node);
+   if (range.Empty())
+   {
+      // Allow specific types of controllers to use the global range
+      if (Control *tmCont = GetTMController(node))
+      {
+         Class_ID cID = tmCont->ClassID();
+         if (  cID == BIPSLAVE_CONTROL_CLASS_ID
+            || cID == BIPBODY_CONTROL_CLASS_ID
+            || cID == IKCONTROL_CLASS_ID 
+            || cID == IKCHAINCONTROL_CLASS_ID 
+            )
+         {
+            range = globalRange;
+         }
+      }
+   }
+
+   return range;
+}
+
 
 NiTimeControllerRef Exporter::CreateController(INode *node, Interval range)
 {
@@ -824,8 +897,8 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 		 if (range.Empty() || (range.Start() == range.End()))
 			 return timeControl;
 
+       Class_ID cID = tmCont->ClassID();
 #ifdef USE_BIPED
-		 Class_ID cID = tmCont->ClassID();
 		 if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
 		 {
 			 TSTR name = node->NodeName();
@@ -908,7 +981,37 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 
 		 }
 #endif
+         else if (cID == IKCONTROL_CLASS_ID || cID == IKCHAINCONTROL_CLASS_ID )
+         {
+            // query MAX for the number of keyframes
+            int iNumKeys = tmCont->NumKeys();
 
+            vector<Vector3Key> posKeys;
+            vector<QuatKey> rotKeys;
+            TimeValue interval = (range.End() - range.Start()) / TicksPerFrame;
+            for (TimeValue t = range.Start(); t <= range.End(); t += interval)
+            {
+               //TimeValue t = tmCont->GetKeyTime(i);
+               Matrix3 tm = ne.getNodeTransform(node, t, true);
+               Vector3Key p;
+               QuatKey q;
+               q.time = p.time = FrameToTime(t);
+               p.data = TOVECTOR3(tm.GetTrans());
+               q.data = TOQUAT( Quat(tm), true );
+               posKeys.push_back( p );
+               rotKeys.push_back( q );
+            }
+
+            // Dont really know what else to use since I cant get anything but the raw data.
+            data->SetTranslateType(LINEAR_KEY);
+            data->SetTranslateKeys(posKeys);
+            data->SetRotateType(LINEAR_KEY);
+            data->SetQuatRotateKeys(rotKeys);
+            //data->SetScaleKeys();
+            if (iNumKeys != 0) { // if no changes set the base transform
+               keepData = true;
+            }
+         }
 
          //if (validity.InInterval(range))
          //{
@@ -1115,6 +1218,13 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
       }
    }
    return timeControl;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Delayed Animation sampling
+Exporter::Result SampledAnimationCallback::execute()
+{
+   return Exporter::Skip;
 }
 
 bool AnimationExport::splitAccum(NiTransformDataRef base, NiTransformDataRef accum, Exporter::AccumType accumType)

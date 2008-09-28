@@ -12,10 +12,13 @@ NifTools MaxPlugin
       
     o Importer
       - Improved support for newer NIFs from Florensia
+      - New settings for Pro Cycling Manager 2008
       
     o Exporter
       - Improved support for Biped animation export (twists still problem)
       - Havok supported calculation for center of mass, and inertia tensor calculations
+      - Support for IKChains for bone animation
+      - Support for multiple UV maps on geometry morphs.
     
       0.2.17
       ------
