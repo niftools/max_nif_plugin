@@ -45,6 +45,7 @@ HISTORY:
 using namespace Niflib;
 
 const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
+
 enum {
    IPOS_X_REF	=	0,
    IPOS_Y_REF	=	1,
@@ -669,6 +670,9 @@ Control *AnimationExport::GetTMController(INode *n)
 
 static void GetTimeRange(Control *c, Interval& range)
 {
+   //if ( Exporter::mExportType == Exporter::NIF_WO_ANIM ) 
+   //   return;
+
 	//Class_ID cID = tmCont->ClassID();
 	//if ( (cID == BIPSLAVE_CONTROL_CLASS_ID) 
 	//	|| (cID == BIPBODY_CONTROL_CLASS_ID) 
@@ -894,10 +898,10 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
          timeControl->SetStartTime( 0.0f );
          timeControl->SetStopTime( FrameToTime( range.Duration()-1 ) );
 
-		 if (range.Empty() || (range.Start() == range.End()))
-			 return timeControl;
+         Class_ID cID = tmCont->ClassID();
+         if (range.Empty() || (range.Start() == range.End()))
+            return timeControl;
 
-       Class_ID cID = tmCont->ClassID();
 #ifdef USE_BIPED
 		 if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
 		 {

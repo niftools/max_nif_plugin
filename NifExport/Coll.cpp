@@ -40,6 +40,7 @@ class HavokMoppCode
 {
 private:
 	typedef int (__stdcall * fnGenerateMoppCode)(int nVerts, Vector3 const* verts, int nTris, Triangle const *tris);
+   typedef int (__stdcall * fnGenerateMoppCodeWithSubshapes)(int nShapes, int const *shapes, int nVerts, Vector3 const* verts, int nTris, Triangle const *tris);
 	typedef int (__stdcall * fnRetrieveMoppCode)(int nBuffer, unsigned char *buffer);
 	typedef int (__stdcall * fnRetrieveMoppScale)(float *value);
 	typedef int (__stdcall * fnRetrieveMoppOrigin)(Vector3 *value);
@@ -49,9 +50,12 @@ private:
 	fnRetrieveMoppCode RetrieveMoppCode;
 	fnRetrieveMoppScale RetrieveMoppScale;
 	fnRetrieveMoppOrigin RetrieveMoppOrigin;
+   fnGenerateMoppCodeWithSubshapes GenerateMoppCodeWithSubshapes;
 
 public:
-	HavokMoppCode() : hMoppLib(0), GenerateMoppCode(0), RetrieveMoppCode(0), RetrieveMoppScale(0), RetrieveMoppOrigin(0) {
+	HavokMoppCode() : hMoppLib(0), GenerateMoppCode(0), RetrieveMoppCode(0)
+                   , RetrieveMoppScale(0), RetrieveMoppOrigin(0), GenerateMoppCodeWithSubshapes(0)
+   {
 	}
 
 	~HavokMoppCode() {
@@ -70,6 +74,7 @@ public:
 			if (hMoppLib == NULL)
 				hMoppLib = LoadLibraryA( "NifMopp.dll" );
 			GenerateMoppCode = (fnGenerateMoppCode)GetProcAddress( hMoppLib, "GenerateMoppCode" );
+         GenerateMoppCodeWithSubshapes = (fnGenerateMoppCodeWithSubshapes)GetProcAddress( hMoppLib, "GenerateMoppCodeWithSubshapes" );
 			RetrieveMoppCode = (fnRetrieveMoppCode)GetProcAddress( hMoppLib, "RetrieveMoppCode" );
 			RetrieveMoppScale = (fnRetrieveMoppScale)GetProcAddress( hMoppLib, "RetrieveMoppScale" );
 			RetrieveMoppOrigin = (fnRetrieveMoppOrigin)GetProcAddress( hMoppLib, "RetrieveMoppOrigin" );
@@ -103,6 +108,43 @@ public:
 		}
 		return code;
 	}
+
+   vector<Niflib::byte> CalculateMoppCode( vector<OblivionSubShape> const & shapes
+                                          , vector<Niflib::Vector3> const & verts
+                                          , vector<Niflib::Triangle> const & tris
+                                          , Niflib::Vector3* origin, float* scale)
+   {
+      vector<Niflib::byte> code;
+      if ( Initialize() )
+      {
+         vector<int> subshapeverts;
+         for (vector<OblivionSubShape>::const_iterator itr = shapes.begin(); itr != shapes.end(); ++itr)
+            subshapeverts.push_back( itr->numVertices );
+
+         int len = 0;
+         if ( GenerateMoppCodeWithSubshapes != NULL )
+            len = GenerateMoppCodeWithSubshapes( subshapeverts.size(), &subshapeverts[0], verts.size(), &verts[0], tris.size(), &tris[0] );
+         else
+            len = GenerateMoppCode( verts.size(), &verts[0], tris.size(), &tris[0] );
+         if ( len > 0 )
+         {
+            code.resize( len );
+            if ( 0 != RetrieveMoppCode( len , &code[0] ) )
+            {
+               if ( NULL != scale )
+                  RetrieveMoppScale(scale);
+               if ( NULL != origin )
+                  RetrieveMoppOrigin(origin);
+            }
+            else
+            {
+               code.clear();
+            }
+         }
+      }
+      return code;
+   }
+
 } TheHavokCode;
 
 static vector<Niflib::byte> ConstructHKMesh( NiTriBasedGeomRef shape, Niflib::Vector3& origin, float& scale)
@@ -114,7 +156,7 @@ static vector<Niflib::byte> ConstructHKMesh( NiTriBasedGeomRef shape, Niflib::Ve
 static vector<Niflib::byte> ConstructHKMesh( bhkPackedNiTriStripsShapeRef shape, Niflib::Vector3& origin, float& scale)
 {
 	hkPackedNiTriStripsDataRef data = shape->GetData();
-	return TheHavokCode.CalculateMoppCode(data->GetVertices(), data->GetTriangles(), &origin, &scale);
+	return TheHavokCode.CalculateMoppCode(shape->GetSubShapes(), data->GetVertices(), data->GetTriangles(), &origin, &scale);
 }
 
 /*

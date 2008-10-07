@@ -17,6 +17,26 @@
 #include "objectParams.h"
 #undef ALPHA_NONE
 
+#ifndef BIPSLAVE_CONTROL_CLASS_ID
+#define BIPSLAVE_CONTROL_CLASS_ID Class_ID(0x9154,0)
+#endif
+// this is the class for the center of mass, biped root controller ("Bip01")
+#ifndef BIPBODY_CONTROL_CLASS_ID
+#define BIPBODY_CONTROL_CLASS_ID  Class_ID(0x9156,0) 
+#endif
+// this is the class for the biped footstep controller ("Bip01 Footsteps")
+#ifndef FOOTPRINT_CLASS_ID
+#define FOOTPRINT_CLASS_ID Class_ID(0x3011,0)        
+#endif
+// this is the class for biped geometric objects
+#ifdef SKELOBJ_CLASS_ID
+#define SKELOBJ_CLASS_ID Class_ID(0x9125, 0)
+#endif
+// this is the class for the biped master controller
+#ifdef BIPED_CLASS_ID
+#define BIPED_CLASS_ID Class_ID(0x9155, 0)
+#endif
+
 // niflib/Ref.h' header guard caused havok!
 // near & far 
 //#include "niflib/pch.h"
