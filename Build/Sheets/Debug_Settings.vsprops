@@ -28,6 +28,10 @@
     Name="VCResourceCompilerTool"
     PreprocessorDefinitions="_DEBUG"
   />
+  <Tool
+    Name="VCPreBuildEventTool"
+    CommandLine="pushd $(SolutionDir)&#x0D;&#x0A;call $(SolutionDir)makeconfig.bat&#x0D;&#x0A;popd&#x0D;&#x0A;"
+  />
 
   <UserMacro Name="NifBuildType" Value="Debug"/>
   

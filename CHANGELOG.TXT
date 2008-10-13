@@ -24,6 +24,7 @@ NifTools MaxPlugin
       - gmax collision and animation now works !!!! 
       - Remove nifgmax.exe in favor of a dll approach to starting gmax.exe
       - Updated mopp generation code to use materials
+      - Fix tangent and binormal export calculation
     
       0.2.17
       ------
