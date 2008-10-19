@@ -191,6 +191,8 @@ public:
    void					   convertMatrix(Matrix33 &dst, const Matrix3 &src);
    void					   nodeTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
    void					   nodeTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
+   void					   objectTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
+   void					   objectTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local=true);
    Matrix3					getNodeTransform(INode *node, TimeValue t, bool local=true);
    Matrix3					getObjectTransform(INode *node, TimeValue t, bool local=true);
    Point3					getVertexNormal(Mesh* mesh, int faceNo, RVertex* rv);

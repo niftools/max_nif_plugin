@@ -82,6 +82,11 @@ struct AnimationExport
 };
 Interval AnimationExport::globalRange;
 
+float QuatDot(const Quaternion& q, const Quaternion&p)
+{
+   return q.w*p.w + q.x*p.x + q.y*p.y + q.z*p.z;
+}
+
 bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
 {
    // Populate Text keys and Sequence information from note tracks
@@ -111,17 +116,21 @@ bool GetTextKeys(INode *node, vector<StringKey>& textKeys, Interval range)
                   for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
                      NoteKey* key = defNT->keys[j];
 
-                     if (wildmatch("start*", key->note)) {
-                        stringlist args = TokenizeCommandLine(key->note, true);
-                        if (args.empty()) continue;
-                        for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
-                           if (strmatch("-name", *itr)) {
-                              if (++itr == args.end()) break;
-                           }
-                        }
-                     } else if ( wildmatch("end*", key->note) ) {
+                     stringlist args = TokenizeCommandLine(key->note, true);
+                     if (args.empty()) continue;
+
+                     bool isStart = false, isEnd = false;
+                     if ( stricmp(args[0].c_str(), "start") == 0) {
+                        isStart = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "start") == 0 ) {
+                        isStart = true;
+                     }else if ( stricmp(args[0].c_str(), "end") == 0) {
+                        isEnd = true;
                         stop = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "stop") == 0 ) {
+                        isEnd = true;
                      }
+
                      if (range.Empty()) {
                         range.SetInstant(key->time);
                      } else {
@@ -218,10 +227,10 @@ NiNodeRef Exporter::createAccumNode(NiNodeRef parent, INode *node)
          vector<NiNodeRef> children;
          getChildNodes(node, children);
          ctrl->SetExtraTargets( DynamicCast<NiAVObject>(children) );
-		 Exporter::InitializeTimeController(ctrl, parent);
+         Exporter::InitializeTimeController(ctrl, parent);
       }
       NiControllerManagerRef mgr = new NiControllerManager();
-	  Exporter::InitializeTimeController(mgr, parent);
+      Exporter::InitializeTimeController(mgr, parent);
 
       // Export Animation now
       doAnimExport(mgr, node);
@@ -258,7 +267,7 @@ bool Exporter::isNodeTracked(INode *node)
                   for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
                      NoteKey* key = defNT->keys[j];
                      // Versions less than 20.0.0.4 will always export
-                     if (Exporter::mNifVersionInt < VER_20_0_0_4 || wildmatch("start*", key->note) ) {
+                     if (wildmatch("*start*", key->note) ) {
                         return true;
                      }
                   }
@@ -443,10 +452,25 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
                   for (int j=0, m=defNT->keys.Count(); j<m && !stop; ++j) {
                      NoteKey* key = defNT->keys[j];
 
-                     if (wildmatch("start*", key->note)) {
-                        stringlist args = TokenizeCommandLine(key->note, true);
-                        if (args.empty()) continue;
+                     stringlist args = TokenizeCommandLine(key->note, true);
+                     if (args.empty()) continue;
 
+                     bool isStart = false, isEnd = false;
+                     if ( stricmp(args[0].c_str(), "start") == 0) {
+                        isStart = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "start") == 0 ) {
+                        isStart = true;
+                        const char *s = args[0].c_str();
+                        const char *p = strchr(s, ':');
+                        string name(p == NULL ? s : s, p-s);
+                        seq->SetName( name );
+                     }else if ( stricmp(args[0].c_str(), "end") == 0) {
+                        isEnd = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "stop") == 0 ) {
+                        isEnd = true;
+                     }
+
+                     if (isStart) {
                         seq->SetStartTime(0.0f);
                         range.SetStart( key->time );
                         for (stringlist::iterator itr = args.begin(); itr != args.end(); ++itr) {
@@ -455,24 +479,24 @@ bool AnimationExport::doExport(NiControllerSequenceRef seq)
                               seq->SetName(*itr);
                            } else if (strmatch("-loop", *itr)) {
                               seq->SetCycleType(CYCLE_LOOP);
-						   } else if (strmatch("-at", *itr)) {
-							   if (++itr == args.end()) break;
-							   string type = (*itr);
-							   if (strmatch(type, "none")) {
-								   accumType = Exporter::AT_NONE;
-							   } else {
-								   for (size_t j=0; j<type.size(); ++j) {
-									   if (tolower(type[j]) == 'x')
-										   accumType = Exporter::AccumType(accumType | Exporter::AT_X);
-									   else if (tolower(type[j]) == 'y')
-										   accumType = Exporter::AccumType(accumType | Exporter::AT_Y);
-									   else if (tolower(type[j]) == 'z')
-										   accumType = Exporter::AccumType(accumType | Exporter::AT_Z);
-								   }
-							   }
-						   }
+						         } else if (strmatch("-at", *itr)) {
+							         if (++itr == args.end()) break;
+							         string type = (*itr);
+							         if (strmatch(type, "none")) {
+								         accumType = Exporter::AT_NONE;
+							         } else {
+								         for (size_t j=0; j<type.size(); ++j) {
+									         if (tolower(type[j]) == 'x')
+										         accumType = Exporter::AccumType(accumType | Exporter::AT_X);
+									         else if (tolower(type[j]) == 'y')
+										         accumType = Exporter::AccumType(accumType | Exporter::AT_Y);
+									         else if (tolower(type[j]) == 'z')
+										         accumType = Exporter::AccumType(accumType | Exporter::AT_Z);
+								         }
+							         }
+						         }
                         }
-                     } else if ( wildmatch("end*", key->note) ) {
+                     } else if ( isEnd ) {
                         range.SetEnd( key->time );
                         seq->SetStopTime( FrameToTime( range.Duration()-1 ) );
                         stop = true;
@@ -567,8 +591,25 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
                   for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
                      NoteKey* key = defNT->keys[j];
 
-                     if (wildmatch("start*", key->note)) {
-                        stringlist args = TokenizeCommandLine(key->note, true);
+                     stringlist args = TokenizeCommandLine(key->note, true);
+                     if (args.empty()) continue;
+
+                     bool isStart = false, isEnd = false;
+                     string startName;
+                     if ( stricmp(args[0].c_str(), "start") == 0) {
+                        isStart = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "start") == 0 ) {
+                        isStart = true;
+                        const char *s = args[0].c_str();
+                        const char *p = strchr(s, ':');
+                        startName = string(p == NULL ? s : s, p-s-1);
+                     }else if ( stricmp(args[0].c_str(), "end") == 0) {
+                        isEnd = true;
+                     } else if ( args.size() > 1 && stricmp(args[1].c_str(), "stop") == 0 ) {
+                        isEnd = true;
+                     }
+
+                     if (isStart) {
                         textKeys.clear();
 
                         curSeq = new NiControllerSequence();
@@ -577,6 +618,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
                         curSeq->SetFrequency(1.0f);
                         curSeq->SetCycleType( CYCLE_CLAMP );
                         curSeq->SetTargetName( node->GetName() );
+                        curSeq->SetName(startName);
                         seqs.push_back(curSeq);
                         this->range.SetInstant(0);
 
@@ -588,22 +630,22 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
                               curSeq->SetName(*itr);
                            } else if (strmatch("-loop", *itr)) {
                               curSeq->SetCycleType(CYCLE_LOOP);
-						   } else if (strmatch("-at", *itr)) {
-							   if (++itr == args.end()) break;
-							   string type = (*itr);
-							   if (strmatch(type, "none")) {
-								   accumType = Exporter::AT_NONE;
-							   } else {
-								   for (size_t j=0; j<type.size(); ++j) {
-									   if (tolower(type[j]) == 'x')
-										   accumType = Exporter::AccumType( accumType | Exporter::AT_X );
-									   else if (tolower(type[j]) == 'y')
-										   accumType = Exporter::AccumType( accumType | Exporter::AT_Y );
-									   else if (tolower(type[j]) == 'z')
-										   accumType = Exporter::AccumType( accumType | Exporter::AT_Z );
-								   }
-							   }
-						   }
+                           } else if (strmatch("-at", *itr)) {
+                              if (++itr == args.end()) break;
+                              string type = (*itr);
+                              if (strmatch(type, "none")) {
+                                 accumType = Exporter::AT_NONE;
+                              } else {
+                                 for (size_t j=0; j<type.size(); ++j) {
+                                    if (tolower(type[j]) == 'x')
+                                       accumType = Exporter::AccumType( accumType | Exporter::AT_X );
+                                    else if (tolower(type[j]) == 'y')
+                                       accumType = Exporter::AccumType( accumType | Exporter::AT_Y );
+                                    else if (tolower(type[j]) == 'z')
+                                       accumType = Exporter::AccumType( accumType | Exporter::AT_Z );
+                                 }
+                              }
+                           }
                         }
                      }
 
@@ -612,7 +654,7 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
                      strkey.data = key->note;
                      textKeys.push_back(strkey);
 
-                     if ( wildmatch("end*", key->note) ) {
+                     if ( isEnd ) {
                         range.SetEnd( key->time );
 
                         // add accumulated text keys to sequence
@@ -903,87 +945,112 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             return timeControl;
 
 #ifdef USE_BIPED
-		 if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
-		 {
-			 TSTR name = node->NodeName();
-			 if (name == TSTR("Bip01 R ForeTwist"))
-			 {
-				 name = name;
-			 }
-			 // query MAX for the number of keyframes
-			 int iNumKeys = tmCont->NumKeys();
+         if (cID == BIPSLAVE_CONTROL_CLASS_ID) 
+         {
+            bool doprint = false;
+            TSTR name = node->NodeName();
+            if (name == TSTR("Bip01 R Clavicle"))
+            {
+               name = name;
+               doprint = true;
+            }
+            // query MAX for the number of keyframes
+            int iNumKeys = tmCont->NumKeys();
 
-			 vector<Vector3Key> posKeys;
-			 vector<QuatKey> rotKeys;
-			 TimeValue interval = (range.End() - range.Start()) / TicksPerFrame;
-			 for (TimeValue t = range.Start(); t <= range.End(); t += interval)
-			 {
-				 //TimeValue t = tmCont->GetKeyTime(i);
-				 Matrix3 tm = ne.getNodeTransform(node, t, true);
-				 Vector3Key p;
-				 QuatKey q;
-				 q.time = p.time = FrameToTime(t);
-				 p.data = TOVECTOR3(tm.GetTrans());
-				 q.data = TOQUAT( Quat(tm), true );
-				 posKeys.push_back( p );
-				 rotKeys.push_back( q );
-			 }
+            vector<Vector3Key> posKeys;
+            vector<QuatKey> rotKeys;
+            TimeValue interval = (range.Duration()) / TicksPerFrame;
 
-			 // Dont really know what else to use since I cant get anything but the raw data.
-			 data->SetTranslateType(LINEAR_KEY);
-			 data->SetTranslateKeys(posKeys);
-			 data->SetRotateType(LINEAR_KEY);
-			 data->SetQuatRotateKeys(rotKeys);
-			 //data->SetScaleKeys();
-			 if (iNumKeys != 0) { // if no changes set the base transform
-				 keepData = true;
-			 }
-		 }
-		 else if (cID == BIPBODY_CONTROL_CLASS_ID) 
-		 {
-			 Animatable* vert = tmCont->SubAnim(VERTICAL_SUBANIM);
-			 Animatable* horiz = tmCont->SubAnim(HORIZONTAL_SUBANIM);
-			 Animatable* rot = tmCont->SubAnim(ROTATION_SUBANIM);
-			 int iVertKeys = vert->NumKeys();
-			 int iHorizKeys = horiz->NumKeys();
-			 int iRotKeys = rot->NumKeys();
+            Quaternion prevq;
+            for (TimeValue t = range.Start(); t < range.End(); t += interval)
+            {
+               //TimeValue t = tmCont->GetKeyTime(i);
+               Matrix3 tm = ne.getNodeTransform(node, t, true);
+               Vector3Key pk;
+               QuatKey qk;
+               qk.time = pk.time = FrameToTime(t);
+               pk.data = TOVECTOR3(tm.GetTrans());
+               qk.data = TOQUAT( Quat(tm), true );
 
-			 // merge vertical and horizontal. rotation stands alone
-			 vector<Vector3Key> posKeys;
-			 vector<QuatKey> rotKeys;
-			 set<TimeValue> times;
-			 for (int i = 0; i < iVertKeys; i++)
-				 times.insert(vert->GetKeyTime(i));
-			 for (int i = 0; i < iHorizKeys; i++)
-				 times.insert(horiz->GetKeyTime(i));
-			 for (set<TimeValue>::iterator itr = times.begin(); itr != times.end(); ++itr)
-			 {
-				 TimeValue t = *itr;
-				 Matrix3 tm = ne.getNodeTransform(node, t, true);
-				 Vector3Key p;
-				 p.time = FrameToTime(t+range.Start());
-				 p.data = TOVECTOR3(tm.GetTrans());
-				 posKeys.push_back( p );
-			 }
-			 for (int i = 0; i < iRotKeys; i++)
-			 {
-				 TimeValue t = rot->GetKeyTime(i);
-				 Matrix3 tm = ne.getNodeTransform(node, t, true);
-				 QuatKey q;
-				 q.time = FrameToTime(t+range.Start());
-				 q.data = TOQUAT( Quat(tm), true );
-				 rotKeys.push_back( q );
-			 }
-			 // Dont really know what else to use since I cant get anything but the raw data.
-			 data->SetTranslateType(LINEAR_KEY);
-			 data->SetTranslateKeys(posKeys);
-			 data->SetRotateType(LINEAR_KEY);
-			 data->SetQuatRotateKeys(rotKeys);
-			 if (posKeys.size() != 0 || rotKeys.size() != 0) { // if no changes set the base transform
-				 keepData = true;
-			 }
+               if (t != range.Start())
+               {
+                  if ( QuatDot(qk.data, prevq) < 0.0f )
+                     qk.data.Set(-qk.data.w, -qk.data.x, -qk.data.y, -qk.data.z);
+               }
+               prevq = qk.data;
 
-		 }
+               posKeys.push_back( pk );
+               rotKeys.push_back( qk );
+            }
+
+            // Dont really know what else to use since I cant get anything but the raw data.
+            data->SetTranslateType(LINEAR_KEY);
+            data->SetTranslateKeys(posKeys);
+            data->SetRotateType(LINEAR_KEY);
+            data->SetQuatRotateKeys(rotKeys);
+            //data->SetScaleKeys();
+            if (iNumKeys != 0) { // if no changes set the base transform
+               keepData = true;
+            }
+         }
+         else if (cID == BIPBODY_CONTROL_CLASS_ID) 
+         {
+            Animatable* vert = tmCont->SubAnim(VERTICAL_SUBANIM);
+            Animatable* horiz = tmCont->SubAnim(HORIZONTAL_SUBANIM);
+            Animatable* rot = tmCont->SubAnim(ROTATION_SUBANIM);
+            int iVertKeys = vert->NumKeys();
+            int iHorizKeys = horiz->NumKeys();
+            int iRotKeys = rot->NumKeys();
+
+            // merge vertical and horizontal. rotation stands alone
+            vector<Vector3Key> posKeys;
+            vector<QuatKey> rotKeys;
+            set<TimeValue> times;
+            for (int i = 0; i < iVertKeys; i++)
+               times.insert(vert->GetKeyTime(i));
+            for (int i = 0; i < iHorizKeys; i++)
+               times.insert(horiz->GetKeyTime(i));
+            for (set<TimeValue>::iterator itr = times.begin(); itr != times.end(); ++itr)
+            {
+               TimeValue t = *itr;
+               Matrix3 tm = ne.getNodeTransform(node, t, true);
+               Vector3Key p;
+               p.time = FrameToTime(t+range.Start());
+               p.data = TOVECTOR3(tm.GetTrans());
+               posKeys.push_back( p );
+            }
+            Quaternion prevq;
+            for (int i = 0; i < iRotKeys; i++)
+            {
+               TimeValue t = rot->GetKeyTime(i);
+               Matrix3 tm = ne.getNodeTransform(node, t, true);
+
+               Point3 p, s; Quat q;
+               DecomposeMatrix(tm, p, q, s);
+
+               QuatKey qk;
+               qk.time = FrameToTime(t+range.Start());
+               qk.data = TOQUAT( Quat(tm), true );
+
+               if (t != range.Start())
+               {
+                  if ( QuatDot(qk.data, prevq) < 0.0f )
+                     qk.data.Set(-qk.data.w, -qk.data.x, -qk.data.y, -qk.data.z);
+               }
+               prevq = qk.data;
+
+               rotKeys.push_back( qk );
+            }
+            // Dont really know what else to use since I cant get anything but the raw data.
+            data->SetTranslateType(LINEAR_KEY);
+            data->SetTranslateKeys(posKeys);
+            data->SetRotateType(LINEAR_KEY);
+            data->SetQuatRotateKeys(rotKeys);
+            if (posKeys.size() != 0 || rotKeys.size() != 0) { // if no changes set the base transform
+               keepData = true;
+            }
+
+         }
 #endif
          else if (cID == IKCONTROL_CLASS_ID || cID == IKCHAINCONTROL_CLASS_ID )
          {
@@ -992,8 +1059,9 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 
             vector<Vector3Key> posKeys;
             vector<QuatKey> rotKeys;
-            TimeValue interval = (range.End() - range.Start()) / TicksPerFrame;
-            for (TimeValue t = range.Start(); t <= range.End(); t += interval)
+            TimeValue interval = (range.Duration()) / TicksPerFrame;
+            Quaternion prevq;
+            for (TimeValue t = range.Start(); t < range.End(); t += interval)
             {
                //TimeValue t = tmCont->GetKeyTime(i);
                Matrix3 tm = ne.getNodeTransform(node, t, true);
@@ -1002,6 +1070,13 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                q.time = p.time = FrameToTime(t);
                p.data = TOVECTOR3(tm.GetTrans());
                q.data = TOQUAT( Quat(tm), true );
+
+               if (t != range.Start()){
+                  if ( QuatDot(q.data, prevq) < 0.0f )
+                     q.data.Set(-q.data.w, -q.data.x, -q.data.y, -q.data.z);
+               }
+               prevq = q.data;
+
                posKeys.push_back( p );
                rotKeys.push_back( q );
             }
@@ -1212,13 +1287,13 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                }           
             }
          }
-		 // only add transform data object if data actually is present
-		 if (!keepData) {
-			 ninode->RemoveController(timeControl);
-			 timeControl = NULL;
-		 } else {
-			 objRefs.insert( StaticCast<NiAVObject>(ninode) );
-		 }
+         // only add transform data object if data actually is present
+         if (!keepData) {
+            ninode->RemoveController(timeControl);
+            timeControl = NULL;
+         } else {
+            objRefs.insert( StaticCast<NiAVObject>(ninode) );
+         }
       }
    }
    return timeControl;

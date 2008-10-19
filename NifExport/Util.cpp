@@ -115,6 +115,26 @@ void Exporter::nodeTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, T
 	rot.w = q.w;
 }
 
+void Exporter::objectTransform(Matrix33 &rot, Vector3 &trans, INode *node, TimeValue t, bool local)
+{
+   Matrix3 tm = getObjectTransform(node, t, local);
+   convertMatrix(rot, tm);
+   trans.Set(tm.GetTrans().x, tm.GetTrans().y, tm.GetTrans().z);
+}
+
+void Exporter::objectTransform(QuaternionXYZW &rot, Vector3 &trans, INode *node, TimeValue t, bool local)
+{
+   Matrix33 rm;
+   objectTransform(rm, trans, node, t, local);
+
+   Quaternion q = rm.AsQuaternion();
+   rot.x = q.x;
+   rot.y = q.y;
+   rot.z = q.z;
+   rot.w = q.w;
+}
+
+
 bool Exporter::equal(const Vector3 &a, const Point3 &b, float thresh)
 {
 	return (fabsf(a.x-b.x) <= thresh) &&

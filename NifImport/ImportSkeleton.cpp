@@ -566,7 +566,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       vector<NiNodeRef> childNodes = DynamicCast<NiNode>(children);
 
       NiAVObject::CollisionType cType = node->GetCollisionMode();
-      if (children.empty() && name=="Bounding Box")
+      if (children.empty())
          return;
 
       // Do all node manipulations here

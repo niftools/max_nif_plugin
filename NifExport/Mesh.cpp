@@ -119,12 +119,12 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 			result = Error;
 			break;
 		}
-		bool exportStrips = mTriStrips;
+		bool exportStrips = mTriStrips && (Exporter::mNifVersionInt > VER_4_2_2_0);
 
 		Matrix44 tm = Matrix44::IDENTITY;
 		if (!mExportExtraNodes) {
 			Matrix33 rot; Vector3 trans;
-			nodeTransform(rot, trans, node, t, local);
+			objectTransform(rot, trans, node, t, local);
 			tm = Matrix44(trans, rot, 1.0f);
 		} else {
 			tm = TOMATRIX4(getObjectTransform(node, t, false) * Inverse(getNodeTransform(node, t, false)));
@@ -210,7 +210,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	data->SetConsistencyFlags(CT_STATIC);
 	shape->SetData(data);
 
-   if (Exporter::mTangentAndBinormalExtraData)
+   if (Exporter::mTangentAndBinormalExtraData && (Exporter::mNifVersionInt > VER_4_2_2_0))
 	   shape->UpdateTangentSpace(Exporter::mTangentAndBinormalMethod);
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));

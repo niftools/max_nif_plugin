@@ -260,12 +260,6 @@ Exporter::Result Exporter::exportNodes(NiNodeRef &parent, INode *node)
 	TimeValue t = 0;
 	ObjectState os = node->EvalWorldState(t);
 
-	if (nodeName == TSTR("Bip01 Footsteps"))
-	{
-		nodeName = nodeName;
-	}
-
-
 	// Always skip bones and bipeds
 	SClass_ID scid = node->SuperClassID();
 	Class_ID ncid = node->ClassID();
