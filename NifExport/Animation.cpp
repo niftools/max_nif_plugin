@@ -67,6 +67,8 @@ struct AnimationExport
    bool exportController(INode *node, Exporter::AccumType accumType);
    Control *GetTMController(INode* node);
    NiTimeControllerRef exportController(INode *node, Interval range, bool setTM );
+
+   bool SampleAnimation( INode * node, Interval &range, PosRotScale prs, NiKeyframeDataRef data );
    bool GetTextKeys(INode *node, vector<StringKey>& textKeys);
    bool splitAccum(NiTransformDataRef base, NiTransformDataRef accum, Exporter::AccumType accumType);
    void GetTimeRange(Control *c, Interval& range);
@@ -733,6 +735,33 @@ static void GetTimeRange(Control *c, Interval& range)
 			}
 		}
 	}
+#if VERSION_3DSMAX >= ((5000<<16)+(9<<8)+0) // Version 5+
+   if ( IListControl* listc = GetIListControlInterface(c) )
+   {
+      if ( listc->GetListCount() > 0 )
+      {
+         if (  !AnimationExport::globalRange.Empty() 
+            && range.Start() < AnimationExport::globalRange.Start()
+            )
+         {
+            range.SetStart(AnimationExport::globalRange.Start());
+         }
+         if (  !AnimationExport::globalRange.Empty() 
+            && range.End() > AnimationExport::globalRange.End()
+            )
+         {
+            range.SetEnd(AnimationExport::globalRange.End());
+         }
+      }
+      //for (int i = 0; i < listc->GetListCount(); ++i)
+      //{
+      //   if (Control* subc = (Control*)listc->SubAnim(i))
+      //   {
+      //      GetTimeRange(subc, range);
+      //   }
+      //}
+   }
+#endif   
 
    //if (IKeyControl *ikeys = GetKeyControlInterface(c)){
    //   int n = ikeys->GetNumKeys();
@@ -1054,42 +1083,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
 #endif
          else if (cID == IKCONTROL_CLASS_ID || cID == IKCHAINCONTROL_CLASS_ID )
          {
-            // query MAX for the number of keyframes
-            int iNumKeys = tmCont->NumKeys();
-
-            vector<Vector3Key> posKeys;
-            vector<QuatKey> rotKeys;
-            TimeValue interval = (range.Duration()) / TicksPerFrame;
-            Quaternion prevq;
-            for (TimeValue t = range.Start(); t <= range.End(); t += interval)
-            {
-               //TimeValue t = tmCont->GetKeyTime(i);
-               Matrix3 tm = ne.getNodeTransform(node, t, true);
-               Vector3Key p;
-               QuatKey q;
-               q.time = p.time = FrameToTime(t);
-               p.data = TOVECTOR3(tm.GetTrans());
-               q.data = TOQUAT( Quat(tm), true );
-
-               if (t != range.Start()){
-                  if ( QuatDot(q.data, prevq) < 0.0f )
-                     q.data.Set(-q.data.w, -q.data.x, -q.data.y, -q.data.z);
-               }
-               prevq = q.data;
-
-               posKeys.push_back( p );
-               rotKeys.push_back( q );
-            }
-
-            // Dont really know what else to use since I cant get anything but the raw data.
-            data->SetTranslateType(LINEAR_KEY);
-            data->SetTranslateKeys(posKeys);
-            data->SetRotateType(LINEAR_KEY);
-            data->SetQuatRotateKeys(rotKeys);
-            //data->SetScaleKeys();
-            if (iNumKeys != 0) { // if no changes set the base transform
-               keepData = true;
-            }
+            keepData |= SampleAnimation(node, range, prsDefault, data);
          }
 
          //if (validity.InInterval(range))
@@ -1105,9 +1099,21 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             if (Control *c = tmCont->GetPositionController()) 
             {
                int nkeys = 0;
+
+
+#if VERSION_3DSMAX >= ((5000<<16)+(9<<8)+0) // Version 5+
+               if ( IListControl* listc = GetIListControlInterface(c) )
+               {
+                  keepData = SampleAnimation(node, range, prsPos, data);
+               }
+#endif
                // separate xyz
-               if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
-               { 
+               if (keepData)
+               {
+                  // already handled,  just skip below
+               }
+               else if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
+               {
                   KeyType kType = QUADRATIC_KEY;
                   vector<FloatKey> xkeys, ykeys, zkeys;
                   if (Control *x = c->GetXController()){
@@ -1427,6 +1433,52 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
    return ok;
 }
 
+bool AnimationExport::SampleAnimation( INode * node, Interval &range, PosRotScale prs, NiKeyframeDataRef data)
+{
+   bool keepData = false;
+
+   vector<Vector3Key> posKeys;
+   vector<QuatKey> rotKeys;
+   TimeValue interval = (range.Duration()) / TicksPerFrame;
+   Quaternion prevq;
+   for (TimeValue t = range.Start(); t <= range.End(); t += interval)
+   {
+      Matrix3 tm = ne.getNodeTransform(node, t, true);
+      Vector3Key p;
+      QuatKey q;
+      q.time = p.time = FrameToTime(t);
+      p.data = TOVECTOR3(tm.GetTrans());
+      q.data = TOQUAT( Quat(tm), true );
+
+      if (t != range.Start()){
+         if ( QuatDot(q.data, prevq) < 0.0f )
+            q.data.Set(-q.data.w, -q.data.x, -q.data.y, -q.data.z);
+      }
+      prevq = q.data;
+
+      posKeys.push_back( p );
+      rotKeys.push_back( q );
+   }
+
+   // Dont really know what else to use since I cant get anything but the raw data.
+   if (prs & prsPos && !posKeys.empty())
+   {
+      data->SetTranslateType(LINEAR_KEY);
+      data->SetTranslateKeys(posKeys);
+      keepData = true;
+   }
+   if (prs & prsRot && !rotKeys.empty())
+   {
+      data->SetRotateType(LINEAR_KEY);
+      data->SetQuatRotateKeys(rotKeys);
+      keepData = true;
+   }
+   if (prs & prsScale)
+   {
+      //data->SetScaleKeys();
+   }
+   return keepData;
+}
 Exporter::Result Exporter::exportGeomMorpherControl(Modifier* mod, vector<Vector3>& baseVerts, vector<int>& baseVertIdx, NiObjectNETRef owner)
 {
 	// Check for morphs
