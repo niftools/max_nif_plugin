@@ -25,6 +25,7 @@ NifTools MaxPlugin
       - Remove nifgmax.exe in favor of a dll approach to starting gmax.exe
       - Updated mopp generation code to use materials
       - Fix tangent and binormal export calculation
+      - Support for spring position animations support
     
       0.2.17
       ------
