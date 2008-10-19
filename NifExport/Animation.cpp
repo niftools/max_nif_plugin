@@ -962,7 +962,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             TimeValue interval = (range.Duration()) / TicksPerFrame;
 
             Quaternion prevq;
-            for (TimeValue t = range.Start(); t < range.End(); t += interval)
+            for (TimeValue t = range.Start(); t <= range.End(); t += interval)
             {
                //TimeValue t = tmCont->GetKeyTime(i);
                Matrix3 tm = ne.getNodeTransform(node, t, true);
@@ -1061,7 +1061,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             vector<QuatKey> rotKeys;
             TimeValue interval = (range.Duration()) / TicksPerFrame;
             Quaternion prevq;
-            for (TimeValue t = range.Start(); t < range.End(); t += interval)
+            for (TimeValue t = range.Start(); t <= range.End(); t += interval)
             {
                //TimeValue t = tmCont->GetKeyTime(i);
                Matrix3 tm = ne.getNodeTransform(node, t, true);
