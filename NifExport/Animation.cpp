@@ -58,7 +58,7 @@ static Interval GetTimeRange(INode *node);
 
 struct AnimationExport
 {
-   AnimationExport(Exporter& parent) : ne(parent) {}
+   AnimationExport(Exporter& parent) : ne(parent) { }
 
    INode * findTrackedNode(INode *root);
 
@@ -74,7 +74,6 @@ struct AnimationExport
    void GetTimeRange(Control *c, Interval& range);
    Interval GetTimeRange(INode *node);
 
-   static Interval globalRange;
    Exporter &ne;
    Interval range;
    NiControllerSequenceRef seq;
@@ -82,7 +81,6 @@ struct AnimationExport
    set<NiAVObjectRef> objRefs;
    map<NiControllerSequenceRef, Interval> ranges;
 };
-Interval AnimationExport::globalRange;
 
 float QuatDot(const Quaternion& q, const Quaternion&p)
 {
@@ -289,18 +287,12 @@ Exporter::Result Exporter::scanForAnimation(INode *node)
    Interval nodeRange = GetTimeRange(node);
    if (!nodeRange.Empty())
    {
-      if (  AnimationExport::globalRange.Empty() 
-         || nodeRange.Start() < AnimationExport::globalRange.Start()
-         )
-      {
-         AnimationExport::globalRange.SetStart(nodeRange.Start());
-      }
-      if (  AnimationExport::globalRange.Empty() 
-         || nodeRange.End() > AnimationExport::globalRange.End()
-         )
-      {
-         AnimationExport::globalRange.SetEnd(nodeRange.End());
-      }
+      if (globalRange.Empty())
+         globalRange = nodeRange;
+      if (  globalRange.Empty() || nodeRange.Start() < globalRange.Start() )
+         globalRange.SetStart(nodeRange.Start());
+      if (  globalRange.Empty() || nodeRange.End() > globalRange.End() )
+         globalRange.SetEnd(nodeRange.End());
    }
 
 	// Ideally check for Morph: targets
@@ -712,7 +704,7 @@ Control *AnimationExport::GetTMController(INode *n)
    return c;
 }
 
-static void GetTimeRange(Control *c, Interval& range)
+void Exporter::GetTimeRange(Control *c, Interval& range)
 {
    //if ( Exporter::mExportType == Exporter::NIF_WO_ANIM ) 
    //   return;
@@ -740,18 +732,12 @@ static void GetTimeRange(Control *c, Interval& range)
    {
       if ( listc->GetListCount() > 0 )
       {
-         if (  !AnimationExport::globalRange.Empty() 
-            && range.Start() < AnimationExport::globalRange.Start()
-            )
-         {
-            range.SetStart(AnimationExport::globalRange.Start());
-         }
-         if (  !AnimationExport::globalRange.Empty() 
-            && range.End() > AnimationExport::globalRange.End()
-            )
-         {
-            range.SetEnd(AnimationExport::globalRange.End());
-         }
+         if (range.Empty())
+            range = globalRange;
+         if (  !globalRange.Empty() && range.Start() > globalRange.Start() )
+            range.SetStart(globalRange.Start());
+         if (  !globalRange.Empty() && range.End() < globalRange.End() )
+            range.SetEnd(globalRange.End());
       }
       //for (int i = 0; i < listc->GetListCount(); ++i)
       //{
@@ -780,7 +766,7 @@ static void GetTimeRange(Control *c, Interval& range)
    //}
 }
 
-static Interval GetTimeRange(INode *node)
+Interval Exporter::GetTimeRange(INode *node)
 {
    Interval range;
    range.SetEmpty();
@@ -841,12 +827,12 @@ static Interval GetTimeRange(INode *node)
 
 void AnimationExport::GetTimeRange(Control *c, Interval& range)
 {
-   ::GetTimeRange(c, range);
+   ne.GetTimeRange(c, range);
 }
 
 Interval AnimationExport::GetTimeRange(INode *node)
 {
-   Interval range = ::GetTimeRange(node);
+   Interval range = ne.GetTimeRange(node);
    if (range.Empty())
    {
       // Allow specific types of controllers to use the global range
@@ -859,7 +845,7 @@ Interval AnimationExport::GetTimeRange(INode *node)
             || cID == IKCHAINCONTROL_CLASS_ID 
             )
          {
-            range = globalRange;
+            range = ne.globalRange;
          }
       }
    }
@@ -1247,6 +1233,9 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                      }
                      data->SetZRotateKeys(keys);
                   }
+                  // XYZ can have adverse affects if no keys are present
+                  if (nkeys == 0)
+                     data->SetRotateType(QUADRATIC_KEY);
                } else if (c->ClassID() == Class_ID(TCBINTERP_ROTATION_CLASS_ID,0)) {
                   vector<QuatKey> keys;
                   data->SetRotateType(TBC_KEY);

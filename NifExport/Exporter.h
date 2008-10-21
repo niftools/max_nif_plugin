@@ -175,6 +175,8 @@ public:
    bool                 mIsBethesda;
    Box3                 mBoundingBox;
    NodeList             mAnimationRoots;
+   Interval             globalRange;
+
 
    Result					exportNodes(NiNodeRef &root, INode *node);
    Result					exportCollision(NiNodeRef &root, INode *node);
@@ -291,6 +293,8 @@ public:
    Ref<NiTimeController> CreateController(INode *node, Interval range);
    static void          InitializeTimeController(Ref<NiTimeController> ctrl, NiNodeRef parent);
    Result               exportGeomMorpherControl(Modifier* mod, vector<Niflib::Vector3>& verts, vector<int>& baseVertIdx, NiObjectNETRef owner);
+   void                 GetTimeRange(Control *c, Interval& range);
+   Interval             GetTimeRange(INode *node);
 
    /* misc export */
    bool                 exportUPB(NiNodeRef &root, INode *node);
