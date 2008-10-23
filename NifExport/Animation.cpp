@@ -713,6 +713,7 @@ void Exporter::GetTimeRange(Control *c, Interval& range)
 	//if ( (cID == BIPSLAVE_CONTROL_CLASS_ID) 
 	//	|| (cID == BIPBODY_CONTROL_CLASS_ID) 
 	//	|| (cID == FOOTPRINT_CLASS_ID) )
+   if (c->IsKeyable())
 	{
 		int iNumKeys = c->NumKeys();
 		for (int i = 0; i < iNumKeys; i++) {
@@ -726,11 +727,28 @@ void Exporter::GetTimeRange(Control *c, Interval& range)
 					range.SetEnd(t);
 			}
 		}
-	}
-#if VERSION_3DSMAX >= ((5000<<16)+(9<<8)+0) // Version 5+
-   if ( IListControl* listc = GetIListControlInterface(c) )
+      if (range.Empty())
+      {
+         if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+            int n = ikeys->GetNumKeys();
+            for (int i=0; i<n; ++i){
+               AnyKey buf; IKey *key = (IKey*)buf;
+               ikeys->GetKey(i, key);
+               if (range.Empty()) {
+                  range.SetInstant(key->time);
+               } else {
+                  if (key->time < range.Start())
+                     range.SetStart(key->time);
+                  if (key->time > range.End())
+                     range.SetEnd(key->time);
+               }
+            }
+         }
+      }
+   }
+   if (range.Empty())
    {
-      if ( listc->GetListCount() > 0 )
+      if (c->IsAnimated())
       {
          if (range.Empty())
             range = globalRange;
@@ -738,32 +756,53 @@ void Exporter::GetTimeRange(Control *c, Interval& range)
             range.SetStart(globalRange.Start());
          if (  !globalRange.Empty() && range.End() < globalRange.End() )
             range.SetEnd(globalRange.End());
+
+         //Tab<TimeValue> times;
+         //if ( c->GetKeyTimes( times,FOREVER, KEYAT_POSITION ) ) {
+         //   for (int i=0; i<times.Count(); ++i){
+         //      TimeValue time = times[i];
+         //      if (range.Empty()) {
+         //         range.SetInstant(time);
+         //      } else {
+         //         if (time < range.Start())
+         //            range.SetStart(time);
+         //         if (time > range.End())
+         //            range.SetEnd(time);
+         //      }
+         //   }
+         //}
+         //if ( c->GetKeyTimes( times,FOREVER, KEYAT_ROTATION ) ) {
+         //   for (int i=0; i<times.Count(); ++i){
+         //      TimeValue time = times[i];
+         //      if (range.Empty()) {
+         //         range.SetInstant(time);
+         //      } else {
+         //         if (time < range.Start())
+         //            range.SetStart(time);
+         //         if (time > range.End())
+         //            range.SetEnd(time);
+         //      }
+         //   }
+         //}
       }
-      //for (int i = 0; i < listc->GetListCount(); ++i)
-      //{
-      //   if (Control* subc = (Control*)listc->SubAnim(i))
-      //   {
-      //      GetTimeRange(subc, range);
-      //   }
-      //}
+   }
+#if VERSION_3DSMAX >= ((5000<<16)+(9<<8)+0) // Version 5+
+   if (range.Empty())
+   {
+      if ( IListControl* listc = GetIListControlInterface(c) )
+      {
+         if ( listc->GetListCount() > 0 )
+         {
+            if (range.Empty())
+               range = globalRange;
+            if (  !globalRange.Empty() && range.Start() > globalRange.Start() )
+               range.SetStart(globalRange.Start());
+            if (  !globalRange.Empty() && range.End() < globalRange.End() )
+               range.SetEnd(globalRange.End());
+         }
+      }
    }
 #endif   
-
-   //if (IKeyControl *ikeys = GetKeyControlInterface(c)){
-   //   int n = ikeys->GetNumKeys();
-   //   for (int i=0; i<n; ++i){
-   //      AnyKey buf; IKey *key = (IKey*)buf;
-   //      ikeys->GetKey(i, key);
-   //      if (range.Empty()) {
-   //         range.SetInstant(key->time);
-   //      } else {
-   //         if (key->time < range.Start())
-   //            range.SetStart(key->time);
-   //         if (key->time > range.End())
-   //            range.SetEnd(key->time);
-   //      }
-   //   }
-   //}
 }
 
 Interval Exporter::GetTimeRange(INode *node)
@@ -1155,10 +1194,10 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                      data->SetTranslateType(TBC_KEY);
                      nkeys += GetKeys<Vector3Key, ITCBPoint3Key>(c, keys, range);
                   } else {
-                     data->SetTranslateType(QUADRATIC_KEY);
-                     nkeys += GetKeys<Vector3Key, IBezPoint3Key>(c, keys, range);
+                     keepData = SampleAnimation(node, range, prsPos, data);
                   }
-                  data->SetTranslateKeys(keys);
+                  if (!keys.empty())
+                     data->SetTranslateKeys(keys);
                }
                if (nkeys != 0) { // if no changes set the base transform
                   keepData = true;
@@ -1241,6 +1280,8 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
                   data->SetRotateType(TBC_KEY);
                   nkeys += GetKeys<QuatKey, ITCBRotKey>(c, keys, range);
                   data->SetQuatRotateKeys(keys);
+               } else {
+                  keepData = SampleAnimation(node, range, prsRot, data);
                }
                if (nkeys != 0) { // if no changes set the base transform
                   keepData = true;
