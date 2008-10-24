@@ -3,6 +3,7 @@ NifTools MaxPlugin
 
     Change log
     ----------
+
       3.0
       ------
     o All
