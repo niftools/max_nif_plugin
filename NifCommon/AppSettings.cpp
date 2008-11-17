@@ -49,6 +49,7 @@ void AppSettings::ReadSettings(string iniFile)
 
    NiVersion = GetSetting<string>("NiVersion", "20.0.0.5");
    NiUserVersion = GetSetting<int>("NiUserVersion", 0);
+	NiUserVersion2 = GetSetting<int>("NiUserVersion2", 0);
 
    rootPath = GetSetting<string>("RootPath");
    rootPaths = TokenizeString(GetSetting<string>("RootPaths").c_str(), ";");
@@ -77,6 +78,7 @@ void AppSettings::WriteSettings(Interface *gi)
    {
       SetIniValue(Name.c_str(), "NiVersion", NiVersion.c_str(), iniName);
       SetIniValue(Name.c_str(), "NiUserVersion", FormatString("%d", NiUserVersion).c_str(), iniName);
+		SetIniValue(Name.c_str(), "NiUserVersion2", FormatString("%d", NiUserVersion2).c_str(), iniName);
    }
 }
 
@@ -134,7 +136,7 @@ bool AppSettings::IsFileInRootPaths(const std::string& fname)
       PathAddBackslash(root);
       PathMakePretty(root);
       if (-1 != _taccess(root,0)) {
-         int len = _tcslen(root);
+         size_t len = _tcslen(root);
          if (0 == _tcsncmp(root, file, len))
             return true;
       }
@@ -167,7 +169,7 @@ std::string AppSettings::GetRelativeTexPath(const std::string& fname, const std:
          PathAddBackslash(root);
          PathMakePretty(root);
          if (-1 != _taccess(root,0)) {
-            int len = _tcslen(root);
+            size_t len = _tcslen(root);
             if (0 == _tcsncmp(root, file, len))
                return string(file+len);
          }
@@ -182,6 +184,13 @@ std::string AppSettings::GetRelativeTexPath(const std::string& fname, const std:
          }
       }
    }
+
+	// check if prefix is in place if so then just return fname as is
+	if (_tcsnicmp(fname.c_str(), prefix.c_str(), prefix.size()) == 0)
+	{
+		return fname;
+	}
+
    // Now just combine prefix with file portion of the name
    PathCombine(buffer, prefix.c_str(), PathFindFileName(fname.c_str()));
    return string(buffer);

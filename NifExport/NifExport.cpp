@@ -2,6 +2,7 @@
 #include "AppSettings.h"
 #include "niutils.h"
 #include  <io.h>
+#include "obj/BSFadeNode.h"
 #include "obj/NiControllerManager.h"
 #include "obj/NiTimeController.h"
 #include "obj/NiControllerSequence.h"
@@ -117,11 +118,13 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
          string selection = Exporter::mGameName;
          string version = Exporter::mNifVersion;
          string userVer = FormatString("%d", Exporter::mNifUserVersion);
+			string userVer2 = FormatString("%d", Exporter::mNifUserVersion2);
          for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr)
             SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_ADDSTRING, 0, LPARAM(itr->Name.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_SELECTSTRING, WPARAM(-1), LPARAM(selection.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+			SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION2, WM_SETTEXT, 0, LPARAM(userVer2.c_str()));
          CheckDlgButton(hWnd, IDC_CHK_AUTO_DETECT, Exporter::mAutoDetect);
 
          // Populate Type options
@@ -233,6 +236,8 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
                Exporter::mNifVersion = tmp;
                GetDlgItemText(hWnd, IDC_CB_USER_VERSION, tmp, MAX_PATH);
                Exporter::mNifUserVersion = strtol(tmp, &end, 0);
+					GetDlgItemText(hWnd, IDC_CB_USER_VERSION2, tmp, MAX_PATH);
+					Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
             }
             Exporter::mAutoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT);
 
@@ -267,8 +272,10 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             {
                string version = appSettings->NiVersion;
                string userVer = FormatString("%d", appSettings->NiUserVersion);
+					string userVer2 = FormatString("%d", appSettings->NiUserVersion2);
                SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
                SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+					SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION2, WM_SETTEXT, 0, LPARAM(userVer2.c_str()));
             }
          }
       }
@@ -440,6 +447,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 
    int nifVersion = VER_20_0_0_5;
    int nifUserVer = Exporter::mNifUserVersion;
+	int nifUserVer2 = Exporter::mNifUserVersion2;
    if (!Exporter::mNifVersion.empty())
    {
       nifVersion = ParseVersionString(Exporter::mNifVersion);
@@ -457,14 +465,14 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
    {
       Exporter::mExportType = Exporter::NIF_WO_KF;
    }
-   Niflib::NifInfo info(nifVersion, nifUserVer, nifUserVer);
+   Niflib::NifInfo info(nifVersion, nifUserVer, nifUserVer2);
    info.endian = ENDIAN_LITTLE;
    info.creator = Exporter::mCreatorName;
    info.exportInfo1 = FormatText("Niftools 3ds Max Plugins %s", fileVersion.data());
 
 	Exporter exp(i, appSettings);
 	
-	Ref<NiNode> root = new NiNode();
+	Ref<NiNode> root = exp.IsFallout3() ? new BSFadeNode() : new NiNode();
 	Exporter::Result result = exp.doExport(root, i->GetRootNode());
 
 	if (result!=Exporter::Ok)

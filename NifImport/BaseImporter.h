@@ -33,6 +33,7 @@ public:
    TSTR webSite;
    TSTR wikiSite;
    int nifVersion;
+	int userVersion;
 
    Niflib::NiObjectRef root;
 

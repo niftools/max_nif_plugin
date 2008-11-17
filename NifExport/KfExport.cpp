@@ -90,11 +90,13 @@ static INT_PTR CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPa
          string selection = Exporter::mGameName;
          string version = Exporter::mNifVersion;
          string userVer = FormatString("%d", Exporter::mNifUserVersion);
+			string userVer2 = FormatString("%d", Exporter::mNifUserVersion2);
          for (AppSettingsMap::iterator itr = TheAppSettings.begin(), end = TheAppSettings.end(); itr != end; ++itr)
             SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_ADDSTRING, 0, LPARAM(itr->Name.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_GAME, CB_SELECTSTRING, WPARAM(-1), LPARAM(selection.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
          SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+			SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION2, WM_SETTEXT, 0, LPARAM(userVer2.c_str()));
 
          imp->mDlgResult = IDCANCEL;
       }
@@ -140,6 +142,8 @@ static INT_PTR CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPa
                Exporter::mNifVersion = tmp;
                GetDlgItemText(hWnd, IDC_CB_USER_VERSION, tmp, MAX_PATH);
                Exporter::mNifUserVersion = strtol(tmp, &end, 0);
+					GetDlgItemText(hWnd, IDC_CB_USER_VERSION2, tmp, MAX_PATH);
+					Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
             }
 
             EndDialog(hWnd, imp->mDlgResult=IDOK);
@@ -173,8 +177,10 @@ static INT_PTR CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPa
             {
                string version = appSettings->NiVersion;
                string userVer = FormatString("%d", appSettings->NiUserVersion);
+					string userVer2 = FormatString("%d", appSettings->NiUserVersion2);
                SendDlgItemMessage(hWnd, IDC_CB_VERSION, WM_SETTEXT, 0, LPARAM(version.c_str()));
                SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION, WM_SETTEXT, 0, LPARAM(userVer.c_str()));
+					SendDlgItemMessage(hWnd, IDC_CB_USER_VERSION2, WM_SETTEXT, 0, LPARAM(userVer2.c_str()));
             }
          }
       }

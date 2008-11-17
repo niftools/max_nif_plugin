@@ -89,6 +89,7 @@ public:
    static string        mNifVersion;
    static int           mNifVersionInt;
    static int           mNifUserVersion;
+	static int           mNifUserVersion2;
    static bool				mSkeletonOnly;
    static bool				mExportCameras;
    static bool          mGenerateBoneCollision;
@@ -172,7 +173,6 @@ public:
    INodeMap             mHandledNodes;
    INode*               mSceneCollisionNode;
    CallbackList         mPostExportCallbacks;
-   bool                 mIsBethesda;
    Box3                 mBoundingBox;
    NodeList             mAnimationRoots;
    Interval             globalRange;
@@ -310,6 +310,11 @@ public:
    void                 ApplyAllSkinOffsets( NiAVObjectRef & root );
    void                 sortVector3(vector<Vector3>& vector);
    void                 sortVector4(vector<Vector4>& vector);
+
+	/* specific versions */
+	bool IsFallout3() const;
+	bool IsOblivion() const;
+	bool IsMorrowind() const;
 
    /* Progress Bar stuff */
    enum ProgressSection

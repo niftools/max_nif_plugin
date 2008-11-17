@@ -579,7 +579,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			InitializeTimeController(new NiTransformController(), newParent);
 
 		bool isBoneRoot = false;
-		if (mIsBethesda)
+		if (IsOblivion())
 		{
 			// Check for Bone Root
 			TSTR upb;
@@ -678,7 +678,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			NiNodeRef accumNode = createAccumNode(newParent, node);
 
 			// Transfer collision object to accum and create blend on accum
-			if (mIsBethesda) {
+			if (IsOblivion()) {
 				InitializeTimeController(new bhkBlendController(), accumNode);
 				accumNode->SetCollisionObject(newParent->GetCollisionObject());
 				newParent->SetCollisionObject( NiCollisionObjectRef() );

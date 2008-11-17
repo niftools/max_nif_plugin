@@ -131,6 +131,7 @@ public:
    bool ImportSkin(ImpNode *node, Niflib::NiTriBasedGeomRef triGeom, int v_start=0);
    Texmap* CreateTexture(Niflib::TexDesc& desc);
    Texmap* CreateTexture(Niflib::NiTexturePropertyRef desc);
+	Texmap* CreateTexture(const string& name);
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);
    INode *CreateCamera(const string& name);
@@ -160,6 +161,10 @@ public:
    bool AddNoteTracks(float time, string name, string target, Niflib::Ref<Niflib::NiTextKeyExtraData> textKeyData, bool loop);
 
    void WeldVertices(Mesh& mesh);
+
+	bool IsFallout3() const;
+	bool IsOblivion() const;
+	bool IsMorrowind() const;
 
    protected: 
       NifImporter();

@@ -21,6 +21,13 @@ HISTORY:
 #include "obj/NiDitherProperty.h"
 #include "obj/NiSpecularProperty.h"
 #include "obj/NiTextureProperty.h"
+#include "obj/BSShaderNoLightingProperty.h"
+#include "obj/BSShaderPPLightingProperty.h"
+#include "obj/BSShaderTextureSet.h"
+#include "obj/SkyShaderProperty.h"
+#include "obj/TileShaderProperty.h"
+#include "obj/TallGrassShaderProperty.h"
+#include "obj/Lighting30ShaderProperty.h"
 #include "obj/NiImage.h"
 #include "objectParams.h"
 using namespace Niflib;
@@ -124,31 +131,76 @@ Texmap* NifImporter::CreateTexture(NiTexturePropertyRef texSrc)
 	return NULL;
 }
 
+Texmap* NifImporter::CreateTexture(const string& filename)
+{
+	if (filename.empty())
+		return NULL;
+
+	BitmapManager *bmpMgr = TheManager;
+	if (bmpMgr->CanImport(filename.c_str())){
+		BitmapTex *bmpTex = NewDefaultBitmapTex();
+		string name = filename;
+		if (name.empty()) {
+			TCHAR buffer[MAX_PATH];
+			_tcscpy(buffer, PathFindFileName(filename.c_str()));
+			PathRemoveExtension(buffer);
+			name = buffer;
+		}         
+		bmpTex->SetName(name.c_str());
+		bmpTex->SetMapName(const_cast<TCHAR*>(FindImage(filename).c_str()));
+		bmpTex->SetAlphaAsMono(TRUE);
+		bmpTex->SetAlphaSource(ALPHA_DEFAULT);
+
+		bmpTex->SetFilterType(FILTER_PYR); 
+
+		if (showTextures) {
+			bmpTex->SetMtlFlag(MTL_TEX_DISPLAY_ENABLED, TRUE);
+			bmpTex->ActivateTexDisplay(TRUE);
+			bmpTex->NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);
+		}
+
+		if (UVGen *uvGen = bmpTex->GetTheUVGen()){
+			uvGen->SetTextureTiling(0);
+		}
+
+		return bmpTex;
+	}
+	return NULL;
+}
+
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
    // Texture
    NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TYPE);
    if (matRef != NULL){
-      NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TYPE);
-	  NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE);
-      NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TYPE);
-      NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
-      NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
-      NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TYPE);
 
-      StdMat2 *m = NewDefaultStdMat();
-      m->SetName(matRef->GetName().c_str());
-	  if (showTextures) {
-         m->SetMtlFlag(MTL_DISPLAY_ENABLE_FLAGS, TRUE);
-	  }
-
-      // try the civ4 shader first then default back to normal shaders
-      if (ImportCiv4Shader(node, avObject, m)) {
-         return m;
+		StdMat2 *m = NewDefaultStdMat();
+		m->SetName(matRef->GetName().c_str());
+		if (showTextures) {
+			m->SetMtlFlag(MTL_DISPLAY_ENABLE_FLAGS, TRUE);
 		}
-      m->SetAmbient(TOCOLOR(matRef->GetAmbientColor()),0);
-      m->SetDiffuse(TOCOLOR(matRef->GetDiffuseColor()),0);
-      m->SetSpecular(TOCOLOR(matRef->GetSpecularColor()),0);
+
+		// try the civ4 shader first then default back to normal shaders
+		if (ImportCiv4Shader(node, avObject, m)) {
+			return m;
+		}
+
+		NiTexturingPropertyRef texRef = avObject->GetPropertyByType(NiTexturingProperty::TYPE);
+		NiWireframePropertyRef wireRef = avObject->GetPropertyByType(NiWireframeProperty::TYPE);
+		NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
+		NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
+		NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TYPE);
+		vector<NiPropertyRef> props = avObject->GetProperties();
+
+		if (IsFallout3()) {
+			m->SetAmbient(Color(0.588f, 0.588f, 0.588f),0);
+			m->SetDiffuse(Color(0.588f, 0.588f, 0.588f),0);
+			m->SetSpecular(Color(0.902f, 0.902f, 0.902f),0);
+		} else {
+			m->SetAmbient(TOCOLOR(matRef->GetAmbientColor()),0);
+			m->SetDiffuse(TOCOLOR(matRef->GetDiffuseColor()),0);
+			m->SetSpecular(TOCOLOR(matRef->GetSpecularColor()),0);
+		}
       Color c = TOCOLOR(matRef->GetEmissiveColor());
       if (c.r != 0 || c.b != 0 || c.g != 0) {
          m->SetSelfIllumColorOn(TRUE);
@@ -210,14 +262,47 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
                m->SetSubTexmap(ID_SI, tex);
          }
       }
-	  if (NULL != tex2Ref)
-	  {
-		  // Handle Base/Detail ???
-		  if (Texmap* tex = CreateTexture(tex2Ref)) {
-			  m->SetSubTexmap(ID_DI, tex);
-		  } 
-	  }
-      return m;
+		if (NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE)){
+			// Handle Base/Detail ???
+			if (Texmap* tex = CreateTexture(tex2Ref)) {
+				m->SetSubTexmap(ID_DI, tex);
+			} 
+		}
+		if (BSShaderNoLightingPropertyRef noLightShadeRef = SelectFirstObjectOfType<BSShaderNoLightingProperty>(props)) {
+			if ( Texmap* tex = CreateTexture( noLightShadeRef->GetFileName() ) ) {
+				m->SetSubTexmap(ID_AM, tex);
+			}
+		}
+		if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
+			if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
+					m->SetSubTexmap(ID_AM, tex);
+				}
+			}
+		}
+		if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
+			if ( Texmap* tex = CreateTexture( skyShadeRef->GetFileName() ) ) {
+				m->SetSubTexmap(ID_AM, tex);
+			}
+		}
+		if (TileShaderPropertyRef tileShadeRef = SelectFirstObjectOfType<TileShaderProperty>(props)) {
+			if ( Texmap* tex = CreateTexture( tileShadeRef->GetFileName() ) ) {
+				m->SetSubTexmap(ID_AM, tex);
+			}
+		}
+		if (TallGrassShaderPropertyRef grassShadeRef = SelectFirstObjectOfType<TallGrassShaderProperty>(props)) {
+			if ( Texmap* tex = CreateTexture( grassShadeRef->GetFileName() ) ) {
+				m->SetSubTexmap(ID_AM, tex);
+			}
+		}
+		if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
+			if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
+					m->SetSubTexmap(ID_AM, tex);
+				}
+			}
+		}
+		return m;
    }
    return NULL;
 }
@@ -274,6 +359,11 @@ bool NifImporter::ImportCiv4Shader(ImpNode *node, NiAVObjectRef avObject, StdMat
       Color emittance = TOCOLOR(matRef->GetEmissiveColor());
       float shininess = matRef->GetGlossiness();
       float alpha = matRef->GetTransparency() * 100.0f;
+
+		if ( IsFallout3() ) {
+			ambient = diffuse = Color(0.588f, 0.588f, 0.588f);
+			specular = Color(0.902f, 0.902f, 0.902f);
+		}
 
       mtl->SetShinStr(0.0,0);
       mtl->SetShininess(shininess/100.0,0);
@@ -367,9 +457,6 @@ bool NifImporter::ImportCiv4Shader(ImpNode *node, NiAVObjectRef avObject, StdMat
       {
          ntex = min(ntex, 7);
          TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
-         NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();       
-         texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
-         texProp->SetTextureCount(7);
          for (int i = 0; i < ntex; ++i) {
             TexType textype = texmap[i];
             if (texRef->HasTexture(textype)){
@@ -380,6 +467,48 @@ bool NifImporter::ImportCiv4Shader(ImpNode *node, NiAVObjectRef avObject, StdMat
          }
       }
    }
+	if (NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE)){
+		// Handle Base/Detail ???
+		if (Texmap* tex = CreateTexture(tex2Ref)) {
+			mtl->SetSubTexmap(ID_DI, tex);
+		} 
+	}
+	if (BSShaderNoLightingPropertyRef noLightShadeRef = SelectFirstObjectOfType<BSShaderNoLightingProperty>(props)) {
+		if ( Texmap* tex = CreateTexture( noLightShadeRef->GetFileName() ) ) {
+			mtl->SetSubTexmap(ID_AM, tex);
+		}
+	}
+	if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
+		if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
+				mtl->SetSubTexmap(ID_AM, tex);
+			}
+		}
+	}
+	if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
+		if ( Texmap* tex = CreateTexture( skyShadeRef->GetFileName() ) ) {
+			mtl->SetSubTexmap(ID_AM, tex);
+		}
+	}
+	if (TileShaderPropertyRef tileShadeRef = SelectFirstObjectOfType<TileShaderProperty>(props)) {
+		if ( Texmap* tex = CreateTexture( tileShadeRef->GetFileName() ) ) {
+			mtl->SetSubTexmap(ID_AM, tex);
+		}
+	}
+	if (TallGrassShaderPropertyRef grassShadeRef = SelectFirstObjectOfType<TallGrassShaderProperty>(props)) {
+		if ( Texmap* tex = CreateTexture( grassShadeRef->GetFileName() ) ) {
+			mtl->SetSubTexmap(ID_AM, tex);
+		}
+	}
+	if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
+		if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
+				mtl->SetSubTexmap(ID_AM, tex);
+			}
+		}
+	}
+
+
    return true;
 }
 

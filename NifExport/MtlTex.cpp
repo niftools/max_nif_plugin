@@ -11,49 +11,76 @@
 #include "obj/NiSpecularProperty.h"
 #include "obj/NiTextureProperty.h"
 #include "obj/NiImage.h"
+#include "obj/BSShaderPPLightingProperty.h"
+#include "obj/BSShaderTextureSet.h"
 
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 {
-   BitmapTex *bmTex = getTexture(mtl);
+	BitmapTex *bmTex = getTexture(mtl);
 	if (!bmTex)
-      return;
+		return;
 
-	 if (Exporter::mNifVersionInt >= VER_4_0_0_0)
-	 {
-		 NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();
-		 texProp->SetApplyMode(APPLY_MODULATE);
-		 texProp->SetTextureCount(7);
 
-		 TexDesc td;
-		 if (makeTextureDesc(bmTex, td))
-			 texProp->SetTexture(BASE_MAP, td);
+	if (IsFallout3())
+	{
+		BSShaderPPLightingPropertyRef texProp = new BSShaderPPLightingProperty();
+		texProp->SetFlags(1);
+		texProp->SetShaderType( SHADER_DEFAULT );
+		BSShaderTextureSetRef texset = new BSShaderTextureSet();
+		texProp->SetTextureSet( texset );
+		
+		vector<string> textures;
+		textures.resize(6);
+		TexDesc td;
+		if (makeTextureDesc(bmTex, td)) {
+			char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+			textures[0] = td.source->GetTextureFileName();
+			_splitpath(textures[0].c_str(), drive, dir, fname, ext);
+			strcat(fname, "_n");
+			_makepath(path_buffer, drive, dir, fname, ext);
+			textures[1] = path_buffer;			
+		}
+		texset->SetTextures(textures);
 
-		 NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-		 parent->AddProperty(prop);
-	 }
-	 else
-	 {
-		 NiTexturePropertyRef texProp = CreateNiObject<NiTextureProperty>();
-		 NiImageRef imgProp = CreateNiObject<NiImage>();
-		 texProp->SetImage(imgProp);
+		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		parent->AddProperty(prop);
+	}
+	else if (Exporter::mNifVersionInt >= VER_4_0_0_0)
+	{
+		NiTexturingPropertyRef texProp = CreateNiObject<NiTexturingProperty>();
+		texProp->SetApplyMode(APPLY_MODULATE);
+		texProp->SetTextureCount(7);
 
-		 // Get file name and check if it matches the "app" settings in the ini file
-		 TSTR mapPath = bmTex->GetMapName();
-		 if (mAppSettings)
-		 {
-			 string newPath = mAppSettings->GetRelativeTexPath(string(mapPath), mTexPrefix);
-			 imgProp->SetExternalTexture(newPath);
-		 }
-		 else
-		 {
-			 TSTR p, f;
-			 SplitPathFile(mapPath, &p, &f);
-			 TSTR newPath = (mTexPrefix == "") ? f : (TSTR(mTexPrefix.c_str()) + _T("\\") + f);
-			 imgProp->SetExternalTexture(newPath.data());
-		 }
-		 NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-		 parent->AddProperty(prop);
-	 }
+		TexDesc td;
+		if (makeTextureDesc(bmTex, td))
+			texProp->SetTexture(BASE_MAP, td);
+
+		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		parent->AddProperty(prop);
+	}
+	else
+	{
+		NiTexturePropertyRef texProp = CreateNiObject<NiTextureProperty>();
+		NiImageRef imgProp = CreateNiObject<NiImage>();
+		texProp->SetImage(imgProp);
+
+		// Get file name and check if it matches the "app" settings in the ini file
+		TSTR mapPath = bmTex->GetMapName();
+		if (mAppSettings)
+		{
+			string newPath = mAppSettings->GetRelativeTexPath(string(mapPath), mTexPrefix);
+			imgProp->SetExternalTexture(newPath);
+		}
+		else
+		{
+			TSTR p, f;
+			SplitPathFile(mapPath, &p, &f);
+			TSTR newPath = (mTexPrefix == "") ? f : (TSTR(mTexPrefix.c_str()) + _T("\\") + f);
+			imgProp->SetExternalTexture(newPath.data());
+		}
+		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		parent->AddProperty(prop);
+	}
 }
 
 bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)

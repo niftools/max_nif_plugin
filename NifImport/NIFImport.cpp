@@ -57,7 +57,10 @@ INode* NifImporter::CreateImportNode(const char *name, Object *obj, INode* paren
 void NifImporter::ReadBlocks()
 {
    //blocks = ReadNifList( name );
-   root = ReadNifTree(name);
+	Niflib::NifInfo info;
+	root = ReadNifTree(name, &info);
+	nifVersion = info.version;
+	userVersion = info.userVersion;
    BuildNodes();
 }
 
@@ -388,4 +391,14 @@ bool NifImporter::DoImport()
    ClearAnimation();
    ImportAnimation();
    return true;
+}
+
+bool NifImporter::IsFallout3() const {
+	return (nifVersion == 0x14020007 && userVersion == 11);
+}
+bool NifImporter::IsOblivion() const {
+	return ((nifVersion == 0x14000004 || nifVersion == 0x14000005) && (userVersion == 11 || userVersion == 10));
+}
+bool NifImporter::IsMorrowind() const {
+	return ((nifVersion == 0x04000002) && (userVersion == 11 || userVersion == 10) );
 }

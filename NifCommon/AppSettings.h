@@ -48,6 +48,7 @@ public:
    int applyOverallTransformToSkinAndBones;
    std::string NiVersion;
    int NiUserVersion;
+	int NiUserVersion2;
    stringlist rotate90Degrees;
    bool supportPrnStrings;
    bool doNotReuseExistingBones;

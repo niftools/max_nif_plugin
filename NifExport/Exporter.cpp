@@ -27,6 +27,7 @@ string Exporter::mGameName = "User";
 string Exporter::mNifVersion = "20.0.0.5";
 int Exporter::mNifVersionInt = VER_20_0_0_5;
 int Exporter::mNifUserVersion = 0;
+int Exporter::mNifUserVersion2 = 0;
 bool Exporter::mSkeletonOnly=false;
 bool Exporter::mExportCameras=false;
 bool Exporter::mGenerateBoneCollision=false;
@@ -84,7 +85,6 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 	root->SetName("Scene Root");
 
 	int nifVersion = ParseVersionString(Exporter::mNifVersion);
-	mIsBethesda = (nifVersion == VER_20_0_0_5 || nifVersion == VER_20_0_0_4) && (Exporter::mNifUserVersion == 11);
 
 	if (mUseTimeTags && nifVersion >= VER_20_0_0_4) {
 		throw runtime_error("Time tag sequences are not supported for version 20.0.0.4 or higher.");
@@ -92,7 +92,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 
 	if (!Exporter::mSelectedOnly)
 	{
-		if (mIsBethesda)
+		if (IsOblivion())
 		{
 			if (mSkeletonOnly)
 			{
@@ -365,4 +365,14 @@ void Exporter::ProgressUpdate(ProgressSection section, const TCHAR *s)
       }
    }
    mI->ProgressUpdate( (percent * 100) / total , s == NULL ? TRUE : FALSE,  const_cast<TCHAR*>(s));
+}
+
+bool Exporter::IsFallout3() const {
+	return (mNifVersionInt == 0x14020007 && mNifUserVersion == 11);
+}
+bool Exporter::IsOblivion() const {
+	return ((mNifVersionInt == 0x14000004 || mNifVersionInt == 0x14000005) && (mNifUserVersion == 11 || mNifUserVersion == 10));
+}
+bool Exporter::IsMorrowind() const {
+	return ((mNifVersionInt == 0x04000002) && (mNifUserVersion == 11 || mNifUserVersion == 10) );
 }

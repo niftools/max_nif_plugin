@@ -212,6 +212,7 @@ AppSettings * Exporter::exportAppSettings()
 
    appSettings->NiVersion = Exporter::mNifVersion;
    appSettings->NiUserVersion = Exporter::mNifUserVersion;
+	appSettings->NiUserVersion2 = Exporter::mNifUserVersion2;
    appSettings->rotate90Degrees = Exporter::mRotate90Degrees;
    appSettings->supportPrnStrings = Exporter::mSupportPrnStrings;
 
@@ -248,6 +249,7 @@ AppSettings *Exporter::importAppSettings(string fname)
    Exporter::mGameName = appSettings->Name;
    Exporter::mNifVersion = appSettings->NiVersion;
    Exporter::mNifUserVersion = appSettings->NiUserVersion;
+	Exporter::mNifUserVersion2 = appSettings->NiUserVersion2;
    if (!appSettings->rotate90Degrees.empty())
       Exporter::mRotate90Degrees = appSettings->rotate90Degrees;
    Exporter::mSupportPrnStrings = appSettings->supportPrnStrings;

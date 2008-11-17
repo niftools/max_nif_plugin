@@ -29,7 +29,6 @@
 #define IDC_CHK_REMAP                   13013
 #define IDC_CB_GAME                     13014
 #define IDC_CB_VERSION                  13015
-#define IDC_CB_VERSION2                 13016
 #define IDC_CB_USER_VERSION             13016
 #define IDC_CHK_SKIN                    13017
 #define IDC_CHK_ANIMATION               13018
@@ -59,6 +58,7 @@
 #define IDC_LBL_BONES_PART              13036
 #define IDC_ED_BONES_PART               13037
 #define IDC_CHK_SKINPART                13038
+#define IDC_CB_USER_VERSION2            13039
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
 #define IDC_SPIN                        13496
