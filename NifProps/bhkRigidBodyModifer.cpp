@@ -79,6 +79,7 @@ public:
 	void BuildColStrips(Mesh& mesh);
 	void BuildColPackedStrips(Mesh& mesh);
 	void BuildColConvex(Mesh& mesh);
+	void BuildColOBB(Mesh& mesh);
 	void BuildOptimize(Mesh& mesh);
 
 	void			SelectionSetChanged(Interface *ip,IUtil *iu);
@@ -176,7 +177,7 @@ enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_
 
 enum { havok_params_panel, };
 
-enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 
 static ParamBlockDesc2 havok_param_blk ( 
    havok_params, _T("BoundingVolumes"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, PBLOCK_REF,
@@ -194,7 +195,7 @@ static ParamBlockDesc2 havok_param_blk (
 	PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		bv_type_shapes, 
 	  p_range, 		0, 6, 
-	  p_ui, 			havok_params,	TYPE_RADIO, 7, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX, IDC_RDO_PACKED_STRIPS,
+	  p_ui, 			havok_params,	TYPE_RADIO, 8, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX, IDC_RDO_PACKED_STRIPS, IDC_RDO_OBB,
 	  end,
 
 	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
@@ -270,6 +271,7 @@ INT_PTR bhkRigidBodyModifierDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND h
 		   mod->pblock->GetValue( PB_MATERIAL, 0, sel, valid);
 		   mCbMaterial.select( sel + 1 );
 		   EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), CanCalcCapsule() ? TRUE : FALSE);
+ 		   EnableWindow(GetDlgItem(hWnd, IDC_RDO_OBB), CanCalcOrientedBox() ? TRUE : FALSE);
 		   Update(t);
 		   break;
 	   }
@@ -498,6 +500,10 @@ void bhkRigidBodyModifier::ModifyObject (TimeValue t, ModContext &mc, ObjectStat
 
 	case bv_type_capsule:
 		BuildColCapsule(proxyMesh);
+		break;
+
+	case bv_type_obb:
+		BuildColOBB(proxyMesh);
 		break;
 
 	case bv_type_convex:
@@ -745,6 +751,22 @@ void bhkRigidBodyModifier::BuildColConvex(Mesh& mesh)
 	extern void compute_convex_hull(Mesh& mesh, Mesh& outmesh);
 
 	compute_convex_hull(mesh, mesh);
+}
+
+void bhkRigidBodyModifier::BuildColOBB(Mesh& mesh)
+{
+	Matrix3 rtm(true);
+	Point3 center;
+	float udim, vdim, ndim;
+	// First build a convex mesh to put the box around;
+	// the method acts oddly if extra vertices are present.
+	BuildColConvex(mesh);
+	CalcOrientedBox(mesh, udim, vdim, ndim, center, rtm);
+	BuildBox(mesh, vdim, udim, ndim);
+
+	MNMesh mn(mesh);
+	mn.Transform(rtm);
+	mn.OutToTri(mesh);
 }
 
 void bhkRigidBodyModifier::BuildOptimize(Mesh& mesh)

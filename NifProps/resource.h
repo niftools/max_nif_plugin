@@ -22,6 +22,7 @@
 #define IDC_RDO_SPHERE                  1119
 #define IDC_RDO_CAPSULE                 1120
 #define IDC_RDO_PROXY_MESH              1121
+#define IDC_RDO_OBB                     1122
 #define IDC_OPT_FACETHRESH              1141
 #define IDC_OPT_FACETHRESHSPIN          1142
 #define IDC_OPT_EDGETHRESH              1143

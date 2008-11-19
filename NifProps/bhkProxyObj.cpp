@@ -106,6 +106,7 @@ public:
    void BuildColPackedStrips();
    void BuildColConvex();
    void BuildColCapsule();
+   void BuildColOBB();
    void BuildOptimize(Mesh&mesh);
 
    void UpdateUI();
@@ -153,7 +154,7 @@ enum
    PB_LAYER, PB_FILTER, 
 };
 
-enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule };  // pblock ID
+enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule, bv_type_obb };  // pblock ID
 
 static ParamBlockDesc2 param_blk ( 
     list_params, _T("parameters"),  0, NULL, P_AUTO_CONSTRUCT + P_AUTO_UI + P_MULTIMAP, 0,
@@ -172,7 +173,7 @@ static ParamBlockDesc2 param_blk (
     PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		0, 
 	  p_range, 			0, 5, 
-	  p_ui, 			list_params,	TYPE_RADIO, 6, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX, IDC_RDO_CAPSULE,
+	  p_ui, 			list_params,	TYPE_RADIO, 7, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX, IDC_RDO_CAPSULE, IDC_RDO_OBB,
 	  end,
 
 	PB_MESHLIST,   _T("meshProxy"),  TYPE_INODE_TAB,		0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_MESHLIST,
@@ -366,6 +367,7 @@ INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT ms
 		  mCbMaterial.select( sel + 1 );
 		 // Disable all types not currently implemented
 		  EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), CanCalcCapsule() ? TRUE : FALSE);
+		  EnableWindow(GetDlgItem(hWnd, IDC_RDO_OBB), CanCalcOrientedBox() ? TRUE : FALSE);
 		 //EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);
 
          Update(t);
@@ -587,6 +589,10 @@ void bhkProxyObject::BuildMesh(TimeValue t)
 
 	case bv_type_capsule:
 		BuildColCapsule();
+		break;
+
+	case bv_type_obb:
+		BuildColOBB();
 		break;
 	}
 }
@@ -897,8 +903,53 @@ void bhkProxyObject::BuildColCapsule()
 	float r1 = 0.0;
 	float r2 = 0.0;
 
-	CalcCapsule(proxyMesh, pt1, pt2, r1, r2);
-	BuildCapsule(proxyMesh, pt1, pt2, r1, r2);
+	if (proxyMesh.getNumVerts() > 3) // Doesn't guarantee that the mesh is not a plane.
+	{
+		CalcCapsule(proxyMesh, pt1, pt2, r1, r2);
+		BuildCapsule(proxyMesh, pt1, pt2, r1, r2);
+	}
+
+	proxyPos = Point3::Origin;
+	forceRedraw = true;
+}
+
+void bhkProxyObject::BuildColOBB()
+{
+	proxyMesh.FreeAll();
+	MeshDelta md(proxyMesh);
+	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
+		INode *tnode = NULL;
+		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
+		if (tnode)
+		{
+			ObjectState os = tnode->EvalWorldState(0);
+			Matrix3 wm = tnode->GetNodeTM(0);
+			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
+			if (tri)
+			{
+				Mesh& mesh = tri->GetMesh();
+				MeshDelta tmd (mesh);
+				md.AttachMesh(proxyMesh, mesh, wm, 0);
+				md.Apply(proxyMesh);
+			}
+		}
+	}
+	Matrix3 rtm(true);
+	Point3 center = Point3::Origin;;
+	float udim = 0.0f, vdim = 0.0f, ndim = 0.0f;
+
+	if (proxyMesh.getNumVerts() > 3) // Doesn't guarantee that the mesh is not a plane.
+	{
+		// First build a convex mesh to put the box around;
+		// the method acts oddly if extra vertices are present.
+		BuildColConvex();
+		CalcOrientedBox(proxyMesh, udim, vdim, ndim, center, rtm);
+		BuildBox(proxyMesh, vdim, udim, ndim);
+	}
+
+	MNMesh mn(proxyMesh);
+	mn.Transform(rtm);
+	mn.OutToTri(proxyMesh);
 
 	proxyPos = Point3::Origin;
 	forceRedraw = true;

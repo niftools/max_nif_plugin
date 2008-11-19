@@ -767,6 +767,11 @@ private:
 	    (int nverts, const Point3 *verts, 
 		Point3& pt1, Point3& pt2, float& r1, float& r2);
 
+	typedef int (__stdcall * fnCalcOrientedBox)
+	    (int nverts, const Point3 *verts,
+		float& udim, float& vdim, float& ndim,
+		Point3& center, Point3& Uaxis, Point3& Vaxis, Point3& Naxis);
+
 	typedef void (__stdcall * fnCalcMassProps)
 	(	int nverts, const Point3* verts, 
 		int ntris, const Triangle* tris,
@@ -775,10 +780,11 @@ private:
 
 	HMODULE hMagicLib;
 	fnCalcCapsule CalcCapsule;
+	fnCalcOrientedBox CalcOrientedBox;
 	fnCalcMassProps CalcMassProps;
 
 public:
-	MagicCode() : hMagicLib(0), CalcCapsule(0), CalcMassProps(0) {
+	MagicCode() : hMagicLib(0), CalcCapsule(0), CalcOrientedBox(0), CalcMassProps(0) {
 	}
 
 	~MagicCode() {
@@ -797,16 +803,32 @@ public:
 			if (hMagicLib == NULL)
 				hMagicLib = LoadLibraryA( "Nifmagic.dll" );
 			CalcCapsule = (fnCalcCapsule)GetProcAddress( hMagicLib, "CalcCapsule" );
+			CalcOrientedBox = (fnCalcOrientedBox)GetProcAddress( hMagicLib, "CalcOrientedBox" );
 			CalcMassProps = (fnCalcMassProps)GetProcAddress( hMagicLib, "CalcMassProps" );
 		}
-		return ( NULL != CalcCapsule && NULL != CalcMassProps );
+		// Now returns TRUE if ANY of the desired methods are present.
+		// Checks for individual methods will need to check both Initialize() and the appropriate Has...() method.
+		return ( NULL != CalcCapsule || NULL != CalcOrientedBox || NULL != CalcMassProps );
 	}
 
+	bool HasCalcCapsule() {return NULL != CalcCapsule;}
+	bool HasCalcOrientedBox() {return NULL != CalcOrientedBox;}
+	bool HasCalcMassProps() {return NULL != CalcMassProps;}
 	void DoCalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& r2)
 	{
-		if ( Initialize() )
+		if (Initialize() && HasCalcCapsule())
 		{
 			CalcCapsule( mesh.getNumVerts(), &mesh.verts[0], pt1, pt2, r1, r2);
+		}
+	}
+
+	void DoCalcOrientedBox(Mesh &mesh, float& udim, float& vdim, float& ndim, Point3& center, Matrix3& rtm)
+	{
+		if (Initialize() && HasCalcOrientedBox())
+		{
+			Point3 Uaxis, Vaxis, Naxis;
+			CalcOrientedBox(mesh.getNumVerts(), &mesh.verts[0], udim, vdim, ndim, center, Uaxis, Vaxis, Naxis);
+			rtm.Set(Uaxis, Vaxis, Naxis, center);
 		}
 	}
 
@@ -814,26 +836,37 @@ public:
 		bool bBodyCoords, float &rfMass,
 		Point3& rkCenter, Matrix3& rkInertia)
 	{
-		vector<Triangle> tris;
-		tris.resize(mesh.getNumFaces());
-		for (int i=0; i<mesh.getNumFaces(); ++i)
+		if (Initialize() && HasCalcMassProps())
 		{
-			Triangle& tri = tris[i];
-			Face& face = mesh.faces[i];
-			tri.a = face.getVert(0);
-			tri.b = face.getVert(1);
-			tri.c = face.getVert(2);
+			vector<Triangle> tris;
+			tris.resize(mesh.getNumFaces());
+			for (int i=0; i<mesh.getNumFaces(); ++i)
+			{
+				Triangle& tri = tris[i];
+				Face& face = mesh.faces[i];
+				tri.a = face.getVert(0);
+				tri.b = face.getVert(1);
+				tri.c = face.getVert(2);
+			}
+			CalcMassProps( mesh.getNumVerts(), &mesh.verts[0]
+				, tris.size(), &tris[0]
+				, bBodyCoords ? 1 : 0, rfMass, rkCenter, rkInertia );
 		}
-		CalcMassProps( mesh.getNumVerts(), &mesh.verts[0]
-			, tris.size(), &tris[0]
-			, bBodyCoords ? 1 : 0, rfMass, rkCenter, rkInertia );
 	}
 
 } TheMagicCode;
 
 extern bool CanCalcCapsule()
 {
-	return TheMagicCode.Initialize();
+	return TheMagicCode.Initialize() && TheMagicCode.HasCalcCapsule();
+}
+extern bool CanCalcOrientedBox()
+{
+	return TheMagicCode.Initialize() && TheMagicCode.HasCalcOrientedBox();
+}
+extern bool CanCalcMassProps()
+{
+	return TheMagicCode.Initialize() && TheMagicCode.HasCalcMassProps();
 }
 
 // Calculate capsule from mesh.  While radii on the endcaps is possible we do 
@@ -843,10 +876,11 @@ extern void CalcCapsule(Mesh &mesh, Point3& pt1, Point3& pt2, float& r1, float& 
 	TheMagicCode.DoCalcCapsule(mesh, pt1, pt2, r1, r2);
 }
 
-
-extern bool CanCalcMassProps()
+// Calculate OBB (oriented bounding box) from mesh.  Returns each of the 3 dimensions of the box, 
+// its center, and the rotation matrix necessary to get the orientation.
+extern void CalcOrientedBox(Mesh &mesh, float& udim, float& vdim, float& ndim, Point3& center, Matrix3& rtm)
 {
-	return TheMagicCode.Initialize();
+	TheMagicCode.DoCalcOrientedBox(mesh, udim, vdim, ndim, center, rtm);
 }
 
 extern void CalcMassProps( Mesh &mesh,

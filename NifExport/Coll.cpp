@@ -1034,7 +1034,7 @@ static void AccumulateSubShapesFromGroup(INode *node, INodeTab& packedShapes, IN
 		{
 			enum { havok_params };
 			enum { PB_BOUND_TYPE, PB_MATERIAL, };
-			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 
 			int type = bv_type_none;
 			if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
@@ -1137,7 +1137,7 @@ bhkShapeRef Exporter::makeProxyShape(INode *node, Object *obj, Matrix3& tm, Havo
 {
 	enum { list_params, bv_mesh, };  // pblock2 ID
 	enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, };
-	enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule, bv_type_obb, };  // pblock ID
 
 	bhkShapeRef shape;
 	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(list_params))
@@ -1169,6 +1169,13 @@ bhkShapeRef Exporter::makeProxyShape(INode *node, Object *obj, Matrix3& tm, Havo
 
 				case bv_type_convex: 
 					shape = makeProxyConvexShape(node, obj, mesh, tm, mtlDefault);
+
+				case bv_type_capsule: 
+					shape = makeProxyCapsuleShape(node, obj, mesh, tm, mtlDefault);
+					break;
+
+				case bv_type_obb: 
+					shape = makeProxyOBBShape(node, obj, mesh, tm, mtlDefault);
 					break;
 				}
 			}
@@ -1219,6 +1226,106 @@ bhkShapeRef	Exporter::makeProxyBoxShape(INode *node, Object *obj, Mesh& mesh, Ma
 	}
 	return retval;
 }
+
+
+bhkShapeRef	Exporter::makeProxyOBBShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm, HavokMaterial mtlDefault)
+{
+	enum { list_params, bv_mesh, };  // pblock2 ID
+	enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, };
+	enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, };  // pblock ID
+
+	bhkShapeRef retval;
+	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(list_params))
+	{
+    	Matrix3 rtm(true);
+	    Point3 center;
+	    float udim, vdim, ndim;
+	    CalcOrientedBox(mesh, udim, vdim, ndim, center, rtm);
+
+		HavokMaterial mtl = mtlDefault;
+		float length = 0, width = 0, height = 0;
+		mtl = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
+		if ( mtl < 0 ) mtl = mtlDefault;
+
+		bhkBoxShapeRef shape = new bhkBoxShape();
+		Vector3 dim(udim, vdim, ndim);
+		dim /= (Exporter::bhkScaleFactor * 2);
+		shape->SetDimensions(dim);
+		shape->SetMaterial(mtl);
+
+		Matrix3 ltm = rtm * tm; // Translation already done in CalcOrientedBox().
+		if (ltm.IsIdentity())
+		{
+			retval = StaticCast<bhkShape>(shape);
+		}
+		else
+		{
+			ltm.SetTrans(ltm.GetTrans() / Exporter::bhkScaleFactor);
+
+			bhkTransformShapeRef transform = new bhkTransformShape();
+			transform->SetTransform(TOMATRIX4(ltm).Transpose());
+			transform->SetShape(shape);
+			transform->SetMaterial(mtl);
+			retval = StaticCast<bhkShape>(transform);
+		}
+	}
+	return retval;
+}
+
+
+bhkShapeRef	Exporter::makeProxyCapsuleShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm, HavokMaterial mtlDefault)
+{
+	enum { list_params, bv_mesh, };  // pblock2 ID
+	enum { PB_MATERIAL, PB_MESHLIST, PB_BOUND_TYPE, PB_CENTER, };
+	enum { bv_type_none, bv_type_box, bv_type_shapes, bv_type_packed, bv_type_convex, bv_type_capsule, bv_type_obb, };  // pblock ID
+
+	bhkShapeRef retval;
+	if (IParamBlock2* pblock2 = obj->GetParamBlockByID(list_params))
+	{
+		HavokMaterial mtl = mtlDefault;
+		mtl = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
+		if ( mtl < 0 ) mtl = mtlDefault;
+		Point3 center = Point3::Origin;
+		Point3 pt1 = Point3::Origin;
+		Point3 pt2 = Point3::Origin;
+		Point3 trans_pt1 = Point3::Origin;
+		Point3 trans_pt2 = Point3::Origin;
+		float r1 = 0.0f;
+		float r2 = 0.0f;
+		CalcCapsule(mesh, pt1, pt2, r1, r2); // Both R's are the same.
+		center = (pt1 + pt2)/2;
+		trans_pt1 = pt1 - center;
+		trans_pt2 = pt2 - center;
+
+		if (bhkCapsuleShapeRef shape = new bhkCapsuleShape())
+		{
+			shape->SetRadius(r1 / Exporter::bhkScaleFactor);
+			shape->SetRadius1(r1 / Exporter::bhkScaleFactor);
+			shape->SetRadius2(r1 / Exporter::bhkScaleFactor);
+			shape->SetFirstPoint(TOVECTOR3(trans_pt1/Exporter::bhkScaleFactor));
+			shape->SetSecondPoint(TOVECTOR3(trans_pt2/Exporter::bhkScaleFactor));
+			shape->SetMaterial(mtl);
+
+		Matrix3 ltm = TransMatrix(center) * tm;
+			if (ltm.IsIdentity())
+			{
+				retval = StaticCast<bhkShape>(shape);
+			}
+			else
+			{
+				ltm.SetTrans(ltm.GetTrans() / Exporter::bhkScaleFactor);
+
+				bhkTransformShapeRef transform = new bhkTransformShape();
+				transform->SetTransform(TOMATRIX4(ltm).Transpose());
+				transform->SetShape(shape);
+				transform->SetMaterial(mtl);
+				retval = StaticCast<bhkShape>(transform);
+			}
+		}
+	}
+	return retval;
+}
+
 
 bhkShapeRef	Exporter::makeProxySphereShape(INode *node, Object *obj, Mesh& mesh, Matrix3& tm, HavokMaterial mtlDefault)
 {
@@ -1320,7 +1427,7 @@ bhkShapeRef	Exporter::makeModifierShape(INode *node, Object* obj, Modifier* mod,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 
 	bhkShapeRef shape;
 
@@ -1364,6 +1471,10 @@ bhkShapeRef	Exporter::makeModifierShape(INode *node, Object* obj, Modifier* mod,
 		shape = makeModCapsuleShape(node, mod, const_cast<Mesh&>(*mesh), tm, material);
 		break;
 
+	case bv_type_obb:
+		shape = makeModOBBShape(node, mod, const_cast<Mesh&>(*mesh), tm, material);
+		break;
+
 	case bv_type_shapes:
 		shape = makeModTriStripShape(node, mod, const_cast<Mesh&>(*mesh), tm, material);
 		break;
@@ -1383,7 +1494,7 @@ bhkShapeRef	Exporter::makeModBoxShape(INode *node, Modifier* mod, Mesh& mesh, Ma
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
@@ -1426,7 +1537,7 @@ bhkShapeRef	Exporter::makeModSphereShape(INode *node, Modifier* mod, Mesh& mesh,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
@@ -1469,7 +1580,7 @@ bhkShapeRef	Exporter::makeModCapsuleShape(INode *node, Modifier* mod, Mesh& mesh
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 
 	node->EvalWorldState(0);
@@ -1482,17 +1593,25 @@ bhkShapeRef	Exporter::makeModCapsuleShape(INode *node, Modifier* mod, Mesh& mesh
 	bhkShapeRef retval;
 
 	Point3 center = Point3::Origin;
-	float radius = 0.0f;
-	CalcCenteredSphere(mesh, center, radius);
+	Point3 pt1 = Point3::Origin;
+	Point3 pt2 = Point3::Origin;
+	Point3 trans_pt1 = Point3::Origin;
+	Point3 trans_pt2 = Point3::Origin;
+	float r1 = 0.0f;
+	float r2 = 0.0f;
+	CalcCapsule(mesh, pt1, pt2, r1, r2); // Both R's are the same.
+	center = (pt1 + pt2)/2;
+	trans_pt1 = pt1 - center;
+	trans_pt2 = pt2 - center;
 
 	if (bhkCapsuleShapeRef shape = new bhkCapsuleShape())
 	{
-		shape->SetRadius(radius / Exporter::bhkScaleFactor);
-		shape->SetRadius1(radius / Exporter::bhkScaleFactor);
-		shape->SetRadius2(radius / Exporter::bhkScaleFactor);
-		shape->SetFirstPoint(TOVECTOR3(center/Exporter::bhkScaleFactor));
-		shape->SetSecondPoint(TOVECTOR3(center/Exporter::bhkScaleFactor));
-		shape->SetMaterial(material);
+		shape->SetRadius(r1 / Exporter::bhkScaleFactor);
+		shape->SetRadius1(r1 / Exporter::bhkScaleFactor);
+		shape->SetRadius2(r1 / Exporter::bhkScaleFactor);
+		shape->SetFirstPoint(TOVECTOR3(trans_pt1/Exporter::bhkScaleFactor));
+		shape->SetSecondPoint(TOVECTOR3(trans_pt2/Exporter::bhkScaleFactor));
+		shape->SetMaterial(HavokMaterial(material));
 
 		Matrix3 ltm = TransMatrix(center) * node->GetObjTMAfterWSM(0) * tm;
 		if (ltm.IsIdentity())
@@ -1506,7 +1625,7 @@ bhkShapeRef	Exporter::makeModCapsuleShape(INode *node, Modifier* mod, Mesh& mesh
 			bhkTransformShapeRef transform = new bhkTransformShape();
 			transform->SetTransform(TOMATRIX4(ltm).Transpose());
 			transform->SetShape(shape);
-			transform->SetMaterial(material);
+			transform->SetMaterial(HavokMaterial(material));
 			retval = StaticCast<bhkShape>(transform);
 		}
 	}
@@ -1517,7 +1636,7 @@ bhkShapeRef	Exporter::makeModConvexShape(INode *node, Modifier* mod, Mesh& mesh,
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
 	{
@@ -1540,7 +1659,7 @@ bhkShapeRef	Exporter::makeModTriStripShape(INode *node, Modifier* mod, Mesh& mes
 {
 	enum { havok_params };
 	enum { PB_BOUND_TYPE, PB_MATERIAL, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
 	{
@@ -1621,7 +1740,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 		{
 			enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
 			enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
-			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+			enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 
 			if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params)) {
 				material = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
@@ -1700,7 +1819,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *node, Modifier* mod, Mes
 {
 	enum { havok_params, opt_params, clone_params, subshape_params };  // pblock ID
 	enum { PB_BOUND_TYPE, PB_MATERIAL, PB_OPT_ENABLE, PB_MAXEDGE, PB_FACETHRESH, PB_EDGETHRESH, PB_BIAS, PB_LAYER, PB_FILTER, };
-	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 	HavokMaterial material = mtlDefault;
 	int layer = NP_DEFAULT_HVK_LAYER;
 	int filter = NP_DEFAULT_HVK_FILTER;
@@ -1724,3 +1843,49 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INode *node, Modifier* mod, Mes
 	}
 	return shape;
 }
+bhkShapeRef	Exporter::makeModOBBShape(INode *node, Modifier* mod, Mesh& mesh, Matrix3& tm, HavokMaterial mtlDefault)
+{
+	enum { havok_params };
+	enum { PB_BOUND_TYPE, PB_MATERIAL, };
+	enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
+	HavokMaterial material = mtlDefault;
+
+	node->EvalWorldState(0);
+	if (IParamBlock2* pblock2 = mod->GetParamBlockByID(havok_params))
+	{
+		material = HavokMaterial(pblock2->GetInt(PB_MATERIAL, 0, 0));
+		if ( material < 0 ) material = mtlDefault;
+	}
+
+	bhkShapeRef retval;
+	if (bhkBoxShapeRef shape = new bhkBoxShape())
+	{
+    	Matrix3 rtm(true);
+	    Point3 center;
+	    float udim, vdim, ndim;
+	    CalcOrientedBox(mesh, udim, vdim, ndim, center, rtm);
+
+		Vector3 dim(udim, vdim, ndim);
+		dim /= (Exporter::bhkScaleFactor * 2);
+		shape->SetDimensions(dim);
+		shape->SetMaterial(HavokMaterial(material));
+
+		Matrix3 ltm = rtm * node->GetNodeTM(0) * tm; // Translation already done in CalcOrientedBox().
+		if (ltm.IsIdentity())
+		{
+			retval = StaticCast<bhkShape>(shape);
+		}
+		else
+		{
+			ltm.SetTrans(ltm.GetTrans() / Exporter::bhkScaleFactor);
+
+			bhkTransformShapeRef transform = new bhkTransformShape();
+			transform->SetTransform(TOMATRIX4(ltm).Transpose());
+			transform->SetShape(shape);
+			transform->SetMaterial(HavokMaterial(material));
+			retval = StaticCast<bhkShape>(transform);
+		}
+	}
+	return retval;
+}
+

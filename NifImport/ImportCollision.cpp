@@ -75,7 +75,7 @@ struct CollisionImport
 	   INode *parent
 	   );
 
-   enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, };  // pblock ID
+   enum { bv_type_none, bv_type_box, bv_type_sphere, bv_type_capsule, bv_type_shapes, bv_type_convex, bv_type_packed, bv_type_obb, };  // pblock ID
 };
 
 bool NifImporter::ImportCollision(NiNodeRef node)
