@@ -1704,7 +1704,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 		INode *node = map[i];
 
 		// skip group heads
-		if (node->IsGroupHead())
+		if (node->IsGroupHead() || (node->IsHidden() && !mExportHidden))
 			continue;
 
 		ObjectState os = node->EvalWorldState(0);
@@ -1773,11 +1773,12 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 
 		for (int i=0; i<nvert; ++i)
 		{
-			Point3 vert = (mesh->getVert(i) * tm) / Exporter::bhkScaleFactor;
+			Point3 vert = (mesh->getVert(i) * ltm) / Exporter::bhkScaleFactor;
 			verts.push_back( TOVECTOR3(vert) );
 		}
 		for (int i=0; i<nface; ++i)
 		{
+			Point3 norm = (mesh->getFaceNormal(i) * ltm) / Exporter::bhkScaleFactor;
 			norms.push_back( TOVECTOR3(mesh->getFaceNormal(i)) );
 
 			Triangle tri;
