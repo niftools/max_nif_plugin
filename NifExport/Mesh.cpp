@@ -194,6 +194,10 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
       shape = new NiTriShape();
       data = new NiTriShapeData(grp.faces);
 	}
+
+	shape->SetName( parent->GetName() );
+	data->SetName( parent->GetName() );
+
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
