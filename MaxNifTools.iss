@@ -6,7 +6,7 @@ AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:CurVer} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2008, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-3.1.0
+OutputBaseFilename=niftools-max-plugins-3.1.1
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,7 +18,7 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=3.1.0
+VersionInfoVersion=3.1.2
 
 SourceDir=.
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
@@ -153,7 +153,7 @@ var sVersion: String;
 
 function InitializeSetup(): Boolean;
 begin
-  sVersion := '3.1.0';
+  sVersion := '3.1.2';
   Result := True;
 end;
 
@@ -277,7 +277,7 @@ begin
   FF3RDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
   FF3RDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
 
-  BCDataDirPage := CreateInputDirPage(DAoCDataDirPage.ID,
+  BCDataDirPage := CreateInputDirPage(FF3RDataDirPage.ID,
     'Select Star Trek: Bridge Commander Data Directory', 'Where are the extracted Star Trek: Bridge Commander data files located?',
     'Select the folders in which 3ds Max should look for files, then click Next.',
     False, '');
@@ -285,7 +285,7 @@ begin
   BCDataDirPage.Add('Extracted Model Directory (e.g. root directory where NIF files are located)');
   BCDataDirPage.Add('Extracted Textures Directory (e.g. root directory containing the Textures directory)');
 
-  F3DataDirPage := CreateInputDirPage(UsagePage.ID,
+  F3DataDirPage := CreateInputDirPage(BCDataDirPage.ID,
     'Select Fallout 3 Data Directory', 'Where are the extracted Fallout 3 data files located?',
     'Select the folders in which 3ds Max should look for files, then click Next.',
     False, '');
@@ -302,7 +302,7 @@ begin
   UsagePage.Values[5] := GetPrevDataBool('bFF', False);
   UsagePage.Values[6] := GetPrevDataBool('bFF3R', False);
   UsagePage.Values[7] := GetPrevDataBool('bBC', False);
-  UsagePage.Values[7] := GetPrevDataBool('bF3', False);
+  UsagePage.Values[8] := GetPrevDataBool('bF3', False);
 
   OBDataDirPage.Values[0] := GetPreviousData('OBModelDir', '');
   OBDataDirPage.Values[1] := GetPreviousData('OBTexDir', '');
@@ -357,8 +357,8 @@ begin
   SetPreviousData(PreviousDataKey, 'FF3RTexDir', FF3RDataDirPage.Values[1]);
   SetPreviousData(PreviousDataKey, 'BCModelDir', BCDataDirPage.Values[0]);
   SetPreviousData(PreviousDataKey, 'BCTexDir', BCDataDirPage.Values[1]);
-  SetPreviousData(PreviousDataKey, 'F3ModelDir', BCDataDirPage.Values[0]);
-  SetPreviousData(PreviousDataKey, 'F3TexDir', BCDataDirPage.Values[1]);
+  SetPreviousData(PreviousDataKey, 'F3ModelDir', F3DataDirPage.Values[0]);
+  SetPreviousData(PreviousDataKey, 'F3TexDir', F3DataDirPage.Values[1]);
 
 end;
 
@@ -605,8 +605,8 @@ begin
         SetIniString('Star Trek: Bridge Commander', 'TextureRootPath', BCDataDirPage.Values[1], iniFile);
       end;
       if UsagePage.Values[8] then begin
-        SetIniString('Fallout 3', 'MeshRootPath', BCDataDirPage.Values[0], iniFile);
-        SetIniString('Fallout 3', 'TextureRootPath', BCDataDirPage.Values[1], iniFile);
+        SetIniString('Fallout 3', 'MeshRootPath', F3DataDirPage.Values[0], iniFile);
+        SetIniString('Fallout 3', 'TextureRootPath', F3DataDirPage.Values[1], iniFile);
       end;
   end;
 end;
