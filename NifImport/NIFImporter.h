@@ -132,6 +132,9 @@ public:
    Texmap* CreateTexture(Niflib::TexDesc& desc);
    Texmap* CreateTexture(Niflib::NiTexturePropertyRef desc);
 	Texmap* CreateTexture(const string& name);
+   Texmap* CreateNormalBump(LPCTSTR name, Texmap* nmap);
+   Texmap* CreateMask(LPCTSTR name, Texmap* nmap, Texmap* mask);
+   
    INode *CreateBone(const string& name, Point3 startPos, Point3 endPos, Point3 zAxis);
    INode *CreateHelper(const string& name, Point3 startPos);
    INode *CreateCamera(const string& name);

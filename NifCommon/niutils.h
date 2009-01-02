@@ -462,4 +462,20 @@ extern int MorpherNumProgMorphs(Modifier* mod, int index);
 extern INode *MorpherGetProgMorph(Modifier* mod, int index, int morphIdx);
 extern void MorpherGetMorphVerts(Modifier* mod, int index, vector<Niflib::Vector3>& verts);
 
+#pragma region Enumeration support
+// Enumeration support
+typedef struct EnumLookupType {
+   int value;
+   const char *name;
+} EnumLookupType;
+
+extern TSTR EnumToString(int value, const EnumLookupType *table);
+extern int StringToEnum(TSTR value, const EnumLookupType *table);
+extern int EnumToIndex(int value, const EnumLookupType *table);
+
+extern TSTR FlagsToString(int value, const EnumLookupType *table);
+extern int StringToFlags(TSTR value, const EnumLookupType *table);
+#pragma endregion
+
+
 #endif // _NIUTILS_H_

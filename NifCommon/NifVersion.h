@@ -19,8 +19,8 @@ HISTORY:
 * Define the major, minor, build, patch version numbers
 */
 #define VERSION_MAJOR_INT  3
-#define VERSION_MINOR_INT  1
-#define VERSION_BUILD_INT  2
+#define VERSION_MINOR_INT  2
+#define VERSION_BUILD_INT  0
 
 #ifndef NIFTOOLS_REVISION_INT
 #define VERSION_PATCH_INT  0

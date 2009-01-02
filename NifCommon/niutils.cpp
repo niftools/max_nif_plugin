@@ -1200,3 +1200,64 @@ Matrix3 GetLocalTM(INode *node)
 		return node->GetNodeTM(0);
 	}
 }
+
+
+// Enumeration Support
+TSTR EnumToString(int value, const EnumLookupType *table) {
+   for (const EnumLookupType *itr = table; itr->name != NULL; ++itr) {
+      if (itr->value == value) return TSTR(itr->name);
+   }
+   return FormatText("%x", value);
+}
+
+int EnumToIndex(int value, const EnumLookupType *table) {
+   int i = 0;
+   for (const EnumLookupType *itr = table; itr->name != NULL; ++itr, ++i) {
+      if (itr->value == value) return i;
+   }
+   return -1;
+}
+
+int StringToEnum(TSTR value, const EnumLookupType *table) {
+   //Trim(value);
+   if (value.isNull()) return 0;
+
+   for (const EnumLookupType *itr = table; itr->name != NULL; ++itr) {
+      if (0 == _tcsicmp(value, itr->name)) return itr->value;
+   }
+   char *end = NULL;
+   return (int)strtol(value, &end, 0);
+}
+
+TSTR FlagsToString(int value, const EnumLookupType *table) {
+   TSTR sstr;
+   for (const EnumLookupType *itr = table; itr->name != NULL; ++itr) {
+      if (itr->value && (itr->value & value) == itr->value) {
+         if (!sstr.isNull()) sstr += " | ";
+         sstr += itr->name;
+         value ^= itr->value;
+      }
+   }
+   if (value == 0 && sstr.isNull()) {
+      return EnumToString(value, table);
+   }
+   if (value != 0) {
+      if (!sstr.isNull()) sstr += "|";
+      sstr += EnumToString(value, table);
+   }
+   return sstr;
+}
+
+int StringToFlags(TSTR value, const EnumLookupType *table) {
+   int retval = 0;
+   LPCTSTR start = value.data();
+   LPCTSTR end = value.data() + value.Length();
+   while(start < end) {
+      LPCTSTR bar = _tcschr(start, '|');
+      int len = (bar != NULL) ?  bar-start : end-start;
+      TSTR subval = value.Substr(start-value.data(), len);
+      retval |= StringToEnum(subval, table);
+      start += (len + 1);
+   }
+   return retval;
+}

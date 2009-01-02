@@ -65,7 +65,7 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include ""winrex.h""\r\n"
+    "#include ""winres.h""\r\n"
     "\r\n"
     "#ifndef NIFPLUGINS\r\n"
     "#define DLLNAME ""NifExporter.dle""  // DLL Name\r\n"
@@ -233,8 +233,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
-
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 

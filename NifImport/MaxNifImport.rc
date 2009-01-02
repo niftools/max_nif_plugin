@@ -13,8 +13,7 @@
 #define DLLNAME "NifImport.dlu"  // DLL Name
 #define DLLDESCRIPTION "3ds Max Nif Importer"
 #include "..\nifcommon\nifversion.rc"  
-#endif
-
+#endif
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 

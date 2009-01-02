@@ -153,6 +153,7 @@ public:
       vector<TexCoord>	uvs;
       vector<Color4>		vcolors;
       vector<int>       vidx;
+      vector<int>       fidx;
       TriStrips         strips;
    };
 

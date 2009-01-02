@@ -1,5 +1,4 @@
-#ifndef __HvkProps__H
-#define __HvkProps__H
+#pragma once
 
 #include "Max.h"
 #include "resource.h"
@@ -11,5 +10,3 @@
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
-
-#endif

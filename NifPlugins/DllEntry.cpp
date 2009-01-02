@@ -30,6 +30,9 @@ extern ClassDesc2* GetbhkBoxDesc();
 extern ClassDesc* GetDDSLibClassDesc();
 extern ClassDesc2* GetbhkListObjDesc();
 extern ClassDesc2* GetbhkProxyObjDesc();
+extern ClassDesc2* GetBSDSModifierDesc();
+extern ClassDesc2* GetNifShaderDesc();
+
 
 enum ClassDescType
 {
@@ -100,6 +103,8 @@ void InitializeLibSettings()
       classDescriptions[nClasses++] = GetbhkSphereDesc();
       classDescriptions[nClasses++] = GetbhkCapsuleDesc();
       classDescriptions[nClasses++] = GetbhkBoxDesc();
+      classDescriptions[nClasses++] = GetBSDSModifierDesc();
+      classDescriptions[nClasses++] = GetNifShaderDesc();
    }
    if ( GetIniValue<bool>("NifFurniture", "Enable", true, iniName) ) {
       classDescEnabled[CD_Furniture] = true;

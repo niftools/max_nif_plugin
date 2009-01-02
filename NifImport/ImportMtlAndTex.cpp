@@ -32,6 +32,35 @@ HISTORY:
 #include "objectParams.h"
 using namespace Niflib;
 
+Texmap* NifImporter::CreateNormalBump(LPCTSTR name, Texmap* nmap)
+{
+   static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
+   Texmap *texmap = (Texmap*)gi->CreateInstance(TEXMAP_CLASS_ID, GNORMAL_CLASS_ID);
+   if(texmap != NULL)
+   {
+      TSTR tname = (name == NULL) ? FormatText("Norm %s", nmap->GetName().data()) : TSTR(name);
+      texmap->SetName(tname);
+      texmap->SetSubTexmap(0, nmap);
+      return texmap;
+   }
+   return nmap;
+}
+
+Texmap* NifImporter::CreateMask(LPCTSTR name, Texmap* map, Texmap* mask)
+{
+   Texmap *texmap = (Texmap*)gi->CreateInstance(TEXMAP_CLASS_ID, Class_ID(MASK_CLASS_ID, 0));
+   if(texmap != NULL)
+   {
+      TSTR tname = (name == NULL) ? FormatText("Mask %s", map->GetName().data()) : TSTR(name);
+      texmap->SetName(tname);
+      texmap->SetSubTexmap(0, map);
+      texmap->SetSubTexmap(0, mask);
+      return texmap;
+   }
+   return map;
+}
+
+
 Texmap* NifImporter::CreateTexture(TexDesc& desc)
 {
    BitmapManager *bmpMgr = TheManager;
@@ -249,7 +278,7 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
          // Handle Bump map
          if (texRef->HasTexture(BUMP_MAP)) {
             if (Texmap* tex = CreateTexture(texRef->GetTexture(BUMP_MAP)))
-               m->SetSubTexmap(ID_BU, tex);
+               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
          }
          // Shiny map
          if (texRef->HasTexture(GLOSS_MAP)) {
@@ -270,37 +299,57 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 		}
 		if (BSShaderNoLightingPropertyRef noLightShadeRef = SelectFirstObjectOfType<BSShaderNoLightingProperty>(props)) {
 			if ( Texmap* tex = CreateTexture( noLightShadeRef->GetFileName() ) ) {
-				m->SetSubTexmap(ID_AM, tex);
+				m->SetSubTexmap(ID_DI, tex);
 			}
 		}
 		if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
 			if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
-				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
-					m->SetSubTexmap(ID_AM, tex);
-				}
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+					m->SetSubTexmap(ID_DI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+               m->SetSubTexmap(ID_SI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+               m->SetSubTexmap(ID_RL, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
+               if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
+                  tex = CreateMask(NULL, tex, mask);
+               m->SetSubTexmap(ID_SP, tex);
+            }
 			}
 		}
 		if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
 			if ( Texmap* tex = CreateTexture( skyShadeRef->GetFileName() ) ) {
-				m->SetSubTexmap(ID_AM, tex);
+				m->SetSubTexmap(ID_DI, tex);
 			}
 		}
 		if (TileShaderPropertyRef tileShadeRef = SelectFirstObjectOfType<TileShaderProperty>(props)) {
 			if ( Texmap* tex = CreateTexture( tileShadeRef->GetFileName() ) ) {
-				m->SetSubTexmap(ID_AM, tex);
+				m->SetSubTexmap(ID_DI, tex);
 			}
 		}
 		if (TallGrassShaderPropertyRef grassShadeRef = SelectFirstObjectOfType<TallGrassShaderProperty>(props)) {
 			if ( Texmap* tex = CreateTexture( grassShadeRef->GetFileName() ) ) {
-				m->SetSubTexmap(ID_AM, tex);
+				m->SetSubTexmap(ID_DI, tex);
 			}
 		}
 		if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
-			if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
-				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) ) {
-					m->SetSubTexmap(ID_AM, tex);
-				}
-			}
+         if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+               m->SetSubTexmap(ID_DI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+               m->SetSubTexmap(ID_SI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+               m->SetSubTexmap(ID_RL, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
+               if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
+                  tex = CreateMask(NULL, tex, mask);
+               m->SetSubTexmap(ID_SP, tex);
+            }
+         }
 		}
 		return m;
    }

@@ -17,6 +17,8 @@ HISTORY:
 #if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
 #  include "MeshNormalSpec.h"
 #endif
+#include "../NifProps/iNifProps.h"
+#include "obj/BSDismemberSkinInstance.h"
 
 using namespace Niflib;
 
@@ -583,6 +585,26 @@ struct VertexHolder
    Tab<float> weights;
 };
 
+struct FaceEquivalence {
+
+   bool operator()(const Face* s1, const Face* s2) const {
+      int sum1 = s1->v[0] + s1->v[1] + s1->v[2];
+      int sum2 = s2->v[0] + s2->v[1] + s2->v[2];
+      int d = sum1 - sum2;
+      if (d == 0) {
+         DWORD v1[3]; memcpy(v1, s1->v, sizeof(v1));
+         DWORD v2[3]; memcpy(v2, s2->v, sizeof(v2));
+         std::sort(v1, v1+3), std::sort(v2, v2+3);
+         if (d == 0) d = (v1[0] - v2[0]);
+         if (d == 0) d = (v1[1] - v2[1]);
+         if (d == 0) d = (v1[2] - v2[2]);
+      }
+      return d < 0; 
+   }
+};
+typedef std::map<Face*,int, FaceEquivalence> FaceMap;
+
+
 bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_start/*=0*/)
 {
    bool ok = true;
@@ -689,6 +711,59 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
       //   There is still an outstanding issue with skeleton and GetObjectTMBeforeWSM.
       skinMod->DisableModInViews();
       skinMod->EnableModInViews();
+
+
+      // If Fallout 3 BSDismembermentSkinInstance, ...
+      if ( BSDismemberSkinInstanceRef bsdsi = DynamicCast<BSDismemberSkinInstance>(nifSkin) )
+      {
+         Modifier *dismemberSkinMod = GetOrCreateBSDismemberSkin(tnode);
+         if (IBSDismemberSkinModifier *disSkin = (IBSDismemberSkinModifier *) dismemberSkinMod->GetInterface(I_BSDISMEMBERSKINMODIFIER)){
+            // Evaluate node ensure the modifier data is created
+            ObjectState os = tnode->EvalWorldState(0);
+
+            FaceMap faceMap;
+            int nfaces = m.getNumFaces();
+            for ( int i=0; i<nfaces; ++i )
+               faceMap[&m.faces[i]] = i;
+
+            Tab<IBSDismemberSkinModifierData*> modData = disSkin->GetModifierData();
+            for (int i=0; i<modData.Count(); ++i) {
+               IBSDismemberSkinModifierData* bsdsmd = modData[i];
+
+               Tab<BSDSPartitionData> &flags = bsdsmd->GetPartitionFlags();
+               vector<BodyPartList> partitions = bsdsi->GetPartitions();
+               if (partitions.empty())
+                  continue;
+
+               bsdsmd->SetActivePartition( partitions.size() - 1 );
+               for (int j=0; j < partitions.size(); ++j ) {
+                  flags[j].bodyPart = (DismemberBodyPartType)partitions[j].bodyPart;
+                  flags[j].partFlag = partitions[j].partFlag;
+               }
+
+               for (int j=0; j < part->GetNumPartitions(); ++j) {
+                  bsdsmd->SetActivePartition( j );
+                  dismemberSkinMod->SelectAll(0); // ensures bitarrays are properly synced to mesh
+                  dismemberSkinMod->ClearSelection(0);
+                  vector<Triangle> triangles = part->GetTriangles(j);
+                  vector<unsigned short> map = part->GetVertexMap(j);
+                  GenericNamedSelSetList& fselSet = bsdsmd->GetFaceSelList();
+                  if ( BitArray* fsel = fselSet.GetSetByIndex(j) )
+                  {
+                     for (vector<Triangle>::iterator itrtri = triangles.begin(); itrtri != triangles.end(); ++itrtri) {
+                        Face f; f.setVerts( map[(*itrtri).v1], map[(*itrtri).v2], map[(*itrtri).v3] );
+                        FaceMap::iterator fitr = faceMap.find( &f );
+                        if (fitr != faceMap.end())
+                           fsel->Set((*fitr).second);
+                     }
+                  }
+               }
+               bsdsmd->SetActivePartition( 0 );
+               disSkin->LocalDataChanged();
+            }
+         }
+      }
+
    }
    return ok;
 }

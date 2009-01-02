@@ -7,12 +7,14 @@
 #ifdef USE_BIPED
 #  include <cs/BipedApi.h>
 #endif
+#include "../NifProps/iNifProps.h"
 #include "obj/NiBSBoneLODController.h"
 #include "obj/NiTransformController.h"
 #include "obj/bhkBlendController.h"
 #include "obj/bhkBlendCollisionObject.h"
 #include "obj/bhkSphereShape.h"
 #include "obj/bhkCapsuleShape.h"
+#include "obj/BSDismemberSkinInstance.h"
 
 Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
 {
@@ -195,9 +197,6 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
       data = new NiTriShapeData(grp.faces);
 	}
 
-	shape->SetName( parent->GetName() );
-	data->SetName( parent->GetName() );
-
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
@@ -292,8 +291,12 @@ void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, co
 	Triangle tri;
 	for (int i=0; i<3; i++)
 		tri[i] = addVertex(grp, face, vi[i], mesh, texm, vertColors);
-
 	grp.faces.push_back(tri);
+
+   int nf = mesh->getNumFaces();
+   if (grp.fidx.size() < nf)
+      grp.fidx.resize(nf,-1);
+   grp.fidx[face] = grp.faces.size() - 1;
 }
 
 bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors, bool noSplit)
@@ -331,12 +334,14 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 		grp.faces.resize(nf);
 		grp.uvs.resize(nv);
 		grp.vnorms.resize(nv);
+      grp.fidx.resize(nf);
 
 		Matrix3 texm;
 		getTextureMatrix(texm, getMaterial(node, 0));
 		texm *= flip;
 
 		for (int face=0; face<nf; ++face) {
+         grp.fidx[face] = face;
 			for (int vi=0; vi<3; ++vi) {
 				int idx = mesh.faces[face].getVert(vi);
 				grp.faces[face][vi] = idx;
@@ -406,18 +411,42 @@ struct SkinInstance : public Exporter::NiCallback
    // Common Data
    NiTriBasedGeomRef shape;
    vector<NiNodeRef> boneList;
+   NiObject * (*SkinInstConstructor)();
 
    // Bone to weight map
    BoneWeightList boneWeights;
 
+   // Fallout 3 dismemberment
+   vector<BodyPartList> partitions;
+   vector<int> facePartList;
+
    Matrix3 bone_init_tm;
    Matrix3 node_init_tm;
 
-   SkinInstance(Exporter *Owner) : owner(Owner) {}
+   SkinInstance(Exporter *Owner) : owner(Owner), SkinInstConstructor(NULL) {}
    virtual ~SkinInstance() {}
    virtual Exporter::Result execute();
 };
 
+
+struct FaceEquivalence {
+
+   bool operator()(const Triangle* s1, const Triangle* s2) const {
+      int sum1 = (*s1)[0] + (*s1)[1] + (*s1)[2];
+      int sum2 = (*s2)[0] + (*s2)[1] + (*s2)[2];
+      int d = sum1 - sum2;
+      if (d == 0) {
+         unsigned short v1[3]; memcpy(v1, s1, sizeof(v1));
+         unsigned short v2[3]; memcpy(v2, s2, sizeof(v2));
+         std::sort(v1, v1+3), std::sort(v2, v2+3);
+         if (d == 0) d = (v1[0] - v2[0]);
+         if (d == 0) d = (v1[1] - v2[1]);
+         if (d == 0) d = (v1[2] - v2[2]);
+      }
+      return d < 0; 
+   }
+};
+typedef std::map<Triangle*,int, FaceEquivalence> FaceMap;
 
 bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t)
 {
@@ -494,20 +523,70 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
       }      
    }
 
+   // Check for dismemberment
+   if (IsFallout3()) {
+      Modifier *dismemberSkinMod = GetBSDismemberSkin(node);
+      if (dismemberSkinMod)
+      {
+         if (IBSDismemberSkinModifier *disSkin = (IBSDismemberSkinModifier *) dismemberSkinMod->GetInterface(I_BSDISMEMBERSKINMODIFIER)){
+            Tab<IBSDismemberSkinModifierData*> modData = disSkin->GetModifierData();
+            if (modData.Count() >= 1) {
+               IBSDismemberSkinModifierData* bsdsmd = modData[0];
+               si->SkinInstConstructor = BSDismemberSkinInstance::Create;
+               Tab<BSDSPartitionData> &flags = bsdsmd->GetPartitionFlags();
+               GenericNamedSelSetList &fselSet = bsdsmd->GetFaceSelList();
+
+               FaceMap fmap;
+               NiTriBasedGeomDataRef data = DynamicCast<NiTriBasedGeomData>(shape->GetData());
+               vector<Triangle> tris = data->GetTriangles();
+               for (int i=0; i<tris.size(); ++i) {
+                  fmap[ &tris[i] ] = i;
+               }
+
+               // Build up list of partitions and face to partition map
+               si->partitions.resize(flags.Count());
+               si->facePartList.resize( grp.faces.size(), -1 );
+               for (int i=0; i<flags.Count(); ++i) {
+                  BodyPartList& bp = si->partitions[i];
+                  bp.bodyPart = (BSDismemberBodyPartType)flags[i].bodyPart;
+                  bp.partFlag = (BSPartFlag)flags[i].partFlag;
+
+                  BitArray& fSelect = fselSet[i];
+                  for (int j=0; j<fSelect.GetSize(); ++j){
+                     if ( fSelect[j] ) {
+                        FaceMap::iterator fitr = fmap.find( &grp.faces[grp.fidx[j]] );
+                        if (fitr != fmap.end())
+                           si->facePartList[ (*fitr).second ] = i;
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+
    return true;
 }
 
 Exporter::Result SkinInstance::execute()
 {
-   shape->BindSkin(boneList);
+   shape->BindSkinWith(boneList, SkinInstConstructor);
    unsigned int bone = 0;
    for (BoneWeightList::iterator bitr = boneWeights.begin(); bitr != boneWeights.end(); ++bitr, ++bone) {
       shape->SetBoneWeights(bone, (*bitr));
    }
+   int* faceMap = NULL;
+   if (partitions.size() > 0) {
+      BSDismemberSkinInstanceRef dismem = DynamicCast<BSDismemberSkinInstance>(shape->GetSkinInstance());
+      if (dismem != NULL)
+         dismem->SetPartitions(partitions);
+      faceMap = &facePartList[0];
+   }
    if (Exporter::mNifVersionInt > VER_4_0_0_2)
    {
       if (Exporter::mMultiplePartitions)
-         shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex);
+         shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex, faceMap);
       else
          shape->GenHardwareSkinInfo(0, 0);
    }

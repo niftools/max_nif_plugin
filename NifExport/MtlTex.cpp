@@ -14,6 +14,8 @@
 #include "obj/BSShaderPPLightingProperty.h"
 #include "obj/BSShaderTextureSet.h"
 
+static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
+
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 {
 	BitmapTex *bmTex = getTexture(mtl);
@@ -31,16 +33,98 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		
 		vector<string> textures;
 		textures.resize(6);
-		TexDesc td;
-		if (makeTextureDesc(bmTex, td)) {
-			char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-			textures[0] = td.source->GetTextureFileName();
-			_splitpath(textures[0].c_str(), drive, dir, fname, ext);
-			strcat(fname, "_n");
-			_makepath(path_buffer, drive, dir, fname, ext);
-			textures[1] = path_buffer;			
-		}
-		texset->SetTextures(textures);
+
+      TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
+
+      if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+         StdMat2 *m = (StdMat2*)mtl;
+
+         if (m->GetMapState(ID_DI) == 2) {
+            diffuseStr = m->GetMapName(ID_DI);
+            if (Texmap *texMap = m->GetSubTexmap(ID_DI)) {
+               if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  diffuseStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         } else if (m->GetMapState(ID_AM) == 2) {
+            diffuseStr = m->GetMapName(ID_AM);
+            if (Texmap *texMap = m->GetSubTexmap(ID_AM)) {
+               if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  diffuseStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         }
+         if (m->GetMapState(ID_BU) == 2) {
+            normalStr = m->GetMapName(ID_BU);     
+            if (Texmap *texMap = m->GetSubTexmap(ID_BU)) {
+               if (texMap->ClassID() == GNORMAL_CLASS_ID) {
+                  texMap = texMap->GetSubTexmap(0);
+                  if (texMap && texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     normalStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               } else if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  normalStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         }
+         if (m->GetMapState(ID_SP) == 2) {
+            envStr = m->GetMapName(ID_SP);     
+            if (Texmap *texMap = m->GetSubTexmap(ID_SP)) {
+               if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+                  Texmap *envMap = texMap->GetSubTexmap(0);
+                  Texmap *envMaskMap = texMap->GetSubTexmap(1);
+                  if (envMap && envMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                     envStr = ((BitmapTex*)envMap)->GetName();
+                  if (envMaskMap && envMaskMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                     envMaskStr = ((BitmapTex*)envMaskMap)->GetName();
+               } else if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  envStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         }
+         if (m->GetMapState(ID_SI) == 2) {
+            glowStr = m->GetMapName(ID_SI);     
+            if (Texmap *texMap = m->GetSubTexmap(ID_SI)) {
+               if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  glowStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         }
+         if (m->GetMapState(ID_RL) == 2) {
+            dispStr = m->GetMapName(ID_RL);     
+            if (Texmap *texMap = m->GetSubTexmap(ID_RL)) {
+               if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  dispStr = ((BitmapTex*)texMap)->GetName();
+               }
+            }
+         }
+      }
+
+      textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+      if (normalStr.isNull()) {
+         char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+         _splitpath(textures[0].c_str(), drive, dir, fname, ext);
+         strcat(fname, "_n");
+         _makepath(path_buffer, drive, dir, fname, ext);
+         textures[1] = path_buffer;			
+      }
+      else
+         textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+      if (!envMaskStr.isNull())
+         textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+      if (!glowStr.isNull())
+         textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+      if (!dispStr.isNull())
+         textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
+      if (!envStr.isNull())
+         textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+
+      BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+      if (!envStr.isNull() || !dispStr.isNull())
+         shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+      texProp->SetShaderFlags(shFlags);
+
+      texset->SetTextures(textures);
 
 		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
 		parent->AddProperty(prop);
@@ -252,26 +336,25 @@ BitmapTex *Exporter::getTexture(Mtl *mtl)
 {
 	if (!mtl)
 		return NULL;
-
 	int texMaps = mtl->NumSubTexmaps();
 	if (!texMaps)
 		return NULL;
-
-	BitmapTex *bmTex = NULL;
 	for (int i=0; i<texMaps; i++)
 	{
 		Texmap *texMap = mtl->GetSubTexmap(i);
 		if (!texMap)
 			continue;
 
-		if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
-		{
-			bmTex = (BitmapTex*)texMap;
-			break;
-		}
-	}
-
-	return bmTex;
+		if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)){
+			return (BitmapTex*)texMap;
+      } else if (texMap && texMap->ClassID() == GNORMAL_CLASS_ID) {
+         texMap = texMap->GetSubTexmap(0);
+         if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+            return ((BitmapTex*)texMap);
+         }
+      }
+   }
+	return NULL;
 }
 
 BitmapTex *Exporter::getTexture(Mtl *mtl, int i)
@@ -282,6 +365,11 @@ BitmapTex *Exporter::getTexture(Mtl *mtl, int i)
          if (Texmap *texMap = mtl->GetSubTexmap(i)) {
             if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
                return (BitmapTex*)texMap;
+            } else if (texMap && texMap->ClassID() == GNORMAL_CLASS_ID) {
+               texMap = texMap->GetSubTexmap(0);
+               if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                  return ((BitmapTex*)texMap);
+               }
             }
          }
       }

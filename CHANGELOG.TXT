@@ -3,6 +3,11 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      3.2
+      ------
+    o Importer/Exporter/Props
+      - Add BSDismemberPart modifier for selecting Fallout3 Dismemberment Partitions
+    
       3.1
       ------
     o All

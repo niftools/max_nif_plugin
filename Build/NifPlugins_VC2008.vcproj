@@ -2378,14 +2378,14 @@
 			Name="NifProps"
 			>
 			<Filter
-				Name="Header Files"
+				Name="Core"
 				>
 				<File
-					RelativePath="..\NifProps\bhkHelperInterface.h"
+					RelativePath="..\NifProps\iNifProps.h"
 					>
 				</File>
 				<File
-					RelativePath="..\NifProps\bhkRigidBodyInterface.h"
+					RelativePath="..\NifProps\nifProps.cpp"
 					>
 				</File>
 				<File
@@ -2402,7 +2402,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Source Files"
+				Name="Collision"
 				>
 				<File
 					RelativePath="..\NifProps\bhkBoxObj.cpp"
@@ -2425,6 +2425,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\NifProps\bhkHelperInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\NifProps\bhkListObj.cpp"
 					>
 				</File>
@@ -2437,6 +2441,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\NifProps\bhkRigidBodyInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\NifProps\bhkRigidBodyModifer.cpp"
 					>
 				</File>
@@ -2444,16 +2452,24 @@
 					RelativePath="..\NifProps\bhkSphereObj.cpp"
 					>
 				</File>
-				<File
-					RelativePath="..\NifProps\nifProps.cpp"
-					>
-				</File>
 			</Filter>
 			<Filter
-				Name="Resource Files"
+				Name="Resources"
 				>
 				<File
+					RelativePath="..\NifProps\Modifier\AddDel16.bmp"
+					>
+				</File>
+				<File
+					RelativePath="..\NifProps\Modifier\AddDelMask16.bmp"
+					>
+				</File>
+				<File
 					RelativePath="..\NifProps\NifProps.rc"
+					>
+				</File>
+				<File
+					RelativePath="..\NifProps\Modifier\selmask.bmp"
 					>
 				</File>
 			</Filter>
@@ -4311,6 +4327,22 @@
 					</FileConfiguration>
 				</File>
 			</Filter>
+			<Filter
+				Name="Shader"
+				>
+				<File
+					RelativePath="..\NifProps\Shader\NifShader.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Modifier"
+				>
+				<File
+					RelativePath="..\NifProps\Modifier\BSDismemberSkin.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="NifFurniture"
@@ -5282,6 +5314,10 @@
 		</File>
 		<File
 			RelativePath="..\LICENSE.TXT"
+			>
+		</File>
+		<File
+			RelativePath="..\MaxNifTools.ini"
 			>
 		</File>
 		<File
