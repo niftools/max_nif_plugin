@@ -14,7 +14,6 @@ static const float Pi2 = Pi * Pi;
 static const float Pi2Ivr = 1.0f / Pi2;
 static const float PiIvr = 1.0f / Pi;
 
-
 Color OrenNayarIllum( Point3& N, Point3& L, Point3& V, float rough, Color& rho, float* pDiffIntensOut, float NL )
 {
 // float a = NL >= -1.0f ? float( acos( NL / Len(L) )) : AngleBetween( N, L );
@@ -176,44 +175,44 @@ void CombineComponentsAdd( IllumParams& ip )
    ip.finalC = COMBINE_ADD(ip); 
 }
 
-void CombineComponentsCompShader::ChooseSpecularMethod(TimeValue t, RenderGlobalContext* rgc)
-{
-   useComposite = true;
-   if (rgc == NULL) {
-      ToneOperatorInterface* tint = static_cast<ToneOperatorInterface*>(
-         GetCOREInterface(TONE_OPERATOR_INTERFACE));
-      if (tint != NULL) {
-         ToneOperator* top = tint->GetToneOperator();
-         if (top != NULL && top->Active(t))
-            useComposite = false;
-      }
-   } else {
-      ToneOperator* top = rgc->pToneOp;
-      if (top != NULL && top->Active(t))
-         useComposite = false;
-   }
-}
-
-void CombineComponentsCompShader::CombineComponents( ShadeContext &sc, IllumParams& ip )
-{
-   if (useComposite) {
-      Color spec, diff, rem;
-      spec = ip.specIllumOut + ip.reflIllumOut;
-      rem = 1.0f - spec;
-      rem = Bound( rem );
-      diff = ip.ambIllumOut + ip.diffIllumOut  + ip.selfIllumOut;
-      ip.finalC = spec + ip.finalAttenuation * rem * diff +  rem * ip.transIllumOut; 
-   } else {
-      ip.finalC = COMBINE_ADD(ip); 
-   }
-}
-
-BaseInterface* CombineComponentsCompShader::GetInterface(Interface_ID id)
-{
-   if (id == ISPECULAR_COMPOSITE_SHADER_ID)
-      return static_cast<ISpecularCompositeShader*>(this);
-   return NULL;
-}
+//void CombineComponentsCompShader::ChooseSpecularMethod(TimeValue t, RenderGlobalContext* rgc)
+//{
+//   useComposite = true;
+//   if (rgc == NULL) {
+//      ToneOperatorInterface* tint = static_cast<ToneOperatorInterface*>(
+//         GetCOREInterface(TONE_OPERATOR_INTERFACE));
+//      if (tint != NULL) {
+//         ToneOperator* top = tint->GetToneOperator();
+//         if (top != NULL && top->Active(t))
+//            useComposite = false;
+//      }
+//   } else {
+//      ToneOperator* top = rgc->pToneOp;
+//      if (top != NULL && top->Active(t))
+//         useComposite = false;
+//   }
+//}
+//
+//void CombineComponentsCompShader::CombineComponents( ShadeContext &sc, IllumParams& ip )
+//{
+//   if (useComposite) {
+//      Color spec, diff, rem;
+//      spec = ip.specIllumOut + ip.reflIllumOut;
+//      rem = 1.0f - spec;
+//      rem = Bound( rem );
+//      diff = ip.ambIllumOut + ip.diffIllumOut  + ip.selfIllumOut;
+//      ip.finalC = spec + ip.finalAttenuation * rem * diff +  rem * ip.transIllumOut; 
+//   } else {
+//      ip.finalC = COMBINE_ADD(ip); 
+//   }
+//}
+//
+//BaseInterface* CombineComponentsCompShader::GetInterface(Interface_ID id)
+//{
+//   if (id == ISPECULAR_COMPOSITE_SHADER_ID)
+//      return static_cast<ISpecularCompositeShader*>(this);
+//   return NULL;
+//}
 
 
 //////////////////////////////////////////////////////////////////////////////

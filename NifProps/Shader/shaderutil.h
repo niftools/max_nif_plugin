@@ -6,8 +6,8 @@
 #ifndef SHADERUTIL_H
 #define SHADERUTIL_H
 
-#include "ICompositeShader.h"
-#include "expmtlControl.h"
+//#include "ICompositeShader.h"
+//#include "expmtlControl.h"
 
 #define ALPHA_MIN	0.015f
 #define ALPHA_MAX	0.5f
@@ -20,29 +20,29 @@
 
 #define MIN_ORIENT		-999.99	
 #define MAX_ORIENT		999.99	
-
-
-class CombineComponentsCompShader : public Shader, public ISpecularCompositeShader,
-								    public ExposureMaterialControl {
-public:
-	CombineComponentsCompShader() : useComposite(false) {}
-
-	ULONG GetRequirements( int subMtlNum ){ return isNoExposure() | MTLREQ_PHONG | MTLREQ_PREPRO; }
-	void CombineComponents( ShadeContext &sc, IllumParams& ip );
-
-	// [dl | 13march2003] Replaced this using statement by this inline function to
-	// resolve compile errors.
-	//using Shader::GetInterface;
-	virtual void* GetInterface(ULONG id) { return Shader::GetInterface(id); }
-
-	virtual BaseInterface* GetInterface(Interface_ID id);
-	virtual void ChooseSpecularMethod(TimeValue t, RenderGlobalContext* rgc);
-
-	bool getUseComposite() { return useComposite; }
-
-private:
-	bool	useComposite;
-};
+//
+//
+//class CombineComponentsCompShader : public Shader, public ISpecularCompositeShader,
+//								    public ExposureMaterialControl {
+//public:
+//	CombineComponentsCompShader() : useComposite(false) {}
+//
+//	ULONG GetRequirements( int subMtlNum ){ return isNoExposure() | MTLREQ_PHONG | MTLREQ_PREPRO; }
+//	void CombineComponents( ShadeContext &sc, IllumParams& ip );
+//
+//	// [dl | 13march2003] Replaced this using statement by this inline function to
+//	// resolve compile errors.
+//	//using Shader::GetInterface;
+//	virtual void* GetInterface(ULONG id) { return Shader::GetInterface(id); }
+//
+//	virtual BaseInterface* GetInterface(Interface_ID id);
+//	virtual void ChooseSpecularMethod(TimeValue t, RenderGlobalContext* rgc);
+//
+//	bool getUseComposite() { return useComposite; }
+//
+//private:
+//	bool	useComposite;
+//};
 
 
 void CombineComponentsAdd( IllumParams& ip );

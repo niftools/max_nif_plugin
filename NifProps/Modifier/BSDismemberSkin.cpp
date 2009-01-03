@@ -31,6 +31,9 @@ HISTORY:
 #include "NifGui.h"
 #include "..\NifProps\iNifProps.h"
 
+#ifndef MESHSELECTCONVERT_INTERFACE 
+#define MESHSELECTCONVERT_INTERFACE Interface_ID(0x3da7dd5, 0x7ecf0391)
+#endif
 //////////////////////////////////////////////////////////////////////////
 
 const EnumLookupType BodyPartFlags[] = 
@@ -62,32 +65,32 @@ const EnumLookupType BodyPartFlags[] =
    {BP_SECTIONCAP_RIGHTLEG2, "Section Cap | Right Leg 2"},
    {BP_SECTIONCAP_RIGHTLEG3, "Section Cap | Right Leg 3"},
    {BP_SECTIONCAP_BRAIN, "Section Cap | Brain"},
-   {BP_TORSOCAP_HEAD, "Torso Cap | Head"},
-   {BP_TORSOCAP_HEAD2, "Torso Cap | Head 2"},
-   {BP_TORSOCAP_LEFTARM, "Torso Cap | Left Arm"},
-   {BP_TORSOCAP_LEFTARM2, "Torso Cap | Left Arm 2"},
-   {BP_TORSOCAP_RIGHTARM, "Torso Cap | Right Arm"},
-   {BP_TORSOCAP_RIGHTARM2, "Torso Cap | Right Arm 2"},
-   {BP_TORSOCAP_LEFTLEG, "Torso Cap | Left Leg"},
-   {BP_TORSOCAP_LEFTLEG2, "Torso Cap | Left Leg 2"},
-   {BP_TORSOCAP_LEFTLEG3, "Torso Cap | Left Leg 3"},
-   {BP_TORSOCAP_RIGHTLEG, "Torso Cap | Right Leg"},
-   {BP_TORSOCAP_RIGHTLEG2, "Torso Cap | Right Leg 2"},
-   {BP_TORSOCAP_RIGHTLEG3, "Torso Cap | Right Leg 3"},
-   {BP_TORSOCAP_BRAIN, "Torso Cap | Brain"},
-   {BP_TORSOSECTION_HEAD, "Torso Section | Head"},
-   {BP_TORSOSECTION_HEAD2, "Torso Section | Head 2"},
-   {BP_TORSOSECTION_LEFTARM, "Torso Section | Left Arm"},
-   {BP_TORSOSECTION_LEFTARM2, "Torso Section | Left Arm 2"},
-   {BP_TORSOSECTION_RIGHTARM, "Torso Section | Right Arm"},
-   {BP_TORSOSECTION_RIGHTARM2, "Torso Section | Right Arm 2"},
-   {BP_TORSOSECTION_LEFTLEG, "Torso Section | Left Leg"},
-   {BP_TORSOSECTION_LEFTLEG2, "Torso Section | Left Leg 2"},
-   {BP_TORSOSECTION_LEFTLEG3, "Torso Section | Left Leg 3"},
-   {BP_TORSOSECTION_RIGHTLEG, "Torso Section | Right Leg"},
-   {BP_TORSOSECTION_RIGHTLEG2, "Torso Section | Right Leg 2"},
-   {BP_TORSOSECTION_RIGHTLEG3, "Torso Section | Right Leg 3"},
-   {BP_TORSOSECTION_BRAIN, "Torso Section | Brain"},
+   {BP_TORSOCAP_HEAD, "Body Cap | Head"},
+   {BP_TORSOCAP_HEAD2, "Body Cap | Head 2"},
+   {BP_TORSOCAP_LEFTARM, "Body Cap | Left Arm"},
+   {BP_TORSOCAP_LEFTARM2, "Body Cap | Left Arm 2"},
+   {BP_TORSOCAP_RIGHTARM, "Body Cap | Right Arm"},
+   {BP_TORSOCAP_RIGHTARM2, "Body Cap | Right Arm 2"},
+   {BP_TORSOCAP_LEFTLEG, "Body Cap | Left Leg"},
+   {BP_TORSOCAP_LEFTLEG2, "Body Cap | Left Leg 2"},
+   {BP_TORSOCAP_LEFTLEG3, "Body Cap | Left Leg 3"},
+   {BP_TORSOCAP_RIGHTLEG, "Body Cap | Right Leg"},
+   {BP_TORSOCAP_RIGHTLEG2, "Body Cap | Right Leg 2"},
+   {BP_TORSOCAP_RIGHTLEG3, "Body Cap | Right Leg 3"},
+   {BP_TORSOCAP_BRAIN, "Body Cap | Brain"},
+   {BP_TORSOSECTION_HEAD, "Body | Head"},
+   {BP_TORSOSECTION_HEAD2, "Body | Head 2"},
+   {BP_TORSOSECTION_LEFTARM, "Body | Left Arm"},
+   {BP_TORSOSECTION_LEFTARM2, "Body | Left Arm 2"},
+   {BP_TORSOSECTION_RIGHTARM, "Body | Right Arm"},
+   {BP_TORSOSECTION_RIGHTARM2, "Body | Right Arm 2"},
+   {BP_TORSOSECTION_LEFTLEG, "Body | Left Leg"},
+   {BP_TORSOSECTION_LEFTLEG2, "Body | Left Leg 2"},
+   {BP_TORSOSECTION_LEFTLEG3, "Body | Left Leg 3"},
+   {BP_TORSOSECTION_RIGHTLEG, "Body | Right Leg"},
+   {BP_TORSOSECTION_RIGHTLEG2, "Body | Right Leg 2"},
+   {BP_TORSOSECTION_RIGHTLEG3, "Body | Right Leg 3"},
+   {BP_TORSOSECTION_BRAIN, "Body | Brain"},
    {0,  NULL},
 };
 
@@ -104,8 +107,8 @@ class PartSubObjType : public ISubObjType {
    int mIdx;
 public:
    TSTR& GetNameRef() { return name; }
-   void SetName(MCHAR *nm){name = nm;}
-   MCHAR *GetName() { return name;}
+   void SetName(TCHAR *nm){name = nm;}
+   TCHAR *GetName() { return name;}
    MaxIcon *GetIcon() { return NULL; }
 };
 
@@ -179,7 +182,7 @@ public:
 	void DeleteThis() { delete this; }
 	void GetClassName(TSTR& s) {s = GetString(IDS_RB_BSDSMODIFIER);}  
 	virtual Class_ID ClassID() { return BSDSMODIFIER_CLASS_ID;}		
-	RefTargetHandle Clone(RemapDir& remap = DefaultRemapDir());
+	RefTargetHandle Clone(RemapDir& remap /*= DefaultRemapDir()*/);
 	TCHAR *GetObjectName() {return GetString(IDS_RB_BSDSMODIFIER);}
    void* GetInterface(ULONG id) { 
       return (id == I_BSDISMEMBERSKINMODIFIER) ? (IBSDismemberSkinModifier*)this : Modifier::GetInterface(id); 
@@ -968,9 +971,10 @@ int BSDSModifier::Display (TimeValue t, INode* inode, ViewExp *vpt, int flags, M
 
 			if (vertSel[i]) gw->setColor (LINE_COLOR, colSel);
 			else gw->setColor (LINE_COLOR, colTicks);
-
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0)
 			if(getUseVertexDots()) gw->marker (&(mesh->verts[i]), VERTEX_DOT_MARKER(getVertexDotType()));
 			else gw->marker (&(mesh->verts[i]), PLUS_SIGN_MRKR);
+#endif
 		}
 		gw->endMarkers();
 	}
@@ -1141,6 +1145,7 @@ void BSDSModifier::SelectSubComponent (HitRecord *hitRec, BOOL selected, BOOL al
 					vhit.Set (hr->hitInfo);
 					if (!all) break;
 				}
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0)
 				MeshSelectionConverter *pConv = static_cast<MeshSelectionConverter*>(msci);
 				pConv->VertexToEdge(*mesh, vhit, nsel);
 				if (invert) nsel ^= d->GetEdgeSel();
@@ -1148,6 +1153,7 @@ void BSDSModifier::SelectSubComponent (HitRecord *hitRec, BOOL selected, BOOL al
 					if (selected) nsel |= d->GetEdgeSel();
 					else nsel = d->GetEdgeSel() & ~nsel;
 				}
+#endif
 			} else {
             BitArray& edgeSel = d->GetEdgeSel();
 				nsel = d->GetEdgeSel();
@@ -1184,13 +1190,15 @@ void BSDSModifier::SelectSubComponent (HitRecord *hitRec, BOOL selected, BOOL al
 					vhit.Set (hr->hitInfo);
 					if (!all) break;
 				}
-				MeshSelectionConverter *pConv = static_cast<MeshSelectionConverter*>(msci);
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0)
+            MeshSelectionConverter *pConv = static_cast<MeshSelectionConverter*>(msci);
 				pConv->VertexToFace (*mesh, vhit, nsel);
 				if (invert) nsel ^= d->GetFaceSel();
 				else {
 					if (selected) nsel |= d->GetFaceSel();
 					else nsel = d->GetFaceSel() & ~nsel;
 				}
+#endif
 			} else {
             BitArray& faceSel = d->GetFaceSel();
 				nsel = d->GetFaceSel();
@@ -1219,6 +1227,7 @@ void BSDSModifier::SelectSubComponent (HitRecord *hitRec, BOOL selected, BOOL al
 			af = d->GetAdjFaceList ();
 			if (msci) {
 				// Use new improved selection conversion:
+#if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0)
 				MeshSelectionConverter *pConv = static_cast<MeshSelectionConverter*>(msci);
 				if (selByVert) {
 					BitArray vhit;
@@ -1241,6 +1250,7 @@ void BSDSModifier::SelectSubComponent (HitRecord *hitRec, BOOL selected, BOOL al
 					if (selLevel == SEL_ELEMENT) pConv->FaceToElement (*mesh, af, fhit, nsel);
 					else pConv->FaceToPolygon (*mesh, af, fhit, nsel, planarThresh, ignoreVisEdge?true:false);
 				}
+#endif
 			} else {
 				// Otherwise we'll take the old approach of converting faces to polygons or elements as we go.
 				nsel.SetSize (mesh->numFaces);

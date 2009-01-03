@@ -3,10 +3,10 @@
 
 [Setup]
 AppName=NIF Utilities for 3ds Max
-AppVerName=NIF Utilities {code:CurVer} for 3ds Max
+AppVerName=NIF Utilities {code:GetParam|fullver} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
 AppCopyright=Copyright © 2008, NIF File Format Library and Tools
-OutputBaseFilename=niftools-max-plugins-3.1.1
+OutputBaseFilename=niftools-max-plugins
 DisableProgramGroupPage=yes
 Compression=lzma
 SolidCompression=yes
@@ -18,9 +18,8 @@ UninstallFilesDir={win}{\}Installer\NifTools
 Uninstallable=yes
 DisableDirPage=yes
 ArchitecturesInstallIn64BitMode=x64
-VersionInfoVersion=3.1.2
-
 SourceDir=.
+OutputDir=.\Output
 ;UninstallDisplayIcon={app}{\}..\Oblivion.exe
 
 [Types]
@@ -138,8 +137,9 @@ Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max1
 
 
 [Code]
-var sVersion: String;
-    i: Integer;
+#include "NifCommon\build.isi"
+
+var i: Integer;
     UsagePage: TInputOptionWizardPage;
     OBDataDirPage: TInputDirWizardPage;
     OBSIDataDirPage: TInputDirWizardPage;
@@ -153,7 +153,6 @@ var sVersion: String;
 
 function InitializeSetup(): Boolean;
 begin
-  sVersion := '3.1.2';
   Result := True;
 end;
 
@@ -556,11 +555,6 @@ begin
   if CurPageId = wpSelectComponents then
     for i := 0 to WizardForm.ComponentsList.Items.Count - 1 do
        WizardForm.ComponentsList.Checked[i] := IsInstalled(WizardForm.ComponentsList.ItemCaption[i]);
-end;
-
-function CurVer(Param: String): String;
-begin
-  Result := sVersion;
 end;
 
 procedure FixPathInINI(component: String);

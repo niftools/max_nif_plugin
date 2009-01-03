@@ -1,0 +1,22 @@
+//
+// Versioning functions for Inno Setup
+//
+#include "nifversion.h"
+
+const
+  app_version = 'VERSION_MAJOR_INT.VERSION_MINOR_INT.VERSION_BUILD_INT';
+  
+function GetParam(Param: String): String;
+begin
+  Result := '';
+  case Param of
+    'version'      : Result := app_version;
+    'fullver'      : Result := app_version + '.' + '$WCREV$';
+    'svn_revision' : Result := '$WCREV$';
+    'svn_modified' : Result := '$WCMODS?Modified:Not modified$';
+    'svn_date'     : Result := '$WCDATE$';
+    'svn_range'    : Result := '$WCRANGE$';
+    'svn_mixed'    : Result := '$WCMIXED?Mixed revision WC:Not mixed$';
+    'svn_url'      : Result := '$WCURL$';
+  end;
+end;

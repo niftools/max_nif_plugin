@@ -245,7 +245,7 @@ protected:
 
    void Update(TimeValue t, Interval& valid);
    void Reset();
-   RefTargetHandle Clone( RemapDir &remap=DefaultRemapDir() );
+   RefTargetHandle Clone( RemapDir &remap /*=DefaultRemapDir()*/ );
    RefResult NotifyRefChanged( Interval changeInt, RefTargetHandle hTarget, 
                                PartID& partID, RefMessage message );
 
@@ -1001,8 +1001,10 @@ void NifShaderDlg::UpdateMapButtons()
    int state = pMtl->GetMapState( 0 );
    texMButDiffuse->SetText( mapStates[state] );
 
+#if VERSION_3DSMAX < ((10000<<16)+(24<<8)+0) // Version 7
    TSTR nm   = pMtl->GetMapName( 0 );
    texMButDiffuse->SetTooltip(TRUE,nm);
+#endif
 }
 
 
@@ -1310,7 +1312,8 @@ void NifShaderDlg::CommitValues()
 
    pShader->SetAmbientClr( Color(clrAmbient->GetColor()), 0);
    pShader->SetDiffuseClr( Color(clrDiffuse->GetColor()), 0);
-   pb->SetValue(ns_mat_emittance, 0, Color(clrEmittance->GetColor()), 0);
+   Color cEmit(clrEmittance->GetColor());
+   pb->SetValue(ns_mat_emittance, 0, cEmit, 0);
 
    pb->SetValue(ns_mat_specenable, 0, (int)IsDlgButtonChecked(hWnd, IDC_CHK_SPECENABLE), 0);
    pb->SetValue(ns_mat_dither, 0, (int)IsDlgButtonChecked(hWnd, IDC_CHK_DITHER), 0);

@@ -86,7 +86,9 @@ public:
 const ULONG I_BSDISMEMBERSKINMODIFIER		= I_USERINTERFACE + 0x0000E271;
 const ULONG I_BSDISMEMBERSKINMODIFIERDATA	= I_USERINTERFACE + 0x0000E272;
 
-class IBSDismemberSkinModifier: public MaxHeapOperators {
+class IBSDismemberSkinModifier
+//   : public MaxHeapOperators 
+{
 public:
    /*! \remarks This method must be called when the <b>LocalModData</b> of
    the modifier is changed. Developers can use the methods of
@@ -100,7 +102,9 @@ public:
 };
 
 
-class IBSDismemberSkinModifierData: public MaxHeapOperators {
+class IBSDismemberSkinModifierData 
+//   : public MaxHeapOperators 
+{
 public:
 
    /*! \remarks Returns the number of partitions for the modifier. */
