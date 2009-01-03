@@ -7,6 +7,10 @@ NifTools MaxPlugin
       ------
     o Importer/Exporter/Props
       - Add BSDismemberPart modifier for selecting Fallout3 Dismemberment Partitions
+      - Add Custom Niftools Shader 
+		* Allows for setting material and texture properties (like Alpha)
+      - Number of fixes for Civ4 and Niftools Shader on import and export
+      - Fixes for fallout 3 binormal and tangent export
     
       3.1
       ------

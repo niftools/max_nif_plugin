@@ -14,6 +14,10 @@
 #include "obj/BSShaderPPLightingProperty.h"
 #include "obj/BSShaderTextureSet.h"
 
+enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
+       C_DECAL1, C_DECAL2, C_DECAL3, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+};
+
 static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
 
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
@@ -244,7 +248,7 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
 void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
 {
    // Fill-in using the Civ4 Shader if available
-   bool done = exportCiv4Shader(parent, mtl);
+   bool done = exportNiftoolsShader(parent, mtl);
    if (done)
       return;
 
@@ -273,7 +277,7 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
       if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
       {
          StdMat2 * smtl = (StdMat2*)mtl;
-         mtlProp->SetTransparency(smtl->GetOpacity(0));
+         mtlProp->SetTransparency(smtl->GetOpacity(0) / 100.0f);
 
          if (smtl->SupportsShaders()) {
             if (Shader *s = smtl->GetShader()) {
@@ -387,7 +391,7 @@ void Exporter::getTextureMatrix(Matrix3 &mat, Mtl *mtl)
 }
 
 
-bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
+bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 {
    if (!mtl) 
       return false;
@@ -396,24 +400,25 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
    if (!ref)
       return false;
 
-   TSTR shaderByName;
+   const Class_ID civ4Shader(0x670a77d0,0x23ab5c7f);
+   const Class_ID NIFSHADER_CLASS_ID(0x566e8ccb, 0xb091bd48);
+
+   TSTR shaderByName; Class_ID shaderID = Class_ID(0, 0);
    if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
    {
       StdMat2 * smtl = (StdMat2*)mtl;
       if (smtl->SupportsShaders()) {
          if (Shader *s = smtl->GetShader()) {
             s->GetClassName(shaderByName);
+            shaderID = s->ClassID();
          }
       }
    }
-   if (shaderByName != TSTR("CivilizationIV Shader"))
+   if (shaderID != NIFSHADER_CLASS_ID && shaderID != civ4Shader)
+   {
+      if (shaderByName != TSTR("CivilizationIV Shader"))
          return false;
-
-   //if (Shader *s = mtl->GetShader()) {
-   //   TSTR className;
-   //   s->GetClassName(className);
-   //   if (className != TSTR("CivilizationIV Shader"))
-   //      return false;
+   }
 
    Color ambient = Color(0.0f,0.0f,0.0f), diffuse = Color(0.0f,0.0f,0.0f), specular = Color(0.0f,0.0f,0.0f), emittance = Color(0.0f,0.0f,0.0f);
    float shininess = 0.0f, alpha = 0.0f, Magnitude = 0.0f, LumaScale = 0.0f, LumaOffset = 0.0f;
@@ -445,7 +450,6 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
    if(ok) ok &= getMAXScriptValue(ref, "SpecularEnable", 0, SpecularEnable);
    if(ok) ok &= getMAXScriptValue(ref, "NoSorter", 0, NoSorter);
    if(ok) ok &= getMAXScriptValue(ref, "Dither", 0, Dither );
-   if(ok) ok &= getMAXScriptValue(ref, "UseNormalMaps", 0, UseNormalMaps );
    if(ok) ok &= getMAXScriptValue(ref, "srcBlend", 0, srcBlend);
    if(ok) ok &= getMAXScriptValue(ref, "destBlend", 0, destBlend);
    if(ok) ok &= getMAXScriptValue(ref, "TestMode", 0, TestMode );
@@ -453,17 +457,7 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
    if(ok) ok &= getMAXScriptValue(ref, "SourceVertexMode", 0, SrcVertexMode);
    if(ok) ok &= getMAXScriptValue(ref, "LightingMode", 0, LightingMode);
    if(ok) ok &= getMAXScriptValue(ref, "alphaMode", 0, alphaMode);
-   if(ok) ok &= getMAXScriptValue(ref, "BaseTextureExport", 0, BaseTextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "DarkTextureExport", 0, DarkTextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "DetailTextureExport", 0, DetailTextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "Decal1TextureExport", 0, Decal1TextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "Decal2TextureExport", 0, Decal2TextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "GlossTextureExport", 0, GlossTextureExport);
-   if(ok) ok &= getMAXScriptValue(ref, "GlowTextureExport", 0, GlowTextureExport);
    if(ok) ok &= getMAXScriptValue(ref, "CustomShader", 0, CustomShader );
-   if(ok) ok &= getMAXScriptValue(ref, "ShaderViewerTechnique", 0, ShaderViewerTechnique);
-   if(ok) ok &= getMAXScriptValue(ref, "ShaderExportTechnique", 0, ShaderExportTechnique);
-   if(ok) ok &= getMAXScriptValue(ref, "NormalMapTechnique", 0, NormalMapTechnique );
    
    if (ok) // civ4 shader
    {
@@ -476,7 +470,7 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
       mtlProp->SetSpecularColor(TOCOLOR3(specular));
       mtlProp->SetEmissiveColor(TOCOLOR3(emittance));
       mtlProp->SetGlossiness(shininess);
-      mtlProp->SetTransparency(alpha/100.0f);
+      mtlProp->SetTransparency(alpha);
       if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
       {
          StdMat2 * smtl = (StdMat2*)mtl;
@@ -546,49 +540,166 @@ bool Exporter::exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl)
             alphaProp->SetDestBlendFunc(NiAlphaProperty::BlendFunc(destBlend));
          }
          alphaProp->SetTestFunc(NiAlphaProperty::TestFunc(TestMode));
-         alphaProp->SetTriangleSortMode(!NoSorter);
+         alphaProp->SetTriangleSortMode(NoSorter);
          alphaProp->SetTestThreshold(TestRef);
-         alphaProp->SetBlendState(AlphaTestEnable);
+         alphaProp->SetTestState(AlphaTestEnable);
          parent->AddProperty(alphaProp);
       }
 
-      int ntex = mtl->NumSubTexmaps();
-      if (ntex > 0)
+
+
+      if (IsFallout3())
       {
-         ntex = min(ntex, 7);
-         TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
-         NiTexturingPropertyRef texProp;
-         for (int i = 0; i < ntex; ++i) {
-            BitmapTex *bmTex = getTexture(mtl, i);
-            if (!bmTex)
-               continue;
+         BSShaderPPLightingPropertyRef texProp = new BSShaderPPLightingProperty();
+         texProp->SetFlags(1);
+         texProp->SetShaderType( SHADER_DEFAULT );
 
-            if (texProp == NULL)
-            {
-               texProp = new NiTexturingProperty();       
-               texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
-               texProp->SetTextureCount(7);
+         BSShaderTextureSetRef texset = new BSShaderTextureSet();
+         texProp->SetTextureSet( texset );
+
+         vector<string> textures;
+         textures.resize(6);
+
+         enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
+            C_DECAL1, C_DECAL2, C_DECAL3, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+         };
+
+         TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
+
+         if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+            StdMat2 *m = (StdMat2*)mtl;
+            if (m->GetMapState(C_BASE) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+                  if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     diffuseStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               }
             }
-            TexDesc td;
-            if (makeTextureDesc(bmTex, td)) {
-               TexType textype = texmap[i];
-               texProp->SetTexture(textype, td);
-               if (textype == BUMP_MAP) {
-                  td.source->SetPixelLayout(PIX_LAY_BUMPMAP);
-                  texProp->SetLumaOffset(LumaOffset);
-                  texProp->SetLumaScale(LumaScale);
 
-                  Matrix22 m2;
-                  m2[0][0] = m2[1][1] = Magnitude;
-                  m2[0][1] = m2[1][0] = 0.0f;
-                  texProp->SetBumpMapMatrix(m2);
+            if (m->GetMapState(C_NORMAL) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_NORMAL)) {
+                  if (texMap->ClassID() == GNORMAL_CLASS_ID) {
+                     texMap = texMap->GetSubTexmap(0);
+                     if (texMap && texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                        normalStr = ((BitmapTex*)texMap)->GetName();
+                     }
+                  } else if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     normalStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               }
+            }
+            if (m->GetMapState(C_ENVMASK) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_ENVMASK)) {
+                  if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+                     Texmap *envMap = texMap->GetSubTexmap(0);
+                     Texmap *envMaskMap = texMap->GetSubTexmap(1);
+                     if (envMap && envMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                        envStr = ((BitmapTex*)envMap)->GetName();
+                     if (envMaskMap && envMaskMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                        envMaskStr = ((BitmapTex*)envMaskMap)->GetName();
+                  } else if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     envMaskStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               }
+            }
+            if (m->GetMapState(C_GLOW) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_GLOW)) {
+                  if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     glowStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               }
+            }
+            if (m->GetMapState(C_HEIGHT) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_HEIGHT)) {
+                  if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     dispStr = ((BitmapTex*)texMap)->GetName();
+                  }
+               }
+            }
+            if (m->GetMapState(C_ENV) == 2) {
+               if (Texmap *texMap = m->GetSubTexmap(C_ENV)) {
+                  if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+                     Texmap *envMap = texMap->GetSubTexmap(0);
+                     Texmap *envMaskMap = texMap->GetSubTexmap(1);
+                     if (envMap && envMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                        envStr = ((BitmapTex*)envMap)->GetName();
+                     if (envMaskMap && envMaskMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0))
+                        envMaskStr = ((BitmapTex*)envMaskMap)->GetName();
+                  } else if (texMap->ClassID() == Class_ID(BMTEX_CLASS_ID, 0)) {
+                     envStr = ((BitmapTex*)texMap)->GetName();
+                  }
                }
             }
          }
+         textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+         if (normalStr.isNull()) {
+            char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+            _splitpath(textures[0].c_str(), drive, dir, fname, ext);
+            strcat(fname, "_n");
+            _makepath(path_buffer, drive, dir, fname, ext);
+            textures[1] = path_buffer;			
+         }
+         else
+            textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+         if (!envMaskStr.isNull())
+            textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+         if (!glowStr.isNull())
+            textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+         if (!dispStr.isNull())
+            textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
+         if (!envStr.isNull())
+            textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
 
-         if (texProp != NULL)
+         BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+         if (!envStr.isNull() || !dispStr.isNull() || !envMaskStr.isNull())
+            shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+         texProp->SetShaderFlags(shFlags);
+
+         texset->SetTextures(textures);
+
+         NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+         parent->AddProperty(prop);
+      } 
+      else
+      {
+         int ntex = mtl->NumSubTexmaps();
+         if (ntex > 0)
          {
-            parent->AddProperty(texProp);
+            ntex = min(ntex, 7);
+            TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
+            NiTexturingPropertyRef texProp;
+            for (int i = 0; i < ntex; ++i) {
+               BitmapTex *bmTex = getTexture(mtl, i);
+               if (!bmTex)
+                  continue;
+
+               if (texProp == NULL)
+               {
+                  texProp = new NiTexturingProperty();       
+                  texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
+                  texProp->SetTextureCount(7);
+               }
+               TexDesc td;
+               if (makeTextureDesc(bmTex, td)) {
+                  TexType textype = texmap[i];
+                  texProp->SetTexture(textype, td);
+                  if (textype == BUMP_MAP) {
+                     td.source->SetPixelLayout(PIX_LAY_BUMPMAP);
+                     texProp->SetLumaOffset(LumaOffset);
+                     texProp->SetLumaScale(LumaScale);
+
+                     Matrix22 m2;
+                     m2[0][0] = m2[1][1] = Magnitude;
+                     m2[0][1] = m2[1][0] = 0.0f;
+                     texProp->SetBumpMapMatrix(m2);
+                  }
+               }
+            }
+
+            if (texProp != NULL)
+            {
+               parent->AddProperty(texProp);
+            }
          }
       }
       return true;

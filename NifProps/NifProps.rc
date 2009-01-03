@@ -328,81 +328,59 @@ BEGIN
     CONTROL         "",IDC_SP_FILTER,"SpinnerControl",WS_DISABLED,76,29,7,10
 END
 
-IDD_NIFSHADER DIALOGEX 0, 0, 212, 412
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_CLIPSIBLINGS
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
+IDD_NIFSHADER DIALOGEX 0, 0, 216, 229
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    GROUPBOX        "Material",-1,2,2,105,119
+    GROUPBOX        "Material",-1,2,2,105,107
     RTEXT           "Ambient:",-1,8,13,33,10
     CONTROL         "User1",IDC_CLR_AMBIENT,"ColorSwatch",0x0,44,12,34,12
     RTEXT           "Diffuse:",-1,8,28,33,10
     CONTROL         "User1",IDC_CLR_DIFFUSE,"ColorSwatch",0x0,44,26,34,12
-    CONTROL         "M",1817,"CustButton",0x0,80,28,10,10
-    RTEXT           "Specular:",-1,8,42,33,10
-    CONTROL         "User1",IDC_CLR_SPECULAR,"ColorSwatch",0x0,44,42,34,12
-    CONTROL         "On",1725,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,80,42,21,10
-    RTEXT           "Emittance:",-1,7,58,34,10
-    CONTROL         "User1",IDC_CLR_EMITTANCE,"ColorSwatch",0x0,44,57,34,12
-    RTEXT           "Shininess:",-1,8,81,33,10
-    CONTROL         "",IDC_EDT_SHININESS,"CustEdit",WS_TABSTOP,44,79,23,10
-    CONTROL         "0,255,0",IDC_SPN_SHININESS,"SpinnerControl",WS_TABSTOP,66,79,11,10
-    RTEXT           "Alpha:",-1,8,94,33,10
-    CONTROL         "",IDC_EDT_ALPHA,"CustEdit",WS_TABSTOP,44,94,23,10
-    CONTROL         "0,255,0",IDC_SPN_ALPHA,"SpinnerControl",WS_TABSTOP,66,94,11,10
-    CONTROL         "Dither",IDC_CHK_DITHER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,44,106,44,10
-    GROUPBOX        "Vertex Colors",-1,2,124,105,51
-    CONTROL         "On",1726,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,133,21,10
-    RTEXT           "Src Mode:",-1,6,146,38,10
-    COMBOBOX        1066,48,145,51,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Light Mode:",-1,6,161,38,10
-    COMBOBOX        1068,48,159,51,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Transparency Modes",-1,110,2,100,119
-    CONTROL         "None",IDC_RDO_TRANS_NONE,"Button",BS_AUTORADIOBUTTON,172,15,33,10
-    CONTROL         "Standard",IDC_RDO_TRANS_STD,"Button",BS_AUTORADIOBUTTON,114,26,45,10
-    CONTROL         "Advanced",IDC_RDO_TRANS_ADV,"Button",BS_AUTORADIOBUTTON,114,63,49,10
-    CONTROL         "Additive",IDC_RDO_TRANS_ADD,"Button",BS_AUTORADIOBUTTON,114,39,41,10
-    CONTROL         "Multiplicative",IDC_RDO_TRANS_MULT,"Button",BS_AUTORADIOBUTTON,114,50,57,10
-    GROUPBOX        "Alpha Testing",-1,110,124,100,51
-    CONTROL         "On",1727,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,128,134,21,10
-    CONTROL         "NoSorter",1728,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,162,134,44,10
-    RTEXT           "Test Ref:",-1,112,146,37,10
-    CONTROL         "",1811,"CustEdit",WS_TABSTOP,156,146,23,10
-    CONTROL         "0,255,0",1812,"SpinnerControl",WS_TABSTOP,180,146,11,10
-    RTEXT           "Test Mode:",-1,110,161,37,8
-    COMBOBOX        1072,148,159,58,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Src:",-1,112,79,18,10
-    COMBOBOX        IDC_CBO_TRANS_SRC,132,78,75,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    RTEXT           "Dest:",-1,112,95,17,10
-    COMBOBOX        IDC_CBO_TRANS_DEST,132,93,75,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        1071,40,186,59,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Apply",-1,2,177,105,25
-    RTEXT           "Mode:",-1,6,186,21,8
-    CONTROL         "Automatic",IDC_RDO_TRANS_AUTO,"Button",BS_AUTORADIOBUTTON,114,15,47,10
-    GROUPBOX        "Bump Map",-1,2,205,105,40
-    LTEXT           "Magnitude:",-1,16,222,36,8
-    CONTROL         "",1846,"CustEdit",WS_TABSTOP,60,221,23,10
-    CONTROL         "0,255,0",1847,"SpinnerControl",WS_TABSTOP,82,221,11,10
-    PUSHBUTTON      "Per-Texture Settings",1153,64,394,85,15
-    COMBOBOX        1125,58,266,143,136,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Custom Shader",-1,2,250,208,138
-    LTEXT           "Description:",-1,12,282,39,13
-    LTEXT           "Selected Shader:",-1,12,263,40,18
-    EDITTEXT        1126,58,282,142,41,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
-    PUSHBUTTON      "Apply",1186,56,330,39,14
-    PUSHBUTTON      "Reset",1187,154,330,39,14
-    COMBOBOX        1127,56,351,143,136,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Viewer Technique:",-1,10,349,40,18
-    COMBOBOX        1128,56,370,143,136,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Export Technique:",-1,10,367,40,18
-    GROUPBOX        "NBT Generation",-1,110,205,100,40
-    CONTROL         "On",1124,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,122,215,29,11
-    COMBOBOX        1132,148,226,58,69,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "Method:",-1,120,229,28,10
-    PUSHBUTTON      "More Info",1196,106,330,39,14
-    GROUPBOX        "Parallax Map",-1,110,177,100,25
-    LTEXT           "Offset:",-1,124,186,22,8
-    CONTROL         "",1814,"CustEdit",WS_TABSTOP,156,186,23,10
-    CONTROL         "0,255,0",1819,"SpinnerControl",WS_TABSTOP,180,186,11,10
+    CONTROL         "M",IDC_MAP_DIFFUSE,"CustButton",0x0,80,27,10,10
+    RTEXT           "Specular:",-1,8,40,33,10
+    CONTROL         "User1",IDC_CLR_SPECULAR,"ColorSwatch",0x0,44,40,34,12
+    CONTROL         "On",IDC_CHK_SPECENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,80,41,21,10
+    RTEXT           "Emittance:",-1,7,55,34,10
+    CONTROL         "User1",IDC_CLR_EMITTANCE,"ColorSwatch",0x0,44,54,34,12
+    RTEXT           "Glossiness:",-1,5,70,36,10
+    CONTROL         "",IDC_EDT_SHININESS,"CustEdit",WS_TABSTOP,44,70,23,10
+    CONTROL         "0,255,0",IDC_SPN_SHININESS,"SpinnerControl",WS_TABSTOP,66,70,11,10
+    RTEXT           "Alpha:",-1,8,82,33,10
+    CONTROL         "",IDC_EDT_ALPHA,"CustEdit",WS_TABSTOP,44,82,23,10
+    CONTROL         "0,255,0",IDC_SPN_ALPHA,"SpinnerControl",WS_TABSTOP,66,82,11,10
+    CONTROL         "Dither",IDC_CHK_DITHER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,44,95,44,10
+    GROUPBOX        "Vertex Colors",-1,2,109,105,51
+    CONTROL         "On",IDC_CHK_VERTEXENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,50,118,21,10
+    RTEXT           "Src Mode:",-1,6,131,38,10
+    COMBOBOX        IDC_CBO_VERTEX_SRC,48,130,51,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Light Mode:",-1,6,146,38,10
+    COMBOBOX        IDC_CBO_VERTEX_LIGHT,48,144,51,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Transparency Modes",-1,110,2,100,107
+    CONTROL         "None",IDC_RDO_TRANS_NONE,"Button",BS_AUTORADIOBUTTON,172,12,33,10
+    CONTROL         "Standard",IDC_RDO_TRANS_STD,"Button",BS_AUTORADIOBUTTON,114,23,45,10
+    CONTROL         "Advanced",IDC_RDO_TRANS_ADV,"Button",BS_AUTORADIOBUTTON,114,56,49,10
+    CONTROL         "Additive",IDC_RDO_TRANS_ADD,"Button",BS_AUTORADIOBUTTON,114,33,41,10
+    CONTROL         "Multiplicative",IDC_RDO_TRANS_MULT,"Button",BS_AUTORADIOBUTTON,114,44,57,10
+    GROUPBOX        "Alpha Testing",-1,110,109,100,51
+    CONTROL         "On",IDC_CHK_ALPHATESTENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,128,119,21,10
+    CONTROL         "NoSorter",IDC_CHK_NOSORTER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,162,119,44,10
+    RTEXT           "Test Ref:",-1,112,131,37,10
+    CONTROL         "",IDC_EDT_TESTREF,"CustEdit",WS_TABSTOP,156,131,23,10
+    CONTROL         "0,255,0",IDC_SPN_TESTREF,"SpinnerControl",WS_TABSTOP,180,131,11,10
+    RTEXT           "Test Mode:",-1,111,146,37,8
+    COMBOBOX        IDC_CBO_TESTMODE,149,144,58,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Src:",-1,112,71,18,10
+    COMBOBOX        IDC_CBO_TRANS_SRC,132,69,75,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Dest:",-1,112,86,17,10
+    COMBOBOX        IDC_CBO_TRANS_DEST,132,84,75,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CBO_APPLY_MODE,40,171,59,75,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Apply",-1,2,162,105,25
+    RTEXT           "Mode:",-1,6,171,21,8
+    CONTROL         "Automatic",IDC_RDO_TRANS_AUTO,"Button",BS_AUTORADIOBUTTON,114,12,47,10
+    COMBOBOX        IDC_CUSTOM_SHADER,58,203,143,136,CBS_DROPDOWNLIST | CBS_SORT | WS_DISABLED | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Selected Shader:",-1,12,200,40,18,WS_DISABLED
+    GROUPBOX        "Custom Shader",-1,2,189,208,35,WS_DISABLED
 END
 
 IDD_MESH_SELECT DIALOGEX 0, 0, 108, 172
@@ -1155,17 +1133,6 @@ BEGIN
     0
 END
 
-IDD_NIFSHADER DLGINIT
-BEGIN
-    1132, 0x403, 5, 0
-0x6f4e, 0x656e, "\000" 
-    1132, 0x403, 4, 0
-0x5441, 0x0049, 
-    1132, 0x403, 4, 0
-0x444e, 0x004c, 
-    0
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1266,7 +1233,7 @@ BEGIN
     IDS_CLONE_PARAMS        "Clone Parameters"
     IDS_DS_FILTER           "Filter"
     IDS_LIST_SUBSHAPEPROPS  "Subshape Properties"
-    IDS_NIF_SHADER_NAME     "NifShader"
+    IDS_NIF_SHADER_NAME     "Niftools Shader"
     IDS_MAT_AMBIENT         "Ambient"
     IDS_RB_BSDSMODIFIER     "BSDismemberSkin Modifier"
     IDS_DS_SELECT           "Select"
@@ -1301,7 +1268,7 @@ BEGIN
     IDS_BY_VERTEX           "By Vertex"
     IDS_IGNORE_BACKFACING   "Ignore Backfacing"
     IDS_IGNORE_VISIBLE      "Ignore Visible Edges"
-    IDS_SH_NAME             "Nif Shader"
+    IDS_SH_NAME             "Niftools Shader"
     IDS_SH_PARAMETERS       "Parameters"
     IDS_MAT_DIFFUSE         "Diffuse"
     IDS_MAT_SPECULAR        "Specular"
@@ -1328,7 +1295,7 @@ BEGIN
     IDS_CHAN_DECAL1         "Decal 1"
     IDS_CHAN_DECAL2         "Decal 2"
     IDS_CHAN_DECAL3         "Decal 3"
-    IDS_CHAN_ENVMASK        "Environment Mask"
+    IDS_CHAN_ENVMASK        "Environ Mask"
     IDS_CHAN_ENV            "Environment"
     IDS_CHAN_HEIGHT         "Height"
 END
@@ -1336,6 +1303,7 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHAN_REFLECTION     "Reflection"
+    IDS_NIFSHADERDLG_NAME   "Niftools Shader"
     IDS_MAXCHAN_DIFFUSE     "diffuseMap"
     IDS_MAXCHAN_SELFILLUMMAP "selfIllumMap"
     IDS_MAXCHAN_NORMAL      "bumpMap"
@@ -1346,6 +1314,28 @@ BEGIN
     IDS_CHAN_EMPTY          " "
     IDS_MAXCHAN_EMPTY       " "
     IDS_MAT_SELFILLUMON     "Self-Illumination On"
+    IDS_MAT_SPECULARENABLE  "Specular Enable"
+    IDS_ALPHA_MODE          "Alpha Transparency Mode"
+    IDS_ALPHA_SRC           "Transparency Source"
+    IDS_ALPHA_DEST          "Transparency Dest"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_VERTEXCOLORENABLE   "Vertex Color Enable"
+    IDS_SRC_VERTEX_MODE     "Source Vertex Mode"
+    IDS_LIGHTING_MODE       "Vertex Lighting Mode"
+    IDS_APPLY_MODE          "Apply Mode"
+    IDS_TEST_REF            "Alpha Test Reference"
+    IDS_TEST_MODE           "Alpha Test Mode"
+    IDS_ALPHATEST_ENABLE    "Alpha Test Enable"
+    IDS_ALPHA_NOSORTER      "Alpha No Sorter"
+    IDS_NIF_SHADER_BASIC    "Niftools Shader Basic Parameters"
+    IDS_SHADER_NAME         "Custom Shader"
+    IDS_MAT_EMITTANCE       "Emittance"
+    IDS_BUMP_MAGNITUDE      "Bump Map Magnitude"
+    IDS_LUMA_SCALE          "Bump Map Luma Scale"
+    IDS_LUMA_OFFSET         "Bump Map Luma Offset"
 END
 
 #endif    // English (U.S.) resources

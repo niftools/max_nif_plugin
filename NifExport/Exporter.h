@@ -238,7 +238,7 @@ public:
    bool                 makeTextureDesc(BitmapTex *bmTex, Niflib::TexDesc &td);
    // creates a NiMaterialProperty
    void					   makeMaterial(NiAVObjectRef &parent, Mtl *mtl);
-   bool                 exportCiv4Shader(NiAVObjectRef parent, Mtl* mtl);
+   bool                 exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl);
 
    /* havok & collision */
    int						addVertex(vector<Vector3> &verts, vector<Vector3> &vnorms, const Point3 &pt, const Point3 &norm);

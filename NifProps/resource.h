@@ -24,8 +24,12 @@
 #define IDC_LIST1                       1023
 #define IDC_ADD                         1024
 #define IDC_REMOVE                      1025
+#define IDC_CBO_VERTEX_SRC              1066
 #define IDC_CBO_TRANS_SRC               1067
+#define IDC_CBO_VERTEX_LIGHT            1068
 #define IDC_CBO_TRANS_DEST              1069
+#define IDC_CBO_APPLY_MODE              1071
+#define IDC_CBO_TESTMODE                1072
 #define IDC_RDO_TRANS_AUTO              1084
 #define IDC_RDO_TRANS_NONE              1085
 #define IDC_RDO_TRANS_STD               1086
@@ -37,6 +41,7 @@
 #define IDC_RDO_CAPSULE                 1120
 #define IDC_RDO_PROXY_MESH              1121
 #define IDC_RDO_OBB                     1122
+#define IDC_CUSTOM_SHADER               1125
 #define IDC_OPT_FACETHRESH              1141
 #define IDC_OPT_FACETHRESHSPIN          1142
 #define IDC_OPT_EDGETHRESH              1143
@@ -85,14 +90,21 @@
 #define IDC_ED_FILTER                   1721
 #define IDC_SP_FILTER                   1722
 #define IDC_LBL_BODYPART                1723
+#define IDC_CHK_VERTEXENABLE            1724
+#define IDC_CHK_SPECENABLE              1725
+#define IDC_CHK_ALPHATESTENABLE         1727
+#define IDC_CHK_NOSORTER                1728
 #define IDC_CHK_DITHER                  1729
 #define IDC_EDT_SHININESS               1807
 #define IDC_SPN_SHININESS               1808
 #define IDC_EDT_ALPHA                   1809
 #define IDC_SPN_ALPHA                   1810
+#define IDC_EDT_TESTREF                 1811
+#define IDC_SPN_TESTREF                 1812
 #define IDC_CLR_AMBIENT                 1813
 #define IDC_CLR_DIFFUSE                 1815
 #define IDC_CLR_SPECULAR                1816
+#define IDC_MAP_DIFFUSE                 1817
 #define IDC_CLR_EMITTANCE               1818
 #define IDC_LENGTHEDIT                  3009
 #define IDC_WIDTHEDIT                   3010
@@ -250,6 +262,7 @@
 #define IDS_CHAN_ENV                    11118
 #define IDS_CHAN_HEIGHT                 11119
 #define IDS_CHAN_REFLECTION             11120
+#define IDS_NIFSHADERDLG_NAME           11121
 #define IDS_MAXCHAN_DIFFUSE             11122
 #define IDS_MAXCHAN_SELFILLUMMAP        11123
 #define IDS_MAXCHAN_NORMAL              11124
@@ -260,6 +273,24 @@
 #define IDS_CHAN_EMPTY                  11129
 #define IDS_MAXCHAN_EMPTY               11130
 #define IDS_MAT_SELFILLUMON             11131
+#define IDS_MAT_SPECULARENABLE          11132
+#define IDS_ALPHA_MODE                  11133
+#define IDS_ALPHA_SRC                   11134
+#define IDS_ALPHA_DEST                  11135
+#define IDS_VERTEXCOLORENABLE           11136
+#define IDS_SRC_VERTEX_MODE             11137
+#define IDS_LIGHTING_MODE               11138
+#define IDS_APPLY_MODE                  11139
+#define IDS_TEST_REF                    11140
+#define IDS_TEST_MODE                   11141
+#define IDS_ALPHATEST_ENABLE            11142
+#define IDS_ALPHA_NOSORTER              11143
+#define IDS_NIF_SHADER_BASIC            11144
+#define IDS_SHADER_NAME                 11145
+#define IDS_MAT_EMITTANCE               11146
+#define IDS_BUMP_MAGNITUDE              11147
+#define IDS_LUMA_SCALE                  11148
+#define IDS_LUMA_OFFSET                 11149
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492
@@ -307,7 +338,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        118
 #define _APS_NEXT_COMMAND_VALUE         40005
-#define _APS_NEXT_CONTROL_VALUE         1724
+#define _APS_NEXT_CONTROL_VALUE         1725
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

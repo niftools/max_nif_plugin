@@ -174,7 +174,7 @@ void NifImporter::LoadIniSettings()
    enableLights = GetIniValue(NifImportSection, "Lights", false);
    enableCameras = GetIniValue(NifImportSection, "Cameras", false);
    vertexColorMode = GetIniValue<int>(NifImportSection, "VertexColorMode", 1);
-   useCiv4Shader = GetIniValue(NifImportSection, "UseCiv4Shader", true);
+   useNiftoolsShader = GetIniValue<int>(NifImportSection, "UseNiftoolsShader", 1);
    mergeNonAccum = GetIniValue(NifImportSection, "MergeNonAccum", true);
    importUPB = GetIniValue(NifImportSection, "ImportUPB", true);
    ignoreRootNode = GetIniValue(NifImportSection, "IgnoreRootNode", true);

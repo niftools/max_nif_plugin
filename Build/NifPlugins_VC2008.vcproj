@@ -4334,6 +4334,14 @@
 					RelativePath="..\NifProps\Shader\NifShader.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\NifProps\Shader\shaderutil.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\NifProps\Shader\shaderutil.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="Modifier"
@@ -5309,7 +5317,19 @@
 			>
 		</File>
 		<File
+			RelativePath="..\NifProps\Modifier\bmp00003.bmp"
+			>
+		</File>
+		<File
 			RelativePath="..\CHANGELOG.TXT"
+			>
+		</File>
+		<File
+			RelativePath="..\NifProps\Shader\dmtlbut.bmp"
+			>
+		</File>
+		<File
+			RelativePath="..\NifProps\Shader\dmtlmsk.bmp"
 			>
 		</File>
 		<File

@@ -197,6 +197,8 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
       data = new NiTriShapeData(grp.faces);
 	}
 
+   shape->SetFlags( 14 );
+
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
@@ -214,7 +216,12 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	shape->SetData(data);
 
    if (Exporter::mTangentAndBinormalExtraData && (Exporter::mNifVersionInt > VER_4_2_2_0))
+   {
+      // enable traditional tangents and binormals for non-oblivion meshes
+      if ( !IsOblivion() && (Exporter::mNifVersionInt >= VER_10_0_1_0) )
+         data->SetTspaceFlag( 0x10 );
 	   shape->UpdateTangentSpace(Exporter::mTangentAndBinormalMethod);
+   }
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
 	makeMaterial(av, mtl);
@@ -662,7 +669,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			InitializeTimeController(new NiTransformController(), newParent);
 
 		bool isBoneRoot = false;
-		if (IsOblivion())
+		if (IsOblivion() || IsFallout3())
 		{
 			// Check for Bone Root
 			TSTR upb;
@@ -761,7 +768,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			NiNodeRef accumNode = createAccumNode(newParent, node);
 
 			// Transfer collision object to accum and create blend on accum
-			if (IsOblivion()) {
+			if (IsOblivion() || IsFallout3()) {
 				InitializeTimeController(new bhkBlendController(), accumNode);
 				accumNode->SetCollisionObject(newParent->GetCollisionObject());
 				newParent->SetCollisionObject( NiCollisionObjectRef() );

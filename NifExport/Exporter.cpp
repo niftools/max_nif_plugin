@@ -92,7 +92,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 
 	if (!Exporter::mSelectedOnly)
 	{
-		if (IsOblivion())
+		if (IsOblivion() || IsFallout3())
 		{
 			if (mSkeletonOnly)
 			{
@@ -120,7 +120,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 			{
 				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 				bsx->SetName("BSX");
-				bsx->SetData( 0x00000002 );
+				bsx->SetData( IsFallout3() ? 202 : 2 );
 				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
 			}
 		}

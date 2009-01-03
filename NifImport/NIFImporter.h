@@ -37,7 +37,7 @@ public:
    bool goToSkeletonBindPosition;
    bool enableCollision;
    int vertexColorMode;
-   bool useCiv4Shader;
+   int useNiftoolsShader;
    bool mergeNonAccum;
    bool enableLights;
    bool enableCameras;
@@ -124,7 +124,7 @@ public:
    bool ImportMultipleGeometry(Niflib::NiNodeRef parent, vector<Niflib::NiTriBasedGeomRef>& glist);
    StdMat2 *ImportMaterialAndTextures(ImpNode *node, Niflib::NiAVObjectRef avObject);
    bool ImportMaterialAndTextures(ImpNode *node, vector<Niflib::NiTriBasedGeomRef>& glist);
-   bool ImportCiv4Shader(ImpNode *node, Niflib::NiAVObjectRef avObject, StdMat2 *m);
+   bool ImportNiftoolsShader(ImpNode *node, Niflib::NiAVObjectRef avObject, StdMat2 *m);
    bool ImportTransform(ImpNode *node, Niflib::NiAVObjectRef avObject);
    bool ImportMesh(ImpNode *node, TriObject *o, Niflib::NiTriBasedGeomRef triGeom, Niflib::NiTriBasedGeomDataRef triGeomData, vector<Niflib::Triangle>& tris);
    bool ImportVertexColor(INode *tnode, TriObject *o, vector<Niflib::Triangle>& tris, vector<Niflib::Color4> cv, int cv_offset=0);

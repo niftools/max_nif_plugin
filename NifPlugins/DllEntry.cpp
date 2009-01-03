@@ -33,7 +33,6 @@ extern ClassDesc2* GetbhkProxyObjDesc();
 extern ClassDesc2* GetBSDSModifierDesc();
 extern ClassDesc2* GetNifShaderDesc();
 
-
 enum ClassDescType
 {
    CD_Import,
