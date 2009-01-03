@@ -1,6 +1,7 @@
 //
 // Versioning functions for Inno Setup
 //
+#define VERSION_STRING
 #include "nifversion.h"
 
 const

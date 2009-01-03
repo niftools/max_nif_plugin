@@ -24,7 +24,7 @@
 #define  VERSION_PATCH_INT  NIFTOOLS_REVISION_INT
 #endif
 
-#ifdef __cplusplus
+#ifndef VERSION_STRING
 #ifndef NIFTOOLS_REVISION
 #define VERSION_STRING "3, 2, 0, 0"
 #else
