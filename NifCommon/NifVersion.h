@@ -7,7 +7,8 @@
 // HISTORY:
 //	 Copyright (c) 2006, All Rights Reserved.
 //**********************************************************************/
-#pragma once
+#ifndef NIFVERSION_H
+#define NIFVERSION_H
 
 #include "config.h"
 
@@ -37,3 +38,5 @@
 
 #define COPYRIGHTYEARINT 2009
 #define COPYRIGHTYEAR "2009"
+
+#endif
