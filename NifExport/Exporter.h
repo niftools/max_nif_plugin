@@ -113,6 +113,8 @@ public:
    static bool          mUseAlternateStripper;
    static float			bhkScaleFactor;
    static int           mTangentAndBinormalMethod;
+   static bool          mStartNifskopeAfterStart;
+   static string        mNifskopeDir;
 
    Exporter(Interface *i, AppSettings *appSettings);
 

@@ -167,8 +167,9 @@ NiNodeRef Exporter::getNode(const string& name)
    if (itr != mNameMap.end())
       return (*itr).second;
    NiNodeRef node = CreateNiObject<NiNode>();
-   if ( IsFallout3() )
-      node->SetFlags(14);
+   if ( IsFallout3() ) {
+      node->SetFlags( 14 );
+   }
    node->SetName(name);
    mNameMap[name] = node;
    return node;

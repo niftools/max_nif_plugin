@@ -59,6 +59,8 @@
 #define IDC_ED_BONES_PART               13037
 #define IDC_CHK_SKINPART                13038
 #define IDC_CB_USER_VERSION2            13039
+#define IDC_CHK_ALLOW_ACCUM2            13040
+#define IDC_CHK_START_NIFSKOPE          13040
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
 #define IDC_SPIN                        13496

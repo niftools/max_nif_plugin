@@ -24,7 +24,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 
 	TriObject *tri = (TriObject *)os.obj->ConvertToType(t, Class_ID(TRIOBJ_CLASS_ID, 0));
 	if (!tri)
-		return Error;
+		return Skip;
 
 	Mesh *copymesh = NULL;
 	Mesh *mesh = &tri->GetMesh();

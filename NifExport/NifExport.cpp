@@ -150,9 +150,11 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 
          CheckDlgButton(hWnd, IDC_CHK_ALLOW_ACCUM, Exporter::mAllowAccum);
 
-         TSTR tmp;
-         tmp.printf("%.4f", Exporter::mWeldThresh);
-         SetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp);
+         //TSTR tmp;
+         //tmp.printf("%.4f", Exporter::mWeldThresh);
+         //SetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp);
+
+         CheckDlgButton(hWnd, IDC_CHK_START_NIFSKOPE, Exporter::mStartNifskopeAfterStart);
 
          ConvertStaticToHyperlink(hWnd, IDC_LBL_LINK);
          ConvertStaticToHyperlink(hWnd, IDC_LBL_WIKI);
@@ -202,8 +204,8 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             Exporter::mExportCameras = IsDlgButtonChecked(hWnd, IDC_CHK_CAMERA);
             Exporter::mGenerateBoneCollision = IsDlgButtonChecked(hWnd, IDC_CHK_BONE_COLL);
             Exporter::mTangentAndBinormalExtraData = IsDlgButtonChecked(hWnd, IDC_CHK_TANGENTS);
-			Exporter::mCollapseTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_COLLAPSE_TRANS);
-			Exporter::mZeroTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_ZERO_TRANS);
+            Exporter::mCollapseTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_COLLAPSE_TRANS);
+            Exporter::mZeroTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_ZERO_TRANS);
 
             Exporter::mExportTransforms = IsDlgButtonChecked(hWnd, IDC_CHK_TRANSFORMS2);
             //Exporter::mUseTimeTags = IsDlgButtonChecked(hWnd, IDC_CHK_USE_TIME_TAGS);           
@@ -240,6 +242,8 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 					Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
             }
             Exporter::mAutoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT);
+
+            Exporter::mStartNifskopeAfterStart = IsDlgButtonChecked(hWnd, IDC_CHK_START_NIFSKOPE);
 
             EndDialog(hWnd, imp->mDlgResult=IDOK);
             close = true;
@@ -478,7 +482,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 
 	Exporter::Result result = exp.doExport(root, i->GetRootNode());
 
-	if (result!=Exporter::Ok)
+	if (result!=Exporter::Ok && result!=Exporter::Skip)
 		throw exception("Unknown error.");
 
    if (exportType == Exporter::NIF_WO_ANIM || exportType == Exporter::NIF_WITH_MGR)
@@ -505,6 +509,23 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
       }
 
       WriteFileGroup(path, StaticCast<NiObject>(root), info, export_type, game);
+   }
+
+   if ( Exporter::mStartNifskopeAfterStart )
+   {
+      string nifskope = Exporter::mNifskopeDir + "\\Nifskope.exe";
+      if (_access(nifskope.c_str(), 04) != -1) {
+         char buffer[260*2];
+         sprintf(buffer, "\"%s\" \"%s\"", nifskope.c_str(), path);
+         STARTUPINFO si; PROCESS_INFORMATION pi;
+         memset(&si, 0, sizeof(si)); memset(&pi, 0, sizeof(pi));
+         si.cb = sizeof(si);
+         si.dwFlags = STARTF_USESHOWWINDOW;
+         si.wShowWindow = SW_SHOWNORMAL;        
+         if ( CreateProcess(NULL, buffer, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, Exporter::mNifskopeDir.c_str(), &si, &pi) )
+            CloseHandle( pi.hThread ), CloseHandle( pi.hProcess );
+      }
+
    }
    return true;
 }

@@ -51,6 +51,8 @@ bool Exporter::mSuppressPrompts = false;
 bool Exporter::mUseAlternateStripper = false;
 float Exporter::bhkScaleFactor = 7.0f;
 int Exporter::mTangentAndBinormalMethod = 0;
+bool Exporter::mStartNifskopeAfterStart = false;
+string Exporter::mNifskopeDir;
 
 #ifndef FOOTPRINT_CLASS_ID
 #  define FOOTPRINT_CLASS_ID Class_ID(0x3011,0)        
