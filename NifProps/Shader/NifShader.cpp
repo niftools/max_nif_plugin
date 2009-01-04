@@ -1082,9 +1082,25 @@ INT_PTR NifShaderDlg::PanelProc(HWND hwndDlg, UINT msg, WPARAM wParam, LPARAM lP
                //UpdateControls();
                UpdateMtlDisplay();
                break;
+
+            default:
+               CommitValues();
+               break;
             }
          }
          break;
+
+      case WM_NOTIFY : 
+         {
+            switch (HIWORD(wParam))
+            {
+            case CBN_SELCHANGE:
+               CommitValues();
+               break;
+            }
+         }
+         break;
+
 
       case CC_COLOR_SEL:
       case CC_COLOR_DROP:
@@ -1312,6 +1328,8 @@ void NifShaderDlg::CommitValues()
 
    pShader->SetAmbientClr( Color(clrAmbient->GetColor()), 0);
    pShader->SetDiffuseClr( Color(clrDiffuse->GetColor()), 0);
+   pShader->SetSpecularClr( Color(clrSpecular->GetColor()), 0);
+
    Color cEmit(clrEmittance->GetColor());
    pb->SetValue(ns_mat_emittance, 0, cEmit, 0);
 

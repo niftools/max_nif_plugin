@@ -473,6 +473,9 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 	Exporter exp(i, appSettings);
 	
 	Ref<NiNode> root = exp.IsFallout3() ? new BSFadeNode() : new NiNode();
+   if ( exp.IsFallout3() )
+      root->SetFlags(14);
+
 	Exporter::Result result = exp.doExport(root, i->GetRootNode());
 
 	if (result!=Exporter::Ok)

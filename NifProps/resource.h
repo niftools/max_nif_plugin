@@ -66,6 +66,8 @@
 #define IDC_MS_SELBYMAT_TEXT2           1382
 #define IDC_MS_SELBYMAT_BOX2            1383
 #define IDC_MS_ADDPART                  1384
+#define IDC_MS_SELUNUSED                1385
+#define IDC_MS_FIXDUPL                  1386
 #define IDC_ED_POS1_X                   1700
 #define IDC_SP_POS1_X                   1701
 #define IDC_ED_POS1_Y                   1702
@@ -291,6 +293,8 @@
 #define IDS_BUMP_MAGNITUDE              11147
 #define IDS_LUMA_SCALE                  11148
 #define IDS_LUMA_OFFSET                 11149
+#define IDS_RB_FIXDUPL                  11150
+#define IDS_RB_SELUNUSED                11151
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492

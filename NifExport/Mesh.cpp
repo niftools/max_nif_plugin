@@ -197,7 +197,8 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
       data = new NiTriShapeData(grp.faces);
 	}
 
-   shape->SetFlags( 14 );
+   if ( IsFallout3() )
+      shape->SetFlags( 14 );
 
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
@@ -225,6 +226,8 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 
 	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
 	makeMaterial(av, mtl);
+
+   shape->SetActiveMaterial(0);
 
 	parent->AddChild(DynamicCast<NiAVObject>(shape));
 

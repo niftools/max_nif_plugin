@@ -255,6 +255,9 @@ public:
 	void UpdateCache(TimeValue t);
 	void InvalidateDialogElement (int elem);
 
+   void FixDuplicates();
+   void SelectUnused();
+
 public: //IBSDismemberSkinModifier
 
    /*! \remarks This method must be called when the <b>LocalModData</b> of
@@ -418,6 +421,7 @@ public:
    virtual DWORD AddPartition() {
       DWORD index = GetNumPartitions();
       SetActivePartition( index );
+      SelectUnused();
       return index;
    }
 
@@ -466,6 +470,8 @@ public:
    GenericNamedSelSetList & GetEdgeSelList () { return eselSet; }
    GenericNamedSelSetList & GetFaceSelList () { return fselSet; }
 
+   void FixDuplicates();
+   void SelectUnused();
 
    DWORD GetSelectionLevel() {
       return flags[ activePartition ].selLevel;
@@ -1687,12 +1693,22 @@ void BSDSModifierMainDlgProc::SetEnables (HWND hParams) {
 
    int npart = mod->GetNumPartitions();
    mDelPart->Enable( (npart > 1) ? TRUE : FALSE );
+
+   but = GetICustButton (GetDlgItem (hParams, IDC_MS_SELUNUSED));
+   but->Enable (subSel);
+   ReleaseICustButton (but);
+
+   but = GetICustButton (GetDlgItem (hParams, IDC_MS_FIXDUPL));
+   but->Enable (subSel);
+   ReleaseICustButton (but);
+
 }
 
 INT_PTR BSDSModifierMainDlgProc::DlgProc (TimeValue t, IParamMap2 *map,
 										HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (!mod) return FALSE;
 	ICustToolbar *iToolbar;
+   ICustButton *but;
 	int matid;
    int nParts;
    int nActive;
@@ -1720,11 +1736,15 @@ INT_PTR BSDSModifierMainDlgProc::DlgProc (TimeValue t, IParamMap2 *map,
       mActivePart->SetResetValue( 0 );
 
       mAddPart = GetICustButton( GetDlgItem(hWnd, IDC_MS_ADDPART) );
+#if VERSION_3DSMAX < ((10000<<16)+(24<<8)+0) // Version 7
       mAddPart->SetTooltip(TRUE, "Create New Partition");
+#endif
       mAddPart->SetImage(theBSDSPartImageHandler.LoadImages(), 0, 2, 0, 2, 16, 16);
 
       mDelPart = GetICustButton( GetDlgItem(hWnd, IDC_MS_DELPART) );
+#if VERSION_3DSMAX < ((10000<<16)+(24<<8)+0) // Version 7
       mDelPart->SetTooltip(TRUE, "Delete Active Partition");
+#endif
       mDelPart->SetImage(theBSDSPartImageHandler.LoadImages(), 1, 3, 1, 3, 16, 16);
 
 		iToolbar = GetICustToolbar(GetDlgItem(hWnd,IDC_MS_SELTYPE));
@@ -1735,6 +1755,16 @@ INT_PTR BSDSModifierMainDlgProc::DlgProc (TimeValue t, IParamMap2 *map,
 		iToolbar->AddTool(ToolButtonItem(CTB_CHECKBUTTON,3,8,3,8,24,23,24,23,IDC_SELPOLY));
 		iToolbar->AddTool(ToolButtonItem(CTB_CHECKBUTTON,4,9,4,9,24,23,24,23,IDC_SELELEMENT));
 		ReleaseICustToolbar(iToolbar);
+
+#if VERSION_3DSMAX < ((10000<<16)+(24<<8)+0) // Version 11+
+      but = GetICustButton (GetDlgItem (hWnd, IDC_MS_SELUNUSED));
+      but->SetTooltip(TRUE, "Select unused faces into active partition");
+      ReleaseICustButton (but);
+
+      but = GetICustButton (GetDlgItem (hWnd, IDC_MS_FIXDUPL));
+      but->SetTooltip(TRUE, "Remove duplicate faces from partitions");
+      ReleaseICustButton (but);
+#endif
 
 		UpdateSelLevelDisplay (hWnd);
 		SetEnables (hWnd);
@@ -1824,6 +1854,14 @@ INT_PTR BSDSModifierMainDlgProc::DlgProc (TimeValue t, IParamMap2 *map,
          }
          break;
 
+      case IDC_MS_FIXDUPL:
+         mod->FixDuplicates();
+         break;
+
+      case IDC_MS_SELUNUSED:
+         mod->SelectUnused();
+         break;
+
 		case IDC_MS_SELBYMAT:
 			mod->pblock->GetValue (ms_matid, t, matid, FOREVER);
 			mod->SelectByMatID(matid-1);
@@ -1909,7 +1947,7 @@ LocalModData *BSDSData::Clone() {
 }
 
 BSDSData::BSDSData(Mesh &mesh) {
-   SetActivePartition(0);
+   AddPartition();
 	GetVertSel() = mesh.vertSel;
 	GetFaceSel() = mesh.faceSel;
 	GetEdgeSel() = mesh.edgeSel;
@@ -1921,7 +1959,7 @@ BSDSData::BSDSData(Mesh &mesh) {
 BSDSData::BSDSData()
 {
    held=0; mesh=NULL; temp=NULL;
-   SetActivePartition(0);
+   AddPartition();
 }
 
 void BSDSData::SynchBitArrays() {
@@ -2140,6 +2178,54 @@ void BSDSData::RemovePartition( DWORD partition )
    }
 }
 
+void BSDSData::SelectUnused()
+{
+   SynchBitArrays();
+   Mesh *mesh = GetMesh();
+   if (!mesh) return;
+   int nList = fselSet.Count();
+   BitArray& activeFSel = GetFaceSel();
+   for (int i=0; i<mesh->numFaces; i++) {
+      bool found = false;
+      for (int j=nList-1; j>=0; --j) {
+         if ( fselSet[j][i] ) {
+            found = true;
+         }
+      }
+      if (!found)
+         activeFSel.Set(i);
+   }
+}
+
+//////////////////////////////////////////////////////////////////////////
+// Remove duplicate faces
+//  If Ctrl pressed then active partition is greedy and gets the face 
+//    if already selected in partition regardless of other partitions
+void BSDSData::FixDuplicates()
+{
+   BOOL add = GetKeyState(VK_CONTROL)<0 ? TRUE : FALSE;
+   BOOL sub = GetKeyState(VK_MENU)<0 ? TRUE : FALSE;
+
+   Mesh *mesh = GetMesh();
+   if (!mesh) return;
+   SynchBitArrays();
+
+   int nList = fselSet.Count();
+   BitArray& activeFSel = GetFaceSel();
+   for (int i=0; i<mesh->numFaces; i++) {
+      bool found = false;
+      bool active = activeFSel[i];
+      if (add) found = active;
+      for (int j=nList-1; j>=0; --j) {
+         if ( fselSet[j][i] ) {
+            if (found) 
+               fselSet[j].Clear(i);
+            found = true;
+         }
+      }
+      if (add) activeFSel.Set(i, active);
+   }
+}
 // SelectRestore --------------------------------------------------
 
 SelectRestore::SelectRestore(BSDSModifier *m, BSDSData *data) {
@@ -2340,6 +2426,42 @@ void BSDSModifier::InvalidateDialogElement (int elem) {
 	if (pmap) pmap->Invalidate (elem);
 }
 
+void BSDSModifier::FixDuplicates()
+{
+   theHold.Begin();
+
+   BSDSData *d;
+   Tab<IBSDismemberSkinModifierData*> list = GetModifierData();
+   for (int i=0; i<list.Count(); i++) {
+      d = (BSDSData *)list[i];
+      if (!d) continue;
+      if (!d->held) theHold.Put(new SelectRestore(this,d));
+      d->FixDuplicates();
+   }
+   theHold.Accept(GetString (IDS_RB_FIXDUPL));
+
+   LocalDataChanged ();
+   ip->RedrawViews(ip->GetTime());
+}
+
+void BSDSModifier::SelectUnused()
+{
+   theHold.Begin();
+
+   BSDSData *d;
+   Tab<IBSDismemberSkinModifierData*> list = GetModifierData();
+   for (int i=0; i<list.Count(); i++) {
+      d = (BSDSData *)list[i];
+      if (!d) continue;
+      if (!d->held) theHold.Put(new SelectRestore(this,d));
+      d->SelectUnused();
+
+   }
+   theHold.Accept(GetString (IDS_RB_SELUNUSED));
+
+   LocalDataChanged ();
+   ip->RedrawViews(ip->GetTime());
+}
 
 // Get or Create the Skin Modifier
 Modifier *GetOrCreateBSDismemberSkin(INode *node)
