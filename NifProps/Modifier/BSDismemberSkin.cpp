@@ -1947,19 +1947,17 @@ LocalModData *BSDSData::Clone() {
 }
 
 BSDSData::BSDSData(Mesh &mesh) {
-   AddPartition();
+   held=0; this->mesh=NULL; temp=NULL;
 	GetVertSel() = mesh.vertSel;
 	GetFaceSel() = mesh.faceSel;
 	GetEdgeSel() = mesh.edgeSel;
-	held = FALSE;
-	this->mesh = NULL;
-	temp = NULL;
+   SetActivePartition( 0 );
 }
 
 BSDSData::BSDSData()
 {
    held=0; mesh=NULL; temp=NULL;
-   AddPartition();
+   SetActivePartition( 0 );
 }
 
 void BSDSData::SynchBitArrays() {
