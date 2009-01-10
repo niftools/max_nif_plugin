@@ -477,5 +477,6 @@ extern TSTR FlagsToString(int value, const EnumLookupType *table);
 extern int StringToFlags(TSTR value, const EnumLookupType *table);
 #pragma endregion
 
+extern unsigned long Crc32Array(const void *data, size_t size);
 
 #endif // _NIUTILS_H_

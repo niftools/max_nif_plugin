@@ -16,6 +16,20 @@
 #include "obj/bhkCapsuleShape.h"
 #include "obj/BSDismemberSkinInstance.h"
 
+inline bool equals(const float &a, const float &b, float thresh)
+{
+   return (fabsf(a-b) <= thresh);
+}
+inline bool equals(const Vector3 &a, const Point3 &b, float thresh)
+{
+   return (fabsf(a.x-b.x) <= thresh) && (fabsf(a.y-b.y) <= thresh) && (fabsf(a.z-b.z) <= thresh);
+}
+inline bool equals(const Color4 &a, const Color4 &b, float thresh)
+{
+   return (fabsf(a.r-b.r) <= thresh) && (fabsf(a.g-b.g) <= thresh) && (fabsf(a.b-b.b) <= thresh);
+}
+
+
 Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
 {
 	ObjectState os = node->EvalWorldState(t);
@@ -266,18 +280,12 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
 
 	for (int i=0; i<grp.verts.size(); i++)
 	{
-		if (equal(grp.verts[i], pt, mWeldThresh) &&
-			equal(grp.vnorms[i], norm, 0))
+		if (equals(grp.verts[i], pt, mWeldThresh) && equals(grp.vnorms[i], norm, 0.01f))
 		{
-			if (mesh->tVerts && mesh->tvFace && (grp.uvs[i].u!=uv.x || grp.uvs[i].v!=uv.y))
+			if (mesh->tVerts && mesh->tvFace && !equals(grp.uvs[i].u,uv.x,0.01f) || !equals(grp.uvs[i].v,uv.y,0.01f))
 				continue;
-
-			if (mVertexColors && !vertColors.empty() &&
-				(grp.vcolors[i].r!=col.r ||
-				 grp.vcolors[i].g!=col.g ||
-				 grp.vcolors[i].b!=col.b))
+			if (mVertexColors && !vertColors.empty() && !equals(grp.vcolors[i], col, 0.01f) )
 				continue;
-
 			return i;
 		}
 	}
@@ -410,6 +418,51 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 	return true;
 }
 
+
+namespace std
+{
+   template<>
+   struct less<Triangle> : public binary_function<Triangle, Triangle, bool>
+   {
+      bool operator()(const Triangle& s1, const Triangle& s2) const{
+         int d = 0;
+         if (d == 0) d = (s1[0] - s2[0]);
+         if (d == 0) d = (s1[1] - s2[1]);
+         if (d == 0) d = (s1[2] - s2[2]);
+         return d < 0; 
+      }
+   };
+   template<>
+   struct less<SkinWeight> : public binary_function<SkinWeight, SkinWeight, bool>
+   {
+      bool operator()(const SkinWeight& lhs, const SkinWeight& rhs) {
+         if (lhs.weight == 0.0) {
+            if (rhs.weight == 0.0) {
+               return rhs.index < lhs.index;
+            } else {
+               return true;
+            }
+            return false;
+         } else if ( rhs.weight == lhs.weight ) {
+            return lhs.index < rhs.index;
+         } else {
+            return rhs.weight < lhs.weight;
+         }
+      }
+   };
+}
+
+inline Triangle& rotate(Triangle &t)
+{
+   if (t[1] < t[0] && t[1] < t[2]) {
+      t.Set( t[1], t[2], t[0] );
+   } else if (t[2] < t[0]) {
+      t.Set( t[2], t[0], t[1] );
+   }
+   return t;
+}
+typedef std::map<Triangle,int> FaceMap;
+
 // Callback interface to register a Skin after entire structure is built due to contraints
 //   in the nif library
 struct SkinInstance : public Exporter::NiCallback
@@ -437,26 +490,6 @@ struct SkinInstance : public Exporter::NiCallback
    virtual ~SkinInstance() {}
    virtual Exporter::Result execute();
 };
-
-
-struct FaceEquivalence {
-
-   bool operator()(const Triangle* s1, const Triangle* s2) const {
-      int sum1 = (*s1)[0] + (*s1)[1] + (*s1)[2];
-      int sum2 = (*s2)[0] + (*s2)[1] + (*s2)[2];
-      int d = sum1 - sum2;
-      if (d == 0) {
-         unsigned short v1[3]; memcpy(v1, s1, sizeof(v1));
-         unsigned short v2[3]; memcpy(v2, s2, sizeof(v2));
-         std::sort(v1, v1+3), std::sort(v2, v2+3);
-         if (d == 0) d = (v1[0] - v2[0]);
-         if (d == 0) d = (v1[1] - v2[1]);
-         if (d == 0) d = (v1[2] - v2[2]);
-      }
-      return d < 0; 
-   }
-};
-typedef std::map<Triangle*,int, FaceEquivalence> FaceMap;
 
 bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, TimeValue t)
 {
@@ -550,21 +583,22 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
                NiTriBasedGeomDataRef data = DynamicCast<NiTriBasedGeomData>(shape->GetData());
                vector<Triangle> tris = data->GetTriangles();
                for (int i=0; i<tris.size(); ++i) {
-                  fmap[ &tris[i] ] = i;
+                  Triangle tri = tris[i];
+                  fmap[ rotate(tri) ] = i;
                }
-
                // Build up list of partitions and face to partition map
                si->partitions.resize(flags.Count());
                si->facePartList.resize( grp.faces.size(), -1 );
                for (int i=0; i<flags.Count(); ++i) {
                   BodyPartList& bp = si->partitions[i];
                   bp.bodyPart = (BSDismemberBodyPartType)flags[i].bodyPart;
-                  bp.partFlag = (BSPartFlag)flags[i].partFlag;
+                  bp.partFlag = (BSPartFlag)(flags[i].partFlag | PF_START_NET_BONESET);
 
                   BitArray& fSelect = fselSet[i];
                   for (int j=0; j<fSelect.GetSize(); ++j){
                      if ( fSelect[j] ) {
-                        FaceMap::iterator fitr = fmap.find( &grp.faces[grp.fidx[j]] );
+                        Triangle tri = grp.faces[grp.fidx[j]];
+                        FaceMap::iterator fitr = fmap.find( rotate(tri) );
                         if (fitr != fmap.end())
                            si->facePartList[ (*fitr).second ] = i;
                      }
@@ -596,10 +630,11 @@ Exporter::Result SkinInstance::execute()
    if (Exporter::mNifVersionInt > VER_4_0_0_2)
    {
       if (Exporter::mMultiplePartitions)
-         shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex, faceMap);
+         shape->GenHardwareSkinInfo(Exporter::mBonesPerPartition, Exporter::mBonesPerVertex, Exporter::mTriPartStrips, faceMap);
       else
-         shape->GenHardwareSkinInfo(0, 0);
+         shape->GenHardwareSkinInfo(0, 0, Exporter::mTriPartStrips);
    }
+
    return Exporter::Ok;
 }
 

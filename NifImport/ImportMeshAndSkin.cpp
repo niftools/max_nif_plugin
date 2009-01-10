@@ -584,25 +584,43 @@ struct VertexHolder
    Tab<INode*> boneNodeList;
    Tab<float> weights;
 };
-
-struct FaceEquivalence {
-
-   bool operator()(const Face* s1, const Face* s2) const {
-      int sum1 = s1->v[0] + s1->v[1] + s1->v[2];
-      int sum2 = s2->v[0] + s2->v[1] + s2->v[2];
-      int d = sum1 - sum2;
-      if (d == 0) {
-         DWORD v1[3]; memcpy(v1, s1->v, sizeof(v1));
-         DWORD v2[3]; memcpy(v2, s2->v, sizeof(v2));
-         std::sort(v1, v1+3), std::sort(v2, v2+3);
-         if (d == 0) d = (v1[0] - v2[0]);
-         if (d == 0) d = (v1[1] - v2[1]);
-         if (d == 0) d = (v1[2] - v2[2]);
+namespace std
+{
+   template<>
+   struct less<Face> : public binary_function<Face, Face, bool>
+   {
+      bool operator()(const Face& s1, const Face& s2) const{
+         int d = 0;
+         if (d == 0) d = (s1.v[0] - s2.v[0]);
+         if (d == 0) d = (s1.v[1] - s2.v[1]);
+         if (d == 0) d = (s1.v[2] - s2.v[2]);
+         return d < 0; 
       }
+   };
+}
+
+inline Face& rotate(Face &t)
+{
+   if (t.v[1] < t.v[0] && t.v[1] < t.v[2]) {
+      t.setVerts( t.v[1], t.v[2], t.v[0] );
+   } else if (t.v[2] < t.v[0]) {
+      t.setVerts( t.v[2], t.v[0], t.v[1] );
+   }
+   return t;
+}
+struct FaceEquivalence {
+   bool operator()(const Face& s1, const Face& s2) const{
+      int d = 0;
+      if (d == 0) d = (s1.v[0] - s2.v[0]);
+      if (d == 0) d = (s1.v[1] - s2.v[1]);
+      if (d == 0) d = (s1.v[2] - s2.v[2]);
       return d < 0; 
    }
+   bool operator()(const Face* s1, const Face* s2) const{
+      return operator()(*s1, *s2);
+   }
 };
-typedef std::map<Face*,int, FaceEquivalence> FaceMap;
+typedef std::map<Face,int, FaceEquivalence> FaceMap;
 
 
 bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_start/*=0*/)
@@ -723,8 +741,10 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
 
             FaceMap faceMap;
             int nfaces = m.getNumFaces();
-            for ( int i=0; i<nfaces; ++i )
-               faceMap[&m.faces[i]] = i;
+            for ( int i=0; i<nfaces; ++i ){
+               Face f = m.faces[i];
+               faceMap[ rotate(f) ] = i;
+            }
 
             Tab<IBSDismemberSkinModifierData*> modData = disSkin->GetModifierData();
             for (int i=0; i<modData.Count(); ++i) {
@@ -752,7 +772,7 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
                   {
                      for (vector<Triangle>::iterator itrtri = triangles.begin(); itrtri != triangles.end(); ++itrtri) {
                         Face f; f.setVerts( map[(*itrtri).v1], map[(*itrtri).v2], map[(*itrtri).v3] );
-                        FaceMap::iterator fitr = faceMap.find( &f );
+                        FaceMap::iterator fitr = faceMap.find( rotate(f) );
                         if (fitr != faceMap.end())
                            fsel->Set((*fitr).second);
                      }

@@ -159,6 +159,8 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
          ConvertStaticToHyperlink(hWnd, IDC_LBL_LINK);
          ConvertStaticToHyperlink(hWnd, IDC_LBL_WIKI);
 
+         CheckDlgButton(hWnd, IDC_CHK_PARTSTRIPS, Exporter::mTriPartStrips);
+
          imp->mDlgResult = IDCANCEL;
       }
       return TRUE;
@@ -242,8 +244,8 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 					Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
             }
             Exporter::mAutoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT);
-
             Exporter::mStartNifskopeAfterStart = IsDlgButtonChecked(hWnd, IDC_CHK_START_NIFSKOPE);
+            Exporter::mTriPartStrips = IsDlgButtonChecked(hWnd, IDC_CHK_PARTSTRIPS);
 
             EndDialog(hWnd, imp->mDlgResult=IDOK);
             close = true;
@@ -476,7 +478,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 
 	Exporter exp(i, appSettings);
 	
-	Ref<NiNode> root = exp.IsFallout3() ? new BSFadeNode() : new NiNode();
+	Ref<NiNode> root = new NiNode();
    if ( exp.IsFallout3() )
       root->SetFlags(14);
 

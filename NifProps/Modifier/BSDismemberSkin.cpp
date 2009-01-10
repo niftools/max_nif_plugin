@@ -1948,10 +1948,10 @@ LocalModData *BSDSData::Clone() {
 
 BSDSData::BSDSData(Mesh &mesh) {
    held=0; this->mesh=NULL; temp=NULL;
+   SetActivePartition( 0 );
 	GetVertSel() = mesh.vertSel;
 	GetFaceSel() = mesh.faceSel;
 	GetEdgeSel() = mesh.edgeSel;
-   SetActivePartition( 0 );
 }
 
 BSDSData::BSDSData()

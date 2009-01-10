@@ -50,7 +50,7 @@ void Exporter::writeConfig(Interface *i)
       TCHAR iniName[MAX_PATH];
       GetIniFileName(iniName);
 
-      SetIniValue(NifExportSection, "GenerateStrips", mTriStrips, iniName);
+      SetIniValue(NifExportSection, "GenerateStrips", mTriStrips, iniName);    
       SetIniValue(NifExportSection, "IncludeHidden", mExportHidden, iniName);
       SetIniValue(NifExportSection, "FurnatureMarkers", mExportFurn, iniName);
       SetIniValue(NifExportSection, "Lights", mExportLights, iniName);
@@ -90,6 +90,7 @@ void Exporter::writeConfig(Interface *i)
       //SetIniValue(CollisionSection, "bhkScaleFactor", bhkScaleFactor, iniName);
 
       SetIniValue<string>(NifExportSection, "Creator", mCreatorName, iniName);
+      SetIniValue(NifExportSection, "GeneratePartitionStrips", mTriPartStrips, iniName);
 
    }
 }
@@ -168,6 +169,7 @@ void Exporter::readConfig(Interface *i)
 
       mStartNifskopeAfterStart = GetIniValue(NifExportSection, "StartNifskopeAfterStart", false, iniName);
       mNifskopeDir = ExpandEnvironment(GetIndirectValue(GetIniValue<string>("System", "NifskopeDir", "", iniName).c_str()));
+      mTriPartStrips = GetIniValue<bool>(NifExportSection, "GeneratePartitionStrips", true, iniName);
   }
 }
 

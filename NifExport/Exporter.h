@@ -115,6 +115,7 @@ public:
    static int           mTangentAndBinormalMethod;
    static bool          mStartNifskopeAfterStart;
    static string        mNifskopeDir;
+   static bool          mTriPartStrips;
 
    Exporter(Interface *i, AppSettings *appSettings);
 

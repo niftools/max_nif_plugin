@@ -20,6 +20,8 @@
 #define IDC_ED_TEXPREFIX                13006
 #define IDC_CHK_LIGHTS                  13007
 #define IDC_ED_WELDTHRESH               13008
+#define IDC_CHK_STRIPS2                 13008
+#define IDC_CHK_PARTSTRIPS              13008
 #define IDC_LBL_WELDTHRESH              13009
 #define IDC_CHK_COLL                    13010
 #define IDC_ED_PRIORITY                 13010
@@ -59,7 +61,6 @@
 #define IDC_ED_BONES_PART               13037
 #define IDC_CHK_SKINPART                13038
 #define IDC_CB_USER_VERSION2            13039
-#define IDC_CHK_ALLOW_ACCUM2            13040
 #define IDC_CHK_START_NIFSKOPE          13040
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
