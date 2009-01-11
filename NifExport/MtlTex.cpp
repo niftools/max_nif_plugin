@@ -202,6 +202,10 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
    }
 
    if (UVGen *uvGen = bmTex->GetTheUVGen()){
+      if (uvGen && uvGen->IsStdUVGen()) {
+         StdUVGen *uvg = (StdUVGen*)uvGen;
+         td.uvSet = uvg->GetMapChannel() - 1;
+      }
       if (RefTargetHandle ref = uvGen->GetReference(0)){
          TexCoord trans, tiling;
          float wangle;

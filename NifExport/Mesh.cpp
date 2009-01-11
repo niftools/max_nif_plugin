@@ -16,19 +16,187 @@
 #include "obj/bhkCapsuleShape.h"
 #include "obj/BSDismemberSkinInstance.h"
 
-inline bool equals(const float &a, const float &b, float thresh)
-{
+#pragma region Comparison Utilities
+inline bool equals(float a, float b, float thresh) {
    return (fabsf(a-b) <= thresh);
 }
-inline bool equals(const Vector3 &a, const Point3 &b, float thresh)
-{
+inline bool equals(const Vector3 &a, const Point3 &b, float thresh) {
    return (fabsf(a.x-b.x) <= thresh) && (fabsf(a.y-b.y) <= thresh) && (fabsf(a.z-b.z) <= thresh);
 }
-inline bool equals(const Color4 &a, const Color4 &b, float thresh)
-{
+inline bool equals(const Color4 &a, const Color4 &b, float thresh) {
    return (fabsf(a.r-b.r) <= thresh) && (fabsf(a.g-b.g) <= thresh) && (fabsf(a.b-b.b) <= thresh);
 }
+inline bool equals(const Point3 &a, const Point3 &b, float thresh) {
+   return a.Equals(b, thresh);
+}
+inline bool equals(const Point3 &a, const Point3 &b) {
+   return (a == b);
+}
 
+struct VertexCompare
+{
+   typedef Exporter::VertexGroup VertexGroup;
+   typedef Exporter::FaceGroup FaceGroup;
+   VertexCompare(FaceGroup& g, float pt, float nt, float vt) 
+      : grp(g), thresh(pt), normthresh(nt), vthresh(vt) {}
+   inline bool operator()(const TexCoord& lhs, const TexCoord& rhs, float thresh) const {
+      return compare(lhs, rhs, thresh) < 0;
+   }
+   inline bool operator()(const VertexGroup& lhs, const VertexGroup& rhs) const {
+      return compare(lhs, rhs) < 0;
+   }
+   inline bool operator()(int lhs, const VertexGroup& rhs) const {
+      return compare(lhs, rhs) < 0;
+   }
+   inline bool operator()(const VertexGroup& lhs, int rhs) const {
+      return compare(lhs, rhs) < 0;
+   }
+   inline bool operator()(int lhs, int rhs) const {
+      return compare(lhs, rhs) < 0;
+   }
+
+   inline int compare(float a, float b, float thresh) const {
+      if (equals(a, b, thresh)) return 0;
+      return std::less<float>()(a, b) ? -1 : 1;
+   }
+   inline int compare(const Point3 &a, const Point3 &b, float thresh) const {
+      int d;
+      if ((d = compare(a.x,b.x,thresh)) != 0) return d;
+      if ((d = compare(a.y,b.y,thresh)) != 0) return d;
+      if ((d = compare(a.z,b.z,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(const Vector3 &a, const Point3 &b, float thresh) const {
+      int d;
+      if ((d = compare(a.x,b.x,thresh)) != 0) return d;
+      if ((d = compare(a.y,b.y,thresh)) != 0) return d;
+      if ((d = compare(a.z,b.z,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(const Point3 &a, const Vector3 &b, float thresh) const {
+      int d;
+      if ((d = compare(a.x,b.x,thresh)) != 0) return d;
+      if ((d = compare(a.y,b.y,thresh)) != 0) return d;
+      if ((d = compare(a.z,b.z,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(const Vector3 &a, const Vector3 &b, float thresh) const {
+      int d;
+      if ((d = compare(a.x,b.x,thresh)) != 0) return d;
+      if ((d = compare(a.y,b.y,thresh)) != 0) return d;
+      if ((d = compare(a.z,b.z,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(const VertexGroup& lhs, const VertexGroup& rhs) const {
+      int d;
+      if ((d = compare(lhs.pt,rhs.pt,thresh)) != 0) return d;
+      if ((d = compare(lhs.norm,rhs.norm,normthresh)) != 0) return d;
+      if ((d = compare(lhs.color,rhs.color,vthresh)) != 0) return d;
+      if ((d = lhs.uvs.size() - rhs.uvs.size()) != 0) return d;
+      for (int i=0; i<lhs.uvs.size(); ++i) {
+         if ((d = compare(lhs.uvs[i],rhs.uvs[i],vthresh)) != 0) return d;
+      }
+      return 0;
+   }
+   inline int compare(const TexCoord& lhs, const TexCoord& rhs, float thresh) const {
+      int d;
+      if ((d = compare(lhs.u,rhs.u,thresh)) != 0) return d;
+      if ((d = compare(lhs.v,rhs.v,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(const Color4 &a, const Color4 &b, float thresh) const {
+      int d;
+      if ((d = compare(a.r,b.r,thresh)) != 0) return d;
+      if ((d = compare(a.g,b.g,thresh)) != 0) return d;
+      if ((d = compare(a.b,b.b,thresh)) != 0) return d;
+      return 0;
+   }
+   inline int compare(int lhs, const VertexGroup& rhs) const {
+      return compare(grp.vgrp[lhs], rhs);
+      //int d;
+      //if ((d = compare(grp.verts[lhs],rhs.pt,thresh)) != 0) return d;
+      //if ((d = compare(grp.vnorms[lhs],rhs.norm,normthresh)) != 0) return d;
+      //if ((d = compare(grp.vcolors[lhs],rhs.color,vthresh)) != 0) return d;
+      //if ((d = grp.uvs[lhs].size() - rhs.uvs.size()) != 0) return d;
+      //for (int i=0; i<rhs.uvs.size(); ++i) {
+      //   if ((d = compare(grp.uvs[lhs][i],rhs.uvs[i],vthresh)) != 0) return d;
+      //}
+      //return d;
+   }
+   inline int compare(const VertexGroup& lhs, int rhs) const {
+      return compare(lhs, grp.vgrp[rhs]);
+      //int d;
+      //if ((d = compare(lhs.pt,grp.verts[rhs],thresh)) != 0) return d;
+      //if ((d = compare(lhs.norm,grp.vnorms[rhs],normthresh)) != 0) return d;
+      //if ((d = compare(lhs.color,grp.vcolors[rhs],vthresh)) != 0) return d;
+      //if ((d = lhs.uvs.size() - grp.uvs[rhs].size()) != 0) return d;
+      //for (int i=0; i<lhs.uvs.size(); ++i) {
+      //   if ((d = compare(lhs.uvs[i],grp.uvs[rhs][i],vthresh)) != 0) return d;
+      //}
+      //return d;
+   }
+   inline int compare(int lhs, int rhs) const {
+      return compare(grp.vgrp[lhs], grp.vgrp[rhs]);
+      //int d;
+      //if ((d = compare(grp.verts[lhs],grp.verts[rhs],thresh)) != 0) return d;
+      //if ((d = compare(grp.vnorms[lhs],grp.vnorms[rhs],normthresh)) != 0) return d;
+      //if ((d = compare(grp.vcolors[lhs],grp.vcolors[rhs],vthresh)) != 0) return d;
+      //for (int i=0; i<grp.uvs.size(); ++i) {
+      //   if ((d = compare(grp.uvs[lhs][i],grp.uvs[rhs][i],vthresh)) != 0) return d;
+      //}
+      //return d;
+   }
+   FaceGroup& grp;
+   float thresh, normthresh, vthresh;
+};
+typedef std::pair< std::vector<int>::iterator, std::vector<int>::iterator > IntRange;
+
+
+
+namespace std
+{
+   template<>
+   struct less<Triangle> : public binary_function<Triangle, Triangle, bool>
+   {
+      bool operator()(const Triangle& s1, const Triangle& s2) const{
+         int d = 0;
+         if (d == 0) d = (s1[0] - s2[0]);
+         if (d == 0) d = (s1[1] - s2[1]);
+         if (d == 0) d = (s1[2] - s2[2]);
+         return d < 0; 
+      }
+   };
+   template<>
+   struct less<SkinWeight> : public binary_function<SkinWeight, SkinWeight, bool>
+   {
+      bool operator()(const SkinWeight& lhs, const SkinWeight& rhs) {
+         if (lhs.weight == 0.0) {
+            if (rhs.weight == 0.0) {
+               return rhs.index < lhs.index;
+            } else {
+               return true;
+            }
+            return false;
+         } else if ( rhs.weight == lhs.weight ) {
+            return lhs.index < rhs.index;
+         } else {
+            return rhs.weight < lhs.weight;
+         }
+      }
+   };
+}
+
+inline Triangle& rotate(Triangle &t)
+{
+   if (t[1] < t[0] && t[1] < t[2]) {
+      t.Set( t[1], t[2], t[0] );
+   } else if (t[2] < t[0]) {
+      t.Set( t[2], t[0], t[1] );
+   }
+   return t;
+}
+typedef std::map<Triangle,int> FaceMap;
+#pragma endregion
 
 Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue t)
 {
@@ -218,11 +386,13 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
 
-	if (grp.uvs.size() > 0)
-	{
-		data->SetUVSetCount(1);
-		data->SetUVSet(0, grp.uvs);
-	}
+   int nUVs = grp.uvs.size();
+   if ( IsFallout3() )
+      nUVs = min(1, nUVs);
+   data->SetUVSetCount(nUVs);
+   for (int i =0;i<nUVs; ++i) {
+	   data->SetUVSet(i, grp.uvs[i]);
+   }
 
 	if (grp.vcolors.size() > 0)
 		data->SetVertexColors(grp.vcolors);
@@ -250,71 +420,74 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 
 int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors)
 {
-   int vidx = mesh->faces[ face ].v[ vi ];
-	Point3 pt = mesh->verts[ vidx ];
-   Point3 norm;
-
+   VertexGroup vg;
+   int vidx;
+   vidx = vg.idx = mesh->faces[ face ].v[ vi ];
+	vg.pt = mesh->verts[ vidx ];
 #if VERSION_3DSMAX <= ((5000<<16)+(15<<8)+0) // Version 5
-   norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
+   vg.norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
 #else
    MeshNormalSpec *specNorms = mesh->GetSpecifiedNormals ();
    if (NULL != specNorms && specNorms->GetNumNormals() != 0)
-      norm = specNorms->GetNormal(face, vi);
+      vg.norm = specNorms->GetNormal(face, vi);
    else
-      norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
+      vg.norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
 #endif
-	Point3 uv;
-   if (mesh->tVerts && mesh->tvFace) {
-		uv = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
-      uv.y += 1.0f;
-   }
 
-   Color4 col(1.0f, 1.0f, 1.0f);
+   int nmaps = mesh->getNumMaps() - 1;
+   vg.uvs.resize(nmaps > 0 ? nmaps : 1);
+   if (nmaps > 0) {
+      for (int i = 0; i<nmaps; ++i) {
+         TexCoord& uvs = vg.uvs[i];
+         UVVert *uv = mesh->mapVerts(i+1); 
+         TVFace *tv = mesh->mapFaces(i+1);
+         if (uv && tv) {
+            Point3 uvw = uv[ tv[ face ].t[ vi ]] * texm;
+            uvs.u = uvw[0];
+            uvs.v = uvw[1] + 1.0f;
+         }
+      }
+   } else {
+      if (mesh->tVerts && mesh->tvFace) {
+         Point3 uvw = mesh->tVerts[ mesh->tvFace[ face ].t[ vi ]] * texm;
+         vg.uvs[0].u = uvw[0];
+         vg.uvs[0].v = uvw[1] + 1.0f;
+      }
+   }
+   vg.color = Color4(1.0f, 1.0f, 1.0f);
    if (mVertexColors && !vertColors.empty()){
       TVFace *vcFace = mesh->vcFaceData ? mesh->vcFaceData : mesh->vcFace;
       if (vcFace) {
          int vidx = vcFace[ face ].t[ vi ];
-         col = vertColors[vidx];
+         vg.color = vertColors[vidx];
       }
    }
 
-	for (int i=0; i<grp.verts.size(); i++)
-	{
-		if (equals(grp.verts[i], pt, mWeldThresh) && equals(grp.vnorms[i], norm, 0.01f))
-		{
-			if (mesh->tVerts && mesh->tvFace && !equals(grp.uvs[i].u,uv.x,0.01f) || !equals(grp.uvs[i].v,uv.y,0.01f))
-				continue;
-			if (mVertexColors && !vertColors.empty() && !equals(grp.vcolors[i], col, 0.01f) )
-				continue;
-			return i;
-		}
-	}
-	
-   grp.vidx.push_back(vidx);
-	grp.verts.push_back(Vector3(pt.x, pt.y, pt.z));
-	grp.vnorms.push_back(Vector3(norm.x, norm.y, norm.z));
-
-	if (mesh->tvFace)
-		grp.uvs.push_back(TexCoord(uv.x, uv.y));
-
-   if (mVertexColors && !vertColors.empty()){
-		grp.vcolors.push_back(col);
+   VertexCompare vc(grp, 0.1f, 0.01f, 0.01f);
+   int n = grp.verts.size();
+#if 0
+   IntRange range = std::equal_range(grp.vmap.begin(), grp.vmap.end(), vg, vc);
+   if (range.first != range.second) {
+      return (*range.first);
+   } 
+   grp.vmap.insert(range.first, n);
+#else
+   for (int i=0; i<grp.vgrp.size(); i++) {
+      if ( vc.compare(vg, i) == 0 )
+         return i;
    }
-
-	return grp.verts.size()-1;
-}
-
-void Exporter::addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors)
-{
-	Triangle tri;
-	for (int i=0; i<3; i++)
-		tri[i] = addVertex(grp, face, vi[i], mesh, texm, vertColors);
-	grp.faces.push_back(tri);
-
-   int nf = mesh->getNumFaces();
-   if (grp.fidx.size() < nf)
-      grp.fidx.resize(nf,-1);
-   grp.fidx[face] = grp.faces.size() - 1;
+   grp.vmap.push_back(n);
+#endif
+   grp.vidx.push_back(vidx);
+   grp.vgrp.push_back(vg);
+   grp.verts.push_back(TOVECTOR3(vg.pt));
+   grp.vnorms.push_back(TOVECTOR3(vg.norm));
+   for (int i=0; i< grp.uvs.size(); ++i) {
+      TexCoords& uvs = grp.uvs[i];
+      uvs.push_back(vg.uvs[i]);
+   }
+   grp.vcolors.push_back(vg.color);
+   return n;
 }
 
 bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors, bool noSplit)
@@ -325,21 +498,18 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 	// Order of the vertices. Get 'em counter clockwise if the objects is
 	// negatively scaled.
 	int vi[3];
-	if (TMNegParity(tm)) 
-	{
-		vi[0] = 2;
-		vi[1] = 1;
-		vi[2] = 0;
-	} else 
-	{
-		vi[0] = 0;
-		vi[1] = 1;
-		vi[2] = 2;
+	if (TMNegParity(tm)) {
+		vi[0] = 2; vi[1] = 1; vi[2] = 0;
+	} else {
+		vi[0] = 0; vi[1] = 1; vi[2] = 2;
 	}
 
 	Matrix3 flip;
 	flip.IdentityMatrix();
 	flip.Scale(Point3(1, -1, 1));
+
+   int nv = mesh.getNumVerts();
+   int nf = mesh.getNumFaces();
 
 	if (noSplit)
 	{
@@ -385,15 +555,15 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 					ASSERT(grp.verts[idx] == TOVECTOR3(mesh.getVert(idx)));
 					//ASSERT(vg.norm == norm);
 					//Point3 uv = mesh.getTVert(idx);
-					if (mesh.getNumTVerts() > 0)
-					{
-						ASSERT(grp.uvs[idx].u == uv.x && grp.uvs[idx].v == uv.y);
-					}
+					//if (mesh.getNumTVerts() > 0)
+					//{
+					//	ASSERT(grp.uvs[idx].u == uv.x && grp.uvs[idx].v == uv.y);
+					//}
 				} else {
 					grp.vidx[idx] = idx;
 					grp.verts[idx] = TOVECTOR3(mesh.getVert(idx));
-					grp.uvs[idx].u = uv.x;
-					grp.uvs[idx].v = uv.y;
+					//grp.uvs[idx].u = uv.x;
+					//grp.uvs[idx].v = uv.y;
 					grp.vnorms[idx] = TOVECTOR3(norm);
 				}
 			}
@@ -404,64 +574,48 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 	}
 	else
 	{
-		int i, numSubMtls = nodeMtl?nodeMtl->NumSubMtls():0;
-		for (i=0; i<mesh.getNumFaces(); i++) 
+		int face, numSubMtls = nodeMtl?nodeMtl->NumSubMtls():0;
+		for (face=0; face<mesh.getNumFaces(); face++) 
 		{
-			int mtlID = (numSubMtls!=0) ? (mesh.faces[i].getMatID() % numSubMtls) : 0;
+			int mtlID = (numSubMtls!=0) ? (mesh.faces[face].getMatID() % numSubMtls) : 0;
+         Mtl *mtl = getMaterial(node, mtlID);
 			Matrix3 texm;
-			getTextureMatrix(texm, getMaterial(node, mtlID));
+			getTextureMatrix(texm, mtl);
 			texm *= flip;
-			addFace(grps[mtlID], i, vi, &mesh, texm, vertColors);
+
+         FaceGroup& grp = grps[mtlID];
+
+         int nmaps = max(1, mesh.getNumMaps() - 1);
+         grp.uvs.resize(nmaps);
+         if (nv > int(grp.verts.capacity()))
+         {
+            grp.vgrp.reserve(nv);
+            grp.verts.reserve(nv);
+            grp.vnorms.reserve(nv);
+            for (int i=0; i<nmaps; ++i)
+               grp.uvs[i].reserve(nv);
+            grp.vcolors.reserve(nv);
+            grp.vidx.reserve(nv);
+         }
+         if (nf > int(grp.faces.capacity()))
+         {
+            grp.faces.reserve(nf);
+            grp.fidx.reserve(nf);
+         }
+
+         Triangle tri;
+         for (int i=0; i<3; i++)
+            tri[i] = addVertex(grp, face, vi[i], &mesh, texm, vertColors);
+         grp.faces.push_back(tri);
+
+         if (grp.fidx.size() < nf)
+            grp.fidx.resize(nf,-1);
+         grp.fidx[face] = grp.faces.size() - 1;
 		}
 	}
 
 	return true;
 }
-
-
-namespace std
-{
-   template<>
-   struct less<Triangle> : public binary_function<Triangle, Triangle, bool>
-   {
-      bool operator()(const Triangle& s1, const Triangle& s2) const{
-         int d = 0;
-         if (d == 0) d = (s1[0] - s2[0]);
-         if (d == 0) d = (s1[1] - s2[1]);
-         if (d == 0) d = (s1[2] - s2[2]);
-         return d < 0; 
-      }
-   };
-   template<>
-   struct less<SkinWeight> : public binary_function<SkinWeight, SkinWeight, bool>
-   {
-      bool operator()(const SkinWeight& lhs, const SkinWeight& rhs) {
-         if (lhs.weight == 0.0) {
-            if (rhs.weight == 0.0) {
-               return rhs.index < lhs.index;
-            } else {
-               return true;
-            }
-            return false;
-         } else if ( rhs.weight == lhs.weight ) {
-            return lhs.index < rhs.index;
-         } else {
-            return rhs.weight < lhs.weight;
-         }
-      }
-   };
-}
-
-inline Triangle& rotate(Triangle &t)
-{
-   if (t[1] < t[0] && t[1] < t[2]) {
-      t.Set( t[1], t[2], t[0] );
-   } else if (t[2] < t[0]) {
-      t.Set( t[2], t[0], t[1] );
-   }
-   return t;
-}
-typedef std::map<Triangle,int> FaceMap;
 
 // Callback interface to register a Skin after entire structure is built due to contraints
 //   in the nif library

@@ -86,15 +86,26 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
    // uv texture info
    {
       int nUVSet = triGeomData->GetUVSetCount();
+      mesh.setNumMaps(nUVSet + 1, TRUE);
       int n = 0, j = 0;
-      //for (int j=0; j<nUVSet; j++){
-      if (nUVSet > 0) {
+      for (int j=0; j<nUVSet; j++){
          vector<TexCoord> texCoords = triGeomData->GetUVSet(j);
          n = texCoords.size();
-         mesh.setNumTVerts(n, FALSE);
-         for (int i=0; i<n; ++i) {
-            TexCoord& texCoord = texCoords[i];
-            mesh.tVerts[i].Set(texCoord.u, (flipUVTextures) ? 1.0f-texCoord.v : texCoord.v, 0);
+         if (j == 0)
+         {
+            mesh.setNumTVerts(n, TRUE);
+            for (int i=0; i<n; ++i) {
+               TexCoord& texCoord = texCoords[i];
+               mesh.tVerts[i].Set(texCoord.u, (flipUVTextures) ? 1.0f-texCoord.v : texCoord.v, 0);
+            }
+         }
+         mesh.setMapSupport (j + 1, TRUE);
+         mesh.setNumMapVerts(j + 1, n, TRUE);
+         if ( UVVert *tVerts = mesh.mapVerts(j+1) ) {
+            for (int i=0; i<n; ++i) {
+               TexCoord& texCoord = texCoords[i];
+               tVerts[i].Set(texCoord.u, (flipUVTextures) ? 1.0f-texCoord.v : texCoord.v, 0);
+            }
          }
       }
    }
@@ -142,8 +153,11 @@ bool NifImporter::ImportMesh(ImpNode *node, TriObject *o, NiTriBasedGeomRef triG
 void NifImporter::SetTriangles(Mesh& mesh, const vector<Triangle>& v)
 {
    int n = v.size();
+   int nm = mesh.getNumMaps();
    mesh.setNumFaces(n);
-   mesh.setNumTVFaces(n);
+   mesh.setNumTVFaces(nm);
+   for (int j=0; j<nm; ++j)
+      mesh.setNumMapFaces(j+1, n, TRUE);
    for (int i=0; i<n; ++i) {
       const Triangle& t = v[i];
       Face& f = mesh.faces[i];
@@ -152,6 +166,10 @@ void NifImporter::SetTriangles(Mesh& mesh, const vector<Triangle>& v)
       f.setEdgeVisFlags(EDGE_VIS, EDGE_VIS, EDGE_VIS);
       TVFace& tf = mesh.tvFace[i];
       tf.setTVerts(t.v1, t.v2, t.v3);
+      for (int j=0; j<nm; ++j) {
+         if (TVFace *tvFace = mesh.mapFaces(j+1))
+            tvFace[i].setTVerts(t.v1, t.v2, t.v3);
+      }
    }
 }
 

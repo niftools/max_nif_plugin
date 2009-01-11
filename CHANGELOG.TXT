@@ -10,6 +10,9 @@ NifTools MaxPlugin
       - Add Custom Niftools Shader 
 		* Allows for setting material and texture properties (like Alpha)
       - Number of fixes for Civ4 and Niftools Shader on import and export
+      - Support multiple UV sets when possible (Fallout 3 does not support more than 1)
+      
+    o Expoter
       - Fixes for fallout 3 binormal and tangent export
       - Add option to start nifskope after successful export
     

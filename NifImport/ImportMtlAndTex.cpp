@@ -92,6 +92,10 @@ Texmap* NifImporter::CreateTexture(TexDesc& desc)
          }
 
          if (UVGen *uvGen = bmpTex->GetTheUVGen()){
+            if (uvGen && uvGen->IsStdUVGen()) {
+               StdUVGen *uvg = (StdUVGen*)uvGen;
+               uvg->SetMapChannel(desc.uvSet + 1);
+            }
 
             switch (desc.clampMode)
             {
@@ -293,6 +297,32 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
          if (texRef->HasTexture(GLOW_MAP)) {
             if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOW_MAP)))
                m->SetSubTexmap(ID_SI, tex);
+         }
+
+         // Custom Shader Handling
+         int nTex = texRef->GetShaderTextureCount();
+         if (nTex > 0) {
+            list<NiExtraDataRef> data = avObject->GetExtraData();
+            NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
+            if (trigeom->HasShader()) {
+               for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
+                  if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
+                     string name = idx->GetName();
+                     if ( wildmatch("*Index", name) ) {
+                        int shader = idx->GetData();
+                        if (shader < nTex) {
+                           if ( name == "NormalMapIndex" ) {
+                              if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                                 m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+                           } else if ( name == "SpecularIntensity" ) {
+                              if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                                 m->SetSubTexmap(ID_SP, CreateNormalBump(NULL, tex));
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
 		if (NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE)){
@@ -520,6 +550,37 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
             if (texRef->HasTexture(textype)){
                if (Texmap* tex = CreateTexture(texRef->GetTexture(textype))) {
                   mtl->SetSubTexmap(i, tex);
+               }
+            }
+         }
+      }
+      // Custom Shader Handling
+      int nTex = texRef->GetShaderTextureCount();
+      if (nTex > 0) {
+         NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
+         if (trigeom->HasShader()) {
+            list<NiExtraDataRef> data = avObject->GetExtraData();
+            for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
+               if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
+                  string name = idx->GetName();
+                  if ( wildmatch("*Index", name) ) {
+                     int shader = idx->GetData();
+                     if (shader < nTex) {
+                        if ( name == "NormalMapIndex" ) {
+                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                              mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
+                        } else if ( name == "SpecularIntensityIndex" ) {
+                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                              mtl->SetSubTexmap(C_GLOSS, tex);
+                        } else if ( name == "EnvironmentMapIndex" ) {
+                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                              mtl->SetSubTexmap(C_ENVMASK, tex);
+                        } else if ( name == "EnvironmentIntensityIndex" ) {
+                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+                              mtl->SetSubTexmap(C_ENV, tex);
+                        }
+                     }
+                  }
                }
             }
          }

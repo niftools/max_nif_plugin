@@ -147,17 +147,28 @@ public:
    typedef vector<unsigned short> TriStrip;
    typedef	list<TriStrip> TriStrips;
    typedef vector<Triangle> Triangles;
+   typedef vector<TexCoord> TexCoords;
+   struct VertexGroup
+   {
+      int        idx;
+      Point3	  pt;
+      Point3	  norm;
+      TexCoords  uvs;
+      Color4     color;
+   };
 
    struct FaceGroup
    {
-      vector<Vector3>	verts;
-      vector<Vector3>	vnorms;
-      Triangles			faces;
-      vector<TexCoord>	uvs;
-      vector<Color4>		vcolors;
-      vector<int>       vidx;
-      vector<int>       fidx;
-      TriStrips         strips;
+      vector<VertexGroup> vgrp;
+      vector<int>	        vmap;
+      vector<Vector3>	  verts;
+      vector<Vector3>	  vnorms;
+      Triangles	        faces;
+      vector<TexCoords>	  uvs;
+      vector<Color4>      vcolors;
+      vector<int>         vidx;
+      vector<int>         fidx;
+      TriStrips           strips;
    };
 
    // maps face groups to material ID
@@ -226,8 +237,6 @@ public:
    // adds a vertex to a face group if it doesn't exist yet. returns new or previous index into the
    // vertex array.
    int 					   addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors);
-   // adds a face to a face group
-   void					   addFace(FaceGroup &grp, int face, const int vi[3], Mesh *mesh, const Matrix3 &texm, vector<Color4>& vertColors);
    // creates face groups from faces with same sub material id
    bool					   splitMesh(INode *node, Mesh &, FaceGroups &grps, TimeValue t, vector<Color4>& vertColors, bool noSplit);
    // creates a NiTriStrips or NiTriShape hierarchy from a face group
