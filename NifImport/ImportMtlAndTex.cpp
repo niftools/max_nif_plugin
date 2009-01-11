@@ -33,7 +33,7 @@ HISTORY:
 using namespace Niflib;
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
-       C_DECAL1, C_DECAL2, C_DECAL3, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+       C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
 };
 
 Texmap* NifImporter::CreateNormalBump(LPCTSTR name, Texmap* nmap)

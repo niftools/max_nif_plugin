@@ -408,12 +408,11 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	   shape->UpdateTangentSpace(Exporter::mTangentAndBinormalMethod);
    }
 
-	NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
-	makeMaterial(av, mtl);
-
-   shape->SetActiveMaterial(0);
-
 	parent->AddChild(DynamicCast<NiAVObject>(shape));
+
+   NiAVObjectRef av(DynamicCast<NiAVObject>(shape));
+   makeMaterial(av, mtl);
+   shape->SetActiveMaterial(0);
 
 	return shape;
 }

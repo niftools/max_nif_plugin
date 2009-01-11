@@ -15,7 +15,7 @@
 #include "obj/BSShaderTextureSet.h"
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
-       C_DECAL1, C_DECAL2, C_DECAL3, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+       C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
 };
 
 static bool GetTexFullName(Texmap *texMap, TSTR& fName)
@@ -432,6 +432,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
       if (shaderByName != TSTR("CivilizationIV Shader"))
          return false;
    }
+   bool isGamebryoShader = (shaderID == civ4Shader);
+   bool isCiv4Shader = isGamebryoShader && (shaderByName == TSTR("CivilizationIV Shader"));
 
    Color ambient = Color(0.0f,0.0f,0.0f), diffuse = Color(0.0f,0.0f,0.0f), specular = Color(0.0f,0.0f,0.0f), emittance = Color(0.0f,0.0f,0.0f);
    float shininess = 0.0f, alpha = 0.0f, Magnitude = 0.0f, LumaScale = 0.0f, LumaOffset = 0.0f;
@@ -573,10 +575,6 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
          vector<string> textures;
          textures.resize(6);
 
-         enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
-            C_DECAL1, C_DECAL2, C_DECAL3, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
-         };
-
          TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
 
          if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
@@ -664,12 +662,24 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
          int ntex = mtl->NumSubTexmaps();
          if (ntex > 0)
          {
-            ntex = min(ntex, 7);
-            TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
+            int maxTexture = 7;
             NiTexturingPropertyRef texProp;
             for (int i = 0; i < ntex; ++i) {
                BitmapTex *bmTex = getTexture(mtl, i);
                if (!bmTex)
+                  continue;
+
+               TexType textype = (TexType)i;
+               if ( isCiv4Shader ) {
+                  const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+                  textype = civmap[i];
+               } else if (isGamebryoShader) {
+                  const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, NORMAL_MAP, UNKNOWN2_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+                  textype = civmap[i];
+               }
+
+               // Fallout 3 only
+               if ( textype >= C_ENVMASK )
                   continue;
 
                if (texProp == NULL)
@@ -678,10 +688,22 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
                   texProp->SetApplyMode(Niflib::ApplyMode(ApplyMode));
                   texProp->SetTextureCount(7);
                }
+               if ( Exporter::mNifVersionInt <= 0x14010003)
+               {
+                  if (textype == C_DECAL0)
+                     texProp->SetTextureCount(9);
+                  else if (textype == C_DECAL1)
+                     texProp->SetTextureCount(10);
+                  else if (textype > C_DECAL1)
+                     continue;
+               }
+               else if ( textype >= texProp->GetTextureCount() )
+               {
+                  texProp->SetTextureCount(textype + 1);
+               }
+
                TexDesc td;
                if (makeTextureDesc(bmTex, td)) {
-                  TexType textype = texmap[i];
-                  texProp->SetTexture(textype, td);
                   if (textype == BUMP_MAP) {
                      td.source->SetPixelLayout(PIX_LAY_BUMPMAP);
                      texProp->SetLumaOffset(LumaOffset);
@@ -692,9 +714,25 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
                      m2[0][1] = m2[1][0] = 0.0f;
                      texProp->SetBumpMapMatrix(m2);
                   }
+                  texProp->SetTexture(textype, td);
+
+                  // kludge for setting decal maps without messing up the file sizes
+                  if ( Exporter::mNifVersionInt <= 0x14010003)
+                  {
+                     if (textype == C_DECAL0)
+                        texProp->SetTextureCount(7);
+                     else if (textype == C_DECAL1)
+                        texProp->SetTextureCount(8);
+                  }
+
+                  if ( textype > maxTexture )
+                     maxTexture = textype;
                }
             }
-
+            if ( Exporter::mNifVersionInt < 0x14010003 && maxTexture > 8)
+               texProp->SetTextureCount(8);
+            else if ( Exporter::mNifVersionInt > 0x14010003 && maxTexture > 12)
+               texProp->SetTextureCount(12);
             if (texProp != NULL)
             {
                parent->AddProperty(texProp);
