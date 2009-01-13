@@ -62,6 +62,8 @@
 #define IDC_CHK_SKINPART                13038
 #define IDC_CB_USER_VERSION2            13039
 #define IDC_CHK_START_NIFSKOPE          13040
+#define IDC_LBL_BONES_VERTEX2           13041
+#define IDC_ED_WELDTHRESH2              13042
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
 #define IDC_SPIN                        13496

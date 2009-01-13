@@ -431,6 +431,10 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
    if (Shader *s = mtl->GetShader())
       s->GetClassName(shaderByName);
 
+   Class_ID shaderID = mtl->ClassID();
+   bool isGamebryoShader = (shaderID == civ4Shader);
+   bool isCiv4Shader = isGamebryoShader && (shaderByName == TSTR("CivilizationIV Shader"));
+
    RefTargetHandle ref = mtl->GetReference(2/*shader*/);
    if (!ref)
       return false;
@@ -543,10 +547,20 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
       int ntex = mtl->NumSubTexmaps();
       if (ntex > 0)
       {
-         ntex = min(ntex, 7);
-         TexType texmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP};
          for (int i = 0; i < ntex; ++i) {
-            TexType textype = texmap[i];
+
+            TexType textype = (TexType)i;
+            if ( isCiv4Shader ) {
+               const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+               textype = civmap[i];
+            } else if (isGamebryoShader) {
+               const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, NORMAL_MAP, UNKNOWN2_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+               textype = civmap[i];
+            }
+            if ( nifVersion <= 0x14010003) {
+               if (textype > C_NORMAL)
+                  textype = (TexType)(i + 2);
+            }
             if (texRef->HasTexture(textype)){
                if (Texmap* tex = CreateTexture(texRef->GetTexture(textype))) {
                   mtl->SetSubTexmap(i, tex);

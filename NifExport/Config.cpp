@@ -55,7 +55,6 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "FurnatureMarkers", mExportFurn, iniName);
       SetIniValue(NifExportSection, "Lights", mExportLights, iniName);
       SetIniValue(NifExportSection, "VertexColors", mVertexColors, iniName);
-      //	SetIniValue(NifExportSection, "WeldThresh", mWeldThresh, iniName);
       SetIniValue(NifExportSection, "TexturePrefix", mTexPrefix, iniName);
       SetIniValue(NifExportSection, "ExportCollision", mExportCollision, iniName);
       SetIniValue(NifExportSection, "RemapIndices", mRemapIndices, iniName);
@@ -92,6 +91,9 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue<string>(NifExportSection, "Creator", mCreatorName, iniName);
       SetIniValue(NifExportSection, "GeneratePartitionStrips", mTriPartStrips, iniName);
 
+      SetIniValue(NifExportSection, "WeldVertexThresh", mWeldThresh, iniName);
+      SetIniValue(NifExportSection, "WeldVertexThresh", mNormThresh, iniName);
+      SetIniValue(NifExportSection, "WeldUVWThresh", mUVWThresh, iniName);
    }
 }
 
@@ -131,7 +133,10 @@ void Exporter::readConfig(Interface *i)
       mExportFurn = GetIniValue<bool>(NifExportSection, "FurnatureMarkers", true, iniName);
       mExportLights = GetIniValue<bool>(NifExportSection, "Lights", false, iniName);
       mVertexColors = GetIniValue<bool>(NifExportSection, "VertexColors", true, iniName);
-      //	mWeldThresh = GetIniValue<float>(NifExportSection, "WeldThresh", 0.1f, iniName);
+      mWeldThresh = GetIniValue<float>(NifExportSection, "WeldVertexThresh", 0.01f, iniName);
+      mNormThresh = GetIniValue<float>(NifExportSection, "WeldNormThresh", 0.01f, iniName);
+      mUVWThresh = GetIniValue<float>(NifExportSection, "WeldUVWThresh", 0.01f, iniName);
+
       mTexPrefix = GetIniValue<string>(NifExportSection, "TexturePrefix", "textures", iniName);
       mExportCollision = GetIniValue<bool>(NifExportSection, "ExportCollision", true, iniName);
       mRemapIndices = GetIniValue(NifExportSection, "RemapIndices", true, iniName);

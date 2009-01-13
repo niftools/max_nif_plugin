@@ -170,7 +170,7 @@ std::string AppSettings::GetRelativeTexPath(const std::string& fname, const std:
          PathMakePretty(root);
          if (-1 != _taccess(root,0)) {
             size_t len = _tcslen(root);
-            if (0 == _tcsncmp(root, file, len))
+            if (0 == _tcsnicmp(root, file, len))
                return string(file+len);
          }
       }

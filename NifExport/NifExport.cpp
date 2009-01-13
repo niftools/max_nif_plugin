@@ -150,9 +150,9 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 
          CheckDlgButton(hWnd, IDC_CHK_ALLOW_ACCUM, Exporter::mAllowAccum);
 
-         //TSTR tmp;
-         //tmp.printf("%.4f", Exporter::mWeldThresh);
-         //SetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp);
+         TSTR tmp;
+         tmp.printf("%.4f", Exporter::mWeldThresh);
+         SetDlgItemText(hWnd, IDC_ED_WELDTHRESH2, tmp);
 
          CheckDlgButton(hWnd, IDC_CHK_START_NIFSKOPE, Exporter::mStartNifskopeAfterStart);
 
@@ -219,7 +219,7 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
             GetDlgItemText(hWnd, IDC_ED_TEXPREFIX, tmp, MAX_PATH);
             Exporter::mTexPrefix = tmp;
 
-            GetDlgItemText(hWnd, IDC_ED_WELDTHRESH, tmp, MAX_PATH);
+            GetDlgItemText(hWnd, IDC_ED_WELDTHRESH2, tmp, MAX_PATH);
             Exporter::mWeldThresh = (float)atof(tmp);
 
             Exporter::mAllowAccum = IsDlgButtonChecked(hWnd, IDC_CHK_ALLOW_ACCUM);

@@ -77,6 +77,8 @@ public:
    static string			mTexPrefix;
    static bool				mVertexColors;
    static float			mWeldThresh;
+   static float			mNormThresh;
+   static float			mUVWThresh;
    static bool				mExportCollision;
    static bool				mRemapIndices;
    static bool				mExportExtraNodes;

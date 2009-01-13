@@ -38,7 +38,12 @@ struct VertexCompare
    typedef Exporter::VertexGroup VertexGroup;
    typedef Exporter::FaceGroup FaceGroup;
    VertexCompare(FaceGroup& g, float pt, float nt, float vt) 
-      : grp(g), thresh(pt), normthresh(nt), vthresh(vt) {}
+      : grp(g), thresh(pt), normthresh(nt), vthresh(vt) {
+         if (normthresh > thresh)
+            normthresh = thresh;
+         if (vthresh > thresh)
+            vthresh = thresh;
+   }
    inline bool operator()(const TexCoord& lhs, const TexCoord& rhs, float thresh) const {
       return compare(lhs, rhs, thresh) < 0;
    }
@@ -462,7 +467,7 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
       }
    }
 
-   VertexCompare vc(grp, 0.1f, 0.01f, 0.01f);
+   VertexCompare vc(grp, Exporter::mWeldThresh, Exporter::mNormThresh, Exporter::mUVWThresh);
    int n = grp.verts.size();
 #if 0
    IntRange range = std::equal_range(grp.vmap.begin(), grp.vmap.end(), vg, vc);
