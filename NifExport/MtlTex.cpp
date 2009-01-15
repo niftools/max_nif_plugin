@@ -305,6 +305,7 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
                   stencil->SetStencilState(false);
                   stencil->SetPassAction(ACTION_INCREMENT);
                   stencil->SetFaceDrawMode(DRAW_BOTH);
+                  stencil->SetFlags(19840);
                   parent->AddProperty(stencil);
                }
                if (smtl->IsFaceted()) {

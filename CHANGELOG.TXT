@@ -16,6 +16,7 @@ NifTools MaxPlugin
       - Fixes for fallout 3 binormal and tangent export
       - Add option to start nifskope after successful export
       - Expose vertex weld threshold on export dialog
+      - Set Flags to 19840 for NiStencilProperty when 2-Sided is checked on Material
     
       3.1
       ------
