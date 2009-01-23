@@ -390,6 +390,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
+   data->SetUVSetMap(grp.uvMapping);
 
    int nUVs = grp.uvs.size();
    if ( IsFallout3() )
@@ -438,13 +439,17 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
       vg.norm = getVertexNormal(mesh, face, mesh->getRVertPtr(vidx));
 #endif
 
-   int nmaps = mesh->getNumMaps() - 1;
+   int nmaps = grp.uvMapping.size();
+   map<int,int>::iterator UVSetIter;
    vg.uvs.resize(nmaps > 0 ? nmaps : 1);
    if (nmaps > 0) {
-      for (int i = 0; i<nmaps; ++i) {
-         TexCoord& uvs = vg.uvs[i];
-         UVVert *uv = mesh->mapVerts(i+1); 
-         TVFace *tv = mesh->mapFaces(i+1);
+	  for (UVSetIter=grp.uvMapping.begin() ; UVSetIter != grp.uvMapping.end(); UVSetIter++ )
+      {
+		  int maxUVIdx = (*UVSetIter).first;
+		  int nifUVIdx = (*UVSetIter).second;
+         TexCoord& uvs = vg.uvs[nifUVIdx];
+         UVVert *uv = mesh->mapVerts(maxUVIdx); 
+         TVFace *tv = mesh->mapFaces(maxUVIdx);
          if (uv && tv) {
             Point3 uvw = uv[ tv[ face ].t[ vi ]] * texm;
             uvs.u = uvw[0];
@@ -589,14 +594,23 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
 
          FaceGroup& grp = grps[mtlID];
 
-         int nmaps = max(1, mesh.getNumMaps() - 1);
-         grp.uvs.resize(nmaps);
+		 if (grp.uvMapping.size() == 0) // Only needs to be done once per face group
+		 {
+			 int nmaps = 0;
+			 int nmapsStart = max(1, mesh.getNumMaps() - (mesh.mapSupport(0) ? 1 : 0)); // Omit vertex color map.
+			 for (int ii = 1; ii <= nmapsStart; ii++) // Winnow out the unsupported maps.
+			 {
+				 if (!mesh.mapSupport(ii)) continue;
+				 grp.uvMapping[ii] = nmaps++;
+			 }
+			 grp.uvs.resize(nmaps == 0 ? 1 : nmaps);
+		 }
          if (nv > int(grp.verts.capacity()))
          {
             grp.vgrp.reserve(nv);
             grp.verts.reserve(nv);
             grp.vnorms.reserve(nv);
-            for (int i=0; i<nmaps; ++i)
+            for (int i=0; i<grp.uvs.size(); ++i)
                grp.uvs[i].reserve(nv);
             grp.vcolors.reserve(nv);
             grp.vidx.reserve(nv);

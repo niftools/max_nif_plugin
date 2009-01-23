@@ -167,6 +167,7 @@ public:
       vector<Vector3>	  vnorms;
       Triangles	        faces;
       vector<TexCoords>	  uvs;
+	  std::map<int, int>  uvMapping; // first = Max index, second = Nif index
       vector<Color4>      vcolors;
       vector<int>         vidx;
       vector<int>         fidx;
@@ -249,7 +250,7 @@ public:
    /* texture & material */
    // creates NiTexturingProperty + NiSourceTexture
    void					   makeTexture(NiAVObjectRef &parent, Mtl *mtl);
-   bool                 makeTextureDesc(BitmapTex *bmTex, Niflib::TexDesc &td);
+   bool                 makeTextureDesc(BitmapTex *bmTex, Niflib::TexDesc &td, NiTriBasedGeomDataRef shape);
    // creates a NiMaterialProperty
    void					   makeMaterial(NiAVObjectRef &parent, Mtl *mtl);
    bool                 exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl);

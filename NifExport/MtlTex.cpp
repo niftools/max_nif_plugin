@@ -149,7 +149,8 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		texProp->SetTextureCount(7);
 
 		TexDesc td;
-		if (makeTextureDesc(bmTex, td))
+		NiTriBasedGeom *shape(DynamicCast<NiTriBasedGeom>(parent));
+		if (makeTextureDesc(bmTex, td, shape->GetData()))
 			texProp->SetTexture(BASE_MAP, td);
 
 		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
@@ -180,7 +181,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 	}
 }
 
-bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
+bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td, NiTriBasedGeomDataRef shape)
 {
    td.source = new NiSourceTexture();
 
@@ -204,7 +205,8 @@ bool Exporter::makeTextureDesc(BitmapTex *bmTex, TexDesc& td)
    if (UVGen *uvGen = bmTex->GetTheUVGen()){
       if (uvGen && uvGen->IsStdUVGen()) {
          StdUVGen *uvg = (StdUVGen*)uvGen;
-         td.uvSet = uvg->GetMapChannel() - 1;
+		 td.uvSet = shape->GetUVSetIndex(uvg->GetMapChannel());
+         if (td.uvSet == -1) td.uvSet = 1;
       }
       if (RefTargetHandle ref = uvGen->GetReference(0)){
          TexCoord trans, tiling;
@@ -660,6 +662,9 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
       } 
       else
       {
+		  StdMat2 *m2 = NULL;
+		  if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) m2 = (StdMat2*)mtl;
+            
          int ntex = mtl->NumSubTexmaps();
          if (ntex > 0)
          {
@@ -667,7 +672,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
             NiTexturingPropertyRef texProp;
             for (int i = 0; i < ntex; ++i) {
                BitmapTex *bmTex = getTexture(mtl, i);
-               if (!bmTex)
+			   if (!bmTex || (m2 && (m2->GetMapState(i)) != 2))
                   continue;
 
                TexType textype = (TexType)i;
@@ -704,7 +709,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
                }
 
                TexDesc td;
-               if (makeTextureDesc(bmTex, td)) {
+			   NiTriBasedGeomRef shape(DynamicCast<NiTriBasedGeom>(parent));
+			   if (makeTextureDesc(bmTex, td, shape->GetData())) {
                   if (textype == BUMP_MAP) {
                      td.source->SetPixelLayout(PIX_LAY_BUMPMAP);
                      texProp->SetLumaOffset(LumaOffset);
