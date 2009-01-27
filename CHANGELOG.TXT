@@ -3,6 +3,13 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      3.3
+    o Exporter
+      - Fix multi-UVW implementation to compact UV channels on export
+      
+    o Importer
+      - Fix issue in niflib causing exception in several games
+      
       3.2
       ------
     o Importer/Exporter/Props

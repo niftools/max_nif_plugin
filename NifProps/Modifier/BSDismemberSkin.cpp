@@ -506,6 +506,7 @@ BOOL BSDSModifier::updateCachePosted = FALSE;
 
 class BSDSClassDesc:public ClassDesc2 {
 	public:
+	BSDSClassDesc();
 	int 			IsPublic() { return 1; }
 	void *			Create(BOOL loading = FALSE) { return new BSDSModifier; }
 	const TCHAR *	ClassName() { return GetString(IDS_RB_BSDSMODIFIER); }
@@ -515,9 +516,6 @@ class BSDSClassDesc:public ClassDesc2 {
 	const TCHAR * InternalName () { return _T("BSDSModifier"); }
 	HINSTANCE HInstance () { return hInstance; }
 };
-
-static BSDSClassDesc BSDSDesc;
-ClassDesc2* GetBSDSModifierDesc() {return &BSDSDesc;}
 
 class BSDSModifierMainDlgProc : public ParamMap2UserDlgProc {
 public:
@@ -559,7 +557,7 @@ enum {ms_by_vertex, ms_ignore_backfacing,
 
 static ParamBlockDesc2 BSDS_desc ( ms_pblock,
 									_T("BSDismemberSkinDescription"),
-									IDS_MS_SOFTSEL, &BSDSDesc,
+									IDS_MS_SOFTSEL, NULL,
 									P_AUTO_CONSTRUCT | P_AUTO_UI | P_MULTIMAP,
 									REF_PBLOCK,
 	//rollout descriptions
@@ -595,15 +593,22 @@ static ParamBlockDesc2 BSDS_desc ( ms_pblock,
 		p_ui, ms_map_main, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
 			IDC_MS_PLANAR, IDC_MS_PLANARSPINNER, .1f,
 		end,
-
 	end
 );
+
+static BSDSClassDesc BSDSDesc;
+ClassDesc2* GetBSDSModifierDesc() {return &BSDSDesc;}
+BSDSClassDesc::BSDSClassDesc() {
+   BSDS_desc.SetClassDesc(this);
+}
 
 //--- BSDS mod methods -------------------------------
 
 BSDSModifier::BSDSModifier() {
+	SetAFlag(A_PLUGIN1);
 	pblock = NULL;
 	BSDSDesc.MakeAutoParamBlocks (this);
+	assert(pblock);
 }
 
 RefTargetHandle BSDSModifier::Clone(RemapDir& remap) {
