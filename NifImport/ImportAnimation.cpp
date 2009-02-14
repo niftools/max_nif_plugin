@@ -338,6 +338,9 @@ static FPValue myAddNewNoteKey(Value* noteTrack, int frame)
 
 bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKeyExtraDataRef textKeyData, bool loop)
 {
+   if (textKeyData == NULL)
+      return false;
+
    vector<StringKey> textKeys = textKeyData->GetKeys();
    if (!textKeys.empty()) {
 
@@ -499,12 +502,18 @@ bool KFMImporter::ImportAnimation()
       NiControllerSequenceRef cntr = (*itr);
       float start = cntr->GetStartTime();
       float stop = cntr->GetStopTime();
-      float total = (stop - start);
 
       vector<ControllerLink> links = cntr->GetControllerData();
 
-      NiTextKeyExtraDataRef textKeyData = cntr->GetTextKeyExtraData();
-      AddNoteTracks( time, cntr->GetName(), cntr->GetTargetName(), textKeyData, (CYCLE_LOOP == cntr->GetCycleType()) );
+      NiTextKeyExtraDataRef textKeyData = cntr->GetTextKeys();
+      if (textKeyData == NULL)
+         textKeyData = cntr->GetTextKeyExtraData();
+
+      string textName = cntr->GetTextKeysName();
+      if (textName.empty())
+         textName = cntr->GetTargetName();
+
+      AddNoteTracks( time, cntr->GetName(), textName, textKeyData, (CYCLE_LOOP == cntr->GetCycleType()) );
 
       for (vector<ControllerLink>::iterator lnk=links.begin(); lnk != links.end(); ++lnk)
       {
@@ -513,9 +522,9 @@ bool KFMImporter::ImportAnimation()
             NiStringPaletteRef strings = lnk->stringPalette;
             name = strings->GetSubStr((*lnk).nodeNameOffset);
          }
-		 if (name.empty()) {
-			 name = (*lnk).nodeName;
-		 }
+         if (name.empty()) {
+            name = (*lnk).nodeName;
+         }
          if (name.empty())
             continue;
 
@@ -525,92 +534,103 @@ bool KFMImporter::ImportAnimation()
             name = name.substr(0, name.length() - 9);
          }
 
-		 string type = (*lnk).controllerType;
-		 if (type.empty()) {
-			 NiStringPaletteRef strings = lnk->stringPalette;
-			 type = strings->GetSubStr((*lnk).controllerTypeOffset);
-		 }
-		 if (type.empty())
-			 continue;
+         string type = (*lnk).controllerType;
+         if (type.empty()) {
+            NiStringPaletteRef strings = lnk->stringPalette;
+            type = strings->GetSubStr((*lnk).controllerTypeOffset);
+         }
+         if (type.empty()) {
+            if ((*lnk).controller != NULL) {
+               type = (*lnk).controller->GetType().GetTypeName();
+            }
+         }
+         if (type.empty())
+            continue;
 
-		 if (strmatch(type, "NiTransformController"))
-		 {
-			 Control *c = ai.GetTMController(name);
-			 if (NULL == c)
-				 continue;
+         if (strmatch(type, "NiTransformController"))
+         {
+            Control *c = ai.GetTMController(name);
+            if (NULL == c)
+               continue;
 
-			 INode *n = gi->GetINodeByName(name.c_str());
+            INode *n = gi->GetINodeByName(name.c_str());
 
-			 if ((*lnk).priority != 0.0f) {
-				 npSetProp(n, NP_ANM_PRI, (*lnk).priority);
-			 }
+            if ((*lnk).priority != 0.0f) {
+               npSetProp(n, NP_ANM_PRI, (*lnk).priority);
+            }
 
-			 NiKeyframeDataRef data;
-			 Point3 p; Quat q; float s;
-			 if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-				 PosRotScaleNode(n, p, q, s, prsDefault, 0);
-				 if (ai.AddValues(c, data, time)) {
-					 minTime = min(minTime, start);
-					 maxTime = max(maxTime, stop);
-					 ok = true;
-				 }
-			 }
-		 }
-		 else if (strmatch(type, "NiGeomMorpherController"))
-		 {
-			 string var2 = (*lnk).variable2;
-			 if (var2.empty()) {
-				 if (NiStringPaletteRef strings = lnk->stringPalette)
-					 var2 = strings->GetSubStr((*lnk).variable2Offset);
-			 }
-			 if (!var2.empty())
-			 {
-				 if (INode *n = gi->GetINodeByName(name.c_str()))
-				 {
-					 if (Modifier* mod = GetMorpherModifier(n))
-					 {
-						 int idx = -1;
-						 for (int i=1; i<=100; ++i) {
-							 if (strmatch(var2, MorpherGetName(mod, i))) {
-								 idx = i;
-								 break;
-							 }
-						 }
-						 if (idx != -1)
-						 {
-							 if (ai.AddValues(lnk->interpolator, (IParamBlock*)mod->GetReference(idx), time)) {
-								 minTime = min(minTime, start);
-								 maxTime = max(maxTime, stop);
-								 ok = true;
-							 }
-						 }
-					 }
-				 }
-			 }
-		 }
-		 else if (strmatch(type, "NiKeyframeController"))
-		 {
-			 Control *c = ai.GetTMController(name);
-			 if (NULL == c)
-				 continue;
+            NiKeyframeDataRef data;
+            Point3 p; Quat q; float s;
+            if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
+               PosRotScaleNode(n, p, q, s, prsDefault, 0);
+               if (ai.AddValues(c, data, time)) {
+                  minTime = min(minTime, start);
+                  maxTime = max(maxTime, stop);
+                  ok = true;
+               }
+            }
+         }
+         else if (strmatch(type, "NiGeomMorpherController"))
+         {
+            string var2 = (*lnk).variable2;
+            if (var2.empty()) {
+               if (NiStringPaletteRef strings = lnk->stringPalette)
+                  var2 = strings->GetSubStr((*lnk).variable2Offset);
+            }
+            if (!var2.empty())
+            {
+               if (INode *n = gi->GetINodeByName(name.c_str()))
+               {
+                  if (Modifier* mod = GetMorpherModifier(n))
+                  {
+                     int idx = -1;
+                     for (int i=1; i<=100; ++i) {
+                        if (strmatch(var2, MorpherGetName(mod, i))) {
+                           idx = i;
+                           break;
+                        }
+                     }
+                     if (idx != -1)
+                     {
+                        if (ai.AddValues(lnk->interpolator, (IParamBlock*)mod->GetReference(idx), time)) {
+                           minTime = min(minTime, start);
+                           maxTime = max(maxTime, stop);
+                           ok = true;
+                        }
+                     }
+                  }
+               }
+            }
+         }
+         else if (strmatch(type, "NiKeyframeController"))
+         {
+            Control *c = ai.GetTMController(name);
+            if (NULL == c)
+               continue;
 
-			 INode *n = gi->GetINodeByName(name.c_str());
+            if (NiKeyframeControllerRef controller = (*lnk).controller)
+            {
+               start = controller->GetStartTime();
+               stop = controller->GetStopTime();
+            }
 
-			 if ((*lnk).priority != 0.0f) {
-				 npSetProp(n, NP_ANM_PRI, (*lnk).priority);
-			 }
+            INode *n = gi->GetINodeByName(name.c_str());
 
-			 NiKeyframeDataRef data;
-			 Point3 p; Quat q; float s;
-			 if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-				 PosRotScaleNode(n, p, q, s, prsDefault, 0);
-				 if (ai.AddValues(c, data, time)) {
-					 minTime = min(minTime, start);
-					 maxTime = max(maxTime, stop);
-					 ok = true;
-	 			 }
-			 }
-		 }
+            if ((*lnk).priority != 0.0f) {
+               npSetProp(n, NP_ANM_PRI, (*lnk).priority);
+            }
+
+            NiKeyframeDataRef data;
+            Point3 p; Quat q; float s;
+            if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
+               PosRotScaleNode(n, p, q, s, prsDefault, 0);
+               if (ai.AddValues(c, data, time)) {
+                  minTime = min(minTime, start);
+                  maxTime = max(maxTime, stop);
+                  ok = true;
+               }
+            }
+         }
       }
       if (maxTime > minTime && maxTime > 0.0f)
          time += (maxTime-minTime) + FramesIncrement;

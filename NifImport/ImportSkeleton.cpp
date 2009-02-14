@@ -553,6 +553,11 @@ static bool HasUserPropBuffer(NiNodeRef node)
    return false;
 }
 
+extern Point3 TOEULER(const Matrix3 &m);
+inline Point3 TORAD(const Point3& p){
+   return Point3(TORAD(p[0]), TORAD(p[1]), TORAD(p[2]));
+}
+
 void NifImporter::ImportBones(NiNodeRef node, bool recurse)
 {
    try 
@@ -630,6 +635,8 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          ppos = pos + Vector3(len/3.0f, 0.0f, 0.0f);
       }
       Point3 pp(ppos.x, ppos.y, ppos.z);
+
+      Point3 qp = TORAD(TOEULER(im));
 
 
       INode *bone = NULL;

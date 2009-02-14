@@ -659,6 +659,8 @@ bool AnimationExport::doExport(NiControllerManagerRef mgr, INode *node)
 
                            NiTextKeyExtraDataRef textKeyData = new NiTextKeyExtraData();
                            curSeq->SetTextKey(textKeyData);
+                           curSeq->SetTextKeys(textKeyData);
+                           curSeq->SetTextKeysName( curSeq->GetTargetName() );
                            textKeyData->SetKeys(textKeys);
                            textKeys.clear();
                            curSeq = NULL;
@@ -963,6 +965,7 @@ NiTimeControllerRef AnimationExport::exportController(INode *node, Interval rang
             trans = TOVECTOR3(tm.GetTrans());
             rot = TOQUAT( Quat(tm), true );
          }
+         string name = ninode->GetName();
 
          NiKeyframeDataRef data;
 
@@ -1404,20 +1407,32 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
       NiSingleInterpControllerRef interpControl = DynamicCast<NiSingleInterpController>(control);
       if (interpControl) 
       {
-         // Get Priority from node
-         float priority;
-         npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
-		 seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), (Niflib::byte)priority);
+         if (Exporter::mNifVersionInt >= VER_10_2_0_0)
+         {
+            // Get Priority from node
+            float priority;
+            npGetProp(node, NP_ANM_PRI, priority, Exporter::mDefaultPriority);
+            seq->AddInterpolator(StaticCast<NiSingleInterpController>(control), (Niflib::byte)priority);
+         }
+         else
+         {
+            seq->AddController(node->GetName(), control);
+            if (NiKeyframeControllerRef ctrl = DynamicCast<NiKeyframeController>(control))
+            {
+               CycleType ct = seq->GetCycleType();
+               ctrl->SetFlags( (ctrl->GetFlags() & ~0x7) | (1 << seq->GetCycleType()) );
+            }
+         }
 
          // Handle NonAccum 
-		 if (Exporter::mAllowAccum && accumType != Exporter::AT_NONE)
+         if (Exporter::mAllowAccum && accumType != Exporter::AT_NONE)
          {
-            NiTransformInterpolatorRef interp = DynamicCast<NiTransformInterpolator>(interpControl->GetInterpolator());
             NiNodeRef accnode = ne.getNode( FormatString("%s NonAccum", node->GetName()) );
             objRefs.insert( StaticCast<NiAVObject>(accnode) );
 
             if (Exporter::mNifVersionInt >= VER_10_2_0_0)
             {
+               NiTransformInterpolatorRef interp = DynamicCast<NiTransformInterpolator>(interpControl->GetInterpolator());
                NiTransformControllerRef acccontrol = new NiTransformController();
                NiTransformInterpolatorRef accinterp = new NiTransformInterpolator();
                accnode->AddController(StaticCast<NiTimeController>(acccontrol));
@@ -1428,15 +1443,15 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
                accinterp->SetRotation( Quaternion(1.0f, 0.0f, 0.0f, 0.0f) );
 
                if (interp != NULL) {
-				   NiTransformDataRef accumData = new NiTransformData();
-				   // Transfer entire data to accum node
-				   if ((accumType & Exporter::AT_XYZ) == Exporter::AT_XYZ) {
-					   accinterp->SetData( interp->GetData() );
-					   interp->SetData( accumData );
-				   } else {
-					   accinterp->SetData( accumData );
-					   splitAccum(interp->GetData(), accumData, accumType);
-				   }
+                  NiTransformDataRef accumData = new NiTransformData();
+                  // Transfer entire data to accum node
+                  if ((accumType & Exporter::AT_XYZ) == Exporter::AT_XYZ) {
+                     accinterp->SetData( interp->GetData() );
+                     interp->SetData( accumData );
+                  } else {
+                     accinterp->SetData( accumData );
+                     splitAccum(interp->GetData(), accumData, accumType);
+                  }
                }
                seq->AddInterpolator(StaticCast<NiSingleInterpController>(acccontrol), (Niflib::byte)Exporter::mDefaultPriority);
 
@@ -1458,7 +1473,7 @@ bool AnimationExport::exportController(INode *node, Exporter::AccumType accumTyp
    for (int i=0, n=node->NumberOfChildren(); ok && i<n; ++i)
    {
       INode *child = node->GetChildNode(i);
-	  ok |= exportController(child, Exporter::AT_NONE);
+      ok |= exportController(child, Exporter::AT_NONE);
    }
    return ok;
 }

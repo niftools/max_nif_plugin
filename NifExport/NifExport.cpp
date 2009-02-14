@@ -506,10 +506,12 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
       }
 
       Niflib::NifGame game = KF_MW;
-      if (nifVersion <= VER_4_0_0_2) {
+      if (appSettings->Name == "Dark Age of Camelot") {
+         game = KF_DAOC;
+      } else if (nifVersion <= VER_4_0_0_2) {
          game = KF_MW;
       } else if (nifVersion <= VER_20_0_0_4) {
-         game = KF_DAOC;
+         game = KF_FFVT3R;
       } else {
          game = KF_CIV4;
       }
