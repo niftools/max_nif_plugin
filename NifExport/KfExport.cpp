@@ -121,8 +121,8 @@ static INT_PTR CALLBACK KfExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wPa
                int nifVersion = ParseVersionString(tmp);
                if (!IsSupportedVersion(nifVersion))
                {
-                  MessageBox(hWnd, FormatString("Version '%s' is not a supported version.", tmp).c_str(), "NifExport", MB_OK|MB_ICONSTOP);
-                  return FALSE;
+                  if (IDNO == MessageBox(hWnd, FormatString("Version '%s' is not a known version. Do you wish to continue?", tmp).c_str(), "NifExport", MB_YESNO|MB_DEFBUTTON2|MB_ICONSTOP))
+                     return FALSE;
                }
             }
 
@@ -327,9 +327,12 @@ int	KfExport::DoExport(const TCHAR *name, ExpInterface *ei, Interface *i, BOOL s
 
       if (!Exporter::mNifVersion.empty())
       {
-         nifVersion = ParseVersionString(Exporter::mNifVersion);
          if (!IsSupportedVersion(nifVersion))
-            throw exception(FormatString("Version '%s' is not a supported version.").c_str());
+         {
+            string tmp = FormatVersionString(nifVersion);
+            if (IDNO == MessageBox(GetActiveWindow(), FormatString("Version '%s' is not a known version. Do you wish to continue?", tmp.c_str()).c_str(), "NifExport", MB_YESNO|MB_DEFBUTTON2|MB_ICONSTOP))
+               return FALSE;
+         }
       }
 
       Exporter::mSelectedOnly = (options&SCENE_EXPORT_SELECTED) != 0;
