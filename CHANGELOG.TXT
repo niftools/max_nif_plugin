@@ -3,6 +3,12 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      3.4
+    o Exporter
+      - Fix issues with importing Freedom Force vs 3rd Reich animation
+    o Importer
+      - Fix issues with importing Freedom Force vs 3rd Reich models and animation
+      
       3.3
     o Exporter
       - Fix multi-UVW implementation to compact UV channels on export

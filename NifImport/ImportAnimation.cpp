@@ -216,6 +216,137 @@ void NifImporter::ClearAnimation()
       ClearAnimation(gi->GetRootNode());
    }
 }
+
+static void GetTimeRange(Control *c, Interval& range)
+{
+   if (c->IsKeyable())
+   {
+      int iNumKeys = c->NumKeys();
+      for (int i = 0; i < iNumKeys; i++) {
+         TimeValue t = c->GetKeyTime(i);
+         if (range.Empty()) {
+            range.SetInstant(t);
+         } else {
+            if (t < range.Start())
+               range.SetStart(t);
+            if (t > range.End())
+               range.SetEnd(t);
+         }
+      }
+      if (range.Empty())
+      {
+         if (IKeyControl *ikeys = GetKeyControlInterface(c)){
+            int n = ikeys->GetNumKeys();
+            for (int i=0; i<n; ++i){
+               AnyKey buf; IKey *key = (IKey*)buf;
+               ikeys->GetKey(i, key);
+               if (range.Empty()) {
+                  range.SetInstant(key->time);
+               } else {
+                  if (key->time < range.Start())
+                     range.SetStart(key->time);
+                  if (key->time > range.End())
+                     range.SetEnd(key->time);
+               }
+            }
+         }
+      }
+   }
+   if (range.Empty())
+   {
+      if (c->IsAnimated())
+      {
+         //Tab<TimeValue> times;
+         //if ( c->GetKeyTimes( times,FOREVER, KEYAT_POSITION ) ) {
+         //   for (int i=0; i<times.Count(); ++i){
+         //      TimeValue time = times[i];
+         //      if (range.Empty()) {
+         //         range.SetInstant(time);
+         //      } else {
+         //         if (time < range.Start())
+         //            range.SetStart(time);
+         //         if (time > range.End())
+         //            range.SetEnd(time);
+         //      }
+         //   }
+         //}
+         //if ( c->GetKeyTimes( times,FOREVER, KEYAT_ROTATION ) ) {
+         //   for (int i=0; i<times.Count(); ++i){
+         //      TimeValue time = times[i];
+         //      if (range.Empty()) {
+         //         range.SetInstant(time);
+         //      } else {
+         //         if (time < range.Start())
+         //            range.SetStart(time);
+         //         if (time > range.End())
+         //            range.SetEnd(time);
+         //      }
+         //   }
+         //}
+      }
+   }
+}
+
+static void GetTimeRange(INode *node, Interval& range, bool recursive = true)
+{
+   int nTracks = node->NumNoteTracks();
+
+   // Populate Text keys and Sequence information from note tracks
+   for (int i=0; i<nTracks; ++i) {
+      if ( NoteTrack *nt = node->GetNoteTrack(i) ) {
+         if ( nt->ClassID() == Class_ID(NOTETRACK_CLASS_ID,0) ) {
+            DefNoteTrack *defNT = (DefNoteTrack *)nt;
+            if ( defNT->NumKeys() > 0 ) {
+               for (int j=0, m=defNT->keys.Count(); j<m; ++j) {
+                  NoteKey* key = defNT->keys[j];
+                  if (range.Empty()) {
+                     range.SetInstant(key->time);
+                  } else {
+                     if (key->time < range.Start())
+                        range.SetStart(key->time);
+                     if (key->time > range.End())
+                        range.SetEnd(key->time);
+                  }
+               }
+            }
+         }
+      }
+   }
+   if (Control* c = node->GetTMController())
+   {
+      GetTimeRange(c, range);
+
+#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 5
+      if (Control *sc = c->GetWController()) { 
+         GetTimeRange(sc, range);
+         if (sc != c) GetTimeRange(sc, range);
+      }
+#endif
+      if (Control *sc = c->GetXController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetYController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetZController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetRotationController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetPositionController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+      if (Control *sc = c->GetScaleController()) { 
+         if (sc != c) GetTimeRange(sc, range);
+      }
+   }
+   if (recursive) {
+      for (int i=0; i<node->NumberOfChildren(); i++) 
+         GetTimeRange(node->GetChildNode(i), range, true);
+   }
+}
+
 #if 0
 FPValue GetScriptedProperty( FPValue& thing, TCHAR* propName ) {
    init_thread_locals();
@@ -494,6 +625,18 @@ bool KFMImporter::ImportAnimation()
    AnimationImport ai(*this);
 
    float time = 0.0f;
+   // Locate the end of the previous animation and start importing there
+   if (!clearAnimation) {
+      float curTime = FrameToTime(gi->GetTime() + TicksPerFrame);
+      Interval globalRange; globalRange.SetInstant(0);
+      GetTimeRange( gi->GetRootNode(), globalRange, true );
+      if (globalRange.Duration() != 0)
+         globalRange.SetEnd( globalRange.End() + TicksPerFrame );
+      float endTime = FrameToTime( globalRange.End() );
+      time = max(curTime, endTime);
+      gi->SetTime( TimeToFrame(time) );
+   }
+
    for(vector<NiControllerSequenceRef>::iterator itr = kf.begin(); itr != kf.end(); ++itr){
 
       float minTime = 1e+35f;
@@ -562,7 +705,7 @@ bool KFMImporter::ImportAnimation()
             NiKeyframeDataRef data;
             Point3 p; Quat q; float s;
             if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-               PosRotScaleNode(n, p, q, s, prsDefault, 0);
+               PosRotScaleNode(n, p, q, s, prsDefault, TimeToFrame(time));
                if (ai.AddValues(c, data, time)) {
                   minTime = min(minTime, start);
                   maxTime = max(maxTime, stop);
@@ -623,7 +766,7 @@ bool KFMImporter::ImportAnimation()
             NiKeyframeDataRef data;
             Point3 p; Quat q; float s;
             if (ai.GetTransformData(*lnk, name, data, p, q, s)) {
-               PosRotScaleNode(n, p, q, s, prsDefault, 0);
+               PosRotScaleNode(n, p, q, s, prsDefault, TimeToFrame(time));
                if (ai.AddValues(c, data, time)) {
                   minTime = min(minTime, start);
                   maxTime = max(maxTime, stop);
