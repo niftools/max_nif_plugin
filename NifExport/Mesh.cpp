@@ -400,7 +400,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	   data->SetUVSet(i, grp.uvs[i]);
    }
 
-	if (grp.vcolors.size() > 0)
+	if (mVertexColors && grp.vcolors.size() > 0)
 		data->SetVertexColors(grp.vcolors);
 
 	data->SetConsistencyFlags(CT_STATIC);
