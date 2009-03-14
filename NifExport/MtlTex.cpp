@@ -292,7 +292,7 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
 		if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
 		{
 			StdMat2 * smtl = (StdMat2*)mtl;
-			mtlProp->SetTransparency(smtl->GetOpacity(0) / 100.0f);
+			mtlProp->SetTransparency(smtl->GetOpacity(0));
 
 			if (smtl->SupportsShaders()) {
 				if (Shader *s = smtl->GetShader()) {
