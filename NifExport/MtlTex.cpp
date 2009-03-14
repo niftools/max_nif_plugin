@@ -482,7 +482,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 		NiMaterialPropertyRef mtlProp = CreateNiObject<NiMaterialProperty>();
 		parent->AddProperty(mtlProp);
 
-		//mtlProp->SetName((char*)mtl->GetName());
+		mtlProp->SetName((char*)mtl->GetName());
 		mtlProp->SetAmbientColor(TOCOLOR3(ambient));
 		mtlProp->SetDiffuseColor(TOCOLOR3(diffuse));
 		mtlProp->SetSpecularColor(TOCOLOR3(specular));
