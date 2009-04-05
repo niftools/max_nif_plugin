@@ -8,6 +8,7 @@ NifTools MaxPlugin
       - Fix issues with importing Freedom Force vs 3rd Reich animation
       - Set Material name again which avoids crashes with Oblivion
       - Fix alpha property so that it no longer divides by 100
+      - Fix issues with exporting Vertex Colors when not required
     o Importer
       - Fix issues with importing Freedom Force vs 3rd Reich models and animation
       

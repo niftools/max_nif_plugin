@@ -118,38 +118,12 @@ struct VertexCompare
    }
    inline int compare(int lhs, const VertexGroup& rhs) const {
       return compare(grp.vgrp[lhs], rhs);
-      //int d;
-      //if ((d = compare(grp.verts[lhs],rhs.pt,thresh)) != 0) return d;
-      //if ((d = compare(grp.vnorms[lhs],rhs.norm,normthresh)) != 0) return d;
-      //if ((d = compare(grp.vcolors[lhs],rhs.color,vthresh)) != 0) return d;
-      //if ((d = grp.uvs[lhs].size() - rhs.uvs.size()) != 0) return d;
-      //for (int i=0; i<rhs.uvs.size(); ++i) {
-      //   if ((d = compare(grp.uvs[lhs][i],rhs.uvs[i],vthresh)) != 0) return d;
-      //}
-      //return d;
    }
    inline int compare(const VertexGroup& lhs, int rhs) const {
       return compare(lhs, grp.vgrp[rhs]);
-      //int d;
-      //if ((d = compare(lhs.pt,grp.verts[rhs],thresh)) != 0) return d;
-      //if ((d = compare(lhs.norm,grp.vnorms[rhs],normthresh)) != 0) return d;
-      //if ((d = compare(lhs.color,grp.vcolors[rhs],vthresh)) != 0) return d;
-      //if ((d = lhs.uvs.size() - grp.uvs[rhs].size()) != 0) return d;
-      //for (int i=0; i<lhs.uvs.size(); ++i) {
-      //   if ((d = compare(lhs.uvs[i],grp.uvs[rhs][i],vthresh)) != 0) return d;
-      //}
-      //return d;
    }
    inline int compare(int lhs, int rhs) const {
       return compare(grp.vgrp[lhs], grp.vgrp[rhs]);
-      //int d;
-      //if ((d = compare(grp.verts[lhs],grp.verts[rhs],thresh)) != 0) return d;
-      //if ((d = compare(grp.vnorms[lhs],grp.vnorms[rhs],normthresh)) != 0) return d;
-      //if ((d = compare(grp.vcolors[lhs],grp.vcolors[rhs],vthresh)) != 0) return d;
-      //for (int i=0; i<grp.uvs.size(); ++i) {
-      //   if ((d = compare(grp.uvs[lhs][i],grp.uvs[rhs][i],vthresh)) != 0) return d;
-      //}
-      //return d;
    }
    FaceGroup& grp;
    float thresh, normthresh, vthresh;
@@ -401,7 +375,18 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    }
 
 	if (mVertexColors && grp.vcolors.size() > 0)
-		data->SetVertexColors(grp.vcolors);
+	{
+		bool allWhite = true;
+		Color4 white(1.0f, 1.0f, 1.0f, 1.0f);
+		for (int i=0,n=grp.vcolors.size();i<n; ++i) {
+			if (white != grp.vcolors[i]) {
+				allWhite = false; 
+				break;
+			}
+		}
+		if (!allWhite)
+			data->SetVertexColors(grp.vcolors);
+	}
 
 	data->SetConsistencyFlags(CT_STATIC);
 	shape->SetData(data);
