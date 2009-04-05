@@ -3,6 +3,10 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      3.5
+    o All
+      - Update niflib to latest nif.xml
+    
       3.4
     o Exporter
       - Fix issues with importing Freedom Force vs 3rd Reich animation

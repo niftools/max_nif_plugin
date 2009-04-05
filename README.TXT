@@ -1,4 +1,4 @@
-                        MaxPlugins 3.4
+                        MaxPlugins 3.5
                         ==============
 
  
