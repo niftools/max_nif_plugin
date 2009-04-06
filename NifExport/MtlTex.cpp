@@ -520,7 +520,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 			parent->AddProperty(vertexColor);
 			vertexColor->SetVertexMode(VertMode(SrcVertexMode));
 			vertexColor->SetLightingMode(LightMode(LightingMode));
-			vertexColor->SetFlags(LightingMode + (SrcVertexMode << 3));
+			vertexColor->SetFlags( (LightingMode << 3) + (SrcVertexMode << 4) );
 		}
 		if (SpecularEnable) {
 			NiSpecularPropertyRef prop = CreateNiObject<NiSpecularProperty>();

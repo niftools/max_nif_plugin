@@ -17,7 +17,7 @@
 //
 #define VERSION_MAJOR_INT  3
 #define VERSION_MINOR_INT  5
-#define VERSION_BUILD_INT  1
+#define VERSION_BUILD_INT  2
 
 #ifndef NIFTOOLS_REVISION_INT
 #define VERSION_PATCH_INT  0
@@ -27,9 +27,9 @@
 
 #ifndef VERSION_STRING
 #ifndef NIFTOOLS_REVISION
-#define VERSION_STRING "3, 5, 1, 0"
+#define VERSION_STRING "3, 5, 2, 0"
 #else
-#define VERSION_STRING "3, 5, 1, " NIFTOOLS_REVISION
+#define VERSION_STRING "3, 5, 2, " NIFTOOLS_REVISION
 #endif
 #endif
 
