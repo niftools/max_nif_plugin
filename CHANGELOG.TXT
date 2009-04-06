@@ -6,6 +6,8 @@ NifTools MaxPlugin
       3.5
     o All
       - Update niflib to latest nif.xml
+    o Exporter
+      - Remove requirements on Vertex Src Mode or Lighting for NiVertexColorProperty
     
       3.4
     o Exporter

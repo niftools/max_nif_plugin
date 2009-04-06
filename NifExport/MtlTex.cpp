@@ -515,7 +515,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 				}
 			}
 		}
-		if (mVertexColors && VertexColorsEnable && (SrcVertexMode != 2 || LightingMode != 1)) {
+		if (mVertexColors && VertexColorsEnable) {
 			NiVertexColorPropertyRef vertexColor = CreateNiObject<NiVertexColorProperty>();
 			parent->AddProperty(vertexColor);
 			vertexColor->SetVertexMode(VertMode(SrcVertexMode));
