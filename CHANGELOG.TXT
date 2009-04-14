@@ -6,10 +6,13 @@ NifTools MaxPlugin
       3.5
     o All
       - Update niflib to latest nif.xml
+      - Improvement fixes for 3ds max 2009
     o Importer
       - Change how Vertex SrcMode and Lighting flags are set on NiVertexColorProperty
+      - Fix import collision subshapes for Fallout3 meshes
     o Exporter
       - Remove requirements on Vertex Src Mode or Lighting for NiVertexColorProperty
+      - Fix export collision subshapes for Fallout3 meshes
     
       3.4
     o Exporter

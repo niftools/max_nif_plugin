@@ -568,6 +568,7 @@ bhkPackedNiTriStripsShapeRef Exporter::makePackedTriStripsShape(Mesh& mesh, Matr
 	vector<OblivionSubShape> subshapes;
 	subshapes.push_back(subshape);
 	shape->SetSubShapes( subshapes );
+	data->SetSubShapes( subshapes );
 	return shape;
 }
 
@@ -1810,6 +1811,7 @@ bhkShapeRef	Exporter::makeModPackedTriStripShape(INodeTab &map, Matrix3& tm, Nif
 	shape->SetData(data);
 
 	shape->SetSubShapes( subshapes );
+	data->SetSubShapes( subshapes );
 
 	if ( TheHavokCode.Initialize() )
 		return StaticCast<bhkShape>( makeTreeShape(shape, (Niflib::HavokMaterial)mtlDefault) );
