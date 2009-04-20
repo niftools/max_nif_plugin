@@ -12,6 +12,7 @@ if "%MAXINSTALLPATH80%"   == "" set MAXINSTALLPATH80=%SystemDrive%\3dsmax8
 if "%MAXINSTALLPATH90%"   == "" set MAXINSTALLPATH90=%ProgramFiles%\AutoDesk\3ds Max 9
 if "%MAXINSTALLPATH2008%" == "" set MAXINSTALLPATH2008=%ProgramFiles%\AutoDesk\3ds Max 2008
 if "%MAXINSTALLPATH2009%" == "" set MAXINSTALLPATH2009=%ProgramFiles%\AutoDesk\3ds Max 2009
+if "%MAXINSTALLPATH2009%" == "" set MAXINSTALLPATH2009=%ProgramFiles%\AutoDesk\3ds Max 2010
 
 svn update
 call makeconfig.bat
@@ -23,15 +24,19 @@ IF EXIST "%MAXINSTALLPATH70%" msbuild NifPlugins_VC2008.sln "/p:Configuration=Re
 IF EXIST "%MAXINSTALLPATH80%" msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 8" /p:Platform=Win32
 IF EXIST "%MAXINSTALLPATH90%" (
     msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 9" /p:Platform=Win32
-    msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 9" /p:Platform=x64
+    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 9" /p:Platform=x64
 )
 IF EXIST "%MAXINSTALLPATH2008%" (
     msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2008" /p:Platform=Win32
-    msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2008" /p:Platform=x64
+    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2008" /p:Platform=x64
 )
 IF EXIST "%MAXINSTALLPATH2009%" (
     msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2009" /p:Platform=Win32
-    msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2009" /p:Platform=x64
+    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2009" /p:Platform=x64
+)
+IF EXIST "%MAXINSTALLPATH2010%" (
+    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2010" /p:Platform=Win32
+    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2010" /p:Platform=x64
 )
 
 endlocal

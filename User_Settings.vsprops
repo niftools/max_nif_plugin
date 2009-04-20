@@ -53,6 +53,7 @@ POSSIBILITY OF SUCH DAMAGE.
   <UserMacro Name="MAXINSTALLPATH90" Value="$(ProgramFiles)\AutoDesk\3ds Max 9" PerformEnvironmentSet="true"/>
   <UserMacro Name="MAXINSTALLPATH2008" Value="$(ProgramFiles)\AutoDesk\3ds Max 2008" PerformEnvironmentSet="true"/>
   <UserMacro Name="MAXINSTALLPATH2009" Value="$(ProgramFiles)\AutoDesk\3ds Max 2009" PerformEnvironmentSet="true"/>
+  <UserMacro Name="MAXINSTALLPATH2010" Value="$(ProgramFiles)\AutoDesk\3ds Max 2010" PerformEnvironmentSet="true"/>
   -->
  
 </VisualStudioPropertySheet>

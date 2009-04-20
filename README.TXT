@@ -21,7 +21,7 @@
     ------------
 
       Plugins:
-        3D Studio Max 5, 6, 7, 8, 9, 2008, 2009
+        3D Studio Max 5, 6, 7, 8, 9, 2008, 2009, 2010
         gmax 1.2
 
     Installation

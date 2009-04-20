@@ -118,6 +118,8 @@ public:
    static bool          mStartNifskopeAfterStart;
    static string        mNifskopeDir;
    static bool          mTriPartStrips;
+   static string		mRootType;
+   static stringlist	mRootTypes;
 
    Exporter(Interface *i, AppSettings *appSettings);
 

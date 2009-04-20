@@ -11,8 +11,14 @@
 #include "obj/NiSpecularProperty.h"
 #include "obj/NiTextureProperty.h"
 #include "obj/NiImage.h"
+#include "obj/WaterShaderProperty.h"
+#include "obj/SkyShaderProperty.h"
+#include "obj/TallGrassShaderProperty.h"
+#include "obj/Lighting30ShaderProperty.h"
+#include "obj/BSShaderNoLightingProperty.h"
 #include "obj/BSShaderPPLightingProperty.h"
 #include "obj/BSShaderTextureSet.h"
+#include "ObjectRegistry.h"
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
 C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
@@ -566,101 +572,189 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 
 
+		bool useDefaultShader = true;
 		if (IsFallout3())
 		{
-			BSShaderPPLightingPropertyRef texProp = new BSShaderPPLightingProperty();
-			texProp->SetFlags(1);
-			texProp->SetShaderType( SHADER_DEFAULT );
+			NiObjectRef root;
+			if (CustomShader == NULL || strlen(CustomShader) != 0)
+				root = Niflib::ObjectRegistry::CreateObject(CustomShader);
 
-			BSShaderTextureSetRef texset = new BSShaderTextureSet();
-			texProp->SetTextureSet( texset );
+			if ( BSShaderPPLightingPropertyRef texProp = DynamicCast<BSShaderPPLightingProperty>(root) )
+			{
+				
+				texProp->SetFlags(1);
+				if (DynamicCast<Lighting30ShaderProperty>(root) != NULL)
+					texProp->SetShaderType( SHADER_LIGHTING30 );
+				else
+					texProp->SetShaderType( SHADER_DEFAULT );
 
-			vector<string> textures;
-			textures.resize(6);
+				BSShaderTextureSetRef texset = new BSShaderTextureSet();
+				texProp->SetTextureSet( texset );
 
-			TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
+				vector<string> textures;
+				textures.resize(6);
 
-			if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
-				StdMat2 *m = (StdMat2*)mtl;
-				if (m->GetMapState(C_BASE) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
-						GetTexFullName(texMap, diffuseStr);
+				TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
+
+				if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+					StdMat2 *m = (StdMat2*)mtl;
+					if (m->GetMapState(C_BASE) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+							GetTexFullName(texMap, diffuseStr);
+						}
 					}
-				}
 
-				if (m->GetMapState(C_NORMAL) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_NORMAL)) {
-						if (texMap->ClassID() == GNORMAL_CLASS_ID) {
-							texMap = texMap->GetSubTexmap(0);
-							GetTexFullName(texMap, normalStr);
-						} else {
-							GetTexFullName(texMap, normalStr);
+					if (m->GetMapState(C_NORMAL) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_NORMAL)) {
+							if (texMap->ClassID() == GNORMAL_CLASS_ID) {
+								texMap = texMap->GetSubTexmap(0);
+								GetTexFullName(texMap, normalStr);
+							} else {
+								GetTexFullName(texMap, normalStr);
+							}
+						}
+					}
+					if (m->GetMapState(C_ENVMASK) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_ENVMASK)) {
+							if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+								Texmap *envMap = texMap->GetSubTexmap(0);
+								Texmap *envMaskMap = texMap->GetSubTexmap(1);
+								GetTexFullName(envMap, envStr);
+								GetTexFullName(envMaskMap, envMaskStr);
+							} else {
+								GetTexFullName(texMap, envMaskStr);
+							}
+						}
+					}
+					if (m->GetMapState(C_GLOW) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_GLOW)) {
+							GetTexFullName(texMap, glowStr);
+						}
+					}
+					if (m->GetMapState(C_HEIGHT) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_HEIGHT)) {
+							GetTexFullName(texMap, dispStr);
+						}
+					}
+					if (m->GetMapState(C_ENV) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_ENV)) {
+							if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+								GetTexFullName(texMap->GetSubTexmap(0), envStr);
+								GetTexFullName(texMap->GetSubTexmap(1), envMaskStr);
+							} else {
+								GetTexFullName(texMap, envStr);
+							}
 						}
 					}
 				}
-				if (m->GetMapState(C_ENVMASK) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_ENVMASK)) {
-						if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
-							Texmap *envMap = texMap->GetSubTexmap(0);
-							Texmap *envMaskMap = texMap->GetSubTexmap(1);
-							GetTexFullName(envMap, envStr);
-							GetTexFullName(envMaskMap, envMaskStr);
-						} else {
-							GetTexFullName(texMap, envMaskStr);
-						}
-					}
+				textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+				if (normalStr.isNull()) {
+					char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+					_splitpath(textures[0].c_str(), drive, dir, fname, ext);
+					strcat(fname, "_n");
+					_makepath(path_buffer, drive, dir, fname, ext);
+					textures[1] = path_buffer;			
 				}
-				if (m->GetMapState(C_GLOW) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_GLOW)) {
-						GetTexFullName(texMap, glowStr);
-					}
-				}
-				if (m->GetMapState(C_HEIGHT) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_HEIGHT)) {
-						GetTexFullName(texMap, dispStr);
-					}
-				}
-				if (m->GetMapState(C_ENV) == 2) {
-					if (Texmap *texMap = m->GetSubTexmap(C_ENV)) {
-						if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
-							GetTexFullName(texMap->GetSubTexmap(0), envStr);
-							GetTexFullName(texMap->GetSubTexmap(1), envMaskStr);
-						} else {
-							GetTexFullName(texMap, envStr);
-						}
-					}
-				}
+				else
+					textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+				if (!envMaskStr.isNull())
+					textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+				if (!glowStr.isNull())
+					textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+				if (!dispStr.isNull())
+					textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
+				if (!envStr.isNull())
+					textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+
+				BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+				if (!envStr.isNull() || !dispStr.isNull() || !envMaskStr.isNull())
+					shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+				texProp->SetShaderFlags(shFlags);
+
+				texset->SetTextures(textures);
+
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
+				useDefaultShader = false;
 			}
-			textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
-			if (normalStr.isNull()) {
-				char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-				_splitpath(textures[0].c_str(), drive, dir, fname, ext);
-				strcat(fname, "_n");
-				_makepath(path_buffer, drive, dir, fname, ext);
-				textures[1] = path_buffer;			
+			else if (BSShaderNoLightingPropertyRef texProp = StaticCast<BSShaderNoLightingProperty>(root))
+			{
+				texProp->SetFlags(1);
+				texProp->SetShaderType( SHADER_NOLIGHTING );
+
+				TSTR diffuseStr;
+				if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+					StdMat2 *m = (StdMat2*)mtl;
+					if (m->GetMapState(C_BASE) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+							GetTexFullName(texMap, diffuseStr);
+						}
+					}
+				}
+				texProp->SetFileName( diffuseStr.data() );
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
+				useDefaultShader = false;
 			}
-			else
-				textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
-			if (!envMaskStr.isNull())
-				textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
-			if (!glowStr.isNull())
-				textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
-			if (!dispStr.isNull())
-				textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
-			if (!envStr.isNull())
-				textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+			else if ( WaterShaderPropertyRef texProp = StaticCast<WaterShaderProperty>(root) )
+			{
+				texProp->SetFlags(1);
+				texProp->SetShaderType( SHADER_WATER);
 
-			BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
-			if (!envStr.isNull() || !dispStr.isNull() || !envMaskStr.isNull())
-				shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
-			texProp->SetShaderFlags(shFlags);
+				TSTR diffuseStr;
+				if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+					StdMat2 *m = (StdMat2*)mtl;
+					if (m->GetMapState(C_BASE) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+							GetTexFullName(texMap, diffuseStr);
+						}
+					}
+				}
+				//texProp->SetFileName( string(diffuseStr.data()) );
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
+				useDefaultShader = false;
+			}
+			else if ( SkyShaderPropertyRef texProp = StaticCast<SkyShaderProperty>(root) )
+			{
+				texProp->SetFlags(1);
+				texProp->SetShaderType(SHADER_SKY);
 
-			texset->SetTextures(textures);
+				TSTR diffuseStr;
+				if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+					StdMat2 *m = (StdMat2*)mtl;
+					if (m->GetMapState(C_BASE) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+							GetTexFullName(texMap, diffuseStr);
+						}
+					}
+				}
+				texProp->SetFileName( diffuseStr.data() );
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
+				useDefaultShader = false;
+			}
+			else if ( TallGrassShaderPropertyRef texProp = StaticCast<TallGrassShaderProperty>(root) )
+			{
+				texProp->SetFlags(1);
+				texProp->SetShaderType( SHADER_TALL_GRASS );
 
-			NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-			parent->AddProperty(prop);
-		} 
-		else
+				TSTR diffuseStr;
+				if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+					StdMat2 *m = (StdMat2*)mtl;
+					if (m->GetMapState(C_BASE) == 2) {
+						if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+							GetTexFullName(texMap, diffuseStr);
+						}
+					}
+				}
+				texProp->SetFileName( diffuseStr.data() );
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
+				useDefaultShader = false;
+			}
+		}
+		if (useDefaultShader)
 		{
 			StdMat2 *m2 = NULL;
 			if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0)) m2 = (StdMat2*)mtl;

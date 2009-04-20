@@ -35,11 +35,13 @@ Name: "max6"; Description: "3ds Max 6"; Types: custom;
 Name: "max7"; Description: "3ds Max 7"; Types: custom;
 Name: "max8"; Description: "3ds Max 8"; Types: custom;
 Name: "max9"; Description: "3ds Max 9 (Win32)"; Types: custom;
-Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
+;Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
 Name: "max10"; Description: "3ds Max 2008 (Win32)"; Types: custom;
-Name: "max10x64"; Description: "3ds Max 2008 (x64)"; Types: custom;
+;Name: "max10x64"; Description: "3ds Max 2008 (x64)"; Types: custom;
 Name: "max11"; Description: "3ds Max 2009 (Win32)"; Types: custom;
-Name: "max11x64"; Description: "3ds Max 2009 (x64)"; Types: custom;
+;Name: "max11x64"; Description: "3ds Max 2009 (x64)"; Types: custom;
+;Name: "max12"; Description: "3ds Max 2010 (Win32)"; Types: custom;
+;Name: "max12x64"; Description: "3ds Max 2010 (x64)"; Types: custom;
 ;Name: "src"; Description: "Program Source";
 
 [Files]
@@ -63,68 +65,69 @@ Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|gm
 ;Source: "Staging\Release - Max 4.2\MaxNifTools.ini"; DestDir: "{code:InstallPath|max42}{\}plugcfg"; Components: "max42"; Flags: ignoreversion;
 ;Source: "..\contrib\niflib\NifMopp\NifMopp.dll" DestDir: "{code:InstallPath|max42}{\}plugins"; Components: "gmax12"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 5\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max5}"; Components: "max5"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 5\NifPlugins.dlu"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max5}{\}plugcfg"; Components: "max5"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max5}{\}plugins"; Components: "max5"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 6\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max6}"; Components: "max6"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 6\NifPlugins.dlu"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max6}{\}plugcfg"; Components: "max6"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max6}{\}plugins"; Components: "max6"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 7\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max7}"; Components: "max7"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 7\NifPlugins.dlu"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max7}{\}plugcfg"; Components: "max7"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max7}{\}plugins"; Components: "max7"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 8\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max8}"; Components: "max8"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 8\NifPlugins.dlu"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max8}{\}plugcfg"; Components: "max8"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max8}{\}plugins"; Components: "max8"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 9\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9}"; Components: "max9"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 9\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max9}{\}plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 32bit\enu\plugcfg"; Components: "max9"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max9}{\}plugins"; Components: "max9"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 9 - x64\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max9x64}"; Components: "max9x64"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 9 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
-Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 9 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max9x64}{\}plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\9 - 64bit\enu\plugcfg"; Components: "max9x64"; Flags: ignoreversion;
+; Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max9x64}{\}plugins"; Components: "max9x64"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 2008\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max10}"; Components: "max10"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 2008\NifPlugins.dlu"; DestDir: "{code:InstallPath|max10}{\}plugins"; Components: "max10"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max10}{\}plugcfg"; Components: "max10"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2008 - 32bit\enu\plugcfg"; Components: "max10"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max10}{\}plugins"; Components: "max10"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max10}{\}plugins"; Components: "max10"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 2008 - x64\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max10x64}"; Components: "max10x64"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 2008 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max10x64}{\}plugins"; Components: "max10x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max10x64}{\}plugcfg"; Components: "max10x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\10 - 64bit\enu\plugcfg"; Components: "max10x64"; Flags: ignoreversion;
-Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max10x64}{\}plugins"; Components: "max10x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 2008 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max10x64}{\}plugins"; Components: "max10x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max10x64}{\}plugcfg"; Components: "max10x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\10 - 64bit\enu\plugcfg"; Components: "max10x64"; Flags: ignoreversion;
+; Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max10x64}{\}plugins"; Components: "max10x64"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 2009\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max11}"; Components: "max11"; Flags: isreadme ignoreversion;
 Source: "Staging\Release - Max 2009\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11}{\}plugcfg"; Components: "max11"; Flags: ignoreversion;
 Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2009 - 32bit\enu\plugcfg"; Components: "max11"; Flags: ignoreversion;
 Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
 Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
 
-;Source: "Staging\Release - Max 2009 - x64\Readme.txt"; DestName: "NifPlugins_Readme.txt"; DestDir: "{code:InstallPath|max11x64}"; Components: "max11x64"; Flags: isreadme ignoreversion;
-Source: "Staging\Release - Max 2009 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11x64}{\}plugcfg"; Components: "max11x64"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\11 - 64bit\enu\plugcfg"; Components: "max11x64"; Flags: ignoreversion;
-Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "Staging\Release - Max 2009 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11x64}{\}plugcfg"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\11 - 64bit\enu\plugcfg"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
+
+;Source: "Staging\Release - Max 2010\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;;
+;Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11}{\}plugcfg"; Components: "max11"; Flags: ignoreversion
+;Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2010 - 32bit\enu\plugcfg"; Components: "max11"; Flags: ignoreversion;
+;Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
+;Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
+
+; Source: "Staging\Release - Max 2010 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11x64}{\}plugcfg"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\11 - 64bit\enu\plugcfg"; Components: "max11x64"; Flags: ignoreversion;
+; Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
 
 
 ;Source: "src\*"; DestDir: "{reg:HKLM\SOFTWARE\Bethesda Softworks\Oblivion,Path|{pf}{\}Bethesda Softworks\Oblivion}\Data\niftools";  Components: "src"; Flags: ignoreversion recursesubdirs;
@@ -458,6 +461,29 @@ begin
           if Length(Result) = 0 then
             Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2009}{\}plugcfg');
         end;
+    'max12': 
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'Installdir', Result) then begin
+                break;
+              end;
+            end;
+          end;
+          if (Length(Result) = 0) then
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2010}{\}plugcfg');
+        end;
+    'max12x64':
+        begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+            for I := 0 to GetArrayLength(Names)-1 do begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+                break;              
+            end;
+          end;
+          if Length(Result) = 0 then
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2010}{\}plugcfg');
+        end;
     else
       Result := '';
   end;
@@ -526,6 +552,20 @@ begin
               break;              
           end;
         end;
+    '3ds Max 2010 (Win32)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
+    '3ds Max 2010 (x64)':
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+          for I := 0 to GetArrayLength(Names)-1 do begin
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+              break;              
+          end;
+        end;
     else
       Result := '';
   end;
@@ -535,17 +575,13 @@ function IsInstalled(Param: String): Boolean;
 begin
   Result := Length(RegInstallPath(Param)) <> 0;
   if Result then begin
-    if IsWin64() and (Param = '3ds Max 9 (Win32)') then
-       Result := False;
     if not IsWin64() and (Param = '3ds Max 9 (x64)') then
-       Result := False;
-    if IsWin64() and (Param = '3ds Max 2008 (Win32)') then
        Result := False;
     if not IsWin64() and (Param = '3ds Max 2008 (x64)') then
        Result := False;
-    if IsWin64() and (Param = '3ds Max 2009 (Win32)') then
-       Result := False;
     if not IsWin64() and (Param = '3ds Max 2009 (x64)') then
+       Result := False;
+    if not IsWin64() and (Param = '3ds Max 2010 (x64)') then
        Result := False;
   end;
 end;
@@ -621,6 +657,8 @@ begin
       FixPathInINI('max10x64');
       FixPathInINI('max11');
       FixPathInINI('max11x64');
+      FixPathInINI('max12');
+      FixPathInINI('max12x64');
   end;
 end;
 

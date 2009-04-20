@@ -64,6 +64,8 @@
 #define IDC_CHK_START_NIFSKOPE          13040
 #define IDC_LBL_BONES_VERTEX2           13041
 #define IDC_ED_WELDTHRESH2              13042
+#define IDC_CBO_ROOT_TYPE               13044
+#define IDC_LBL_ROOT_TYPE               13045
 #define IDC_COLOR                       13456
 #define IDC_EDIT                        13490
 #define IDC_SPIN                        13496

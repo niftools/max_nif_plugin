@@ -75,11 +75,11 @@ const EnumLookupType BSShaderTypes[] = {
    { 2, "BSShaderNoLightingProperty"},
    { 3, "WaterShaderProperty"},
    { 4, "SkyShaderProperty"},
-   { 5, "DistantLODShaderProperty"},
-   { 6, "BSDistantTreeShaderProperty"},
+   //{ 5, "DistantLODShaderProperty"},
+   //{ 6, "BSDistantTreeShaderProperty"},
    { 7, "TallGrassShaderProperty"},
-   { 8, "VolumetricFogShaderProperty"},
-   { 9, "HairShaderProperty"},
+   //{ 8, "VolumetricFogShaderProperty"},
+   //{ 9, "HairShaderProperty"},
    {10, "Lighting30ShaderProperty"},
    {-1, NULL},
 };
@@ -1219,6 +1219,10 @@ void NifShaderDlg::InitializeControls(HWND hWnd)
    pTestRefSpinner->SetResetValue( 0.0f );
    pTestRefSpinner->LinkToEdit( GetDlgItem(hWnd, IDC_EDT_TESTREF), EDITTYPE_POS_INT );
 
+   for (const EnumLookupType* flag = BSShaderTypes; flag->name != NULL; ++flag)
+	   SendDlgItemMessage(hWnd, IDC_CUSTOM_SHADER, CB_ADDSTRING, 0, LPARAM(flag->name));
+   SendDlgItemMessage(hWnd, IDC_CUSTOM_SHADER, CB_SETCURSEL, 0, 0);
+
    UpdateControls();
 }
 
@@ -1313,6 +1317,8 @@ void NifShaderDlg::UpdateControls()
 
    pTestRefSpinner->SetValue(pb->GetInt(ns_test_ref, 0, 0), 0);
    
+   TSTR customShader = pb->GetStr(ns_shader_name, 0, 0);
+   SendDlgItemMessage(hWnd, IDC_CUSTOM_SHADER, CB_SELECTSTRING, WPARAM(-1), LPARAM(customShader.data()));
 
    NotifyChanged();
    inUpdate = update;
@@ -1372,6 +1378,10 @@ void NifShaderDlg::CommitValues()
    
    pb->SetValue(ns_test_ref, 0, pTestRefSpinner->GetIVal(), 0);
    
+   TCHAR customShader[64];
+   GetDlgItemText(hWnd, IDC_CUSTOM_SHADER, customShader, _countof(customShader));
+   pb->SetValue(ns_shader_name, 0, customShader, 0);
+
    //////////////////////////////////////////////////////////////////////////
 
    inUpdate = update;

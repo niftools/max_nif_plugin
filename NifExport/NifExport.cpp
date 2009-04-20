@@ -6,6 +6,7 @@
 #include "obj/NiControllerManager.h"
 #include "obj/NiTimeController.h"
 #include "obj/NiControllerSequence.h"
+#include "ObjectRegistry.h"
 #include "Hyperlinks.h"
 using namespace Niflib;
 
@@ -161,6 +162,14 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
 
          CheckDlgButton(hWnd, IDC_CHK_PARTSTRIPS, Exporter::mTriPartStrips);
 
+
+		 // Populate Type options
+		 int i = 0;
+		 for ( stringlist::iterator itr = Exporter::mRootTypes.begin(); itr != Exporter::mRootTypes.end(); ++itr)
+			 SendDlgItemMessage(hWnd, IDC_CBO_ROOT_TYPE, CB_ADDSTRING, i++, LPARAM((*itr).c_str()));
+		 LRESULT lIndex = SendDlgItemMessage(hWnd, IDC_CBO_ROOT_TYPE, CB_FINDSTRINGEXACT, -1, LPARAM(Exporter::mRootType.c_str()));
+		 SendDlgItemMessage(hWnd, IDC_CBO_ROOT_TYPE, CB_SETCURSEL, WPARAM(lIndex), 0);
+
          imp->mDlgResult = IDCANCEL;
       }
       return TRUE;
@@ -240,12 +249,17 @@ INT_PTR CALLBACK NifExportOptionsDlgProc(HWND hWnd,UINT message,WPARAM wParam,LP
                Exporter::mNifVersion = tmp;
                GetDlgItemText(hWnd, IDC_CB_USER_VERSION, tmp, MAX_PATH);
                Exporter::mNifUserVersion = strtol(tmp, &end, 0);
-					GetDlgItemText(hWnd, IDC_CB_USER_VERSION2, tmp, MAX_PATH);
-					Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
+			   GetDlgItemText(hWnd, IDC_CB_USER_VERSION2, tmp, MAX_PATH);
+			   Exporter::mNifUserVersion2 = strtol(tmp, &end, 0);
             }
             Exporter::mAutoDetect = IsDlgButtonChecked(hWnd, IDC_CHK_AUTO_DETECT);
             Exporter::mStartNifskopeAfterStart = IsDlgButtonChecked(hWnd, IDC_CHK_START_NIFSKOPE);
             Exporter::mTriPartStrips = IsDlgButtonChecked(hWnd, IDC_CHK_PARTSTRIPS);
+
+			{
+				int idx = SendDlgItemMessage(hWnd, IDC_CBO_ROOT_TYPE, CB_GETCURSEL, 0, 0);
+				Exporter::mRootType = (idx >= 0) ? Exporter::mRootTypes[idx] : "NiNode";
+			}
 
             EndDialog(hWnd, imp->mDlgResult=IDOK);
             close = true;
@@ -482,9 +496,11 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 
 	Exporter exp(i, appSettings);
 	
-	Ref<NiNode> root = new NiNode();
-   if ( exp.IsFallout3() )
-      root->SetFlags(14);
+	Ref<NiNode> root = DynamicCast<NiNode>(Niflib::ObjectRegistry::CreateObject(Exporter::mRootType));
+	if (root == NULL)
+		root = new NiNode();
+	if ( exp.IsFallout3() )
+		root->SetFlags(14);
 
 	Exporter::Result result = exp.doExport(root, i->GetRootNode());
 

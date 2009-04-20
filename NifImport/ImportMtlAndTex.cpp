@@ -610,6 +610,7 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
 		if ( Texmap* tex = CreateTexture( noLightShadeRef->GetFileName() ) ) {
 			mtl->SetSubTexmap(ID_DI, tex);
 		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(noLightShadeRef->GetType().GetTypeName().c_str()));
 	}
    if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
       if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
@@ -626,21 +627,25 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
          if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
             mtl->SetSubTexmap(C_ENV, tex);
       }
+	  setMAXScriptValue(ref, "CustomShader", 0, TSTR(ppLightShadeRef->GetType().GetTypeName().c_str()));
    }
 	if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
 		if ( Texmap* tex = CreateTexture( skyShadeRef->GetFileName() ) ) {
 			mtl->SetSubTexmap(ID_DI, tex);
 		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(skyShadeRef->GetType().GetTypeName().c_str()));
 	}
 	if (TileShaderPropertyRef tileShadeRef = SelectFirstObjectOfType<TileShaderProperty>(props)) {
 		if ( Texmap* tex = CreateTexture( tileShadeRef->GetFileName() ) ) {
 			mtl->SetSubTexmap(ID_DI, tex);
 		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(tileShadeRef->GetType().GetTypeName().c_str()));
 	}
 	if (TallGrassShaderPropertyRef grassShadeRef = SelectFirstObjectOfType<TallGrassShaderProperty>(props)) {
 		if ( Texmap* tex = CreateTexture( grassShadeRef->GetFileName() ) ) {
 			mtl->SetSubTexmap(ID_DI, tex);
 		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(grassShadeRef->GetType().GetTypeName().c_str()));
 	}
 	if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
 		if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
@@ -657,6 +662,7 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
          if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
             mtl->SetSubTexmap(C_ENV, tex);
 		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(lighting30ShadeRef->GetType().GetTypeName().c_str()));
 	}
 
 

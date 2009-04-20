@@ -56,6 +56,8 @@ int Exporter::mTangentAndBinormalMethod = 0;
 bool Exporter::mStartNifskopeAfterStart = false;
 string Exporter::mNifskopeDir;
 bool Exporter::mTriPartStrips = true;
+string Exporter::mRootType;
+stringlist Exporter::mRootTypes;
 
 #ifndef FOOTPRINT_CLASS_ID
 #  define FOOTPRINT_CLASS_ID Class_ID(0x3011,0)        

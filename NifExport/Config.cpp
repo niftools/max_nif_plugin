@@ -94,6 +94,8 @@ void Exporter::writeConfig(Interface *i)
       SetIniValue(NifExportSection, "WeldVertexThresh", mWeldThresh, iniName);
       SetIniValue(NifExportSection, "WeldVertexThresh", mNormThresh, iniName);
       SetIniValue(NifExportSection, "WeldUVWThresh", mUVWThresh, iniName);
+
+	  SetIniValue<string>(NifExportSection, "RootType", mRootType, iniName);
    }
 }
 
@@ -175,6 +177,9 @@ void Exporter::readConfig(Interface *i)
       mStartNifskopeAfterStart = GetIniValue(NifExportSection, "StartNifskopeAfterStart", false, iniName);
       mNifskopeDir = ExpandEnvironment(GetIndirectValue(GetIniValue<string>("System", "NifskopeDir", "", iniName).c_str()));
       mTriPartStrips = GetIniValue<bool>(NifExportSection, "GeneratePartitionStrips", true, iniName);
+
+	  mRootType = GetIniValue<string>(NifExportSection, "RootType", "NiNode", iniName);
+	  mRootTypes = TokenizeString(GetIniValue<string>(NifExportSection, "RootTypes", "NiNode;BSFadeNode", iniName).c_str(), ";");
   }
 }
 
