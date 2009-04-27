@@ -486,6 +486,7 @@ bhkNiTriStripsShapeRef Exporter::makeTriStripsShape(Mesh& mesh, Matrix3& sm, Hav
 	shape->SetStripsData(0, data);
 	shape->SetNumDataLayers(1);
 	shape->SetOblivionLayer(0, OL_STATIC);
+	shape->SetMaterial(mtlDefault);
 	return shape;
 }
 

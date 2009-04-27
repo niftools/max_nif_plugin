@@ -188,7 +188,7 @@ static ParamBlockDesc2 havok_param_blk (
 	clone_params,	IDD_CLONE_PANEL,   IDS_CLONE_PARAMS, 0, 0, NULL,
 	subshape_params,	IDD_RB_MOD_PANEL5,   IDS_LIST_SUBSHAPEPROPS, 0, 0, NULL,
 
-    PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
+    PB_MATERIAL, _T("material"), TYPE_INT, 0,	IDS_DS_MATERIAL,
       p_default,	NP_INVALID_HVK_MATERIAL,
       end,
 
