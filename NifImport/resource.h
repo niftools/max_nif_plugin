@@ -44,6 +44,8 @@
 #define IDC_CHK_CAMERA                  10025
 #define IDC_CHK_TIMETAGS                10026
 #define IDC_LBL_WIKI                    10027
+#define IDC_CHK_IGNORE_ROOT2            10028
+#define IDC_CHK_USE_SHADER              10028
 
 // Next default values for new objects
 // 

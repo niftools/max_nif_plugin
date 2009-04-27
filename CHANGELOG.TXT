@@ -7,10 +7,12 @@ NifTools MaxPlugin
     o All
       - Update niflib to latest nif.xml
       - Stability fixes for 3ds max 2009 Niftools Shader
+      - Add 3ds max 2010 support
     o Importer
       - Change how Vertex SrcMode and Lighting flags are set on NiVertexColorProperty
       - Fix import collision subshapes for Fallout3 meshes
       - Set the custom shader property when importing from Fallout
+      - Expose ability to disable use of Niftools Shader on import
     o Exporter
       - Remove requirements on Vertex Src Mode or Lighting for NiVertexColorProperty
       - Fix issue with setting NiVertexColorProperty Flags correctly on export.
@@ -18,6 +20,8 @@ NifTools MaxPlugin
       - Extra setting on export for Fallout to set BSFadeNode as root
       - Extra setting on Niftools Shader for selecting custom shaders for Fallout
       - Fix animation transform export issue when Extra Nodes on Mesh was not checked
+    o Properties
+      - Stability changes on Niftools Shader (add Opacity to avoid max bug but disable)
       
       3.4
     o Exporter

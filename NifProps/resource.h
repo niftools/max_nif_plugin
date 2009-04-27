@@ -295,6 +295,7 @@
 #define IDS_LUMA_OFFSET                 11149
 #define IDS_RB_FIXDUPL                  11150
 #define IDS_RB_SELUNUSED                11151
+#define IDS_CHAN_OPACITY                11152
 #define IDC_ED_CENTER_X                 11490
 #define IDC_SP_CENTER_X                 11491
 #define IDC_ED_CENTER_Y                 11492

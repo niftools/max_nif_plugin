@@ -1342,6 +1342,11 @@ BEGIN
     IDS_RB_SELUNUSED        "Select Unused Faces"
 END
 
+STRINGTABLE 
+BEGIN
+    IDS_CHAN_OPACITY        "Opacity"
+END
+
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

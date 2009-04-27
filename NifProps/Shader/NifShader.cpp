@@ -98,17 +98,17 @@ static const TexChannel texChannelNames[STD2_NMAX_TEXMAPS] = {
    {IDS_CHAN_DETAIL,    IDS_MAXCHAN_DETAIL,        CLR_CHANNEL    },
    {IDS_CHAN_GLOSS,     IDS_MAXCHAN_GLOSS,         MONO_CHANNEL   },
    {IDS_CHAN_GLOW,      IDS_MAXCHAN_GLOW,          CLR_CHANNEL    },
-   {IDS_CHAN_BUMP,      IDS_MAXCHAN_BUMP,          CLR_CHANNEL    },
-   {IDS_CHAN_NORMAL,    IDS_MAXCHAN_NORMAL,        CLR_CHANNEL    },
+   {IDS_CHAN_BUMP,      IDS_MAXCHAN_BUMP,          BUMP_CHANNEL   },
+   {IDS_CHAN_NORMAL,    IDS_MAXCHAN_NORMAL,        BUMP_CHANNEL   },
    {IDS_CHAN_UNK2,      IDS_CHAN_UNK2,             CLR_CHANNEL    },
    {IDS_CHAN_DECAL1,    IDS_CHAN_DECAL1,           CLR_CHANNEL    },
    {IDS_CHAN_DECAL2,    IDS_CHAN_DECAL2,           CLR_CHANNEL    },
    {IDS_CHAN_DECAL3,    IDS_CHAN_DECAL3,           CLR_CHANNEL    },
    {IDS_CHAN_ENVMASK,   IDS_CHAN_ENVMASK,          CLR_CHANNEL    },
    {IDS_CHAN_ENV,       IDS_CHAN_ENV,              CLR_CHANNEL    },
-   {IDS_CHAN_HEIGHT,    IDS_CHAN_HEIGHT,           CLR_CHANNEL    },
-   {IDS_CHAN_REFLECTION,IDS_CHAN_REFLECTION,       CLR_CHANNEL    },
-   {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
+   {IDS_CHAN_HEIGHT,    IDS_CHAN_HEIGHT,           MONO_CHANNEL   },
+   {IDS_CHAN_REFLECTION,IDS_CHAN_REFLECTION,       REFL_CHANNEL   },
+   {IDS_CHAN_OPACITY,   IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
@@ -131,28 +131,31 @@ enum
    C_DECAL0,
    C_DECAL1,
    C_DECAL2,
+   C_DECAL3,
    C_ENVMASK,
    C_ENV,
    C_HEIGHT,
    C_REFLECTION,
+   C_OPACITY,
+   C_MAX_SUPPORTED,
 };
 
 
 
 // map from custom channel to standard map
-static const int stdIDToChannel[N_ID_CHANNELS] = {
-   -1,         // ambient
-   C_BASE,     // diffuse           
-   C_DARK,     // specular
-   C_GLOSS,    // shininess/glossiness
-   -1,         // shininess strength
-   C_GLOW,     // self-illumination 
-   -1,         // opacity
-   -1,         // filter color
-   C_NORMAL,   // bump              
-   C_REFLECTION,//reflection        
-   -1,         // refraction 
-   -1,         // displacement
+static const int nifShaderStdIDToChannel[N_ID_CHANNELS] = {
+   -1,         // 0 - ambient
+   C_BASE,     // 1 - diffuse           
+   C_DARK,     // 2 - specular
+   C_GLOSS,    // 3 - Glossiness (Shininess in 3ds Max release 2.0 and earlier)
+   -1,         // 4 - Specular Level (Shininess strength in 3ds Max release 2.0 and earlier)
+   C_GLOW,     // 5 - self-illumination 
+   C_OPACITY,  // 6 - opacity
+   -1,         // 7 - filter color
+   C_NORMAL,   // 8 - bump              
+   C_REFLECTION,//9 - reflection        
+   -1,         // 10 - refraction 
+   -1,         // 11 - displacement
 };
 
 enum 
@@ -208,11 +211,11 @@ protected:
     void CopyStdParams( Shader* pFrom );
 
    // texture maps
-   long nTexChannelsSupported(){ return 15; }
+   long nTexChannelsSupported(){ return C_MAX_SUPPORTED; }
    TSTR GetTexChannelName( long nChan ){ return GetString( texChannelNames[ nChan ].channelName ); }
    TSTR GetTexChannelInternalName( long nChan ) { return GetString(texChannelNames[ nChan ].maxName); }
    long ChannelType( long nChan ) { return texChannelNames[nChan].channelType; }
-   long StdIDToChannel( long stdID ){ return stdIDToChannel[stdID]; }
+   long StdIDToChannel( long stdID ){ return nifShaderStdIDToChannel[stdID]; }
 
    BOOL KeyAtTime(int id,TimeValue t) { return pb->KeyFrameAtTime(id,t); }
    ULONG GetRequirements( int subMtlNum ){ return MTLREQ_PHONG; }

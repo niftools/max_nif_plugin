@@ -59,6 +59,7 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
             CheckDlgButton(hWnd, IDC_CHK_KEYNOTES, imp->addNoteTracks);
             CheckDlgButton(hWnd, IDC_CHK_TIMETAGS, imp->addTimeTags);
             CheckDlgButton(hWnd, IDC_CHK_IGNORE_ROOT, imp->ignoreRootNode);
+			CheckDlgButton(hWnd, IDC_CHK_USE_SHADER, imp->useNiftoolsShader);
             
             CheckDlgButton(hWnd, IDC_CHK_BIPED, imp->useBiped);
             CheckDlgButton(hWnd, IDC_CHK_UPB, !imp->importUPB);           
@@ -129,6 +130,7 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
                   imp->useBiped = IsDlgButtonChecked(hWnd, IDC_CHK_BIPED) ? true : false;
                   imp->importUPB = IsDlgButtonChecked(hWnd, IDC_CHK_UPB) ? false : true;
                   imp->ignoreRootNode = IsDlgButtonChecked(hWnd, IDC_CHK_IGNORE_ROOT) ? true : false;
+				  imp->useNiftoolsShader = IsDlgButtonChecked(hWnd, IDC_CHK_USE_SHADER) ? true : false;
                   
                   GetDlgItemText(hWnd, IDC_CB_GAME, tmp, MAX_PATH);
                   if (AppSettings *appSettings = FindAppSetting(tmp)) {
@@ -142,7 +144,7 @@ static INT_PTR CALLBACK MaxNifImportOptionsDlgProc(HWND hWnd,UINT message,WPARAM
 				  // Weld Threshold
 				  imp->weldVertices = IsDlgButtonChecked(hWnd, IDC_CHK_WELD)? true : false;
 				  GetDlgItemText(hWnd, IDC_EDIT_WELDTHRESH, tmp, MAX_PATH);
-				  if (strlen(tmp) > 0) imp->weldVertexThresh = atof(tmp);
+				  if (strlen(tmp) > 0) imp->weldVertexThresh = (float)atof(tmp);
 
                   EndDialog(hWnd, dlgRes=IDOK);
                   return TRUE;

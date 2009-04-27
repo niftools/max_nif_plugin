@@ -35,7 +35,7 @@ IF EXIST "%MAXINSTALLPATH2009%" (
     REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2009" /p:Platform=x64
 )
 IF EXIST "%MAXINSTALLPATH2010%" (
-    REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2010" /p:Platform=Win32
+    msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2010" /p:Platform=Win32
     REM msbuild NifPlugins_VC2008.sln "/p:Configuration=Release - Max 2010" /p:Platform=x64
 )
 
