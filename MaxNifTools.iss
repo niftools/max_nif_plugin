@@ -5,7 +5,7 @@
 AppName=NIF Utilities for 3ds Max
 AppVerName=NIF Utilities {code:GetParam|fullver} for 3ds Max
 AppPublisher=NIF File Format Library and Tools
-AppCopyright=Copyright © 2008, NIF File Format Library and Tools
+AppCopyright=Copyright © 2009, NIF File Format Library and Tools
 OutputBaseFilename=niftools-max-plugins
 DisableProgramGroupPage=yes
 Compression=lzma
@@ -118,11 +118,11 @@ Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|ma
 ; Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\11 - 64bit\enu\plugcfg"; Components: "max11x64"; Flags: ignoreversion;
 ; Source: "..\contrib\NifMagic\x64\NifMagic.dll"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
 
-Source: "Staging\Release - Max 2010\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
-Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11}{\}plugcfg"; Components: "max11"; Flags: ignoreversion
-Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2010 - 32bit\enu\plugcfg"; Components: "max11"; Flags: ignoreversion;
-Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
-Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max11}{\}plugins"; Components: "max11"; Flags: ignoreversion;
+Source: "Staging\Release - Max 2010\NifPlugins.dlu"; DestDir: "{code:InstallPath|max12}{\}plugins"; Components: "max12"; Flags: ignoreversion;
+Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max12}{\}plugcfg"; Components: "max12"; Flags: ignoreversion
+Source: "MaxNifTools.ini"; DestDir: "{localappdata}{\}Autodesk\3dsmax\2010 - 32bit\enu\plugcfg"; Components: "max12"; Flags: ignoreversion;
+Source: "..\contrib\niflib\NifMopp\NifMopp.dll"; DestDir: "{code:InstallPath|max12}{\}plugins"; Components: "max12"; Flags: ignoreversion;
+Source: "..\contrib\NifMagic\Win32\NifMagic.dll"; DestDir: "{code:InstallPath|max12}{\}plugins"; Components: "max12"; Flags: ignoreversion;
 
 ; Source: "Staging\Release - Max 2010 - x64\NifPlugins.dlu"; DestDir: "{code:InstallPath|max11x64}{\}plugins"; Components: "max11x64"; Flags: ignoreversion;
 ; Source: "MaxNifTools.ini"; DestDir: "{code:InstallPath|max11x64}{\}plugcfg"; Components: "max11x64"; Flags: ignoreversion;
@@ -402,7 +402,7 @@ begin
             end;
           end;
           if (Length(Result) = 0) then
-            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 9}{\}plugcfg');
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 9}{\}');
         end;
     'max9x64':
         begin
@@ -413,7 +413,7 @@ begin
             end;
           end;
           if Length(Result) = 0 then
-            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 9}{\}plugcfg');
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 9}{\}');
         end;
     'max10': 
         begin
@@ -425,7 +425,7 @@ begin
             end;
           end;
           if (Length(Result) = 0) then
-            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2008}{\}plugcfg');
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2008}{\}');
         end;
     'max10x64':
         begin
@@ -436,7 +436,7 @@ begin
             end;
           end;
           if Length(Result) = 0 then
-            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2008}{\}plugcfg');
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2008}{\}');
         end;
     'max11': 
         begin
@@ -448,7 +448,7 @@ begin
             end;
           end;
           if (Length(Result) = 0) then
-            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2009}{\}plugcfg');
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2009}{\}');
         end;
     'max11x64':
         begin
@@ -459,7 +459,7 @@ begin
             end;
           end;
           if Length(Result) = 0 then
-            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2009}{\}plugcfg');
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2009}{\}');
         end;
     'max12': 
         begin
@@ -471,7 +471,7 @@ begin
             end;
           end;
           if (Length(Result) = 0) then
-            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2010}{\}plugcfg');
+            Result := ExpandConstant('{pf32}{\}AutoDesk\3ds Max 2010}{\}');
         end;
     'max12x64':
         begin
@@ -482,7 +482,7 @@ begin
             end;
           end;
           if Length(Result) = 0 then
-            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2010}{\}plugcfg');
+            Result := ExpandConstant('{pf64}{\}AutoDesk\3ds Max 2010}{\}');
         end;
     else
       Result := '';
