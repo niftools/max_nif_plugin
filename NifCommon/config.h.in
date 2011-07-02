@@ -42,10 +42,17 @@
 #define NIFTOOLS_REVISION "$WCREV$"
 #define NIFTOOLS_REVISION_INT $WCREV$
 
-#define NIFTOOLS_SVN_VERSION "$WCMODS?Modified:Not modified$"
+// NIFTOOLS_SVN_VERSION kept for compatibility
+#define NIFTOOLS_SVN_VERSION "Not modified"
+
 #define NIFTOOLS_SVN_DATE    "$WCDATE$"
-#define NIFTOOLS_SVN_RANGE   "$WCRANGE$"
-#define NIFTOOLS_SVN_MIXED   "$WCMIXED?Mixed revision WC:Not mixed$"
+
+// NIFTOOLS_SVN_RANGE kept, and defined as WCREV, for compatibility
+#define NIFTOOLS_SVN_RANGE   "$WCREV$"
+
+// NIFTOOLS_SVN_MIXED kept for compatibility
+#define NIFTOOLS_SVN_MIXED   "Not mixed"
+
 #define NIFTOOLS_SVN_URL     "$WCURL$"
 
 #endif
