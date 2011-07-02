@@ -1,5 +1,4 @@
-// NOTE: Run this file through TortoiseSVN's SubWCRev.exe utility
-// (see makeconfig.bat)
+// NOTE: Run this file through the makeconfig.sh script
 
 // ***** BEGIN LICENSE BLOCK *****
 //
@@ -38,7 +37,6 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// the revision number is generated with TortoiseSVN's SubWCRev.exe
 #define NIFTOOLS_REVISION "$WCREV$"
 #define NIFTOOLS_REVISION_INT $WCREV$
 

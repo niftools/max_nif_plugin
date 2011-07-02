@@ -13,4 +13,6 @@ else
 fi
 
 git clean -xfd
-git-archive-all max_nif_plugin-${extversion}.zip --prefix max_nif_plugin/ -v
+./makeconfig.sh
+git-archive-all max_nif_plugin-${extversion}.zip --prefix max_nif_plugin/ -v --extra NifCommon/config.h
+
