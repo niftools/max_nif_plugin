@@ -66,7 +66,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
 	if (!controlsInit) {
 		controlsInit = TRUE;
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
 		InitCustomControls(hInstance);	// Initialize MAX's custom controls
+#endif
 		InitCommonControls();			// Initialize Win95 controls
 		RegisterNotification(DoNotifyNodeHide, NULL, NOTIFY_NODE_HIDE); 
 		RegisterNotification(DoNotifyNodeUnHide, NULL, NOTIFY_NODE_UNHIDE); 

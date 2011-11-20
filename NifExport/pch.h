@@ -72,5 +72,9 @@
 #include "Exporter.h"
 #include "NifExport.h"
 
+#if VERSION_3DSMAX >= (14000<<16) // Version 14 (2012)
+#define SDK_RESERVED_METHOD(a)
+#endif
+
 #include "niutils.h"
 #include <shlwapi.h>

@@ -39,12 +39,12 @@ class MaxNifImport : public SceneImport {
 		void			   ShowAbout(HWND hWnd);		// Show DLL's "About..." box
 		int				DoImport(const TCHAR *name,ImpInterface *i,Interface *gi, BOOL suppressPrompts=FALSE);	// Import file
 
-      SDK_RESERVED_METHOD(1); // russom 02/26/01
-      SDK_RESERVED_METHOD(2); // russom 02/26/01
-      SDK_RESERVED_METHOD(3); // russom 02/26/01
-      SDK_RESERVED_METHOD(4); // russom 02/26/01
-      SDK_RESERVED_METHOD(5); // russom 02/26/01
-      SDK_RESERVED_METHOD(6); // russom 02/26/01
+      //SDK_RESERVED_METHOD(1); // russom 02/26/01
+      //SDK_RESERVED_METHOD(2); // russom 02/26/01
+      //SDK_RESERVED_METHOD(3); // russom 02/26/01
+      //SDK_RESERVED_METHOD(4); // russom 02/26/01
+      //SDK_RESERVED_METHOD(5); // russom 02/26/01
+      //SDK_RESERVED_METHOD(6); // russom 02/26/01
 		
 		//Constructor/Destructor
 		MaxNifImport();

@@ -12,6 +12,7 @@ HISTORY:
 **********************************************************************/
 #include "stdafx.h"
 #include <shaders.h>
+#include <maxtypes.h>
 #include "MaxNifImport.h"
 #include "obj/NiWireframeProperty.h"
 #include "obj/NiAlphaProperty.h"
@@ -36,9 +37,11 @@ enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2,
        C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
 };
 
+#undef GNORMAL_CLASS_ID
+static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
+
 Texmap* NifImporter::CreateNormalBump(LPCTSTR name, Texmap* nmap)
 {
-   static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
    Texmap *texmap = (Texmap*)gi->CreateInstance(TEXMAP_CLASS_ID, GNORMAL_CLASS_ID);
    if(texmap != NULL)
    {

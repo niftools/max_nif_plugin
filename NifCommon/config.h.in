@@ -38,7 +38,7 @@
 #define CONFIG_H
 
 #define NIFTOOLS_REVISION "$WCREV$"
-#define NIFTOOLS_REVISION_INT $WCREV$
+#define NIFTOOLS_REVISION_INT 0x$WCREV$
 
 // NIFTOOLS_SVN_VERSION kept for compatibility
 #define NIFTOOLS_SVN_VERSION "Not modified"

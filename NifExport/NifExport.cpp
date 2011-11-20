@@ -41,12 +41,12 @@ public:
    int				DoExport(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts=FALSE, DWORD options=0);
    int				DoExportInternal(const TCHAR *name,ExpInterface *ei,Interface *i, BOOL suppressPrompts, DWORD options);
 
-   SDK_RESERVED_METHOD(1); // russom 02/26/01
-   SDK_RESERVED_METHOD(2); // russom 02/26/01
-   SDK_RESERVED_METHOD(3); // russom 02/26/01
-   SDK_RESERVED_METHOD(4); // russom 02/26/01
-   SDK_RESERVED_METHOD(5); // russom 02/26/01
-   SDK_RESERVED_METHOD(6); // russom 02/26/01
+   //SDK_RESERVED_METHOD(1); // russom 02/26/01
+   //SDK_RESERVED_METHOD(2); // russom 02/26/01
+   //SDK_RESERVED_METHOD(3); // russom 02/26/01
+   //SDK_RESERVED_METHOD(4); // russom 02/26/01
+   //SDK_RESERVED_METHOD(5); // russom 02/26/01
+   //SDK_RESERVED_METHOD(6); // russom 02/26/01
 
 	NifExport();
 	~NifExport();		

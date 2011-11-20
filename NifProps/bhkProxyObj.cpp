@@ -25,7 +25,8 @@ HISTORY:
 #include "NifGui.h"
 #include "NifStrings.h"
 #include "bhkHelperFuncs.h"
-#include "meshdelta.h"
+#include <stdmat.h>
+#include <meshdelta.h>
 #ifndef _countof
 #define _countof(x) (sizeof(x)/sizeof((x)[0]))
 #endif

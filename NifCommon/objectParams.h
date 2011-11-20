@@ -15,11 +15,21 @@
 #ifndef _OBJECTPARAMS_H_
 #define _OBJECTPARAMS_H_
 
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
 #include "maxscrpt/maxscrpt.h"
 #include "maxscrpt/Numbers.h"
 #include "maxscrpt/Name.h"
 #include "maxscrpt/ColorVal.h"
 #include "maxscrpt/MAXObj.h"
+static inline void set_error_trace_back_active( BOOL value ) { trace_back_active = value; }
+#else
+#include <maxscript/maxscript.h>
+#include <maxscript/foundation/numbers.h>
+#include <maxscript/foundation/name.h>
+#include <maxscript/foundation/colors.h>
+#include <maxscript/maxwrapper/mxsobjects.h>
+#include <maxscript\kernel\collectable.h>
+#endif
 #include "assert1.h"
 
 template <class T>
@@ -32,7 +42,7 @@ inline Value* make_maxscript_value(const Color& rgb);
 inline Value* make_maxscript_value(LPCTSTR str);
 inline Value* make_maxscript_value(ReferenceTarget* rtarg);
 
-#if VERSION_3DSMAX <= ((7000<<16)+(15<<8)+0) // Version 7
+#if VERSION_3DSMAX <= (7000<<16) // Version 7
 inline void clear_error_source_data() {}
 #endif
 
@@ -51,7 +61,7 @@ bool setMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T value, 
 	push_alloc_frame();
 	two_value_locals(prop, result);		// Keep two local variables
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 
 	try {
 		// Get the name of the parameter and then retrieve
@@ -93,7 +103,7 @@ bool setMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T& value)
 	push_alloc_frame();
 	two_value_locals(prop, val);			// Keep two local variables
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active( FALSE );
 
 	try {
 		// Get the name and value to set
@@ -127,7 +137,7 @@ bool getMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T& value,
 	push_alloc_frame();
 	two_value_locals(prop, result);		// Keep two local variables
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 
 	try {
 		// Get the name and the array holding the roperty.
@@ -168,7 +178,7 @@ bool getMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T& value)
 	push_alloc_frame();
 	two_value_locals(prop, result);	// Keep two local varaibles
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active( FALSE );
 
 	try {
 		// Get the name and the parameter value
@@ -194,7 +204,7 @@ bool getMAXScriptValue(ReferenceTarget* obj, LPTSTR name, TimeValue t, T& value)
 }
 
 // Get the parameter controller
-inline Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamDimension*& dim)
+Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamDimension*& dim)
 {
 	Control* rval = NULL;
 	assert(obj != NULL);
@@ -202,7 +212,7 @@ inline Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamD
 	push_alloc_frame();
 	one_value_local(prop);			// Keep one local varaibles
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active( FALSE );
 
 	try {
 		// Get the name and the parameter value
@@ -221,7 +231,7 @@ inline Control* getMAXScriptController(ReferenceTarget* obj, LPTSTR name, ParamD
 }
 
 // Set the parameter controller
-inline bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* control, ParamDimension* dim)
+bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* control, ParamDimension* dim)
 {
 	bool rval = false;
 	assert(obj != NULL);
@@ -229,7 +239,7 @@ inline bool setMAXScriptController(ReferenceTarget* obj, LPTSTR name, Control* c
 	push_alloc_frame();
 	two_value_locals(prop, maxControl);			// Keep two local varaibles
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active( FALSE );
 
 	try {
 		// Get the name and the parameter value
@@ -318,8 +328,12 @@ inline float ConvertMAXScriptToC<float>::cvt(Value* val)
 
 inline Color ConvertMAXScriptToC<Color>::cvt(Value* val)
 {
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
 	Point3 pt3 = val->to_point3();
    return Color(pt3.x/255.0f, pt3.y/255.0f, pt3.z/255.0f);
+#else
+   return val->to_point3();
+#endif
 }
 
 inline LPTSTR ConvertMAXScriptToC<LPTSTR>::cvt(Value* val)

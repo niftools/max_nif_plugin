@@ -26,8 +26,13 @@ HISTORY:
 #  include <cs/BipedApi.h>
 #  include <cs/OurExp.h> 
 #endif
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\Parser.h"
+#else
+#include <maxscript/maxscript.h>
+#include <maxscript/compiler/parser.h>
+#endif
 
 using namespace std;
 using namespace Niflib;

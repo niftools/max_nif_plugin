@@ -29,7 +29,10 @@
 #include <meshadj.h>
 //#include <scenetraversal.h> 
 #include <plugapi.h>
+#include <maxtypes.h>
 #include <triobj.h> 
+#include <stdmat.h>
+#include <simpobj.h>
 #include <bitmap.h>
 #include <modstack.h>
 #include <iskin.h>

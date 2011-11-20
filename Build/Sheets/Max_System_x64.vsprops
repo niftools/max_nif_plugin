@@ -3,8 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Max_System_x64"
-  OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName) - $(PlatformName)\"
-  IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
+  OutputDirectory="$(SolutionDir)..\..\..\..\Staging\$(ConfigurationName) - $(PlatformName)\"
+  IntermediateDirectory="$(SolutionDir)..\..\..\temp\$(ProjectName)\$(ConfigurationName) - $(PlatformName)\"
   InheritedPropertySheets=".\Max_System_Default.vsprops;.\Niflib_Settings.vsprops"
 	>
 	<Tool

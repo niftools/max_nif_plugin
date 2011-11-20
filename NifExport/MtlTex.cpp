@@ -45,6 +45,7 @@ static bool GetTexFullName(Texmap *texMap, TSTR& fName)
 	return false;
 }
 
+#undef GNORMAL_CLASS_ID
 static const Class_ID GNORMAL_CLASS_ID(0x243e22c6, 0x63f6a014);
 
 void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
@@ -131,8 +132,15 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 			textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
 		if (!envMaskStr.isNull())
 			textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
-		if (!glowStr.isNull())
+		if (glowStr.isNull()){
+			char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+			_splitpath(textures[0].c_str(), drive, dir, fname, ext);
+			strcat(fname, "_g");
+			_makepath(path_buffer, drive, dir, fname, ext);
+			textures[3] = path_buffer;			
+		} else {
 			textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+		}
 		if (!dispStr.isNull())
 			textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
 		if (!envStr.isNull())
@@ -657,10 +665,10 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 				}
 				else
 					textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+				if (!glowStr.isNull())
+					textures[2] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
 				if (!envMaskStr.isNull())
 					textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
-				if (!glowStr.isNull())
-					textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
 				if (!dispStr.isNull())
 					textures[4] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
 				if (!envStr.isNull())

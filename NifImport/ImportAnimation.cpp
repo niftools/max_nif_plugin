@@ -14,7 +14,11 @@ HISTORY:
 #if VERSION_3DSMAX >= ((7000<<16)+(15<<8)+0) // Version 7
 #  include <IFrameTagManager.h>
 #endif
-#include <maxscrpt/strings.h>
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
+#include "maxscrpt\Strings.h"
+#else
+#include "maxscript/maxscript.h"
+#endif
 #include <notetrck.h>
 #include "MaxNifImport.h"
 #include "NIFImporter.h"
@@ -1147,19 +1151,19 @@ Control* AnimationImport::MakePositionXYZ(Control *tmCont, Class_ID clsid)
       if (Control *x = c->GetXController()){
          if (x->ClassID()!= clsid) {
             if (Control *tmp = (Control*)ip->CreateInstance(CTRL_FLOAT_CLASS_ID, clsid))
-               c->SetReference(IPOS_X_REF, tmp);
+               c->ReplaceReference(IPOS_X_REF, tmp);
          }
       }
       if (Control *y = c->GetYController()){
          if (y->ClassID()!= clsid) {
             if (Control *tmp = (Control*)ip->CreateInstance(CTRL_FLOAT_CLASS_ID, clsid))
-               c->SetReference(IPOS_Y_REF, tmp);
+               c->ReplaceReference(IPOS_Y_REF, tmp);
          }
       }
       if (Control *z = c->GetZController()){
          if (z->ClassID()!= clsid) {
             if (Control *tmp = (Control*)ip->CreateInstance(CTRL_FLOAT_CLASS_ID, clsid))
-               c->SetReference(IPOS_Z_REF, tmp);
+               c->ReplaceReference(IPOS_Z_REF, tmp);
          }
       }
       return c;

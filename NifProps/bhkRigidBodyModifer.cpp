@@ -8,6 +8,7 @@
 #include "bhkRigidBodyInterface.h"
 #include "bhkHelperInterface.h"
 #include "bhkHelperFuncs.h"
+#include <stdmat.h>
 #include <MeshDelta.h>
 
 using namespace std;

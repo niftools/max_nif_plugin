@@ -23,3 +23,7 @@
 
 #include "MaxNifImport.h"
 #include "MAX_MemDirect.h"
+
+#if VERSION_3DSMAX >= (14000<<16) // Version 14 (2012)
+#define SDK_RESERVED_METHOD(a)
+#endif

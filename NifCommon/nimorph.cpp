@@ -26,8 +26,14 @@ HISTORY:
 #  include <cs/BipedApi.h>
 #  include <cs/OurExp.h> 
 #endif
+#if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
 #include "maxscrpt\Strings.h"
 #include "maxscrpt\Parser.h"
+//static inline void set_error_trace_back_active( BOOL value ) { trace_back_active = value; }
+#else
+#include "maxscript/maxscript.h"
+#include <maxscript/compiler/parser.h>
+#endif
 
 using namespace std;
 using namespace Niflib;
@@ -89,7 +95,7 @@ void MorpherBuildFromNode(Modifier* mod, int index, INode *target)
 	push_alloc_frame();
 	six_value_locals(name, fn, mod, index, target, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 
 	try	{
 		// Create the name of the maxscript function we want.
@@ -145,7 +151,7 @@ TSTR MorpherGetName(Modifier* mod, int index)
 	push_alloc_frame();
 	six_value_locals(name, fn, mod, index, value, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	TSTR string;
 	try	{
 		// Create the name of the maxscript function we want.
@@ -205,7 +211,7 @@ void MorpherSetName(Modifier* mod, int index, TSTR& name)
 	push_alloc_frame();
 	six_value_locals(name, fn, mod, index, value, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	String* value = new String(name);
 
 	try	{
@@ -264,7 +270,7 @@ void MorpherRebuild(Modifier* mod, int index)
 	push_alloc_frame();
 	five_value_locals(name, fn, mod, index, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -320,7 +326,7 @@ bool MorpherIsActive(Modifier* mod, int index)
 	push_alloc_frame();
 	five_value_locals(name, fn, mod, index, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -379,7 +385,7 @@ bool MorpherHasData(Modifier* mod, int index)
 	push_alloc_frame();
 	five_value_locals(name, fn, mod, index, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -438,7 +444,7 @@ int MorpherNumProgMorphs(Modifier* mod, int index)
 	push_alloc_frame();
 	five_value_locals(name, fn, mod, index, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -497,7 +503,7 @@ INode *MorpherGetProgMorph(Modifier* mod, int index, int morphIdx)
 	push_alloc_frame();
 	six_value_locals(name, fn, mod, index, midx, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -557,7 +563,7 @@ int MorpherGetNumVerts(Modifier* mod, int index)
 	push_alloc_frame();
 	five_value_locals(name, fn, mod, index, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names
@@ -620,7 +626,7 @@ void MorpherGetMorphVerts(Modifier* mod, int index, vector<Vector3>& verts)
 	push_alloc_frame();
 	six_value_locals(name, fn, mod, index, midx, result);
 	save_current_frames();
-	trace_back_active = FALSE;
+	set_error_trace_back_active(FALSE);
 	try	{
 		// Create the name of the maxscript function we want.
 		// and look it up in the global names

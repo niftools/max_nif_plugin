@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="Max_Version_2012"
+  InheritedPropertySheets="..\..\User_Settings.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+    PreprocessorDefinitions="USE_BIPED"
+  />
+  <Tool
+    Name="VCPreBuildEventTool"
+    Description="Checking Environment Variables ..."
+    CommandLine="IF NOT EXIST &quot;$(MaxInstallDir)&quot; (&#x0D;&#x0A;  echo :&#x0D;&#x0A;  echo : The variable MAXINSTALLPATH2012 is not defined.&#x0D;&#x0A;  echo : Set environment variable or edit User_Settings.vsprops to correct. &#x0D;&#x0A;  echo :&#x0D;&#x0A;  EXIT 2&#x0D;&#x0A;) else (&#x0D;&#x0A;  echo : Using MAXINSTALLPATH2012=%MAXINSTALLPATH2012%&#x0D;&#x0A;)&#x0D;&#x0A;"
+  /> 
+  <UserMacro Name="MaxInstallDir" Value="$(MAXINSTALLPATH2012)\" PerformEnvironmentSet="true"/>
+ 
+</VisualStudioPropertySheet>
