@@ -35,6 +35,9 @@ public:
    int nifVersion;
 	int userVersion;
 
+	bool hasErrors;
+	string errorMsg;
+
    Niflib::NiObjectRef root;
 
    BaseImporter(){}
@@ -74,6 +77,8 @@ public:
       wikiSite = GetIniValue<TSTR>("System", "Wiki", "http://niftools.sourceforge.net/wiki/3ds_Max");
 
 	  nifVersion = Niflib::GetNifVersion(this->name);
+
+	  hasErrors = false;
 
       // Load ini settings
       iniFileValid = false;

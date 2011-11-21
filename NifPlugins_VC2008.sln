@@ -7,18 +7,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		User_Settings.vsprops = User_Settings.vsprops
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Niflib", "niflib\niflib_VC2008.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Niflib", "..\niflib\niflib_VC2008.vcproj", "{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NifPlugins", "Build\NifPlugins_VC2008.vcproj", "{466F2D3E-2663-4583-A05C-128683677617}"
 	ProjectSection(ProjectDependencies) = postProject
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E} = {19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB9-8B4A-11D0-8D11-00A0C91BC942}") = "3dsmax.exe", "C:\Program Files\Autodesk\3ds Max 2010\3dsmax.exe", "{BF046FCD-1095-4E2B-948D-CB863D888017}"
+EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - gmax|Win32 = Debug - gmax|Win32
 		Debug - gmax|x64 = Debug - gmax|x64
@@ -94,6 +92,10 @@ Global
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2010|Win32.Build.0 = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2010|x64.ActiveCfg = Debug - Static|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2010|x64.Build.0 = Debug - Static|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2011|Win32.ActiveCfg = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2011|x64.ActiveCfg = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2012|Win32.ActiveCfg = Debug - DLL|x64
+		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 2012|x64.ActiveCfg = Debug - DLL|x64
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|Win32.ActiveCfg = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|Win32.Build.0 = Debug - Static|Win32
 		{19FD8EE6-79CC-4BAC-9744-D9573BE47C7E}.Debug - Max 4.2|x64.ActiveCfg = Debug - DLL|x64
@@ -232,6 +234,8 @@ Global
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|Win32.Build.0 = Debug - Max 9|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|x64.ActiveCfg = Debug - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Debug - Max 9|x64.Build.0 = Debug - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug|Win32.ActiveCfg = Debug - Max 2012|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Debug|x64.ActiveCfg = Debug - Max 2012|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|Win32.ActiveCfg = Release - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|Win32.Build.0 = Release - gmax|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - gmax|x64.ActiveCfg = Release - gmax|x64
@@ -284,8 +288,73 @@ Global
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|Win32.Build.0 = Release - Max 9|Win32
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|x64.ActiveCfg = Release - Max 9|x64
 		{466F2D3E-2663-4583-A05C-128683677617}.Release - Max 9|x64.Build.0 = Release - Max 9|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release|Win32.ActiveCfg = Release - Max 2012|x64
+		{466F2D3E-2663-4583-A05C-128683677617}.Release|x64.ActiveCfg = Release - Max 2012|x64
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - gmax|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - gmax|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2008|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2008|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2009|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2009|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2010|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2010|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2011|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2011|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2012|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 2012|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 4.2|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 4.2|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 4|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 4|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 5|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 5|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 6|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 6|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 7|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 7|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 8|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 8|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 9|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug - Max 9|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Debug|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - gmax|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - gmax|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2008|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2008|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2009|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2009|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2010|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2010|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2011|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2011|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2012|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 2012|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 4.2|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 4.2|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 4|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 4|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 5|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 5|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 6|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 6|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 7|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 7|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 8|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 8|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 9|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release - Max 9|x64.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release|Win32.ActiveCfg = Debug
+		{BF046FCD-1095-4E2B-948D-CB863D888017}.Release|x64.ActiveCfg = Debug
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF046FCD-1095-4E2B-948D-CB863D888017} = {50B67748-0DFB-45B0-BF1F-E80135EE3823}
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal

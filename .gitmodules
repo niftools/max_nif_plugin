@@ -1,3 +1,0 @@
-[submodule "niflib"]
-	path = niflib
-	url = git://github.com/figment/niflib.git
