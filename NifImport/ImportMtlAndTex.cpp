@@ -208,6 +208,21 @@ Texmap* NifImporter::CreateTexture(const string& filename)
 	return NULL;
 }
 
+template <typename U>
+inline Niflib::Ref<U> SelectFirstObjectOfType( vector<Niflib::Ref<NiProperty> > const & objs ) {
+	for (vector<Niflib::Ref<NiProperty> >::const_iterator itr = objs.begin(), end = objs.end(); itr != end; ++itr) {
+
+		Niflib::Ref<NiObject> obj = StaticCast<NiObject>(*itr);
+		if (obj)
+		{
+			Niflib::Ref<U> val = DynamicCast<U>(obj);
+			if (val) return val;
+		}
+	}
+	return Niflib::Ref<U>();
+}
+
+
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
    // Texture

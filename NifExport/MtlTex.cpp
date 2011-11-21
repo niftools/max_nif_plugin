@@ -153,8 +153,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
 		texset->SetTextures(textures);
 
-		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-		parent->AddProperty(prop);
+		parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 	}
 	else if (Exporter::mNifVersionInt >= VER_4_0_0_0)
 	{
@@ -681,8 +680,9 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 				texset->SetTextures(textures);
 
-				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-				parent->AddProperty(prop);
+				// Hack to allow BSShaderPPLightingProperty to still be added to niflib maybe
+
+				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 				useDefaultShader = false;
 			}
 			else if (BSShaderNoLightingPropertyRef texProp = StaticCast<BSShaderNoLightingProperty>(root))
@@ -700,8 +700,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-				parent->AddProperty(prop);
+				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 				useDefaultShader = false;
 			}
 			else if ( WaterShaderPropertyRef texProp = StaticCast<WaterShaderProperty>(root) )
@@ -719,8 +718,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				//texProp->SetFileName( string(diffuseStr.data()) );
-				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-				parent->AddProperty(prop);
+				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 				useDefaultShader = false;
 			}
 			else if ( SkyShaderPropertyRef texProp = StaticCast<SkyShaderProperty>(root) )
@@ -738,8 +736,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-				parent->AddProperty(prop);
+				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 				useDefaultShader = false;
 			}
 			else if ( TallGrassShaderPropertyRef texProp = StaticCast<TallGrassShaderProperty>(root) )
@@ -757,8 +754,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-				parent->AddProperty(prop);
+				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
 				useDefaultShader = false;
 			}
 		}

@@ -3,6 +3,14 @@ NifTools MaxPlugin
 
     Change log
     ----------
+      3.7
+    o All
+      - Recompiled with Skyrim modified niflib
+      - Add 3ds max 2011, 2012 support
+      
+      3.6
+    o Unreleased build
+
       3.5
     o All
       - Update niflib to latest nif.xml

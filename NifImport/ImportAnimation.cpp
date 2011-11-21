@@ -52,6 +52,9 @@ enum {
    IPOS_W_REF	=	3,
 };
 
+
+const KeyType UNKNOWN_KEY = (KeyType)0;
+
 #if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
 void* operator new(size_t size, NoteKey* stub )
 { return MAX_new(size); }
