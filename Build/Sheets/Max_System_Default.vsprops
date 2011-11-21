@@ -3,8 +3,8 @@
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="Max_System_Default"
-  OutputDirectory="$(SolutionDir)Staging\$(ConfigurationName)\"
-  IntermediateDirectory="$(SolutionDir)Temp\$(ProjectName)\$(ConfigurationName)\"
+  OutputDirectory="$(SolutionDir)Staging\$(PlatformName)\$(ConfigurationName)\$(ProjectName)\"
+  IntermediateDirectory="$(SolutionDir)Temp\$(PlatformName)\$(ConfigurationName)\$(ProjectName)\"
   UseOfMFC="0"
   ATLMinimizesCRunTimeLibraryUsage="false"
   WholeProgramOptimization="0"
@@ -32,7 +32,7 @@
     ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
     SubSystem="2"
     BaseAddress="0x16860000"
-    OutputFile="$(MaxPluginDir)\NifPlugins.dlu"
+    OutputFile="$(OutDir)\NifPlugins.dlu"
     ImportLibrary="$(IntDir)\$(ProjectName).lib"
   />
   

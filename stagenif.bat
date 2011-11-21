@@ -11,43 +11,43 @@ if "%1" == "" (
 
 rm -r -f "%DEST%"
 
-for /L %%i in (5,1,8) do (
-    mkdir "%DEST%\max-%%i-plugins-%1\plugcfg" > nul 2<&1
-    mkdir "%DEST%\max-%%i-plugins-%1\plugins" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.txt" "%DEST%\max-%%i-plugins-%1\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.ini" "%DEST%\max-%%i-plugins-%1\plugcfg\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.dl*" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\..\contrib\niflib\NifMopp\NifMopp.dll" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\..\contrib\NifMagic\Win32\NifMagic.dll" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-    REM pushd "%DEST%\max-%%i-plugins-%1\" && ntzip -9 -r "..\max-%%i-plugins-%1.zip" * && popd
+for %%j in (Win32) do (
+    for /L %%i in (5,1,8) do (
+        mkdir "%DEST%\%%j\max-%%i-plugins-%1\plugcfg" > nul 2<&1
+        mkdir "%DEST%\%%j\max-%%i-plugins-%1\plugins" > nul 2<&1
+        xcopy /D /Y /I "%SRC%*.txt" "%DEST%\%%j\max-%%i-plugins-%1\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%MaxNifTools.ini" "%DEST%\%%j\max-%%i-plugins-%1\plugcfg\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%staging\%%j\release - max %%i\NifPlugins\*.dl*" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%..\NifMopp\NifMopp.dll" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%..\NifMagic\%%j\NifMagic.dll" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+        REM pushd "%DEST%\max-%%i-plugins-%1\" && ntzip -9 -r "..\max-%%i-plugins-%1.zip" * && popd
+    )
+    
+    mkdir "%DEST%\%%j\gmax-1.2-plugins-%1\plugcfg" > nul 2<&1
+    mkdir "%DEST%\%%j\gmax-1.2-plugins-%1\plugins" > nul 2<&1
+    xcopy /D /Y /I "%SRC%README.txt" "%DEST%\%%j\gmax-1.2-plugins-%1\" > nul 2<&1
+    xcopy /D /Y /I "%SRC%MaxNifTools.ini" "%DEST%\%%j\gmax-1.2-plugins-%1\plugcfg\" > nul 2<&1
+    xcopy /D /Y /I "%SRC%staging\%%j\release - gmax\NifPlugins\*.dl*" "%DEST%\%%j\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
+    xcopy /D /Y /I "\gmax12\winmm.dll" "%DEST%\%%j\gmax-1.2-plugins-%1\" > nul 2<&1
+    xcopy /D /Y /I "%SRC%..\NifMopp\%%j\NifMopp.dll" "%DEST%\%%j\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
+    xcopy /D /Y /I "%SRC%..\NifMagic\%%j\NifMagic.dll" "%DEST%\%%j\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
+    REM pushd "%DEST%\gmax-1.2-plugins-%1\" && ntzip -9 -r "..\gmax-1.2-plugins-%1.zip" * && popd
 )
 
-mkdir "%DEST%\gmax-1.2-plugins-%1\plugcfg" > nul 2<&1
-mkdir "%DEST%\gmax-1.2-plugins-%1\plugins" > nul 2<&1
-xcopy /D /Y /I "%SRC%\staging\release - gmax\*.txt" "%DEST%\gmax-1.2-plugins-%1\" > nul 2<&1
-xcopy /D /Y /I "%SRC%\staging\release - gmax\*.ini" "%DEST%\gmax-1.2-plugins-%1\plugcfg\" > nul 2<&1
-xcopy /D /Y /I "%SRC%\staging\release - gmax\*.dlu" "%DEST%\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
-xcopy /D /Y /I "%SRC%\staging\release - gmax\*.dll" "%DEST%\gmax-1.2-plugins-%1\" > nul 2<&1
-xcopy /D /Y /I "%SRC%\..\contrib\niflib\NifMopp\NifMopp.dll" "%DEST%\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
-xcopy /D /Y /I "%SRC%\..\contrib\NifMagic\Win32\NifMagic.dll" "%DEST%\gmax-1.2-plugins-%1\plugins\" > nul 2<&1
-REM pushd "%DEST%\gmax-1.2-plugins-%1\" && ntzip -9 -r "..\gmax-1.2-plugins-%1.zip" * && popd
-
-for %%i in (9 2008 2009 2010 2011 2012) do (
-    mkdir "%DEST%\max-%%i-plugins-%1\plugcfg" > nul 2<&1
-    mkdir "%DEST%\max-%%i-plugins-%1\plugins" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.txt" "%DEST%\max-%%i-plugins-%1\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.ini" "%DEST%\max-%%i-plugins-%1\plugcfg\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\staging\release - max %%i\*.dl*" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\..\contrib\niflib\NifMopp\NifMopp.dll" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-    xcopy /D /Y /I "%SRC%\..\contrib\NifMagic\Win32\NifMagic.dll" "%DEST%\max-%%i-plugins-%1\plugins\" > nul 2<&1
-
-    REM mkdir "%DEST%\max-%%i-plugins-%1-x64\plugcfg" > nul 2<&1
-    REM mkdir "%DEST%\max-%%i-plugins-%1-x64\plugins" > nul 2<&1
-    REM xcopy /D /Y /I "%SRC%\staging\release - max %%i - x64\*.txt" "%DEST%\max-%%i-plugins-%1-x64\" > nul 2<&1
-    REM xcopy /D /Y /I "%SRC%\staging\release - max %%i - x64\*.ini" "%DEST%\max-%%i-plugins-%1-x64\plugcfg\" > nul 2<&1
-    REM xcopy /D /Y /I "%SRC%\staging\release - max %%i - x64\*.dl*" "%DEST%\max-%%i-plugins-%1-x64\plugins\" > nul 2<&1
-    REM xcopy /D /Y /I "%SRC%\..\contrib\NifMagic\x64\NifMagic.dll" "%DEST%\max-%%i-plugins-%1-x64\plugins\" > nul 2<&1
+for %%j in (Win32 x64) do (
+    for %%i in (9 2008 2009 2010 2011 2012) do (
+        mkdir "%DEST%\%%j\max-%%i-plugins-%1\plugcfg" > nul 2<&1
+        mkdir "%DEST%\%%j\max-%%i-plugins-%1\plugins" > nul 2<&1
+        xcopy /D /Y /I "%SRC%README.txt" "%DEST%\%%j\max-%%i-plugins-%1\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%MaxNifTools.ini" "%DEST%\%%j\max-%%i-plugins-%1\plugcfg\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%staging\%%j\release - max %%i\NifPlugins\*.dl*" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%..\NifMopp\%%j\NifMopp.dll" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+        xcopy /D /Y /I "%SRC%..\NifMagic\%%j\NifMagic.dll" "%DEST%\%%j\max-%%i-plugins-%1\plugins\" > nul 2<&1
+    )
 )
+pushd "%DEST%"
+rm -r -f NifPlugins_Development_Readme.txt
+popd
 
 pushd "%SRC%"
 set VERSION=%1

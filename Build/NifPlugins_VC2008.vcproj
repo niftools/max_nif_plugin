@@ -79,6 +79,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 6|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -313,6 +315,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 7|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -547,6 +551,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 8|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -898,6 +904,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 5|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1251,6 +1259,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1836,6 +1846,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release - Max 4.2|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool

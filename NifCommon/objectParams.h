@@ -42,7 +42,7 @@ inline Value* make_maxscript_value(const Color& rgb);
 inline Value* make_maxscript_value(LPCTSTR str);
 inline Value* make_maxscript_value(ReferenceTarget* rtarg);
 
-#if VERSION_3DSMAX <= (7000<<16) // Version 7
+#if MAX_RELEASE <= 7000 // Version 7
 inline void clear_error_source_data() {}
 #endif
 
