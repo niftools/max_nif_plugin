@@ -18,6 +18,7 @@
 #include "obj/BSShaderNoLightingProperty.h"
 #include "obj/BSShaderPPLightingProperty.h"
 #include "obj/BSShaderTextureSet.h"
+#include "obj/BSLightingShaderProperty.h"
 #include "ObjectRegistry.h"
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
@@ -55,9 +56,15 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		return;
 
 
-	if (IsFallout3())
+	if (IsFallout3() || IsSkyrim())
 	{
-		BSShaderPPLightingPropertyRef texProp = new BSShaderPPLightingProperty();
+		BSShaderPPLightingPropertyRef texProp;
+		if (IsSkyrim()) {
+			texProp = new BSLightingShaderProperty();
+		} else {
+			texProp = new BSShaderPPLightingProperty();
+		}
+		
 		texProp->SetFlags(1);
 		texProp->SetShaderType( SHADER_DEFAULT );
 		BSShaderTextureSetRef texset = new BSShaderTextureSet();
@@ -153,7 +160,8 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
 		texset->SetTextures(textures);
 
-		parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		parent->AddProperty(prop);
 	}
 	else if (Exporter::mNifVersionInt >= VER_4_0_0_0)
 	{
@@ -492,16 +500,19 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 	if (ok) // civ4 shader
 	{
-		NiMaterialPropertyRef mtlProp = CreateNiObject<NiMaterialProperty>();
-		parent->AddProperty(mtlProp);
+		if ( !IsSkyrim() ) // skyrim does not use material properties
+		{
+			NiMaterialPropertyRef mtlProp = CreateNiObject<NiMaterialProperty>();
+			parent->AddProperty(mtlProp);
 
-		mtlProp->SetName((char*)mtl->GetName());
-		mtlProp->SetAmbientColor(TOCOLOR3(ambient));
-		mtlProp->SetDiffuseColor(TOCOLOR3(diffuse));
-		mtlProp->SetSpecularColor(TOCOLOR3(specular));
-		mtlProp->SetEmissiveColor(TOCOLOR3(emittance));
-		mtlProp->SetGlossiness(shininess);
-		mtlProp->SetTransparency(alpha);
+			mtlProp->SetName((char*)mtl->GetName());
+			mtlProp->SetAmbientColor(TOCOLOR3(ambient));
+			mtlProp->SetDiffuseColor(TOCOLOR3(diffuse));
+			mtlProp->SetSpecularColor(TOCOLOR3(specular));
+			mtlProp->SetEmissiveColor(TOCOLOR3(emittance));
+			mtlProp->SetGlossiness(shininess);
+			mtlProp->SetTransparency(alpha);
+		}
 		if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
 		{
 			StdMat2 * smtl = (StdMat2*)mtl;
@@ -580,11 +591,19 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 
 		bool useDefaultShader = true;
-		if (IsFallout3())
+		if (IsFallout3() || IsSkyrim())
 		{
 			NiObjectRef root;
-			if (CustomShader == NULL || strlen(CustomShader) != 0)
+			if (CustomShader != NULL && strlen(CustomShader) != 0)
 				root = Niflib::ObjectRegistry::CreateObject(CustomShader);
+
+			if (root == NULL) {
+				if (IsSkyrim()) {
+					root = new BSLightingShaderProperty();
+				} else {
+					root = new BSShaderPPLightingProperty();
+				}
+			}
 
 			if ( BSShaderPPLightingPropertyRef texProp = DynamicCast<BSShaderPPLightingProperty>(root) )
 			{
@@ -680,9 +699,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 				texset->SetTextures(textures);
 
-				// Hack to allow BSShaderPPLightingProperty to still be added to niflib maybe
-
-				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
 				useDefaultShader = false;
 			}
 			else if (BSShaderNoLightingPropertyRef texProp = StaticCast<BSShaderNoLightingProperty>(root))
@@ -700,7 +718,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
 				useDefaultShader = false;
 			}
 			else if ( WaterShaderPropertyRef texProp = StaticCast<WaterShaderProperty>(root) )
@@ -718,7 +737,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				//texProp->SetFileName( string(diffuseStr.data()) );
-				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
 				useDefaultShader = false;
 			}
 			else if ( SkyShaderPropertyRef texProp = StaticCast<SkyShaderProperty>(root) )
@@ -736,7 +756,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
 				useDefaultShader = false;
 			}
 			else if ( TallGrassShaderPropertyRef texProp = StaticCast<TallGrassShaderProperty>(root) )
@@ -754,7 +775,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 					}
 				}
 				texProp->SetFileName( diffuseStr.data() );
-				parent->AddProperty(reinterpret_cast<NiProperty*>((NiObject*)texProp));
+				NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+				parent->AddProperty(prop);
 				useDefaultShader = false;
 			}
 		}

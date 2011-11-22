@@ -165,6 +165,7 @@ public:
 
    void WeldVertices(Mesh& mesh);
 
+   bool IsSkyrim() const;
 	bool IsFallout3() const;
 	bool IsOblivion() const;
 	bool IsMorrowind() const;

@@ -208,29 +208,21 @@ Texmap* NifImporter::CreateTexture(const string& filename)
 	return NULL;
 }
 
-template <typename U>
-inline Niflib::Ref<U> SelectFirstObjectOfType( vector<Niflib::Ref<NiProperty> > const & objs ) {
-	for (vector<Niflib::Ref<NiProperty> >::const_iterator itr = objs.begin(), end = objs.end(); itr != end; ++itr) {
-
-		Niflib::Ref<NiObject> obj = StaticCast<NiObject>(*itr);
-		if (obj)
-		{
-			Niflib::Ref<U> val = DynamicCast<U>(obj);
-			if (val) return val;
-		}
-	}
-	return Niflib::Ref<U>();
-}
-
-
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
-   // Texture
-   NiMaterialPropertyRef matRef = avObject->GetPropertyByType(NiMaterialProperty::TYPE);
-   if (matRef != NULL){
+	// Texture
+	vector<NiPropertyRef> props = avObject->GetProperties();
+	NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props);
+	BSShaderPropertyRef shaderRef = SelectFirstObjectOfType<BSShaderProperty>(props);
+	if (matRef != NULL || shaderRef != NULL){
 
 		StdMat2 *m = NewDefaultStdMat();
-		m->SetName(matRef->GetName().c_str());
+
+		if (matRef != NULL) {
+			m->SetName(matRef->GetName().c_str());
+		} else {
+			m->SetName(avObject->GetName().c_str());
+		}
 		if (showTextures) {
 			m->SetMtlFlag(MTL_DISPLAY_ENABLE_FLAGS, TRUE);
 		}
@@ -245,104 +237,105 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 		NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
 		NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
 		NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TYPE);
-		vector<NiPropertyRef> props = avObject->GetProperties();
 
-		if (IsFallout3()) {
+
+		if (IsFallout3() || IsSkyrim()) {
 			m->SetAmbient(Color(0.588f, 0.588f, 0.588f),0);
 			m->SetDiffuse(Color(0.588f, 0.588f, 0.588f),0);
 			m->SetSpecular(Color(0.902f, 0.902f, 0.902f),0);
-		} else {
+		} else if (matRef != NULL) {
 			m->SetAmbient(TOCOLOR(matRef->GetAmbientColor()),0);
 			m->SetDiffuse(TOCOLOR(matRef->GetDiffuseColor()),0);
 			m->SetSpecular(TOCOLOR(matRef->GetSpecularColor()),0);
 		}
-      Color c = TOCOLOR(matRef->GetEmissiveColor());
-      if (c.r != 0 || c.b != 0 || c.g != 0) {
-         m->SetSelfIllumColorOn(TRUE);
-         m->SetSelfIllumColor(c,0);
-      }
-      m->SetShinStr(0.0,0);
-      m->SetShininess(matRef->GetGlossiness()/100.0,0);
-      m->SetOpacity(matRef->GetTransparency(),0);
+		if (matRef != NULL) {
+			Color c = TOCOLOR(matRef->GetEmissiveColor());
+			if (c.r != 0 || c.b != 0 || c.g != 0) {
+				m->SetSelfIllumColorOn(TRUE);
+				m->SetSelfIllumColor(c,0);
+			}
+			m->SetShinStr(0.0,0);
+			m->SetShininess(matRef->GetGlossiness()/100.0,0);
+			m->SetOpacity(matRef->GetTransparency(),0);
+		}
+		bool hasShaderAttributes = (wireRef != NULL) || (stencilRef != NULL) || (shadeRef != NULL);
+		if (m->SupportsShaders() && hasShaderAttributes) {
+			if (Shader *s = m->GetShader()) {
+				if (wireRef != NULL && (wireRef->GetFlags() & 1)) {
+					BOOL value = TRUE;
+					m->SetWire(value);
+				}
+				if (stencilRef != NULL) {
+					if (stencilRef->GetFaceDrawMode() == DRAW_BOTH) {
+						BOOL value = TRUE;
+						m->SetTwoSided(value);
+					}
+				}
+				if (shadeRef != NULL && shadeRef->GetFlags() & 1) {
+					m->SetFaceted(TRUE);
+				}
+			}
+		}
 
-      bool hasShaderAttributes = (wireRef != NULL) || (stencilRef != NULL) || (shadeRef != NULL);
-      if (m->SupportsShaders() && hasShaderAttributes) {
-         if (Shader *s = m->GetShader()) {
-            if (wireRef != NULL && (wireRef->GetFlags() & 1)) {
-               BOOL value = TRUE;
-               m->SetWire(value);
-            }
-            if (stencilRef != NULL) {
-				if (stencilRef->GetFaceDrawMode() == DRAW_BOTH) {
-                  BOOL value = TRUE;
-                  m->SetTwoSided(value);
-               }
-            }
-            if (shadeRef != NULL && shadeRef->GetFlags() & 1) {
-               m->SetFaceted(TRUE);
-            }
-         }
-      }
-
-      if (NULL != texRef)
-      {
-         // Handle Base/Detail ???
-         if (texRef->HasTexture(DECAL_0_MAP)){
-            if (Texmap* tex = CreateTexture(texRef->GetTexture(DECAL_0_MAP)))
-               m->SetSubTexmap(ID_DI, tex);
-            if (texRef->HasTexture(BASE_MAP)){
-               m->LockAmbDiffTex(FALSE);
-               if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP)))
-                  m->SetSubTexmap(ID_AM, tex);
-            }
-         } else if (texRef->HasTexture(BASE_MAP)) {
-			 if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP))) {
-               m->SetSubTexmap(ID_DI, tex);
-			   if (showTextures) gi->ActivateTexture(tex,m);
+		if (NULL != texRef)
+		{
+			// Handle Base/Detail ???
+			if (texRef->HasTexture(DECAL_0_MAP)){
+				if (Texmap* tex = CreateTexture(texRef->GetTexture(DECAL_0_MAP)))
+					m->SetSubTexmap(ID_DI, tex);
+				if (texRef->HasTexture(BASE_MAP)){
+					m->LockAmbDiffTex(FALSE);
+					if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP)))
+						m->SetSubTexmap(ID_AM, tex);
+				}
+			} else if (texRef->HasTexture(BASE_MAP)) {
+				if (Texmap* tex = CreateTexture(texRef->GetTexture(BASE_MAP))) {
+					m->SetSubTexmap(ID_DI, tex);
+					if (showTextures) gi->ActivateTexture(tex,m);
 			 }
-         } 
-         // Handle Bump map
-         if (texRef->HasTexture(BUMP_MAP)) {
-            if (Texmap* tex = CreateTexture(texRef->GetTexture(BUMP_MAP)))
-               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
-         }
-         // Shiny map
-         if (texRef->HasTexture(GLOSS_MAP)) {
-            if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOSS_MAP)))
-               m->SetSubTexmap(ID_SS, tex);
-         }
-         // Self illumination
-         if (texRef->HasTexture(GLOW_MAP)) {
-            if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOW_MAP)))
-               m->SetSubTexmap(ID_SI, tex);
-         }
+			} 
+			// Handle Bump map
+			if (texRef->HasTexture(BUMP_MAP)) {
+				if (Texmap* tex = CreateTexture(texRef->GetTexture(BUMP_MAP)))
+					m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+			}
+			// Shiny map
+			if (texRef->HasTexture(GLOSS_MAP)) {
+				if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOSS_MAP)))
+					m->SetSubTexmap(ID_SS, tex);
+			}
+			// Self illumination
+			if (texRef->HasTexture(GLOW_MAP)) {
+				if (Texmap* tex = CreateTexture(texRef->GetTexture(GLOW_MAP)))
+					m->SetSubTexmap(ID_SI, tex);
+			}
 
-         // Custom Shader Handling
-         int nTex = texRef->GetShaderTextureCount();
-         if (nTex > 0) {
-            list<NiExtraDataRef> data = avObject->GetExtraData();
-            NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
-            if (trigeom->HasShader()) {
-               for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
-                  if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
-                     string name = idx->GetName();
-                     if ( wildmatch("*Index", name) ) {
-                        int shader = idx->GetData();
-                        if (shader < nTex) {
-                           if ( name == "NormalMapIndex" ) {
-                              if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                                 m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
-                           } else if ( name == "SpecularIntensity" ) {
-                              if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                                 m->SetSubTexmap(ID_SP, CreateNormalBump(NULL, tex));
-                           }
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
+			// Custom Shader Handling
+			int nTex = texRef->GetShaderTextureCount();
+			if (nTex > 0) {
+				list<NiExtraDataRef> data = avObject->GetExtraData();
+				NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
+				if (trigeom->HasShader()) {
+					for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
+						if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
+							string name = idx->GetName();
+							if ( wildmatch("*Index", name) ) {
+								int shader = idx->GetData();
+								if (shader < nTex) {
+									if ( name == "NormalMapIndex" ) {
+										if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+											m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+									} else if ( name == "SpecularIntensity" ) {
+										if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+											m->SetSubTexmap(ID_SP, CreateNormalBump(NULL, tex));
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 		if (NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE)){
 			// Handle Base/Detail ???
 			if (Texmap* tex = CreateTexture(tex2Ref)) {
@@ -358,17 +351,17 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 			if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
 				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
 					m->SetSubTexmap(ID_DI, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
-               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
-               m->SetSubTexmap(ID_SI, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
-               m->SetSubTexmap(ID_RL, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
-               if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
-                  tex = CreateMask(NULL, tex, mask);
-               m->SetSubTexmap(ID_SP, tex);
-            }
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+					m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+					m->SetSubTexmap(ID_SI, tex);
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+					m->SetSubTexmap(ID_RL, tex);
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
+					if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
+						tex = CreateMask(NULL, tex, mask);
+					m->SetSubTexmap(ID_SP, tex);
+				}
 			}
 		}
 		if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
@@ -387,25 +380,25 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 			}
 		}
 		if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
-         if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
-               m->SetSubTexmap(ID_DI, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
-               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
-               m->SetSubTexmap(ID_SI, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
-               m->SetSubTexmap(ID_RL, tex);
-            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
-               if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
-                  tex = CreateMask(NULL, tex, mask);
-               m->SetSubTexmap(ID_SP, tex);
-            }
-         }
+			if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+					m->SetSubTexmap(ID_DI, tex);
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+					m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+					m->SetSubTexmap(ID_SI, tex);
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+					m->SetSubTexmap(ID_RL, tex);
+				if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
+					if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
+						tex = CreateMask(NULL, tex, mask);
+					m->SetSubTexmap(ID_SP, tex);
+				}
+			}
 		}
 		return m;
-   }
-   return NULL;
+	}
+	return NULL;
 }
 
 
@@ -434,190 +427,190 @@ bool NifImporter::ImportMaterialAndTextures(ImpNode *node, vector<NiTriBasedGeom
 
 bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, StdMat2 *mtl)
 {
-   if (!useNiftoolsShader || !mtl || !mtl->SupportsShaders()) 
-      return false;
+	if (!useNiftoolsShader || !mtl || !mtl->SupportsShaders()) 
+		return false;
 
-   const Class_ID civ4Shader(0x670a77d0,0x23ab5c7f);
-   const Class_ID NIFSHADER_CLASS_ID(0x566e8ccb, 0xb091bd48);
+	const Class_ID civ4Shader(0x670a77d0,0x23ab5c7f);
+	const Class_ID NIFSHADER_CLASS_ID(0x566e8ccb, 0xb091bd48);
 
-   if ((useNiftoolsShader & 1) == 0 || !mtl->SwitchShader(NIFSHADER_CLASS_ID)) {
-      if ((useNiftoolsShader & 2) == 0 || !mtl->SwitchShader(civ4Shader))
-         return false;
-   }
+	if ((useNiftoolsShader & 1) == 0 || !mtl->SwitchShader(NIFSHADER_CLASS_ID)) {
+		if ((useNiftoolsShader & 2) == 0 || !mtl->SwitchShader(civ4Shader))
+			return false;
+	}
 
-   TSTR shaderByName;
-   if (Shader *s = mtl->GetShader())
-      s->GetClassName(shaderByName);
+	TSTR shaderByName;
+	if (Shader *s = mtl->GetShader())
+		s->GetClassName(shaderByName);
 
-   Class_ID shaderID = mtl->ClassID();
-   bool isGamebryoShader = (shaderID == civ4Shader);
-   bool isCiv4Shader = isGamebryoShader && (shaderByName == TSTR("CivilizationIV Shader"));
+	Class_ID shaderID = mtl->ClassID();
+	bool isGamebryoShader = (shaderID == civ4Shader);
+	bool isCiv4Shader = isGamebryoShader && (shaderByName == TSTR("CivilizationIV Shader"));
 
-   RefTargetHandle ref = mtl->GetReference(2/*shader*/);
-   if (!ref)
-      return false;
+	RefTargetHandle ref = mtl->GetReference(2/*shader*/);
+	if (!ref)
+		return false;
 
-   vector<NiPropertyRef> props = avObject->GetProperties();
+	vector<NiPropertyRef> props = avObject->GetProperties();
 
-   if (NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props)){
-      Color ambient = TOCOLOR(matRef->GetAmbientColor());
-      Color diffuse = TOCOLOR(matRef->GetDiffuseColor());
-      Color specular = TOCOLOR(matRef->GetSpecularColor());
-      Color emittance = TOCOLOR(matRef->GetEmissiveColor());
-      float shininess = matRef->GetGlossiness();
-      float alpha = matRef->GetTransparency();
+	if (NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props)){
+		Color ambient = TOCOLOR(matRef->GetAmbientColor());
+		Color diffuse = TOCOLOR(matRef->GetDiffuseColor());
+		Color specular = TOCOLOR(matRef->GetSpecularColor());
+		Color emittance = TOCOLOR(matRef->GetEmissiveColor());
+		float shininess = matRef->GetGlossiness();
+		float alpha = matRef->GetTransparency();
 
-		if ( IsFallout3() ) {
+		if ( IsFallout3() || IsSkyrim()) {
 			ambient = diffuse = Color(0.588f, 0.588f, 0.588f);
 			//specular = Color(0.902f, 0.902f, 0.902f);
 		}
 
-      mtl->SetShinStr(0.0,0);
-      mtl->SetShininess(shininess/100.0,0);
-      mtl->SetOpacity(alpha*100.0f,0);
+		mtl->SetShinStr(0.0,0);
+		mtl->SetShininess(shininess/100.0,0);
+		mtl->SetOpacity(alpha*100.0f,0);
 
-      setMAXScriptValue(ref, "ambient", 0, ambient );
-      setMAXScriptValue(ref, "diffuse", 0, diffuse );
-      setMAXScriptValue(ref, "specular", 0, specular );
-      setMAXScriptValue(ref, "emittance", 0, emittance );
-      setMAXScriptValue(ref, "shininess", 0, shininess );
-      setMAXScriptValue(ref, "alpha", 0, alpha );
-   }
-   if (NiShadePropertyRef shadeRef = SelectFirstObjectOfType<NiShadeProperty>(props)) {
-      if (shadeRef->GetFlags() & 1){
-         mtl->SetFaceted(TRUE);
-      }
-   }
-   if (NiWireframePropertyRef wireRef = SelectFirstObjectOfType<NiWireframeProperty>(props)) {
-      if (wireRef->GetFlags() & 1){
-         mtl->SetWire(TRUE);
-      }
-   }
-   if (NiStencilPropertyRef stencilRef = SelectFirstObjectOfType<NiStencilProperty>(props)) {
-      mtl->SetTwoSided(TRUE);
-   }
-   bool Dither = false;
-   bool SpecularEnable = false;
-   if (NiDitherPropertyRef ditherRef = SelectFirstObjectOfType<NiDitherProperty>(props)) {
-      Dither = (ditherRef->GetFlags() & 1) ? true : false;
-   }
-   if (NiSpecularPropertyRef specRef = SelectFirstObjectOfType<NiSpecularProperty>(props)) {
-      SpecularEnable = (specRef->GetFlags() & 1) ? true : false;
-   }
-   setMAXScriptValue(ref, "Dither", 0, Dither );
-   setMAXScriptValue(ref, "SpecularEnable", 0, SpecularEnable);
+		setMAXScriptValue(ref, "ambient", 0, ambient );
+		setMAXScriptValue(ref, "diffuse", 0, diffuse );
+		setMAXScriptValue(ref, "specular", 0, specular );
+		setMAXScriptValue(ref, "emittance", 0, emittance );
+		setMAXScriptValue(ref, "shininess", 0, shininess );
+		setMAXScriptValue(ref, "alpha", 0, alpha );
+	}
+	if (NiShadePropertyRef shadeRef = SelectFirstObjectOfType<NiShadeProperty>(props)) {
+		if (shadeRef->GetFlags() & 1){
+			mtl->SetFaceted(TRUE);
+		}
+	}
+	if (NiWireframePropertyRef wireRef = SelectFirstObjectOfType<NiWireframeProperty>(props)) {
+		if (wireRef->GetFlags() & 1){
+			mtl->SetWire(TRUE);
+		}
+	}
+	if (NiStencilPropertyRef stencilRef = SelectFirstObjectOfType<NiStencilProperty>(props)) {
+		mtl->SetTwoSided(TRUE);
+	}
+	bool Dither = false;
+	bool SpecularEnable = false;
+	if (NiDitherPropertyRef ditherRef = SelectFirstObjectOfType<NiDitherProperty>(props)) {
+		Dither = (ditherRef->GetFlags() & 1) ? true : false;
+	}
+	if (NiSpecularPropertyRef specRef = SelectFirstObjectOfType<NiSpecularProperty>(props)) {
+		SpecularEnable = (specRef->GetFlags() & 1) ? true : false;
+	}
+	setMAXScriptValue(ref, "Dither", 0, Dither );
+	setMAXScriptValue(ref, "SpecularEnable", 0, SpecularEnable);
 
-   if (NiVertexColorPropertyRef vertexColor = SelectFirstObjectOfType<NiVertexColorProperty>(props)) {
-      int SrcVertexMode = vertexColor->GetVertexMode();
-      int LightingMode = vertexColor->GetLightingMode();
-      bool VertexColorsEnable = true;
-      setMAXScriptValue(ref, "Vertex_Color_Enable", 0, VertexColorsEnable);
-      setMAXScriptValue(ref, "VertexColorsEnable", 0, VertexColorsEnable);
-      setMAXScriptValue(ref, "SourceVertexMode", 0, SrcVertexMode);
-      setMAXScriptValue(ref, "SrcVertexMode", 0, SrcVertexMode);
-      setMAXScriptValue(ref, "LightingMode", 0, LightingMode);
-   } else {
-      bool VertexColorsEnable = false;
-      setMAXScriptValue(ref, "Vertex_Color_Enable", 0, VertexColorsEnable);
-      setMAXScriptValue(ref, "VertexColorsEnable", 0, VertexColorsEnable);
-   }
-   if (NiAlphaPropertyRef alphaRef = SelectFirstObjectOfType<NiAlphaProperty>(props)) {
-      int TestRef = alphaRef->GetTestThreshold();
-      int srcBlend = alphaRef->GetSourceBlendFunc(); 
-      int destBlend = alphaRef->GetDestBlendFunc ();
-      int TestMode = alphaRef->GetTestFunc();
-      bool AlphaTestEnable = alphaRef->GetTestState();     
-      bool NoSorter = alphaRef->GetTriangleSortMode();
-      bool alphaBlend = alphaRef->GetBlendState();
-      int alphaMode = 1;
+	if (NiVertexColorPropertyRef vertexColor = SelectFirstObjectOfType<NiVertexColorProperty>(props)) {
+		int SrcVertexMode = vertexColor->GetVertexMode();
+		int LightingMode = vertexColor->GetLightingMode();
+		bool VertexColorsEnable = true;
+		setMAXScriptValue(ref, "Vertex_Color_Enable", 0, VertexColorsEnable);
+		setMAXScriptValue(ref, "VertexColorsEnable", 0, VertexColorsEnable);
+		setMAXScriptValue(ref, "SourceVertexMode", 0, SrcVertexMode);
+		setMAXScriptValue(ref, "SrcVertexMode", 0, SrcVertexMode);
+		setMAXScriptValue(ref, "LightingMode", 0, LightingMode);
+	} else {
+		bool VertexColorsEnable = false;
+		setMAXScriptValue(ref, "Vertex_Color_Enable", 0, VertexColorsEnable);
+		setMAXScriptValue(ref, "VertexColorsEnable", 0, VertexColorsEnable);
+	}
+	if (NiAlphaPropertyRef alphaRef = SelectFirstObjectOfType<NiAlphaProperty>(props)) {
+		int TestRef = alphaRef->GetTestThreshold();
+		int srcBlend = alphaRef->GetSourceBlendFunc(); 
+		int destBlend = alphaRef->GetDestBlendFunc ();
+		int TestMode = alphaRef->GetTestFunc();
+		bool AlphaTestEnable = alphaRef->GetTestState();     
+		bool NoSorter = alphaRef->GetTriangleSortMode();
+		bool alphaBlend = alphaRef->GetBlendState();
+		int alphaMode = 1;
 
-      if (!alphaBlend) {
-         alphaMode = 1; // none
-      } else if (srcBlend == NiAlphaProperty::BF_SRC_ALPHA && destBlend == NiAlphaProperty::BF_ONE_MINUS_SRC_ALPHA) {
-         alphaMode = 0; // standard or automatic?
-      } else if (srcBlend == NiAlphaProperty::BF_ONE && destBlend == NiAlphaProperty::BF_ONE) {
-         alphaMode = 3;
-      } else if (srcBlend == NiAlphaProperty::BF_ZERO && destBlend == NiAlphaProperty::BF_SRC_COLOR) {
-         alphaMode = 4;
-      } else {
-         alphaMode = 5;
-      }
-      setMAXScriptValue(ref, "AlphaTestEnable", 0, AlphaTestEnable );
-      setMAXScriptValue(ref, "alphaMode", 0, alphaMode);
-      setMAXScriptValue(ref, "srcBlend", 0, srcBlend);
-      setMAXScriptValue(ref, "destBlend", 0, destBlend);
-      setMAXScriptValue(ref, "NoSorter", 0, NoSorter);
-      setMAXScriptValue(ref, "TestRef", 0, TestRef );
-      setMAXScriptValue(ref, "TestMode", 0, TestMode );
-   }
-   if (NiTexturingPropertyRef texRef = SelectFirstObjectOfType<NiTexturingProperty>(props)) {
-      Matrix22 m2 = texRef->GetBumpMapMatrix();
-      float Magnitude = (m2[0][0] + m2[1][1]) / 2.0f;
-      float LumaScale = texRef->GetLumaScale();
-      float LumaOffset = texRef->GetLumaOffset();
-      int ApplyMode = texRef->GetApplyMode();
+		if (!alphaBlend) {
+			alphaMode = 1; // none
+		} else if (srcBlend == NiAlphaProperty::BF_SRC_ALPHA && destBlend == NiAlphaProperty::BF_ONE_MINUS_SRC_ALPHA) {
+			alphaMode = 0; // standard or automatic?
+		} else if (srcBlend == NiAlphaProperty::BF_ONE && destBlend == NiAlphaProperty::BF_ONE) {
+			alphaMode = 3;
+		} else if (srcBlend == NiAlphaProperty::BF_ZERO && destBlend == NiAlphaProperty::BF_SRC_COLOR) {
+			alphaMode = 4;
+		} else {
+			alphaMode = 5;
+		}
+		setMAXScriptValue(ref, "AlphaTestEnable", 0, AlphaTestEnable );
+		setMAXScriptValue(ref, "alphaMode", 0, alphaMode);
+		setMAXScriptValue(ref, "srcBlend", 0, srcBlend);
+		setMAXScriptValue(ref, "destBlend", 0, destBlend);
+		setMAXScriptValue(ref, "NoSorter", 0, NoSorter);
+		setMAXScriptValue(ref, "TestRef", 0, TestRef );
+		setMAXScriptValue(ref, "TestMode", 0, TestMode );
+	}
+	if (NiTexturingPropertyRef texRef = SelectFirstObjectOfType<NiTexturingProperty>(props)) {
+		Matrix22 m2 = texRef->GetBumpMapMatrix();
+		float Magnitude = (m2[0][0] + m2[1][1]) / 2.0f;
+		float LumaScale = texRef->GetLumaScale();
+		float LumaOffset = texRef->GetLumaOffset();
+		int ApplyMode = texRef->GetApplyMode();
 
-      setMAXScriptValue(ref, "Bump_Map_Magnitude", 0, Magnitude);
-      setMAXScriptValue(ref, "Bump_Map_Luma_Scale", 0, LumaScale);
-      setMAXScriptValue(ref, "Bump_Map_Luma_offset", 0, LumaOffset);
-      setMAXScriptValue(ref, "ApplyMode", 0, ApplyMode);
+		setMAXScriptValue(ref, "Bump_Map_Magnitude", 0, Magnitude);
+		setMAXScriptValue(ref, "Bump_Map_Luma_Scale", 0, LumaScale);
+		setMAXScriptValue(ref, "Bump_Map_Luma_offset", 0, LumaOffset);
+		setMAXScriptValue(ref, "ApplyMode", 0, ApplyMode);
 
-      int ntex = mtl->NumSubTexmaps();
-      if (ntex > 0)
-      {
-         for (int i = 0; i < ntex; ++i) {
+		int ntex = mtl->NumSubTexmaps();
+		if (ntex > 0)
+		{
+			for (int i = 0; i < ntex; ++i) {
 
-            TexType textype = (TexType)i;
-            if ( isCiv4Shader ) {
-               const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
-               textype = civmap[i];
-            } else if (isGamebryoShader) {
-               const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, NORMAL_MAP, UNKNOWN2_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
-               textype = civmap[i];
-            }
-            if ( nifVersion <= 0x14010003) {
-               if (textype > C_NORMAL)
-                  textype = (TexType)(i + 2);
-            }
-            if (texRef->HasTexture(textype)){
-               if (Texmap* tex = CreateTexture(texRef->GetTexture(textype))) {
-                  mtl->SetSubTexmap(i, tex);
-               }
-            }
-         }
-      }
-      // Custom Shader Handling
-      int nTex = texRef->GetShaderTextureCount();
-      if (nTex > 0) {
-         NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
-         if (trigeom->HasShader()) {
-            list<NiExtraDataRef> data = avObject->GetExtraData();
-            for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
-               if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
-                  string name = idx->GetName();
-                  if ( wildmatch("*Index", name) ) {
-                     int shader = idx->GetData();
-                     if (shader < nTex) {
-                        if ( name == "NormalMapIndex" ) {
-                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                              mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
-                        } else if ( name == "SpecularIntensityIndex" ) {
-                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                              mtl->SetSubTexmap(C_GLOSS, tex);
-                        } else if ( name == "EnvironmentMapIndex" ) {
-                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                              mtl->SetSubTexmap(C_ENVMASK, tex);
-                        } else if ( name == "EnvironmentIntensityIndex" ) {
-                           if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
-                              mtl->SetSubTexmap(C_ENV, tex);
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-   }
+				TexType textype = (TexType)i;
+				if ( isCiv4Shader ) {
+					const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+					textype = civmap[i];
+				} else if (isGamebryoShader) {
+					const TexType civmap[] = {BASE_MAP, DARK_MAP, DETAIL_MAP, DECAL_0_MAP, NORMAL_MAP, UNKNOWN2_MAP, BUMP_MAP, GLOSS_MAP, GLOW_MAP, DECAL_1_MAP, DECAL_2_MAP, DECAL_3_MAP};
+					textype = civmap[i];
+				}
+				if ( nifVersion <= 0x14010003) {
+					if (textype > C_NORMAL)
+						textype = (TexType)(i + 2);
+				}
+				if (texRef->HasTexture(textype)){
+					if (Texmap* tex = CreateTexture(texRef->GetTexture(textype))) {
+						mtl->SetSubTexmap(i, tex);
+					}
+				}
+			}
+		}
+		// Custom Shader Handling
+		int nTex = texRef->GetShaderTextureCount();
+		if (nTex > 0) {
+			NiGeometryRef trigeom = DynamicCast<NiGeometry>(avObject);
+			if (trigeom->HasShader()) {
+				list<NiExtraDataRef> data = avObject->GetExtraData();
+				for (list<NiExtraDataRef>::iterator itr = data.begin(); itr != data.end(); ++itr) {
+					if ( NiIntegerExtraDataRef idx = DynamicCast<NiIntegerExtraData>(*itr) ) {
+						string name = idx->GetName();
+						if ( wildmatch("*Index", name) ) {
+							int shader = idx->GetData();
+							if (shader < nTex) {
+								if ( name == "NormalMapIndex" ) {
+									if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+										mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
+								} else if ( name == "SpecularIntensityIndex" ) {
+									if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+										mtl->SetSubTexmap(C_GLOSS, tex);
+								} else if ( name == "EnvironmentMapIndex" ) {
+									if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+										mtl->SetSubTexmap(C_ENVMASK, tex);
+								} else if ( name == "EnvironmentIntensityIndex" ) {
+									if (Texmap* tex = CreateTexture(texRef->GetShaderTexture(shader)))
+										mtl->SetSubTexmap(C_ENV, tex);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	if (NiTexturePropertyRef tex2Ref = avObject->GetPropertyByType(NiTextureProperty::TYPE)){
 		// Handle Base/Detail ???
 		if (Texmap* tex = CreateTexture(tex2Ref)) {
@@ -630,23 +623,23 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
 		}
 		setMAXScriptValue(ref, "CustomShader", 0, TSTR(noLightShadeRef->GetType().GetTypeName().c_str()));
 	}
-   if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
-      if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
-            mtl->SetSubTexmap(C_BASE, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
-            mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(2) ) )
-            mtl->SetSubTexmap(C_ENVMASK, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
-            mtl->SetSubTexmap(C_GLOW, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
-            mtl->SetSubTexmap(C_HEIGHT, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
-            mtl->SetSubTexmap(C_ENV, tex);
-      }
-	  setMAXScriptValue(ref, "CustomShader", 0, TSTR(ppLightShadeRef->GetType().GetTypeName().c_str()));
-   }
+	if (BSShaderPPLightingPropertyRef ppLightShadeRef = SelectFirstObjectOfType<BSShaderPPLightingProperty>(props)) {
+		if ( BSShaderTextureSetRef textures = ppLightShadeRef->GetTextureSet() ) {
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+				mtl->SetSubTexmap(C_BASE, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+				mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(2) ) )
+				mtl->SetSubTexmap(C_ENVMASK, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+				mtl->SetSubTexmap(C_GLOW, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+				mtl->SetSubTexmap(C_HEIGHT, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
+				mtl->SetSubTexmap(C_ENV, tex);
+		}
+		setMAXScriptValue(ref, "CustomShader", 0, TSTR(ppLightShadeRef->GetType().GetTypeName().c_str()));
+	}
 	if (SkyShaderPropertyRef skyShadeRef = SelectFirstObjectOfType<SkyShaderProperty>(props)) {
 		if ( Texmap* tex = CreateTexture( skyShadeRef->GetFileName() ) ) {
 			mtl->SetSubTexmap(ID_DI, tex);
@@ -667,24 +660,24 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
 	}
 	if (Lighting30ShaderPropertyRef lighting30ShadeRef = SelectFirstObjectOfType<Lighting30ShaderProperty>(props)) {
 		if ( BSShaderTextureSetRef textures = lighting30ShadeRef->GetTextureSet() ) {
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
-            mtl->SetSubTexmap(C_BASE, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
-            mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(2) ) )
-            mtl->SetSubTexmap(C_ENVMASK, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
-            mtl->SetSubTexmap(C_GLOW, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
-            mtl->SetSubTexmap(C_HEIGHT, tex);
-         if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
-            mtl->SetSubTexmap(C_ENV, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+				mtl->SetSubTexmap(C_BASE, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+				mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(2) ) )
+				mtl->SetSubTexmap(C_ENVMASK, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+				mtl->SetSubTexmap(C_GLOW, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+				mtl->SetSubTexmap(C_HEIGHT, tex);
+			if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) )
+				mtl->SetSubTexmap(C_ENV, tex);
 		}
 		setMAXScriptValue(ref, "CustomShader", 0, TSTR(lighting30ShadeRef->GetType().GetTypeName().c_str()));
 	}
 
 
-   return true;
+	return true;
 }
 
 

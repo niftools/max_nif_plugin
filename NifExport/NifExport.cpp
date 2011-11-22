@@ -499,7 +499,7 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 	Ref<NiNode> root = DynamicCast<NiNode>(Niflib::ObjectRegistry::CreateObject(Exporter::mRootType));
 	if (root == NULL)
 		root = new NiNode();
-	if ( exp.IsFallout3() )
+	if ( exp.IsFallout3() || exp.IsSkyrim() )
 		root->SetFlags(14);
 
 	Exporter::Result result = exp.doExport(root, i->GetRootNode());

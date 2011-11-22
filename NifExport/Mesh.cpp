@@ -358,7 +358,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
       data = new NiTriShapeData(grp.faces);
 	}
 
-   if ( IsFallout3() )
+   if ( IsFallout3() || IsSkyrim() )
       shape->SetFlags( 14 );
 
    data->SetVertices(grp.verts);
@@ -367,7 +367,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    data->SetUVSetMap(grp.uvMapping);
 
    int nUVs = grp.uvs.size();
-   if ( IsFallout3() )
+   if ( IsFallout3() || IsSkyrim() )
       nUVs = min(1, nUVs);
    data->SetUVSetCount(nUVs);
    for (int i =0;i<nUVs; ++i) {
@@ -724,7 +724,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
    }
 
    // Check for dismemberment
-   if (IsFallout3()) {
+   if (IsFallout3() || IsSkyrim()) {
       Modifier *dismemberSkinMod = GetBSDismemberSkin(node);
       if (dismemberSkinMod)
       {
@@ -864,7 +864,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			InitializeTimeController(new NiTransformController(), newParent);
 
 		bool isBoneRoot = false;
-		if (IsOblivion() || IsFallout3())
+		if (IsOblivion() || IsFallout3() || IsSkyrim())
 		{
 			// Check for Bone Root
 			TSTR upb;
@@ -963,7 +963,7 @@ NiNodeRef Exporter::exportBone(NiNodeRef parent, INode *node)
 			NiNodeRef accumNode = createAccumNode(newParent, node);
 
 			// Transfer collision object to accum and create blend on accum
-			if (IsOblivion() || IsFallout3()) {
+			if (IsOblivion() || IsFallout3() || IsSkyrim()) {
 				InitializeTimeController(new bhkBlendController(), accumNode);
 				accumNode->SetCollisionObject(newParent->GetCollisionObject());
 				newParent->SetCollisionObject( NiCollisionObjectRef() );

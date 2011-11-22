@@ -336,6 +336,7 @@ public:
 	bool IsFallout3() const;
 	bool IsOblivion() const;
 	bool IsMorrowind() const;
+	bool IsSkyrim() const;
 
    /* Progress Bar stuff */
    enum ProgressSection

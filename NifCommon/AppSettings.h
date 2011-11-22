@@ -52,6 +52,7 @@ public:
    stringlist rotate90Degrees;
    bool supportPrnStrings;
    bool doNotReuseExistingBones;
+   string skeletonCheck;
 
    static void Initialize(Interface *gi);
    void ReadSettings(std::string iniFile);

@@ -167,7 +167,7 @@ NiNodeRef Exporter::getNode(const string& name)
    if (itr != mNameMap.end())
       return (*itr).second;
    NiNodeRef node = CreateNiObject<NiNode>();
-   if ( IsFallout3() ) {
+   if ( IsFallout3() || IsSkyrim() ) {
       node->SetFlags( 14 );
    }
    node->SetName(name);

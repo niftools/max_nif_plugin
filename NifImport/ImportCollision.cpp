@@ -565,7 +565,7 @@ bool CollisionImport::ImportPackedNiTriStripsShape(INode *rbody, bhkRigidBodyRef
 		vector<Triangle> tris = data->GetTriangles();
 		vector<Vector3> norms = data->GetNormals();
 
-		vector<Niflib::OblivionSubShape> subshapes = (ni.IsFallout3()) ? shape->GetSubShapes() : data->GetSubShapes();
+		vector<Niflib::OblivionSubShape> subshapes = (ni.IsFallout3() || ni.IsSkyrim()) ? shape->GetSubShapes() : data->GetSubShapes();
 		if (subshapes.size() == 0)
 		{
 			// Is this possible?

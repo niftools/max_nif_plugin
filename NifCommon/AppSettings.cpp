@@ -68,6 +68,8 @@ void AppSettings::ReadSettings(string iniFile)
    rotate90Degrees = TokenizeString(GetSetting<string>("Rotate90Degrees").c_str(), ";");
    supportPrnStrings = GetSetting<bool>("SupportPrnStrings", supportPrnStrings);
    doNotReuseExistingBones = GetSetting<bool>("DoNotReuseExistingBones", doNotReuseExistingBones);
+
+   skeletonCheck = GetSetting<string>("SkeletonCheck");
 }
 
 void AppSettings::WriteSettings(Interface *gi)

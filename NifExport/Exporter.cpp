@@ -99,7 +99,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 
 	if (!Exporter::mSelectedOnly)
 	{
-		if (IsOblivion() || IsFallout3())
+		if (IsOblivion() || IsFallout3() || IsSkyrim())
 		{
 			if (mSkeletonOnly)
 			{
@@ -127,7 +127,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 			{
 				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 				bsx->SetName("BSX");
-				bsx->SetData( IsFallout3() ? 202 : 2 );
+				bsx->SetData( IsSkyrim() ? 198 : IsFallout3() ? 202 : 2 );
 				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
 			}
 		}
@@ -374,6 +374,10 @@ void Exporter::ProgressUpdate(ProgressSection section, const TCHAR *s)
    mI->ProgressUpdate( (percent * 100) / total , s == NULL ? TRUE : FALSE,  const_cast<TCHAR*>(s));
 }
 
+
+bool Exporter::IsSkyrim() const {
+	return (mNifVersionInt == 0x14020007 && mNifUserVersion == 12);
+}
 bool Exporter::IsFallout3() const {
 	return (mNifVersionInt == 0x14020007 && mNifUserVersion == 11);
 }

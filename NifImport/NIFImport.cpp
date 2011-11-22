@@ -233,6 +233,9 @@ void NifImporter::ApplyAppSettings()
       supportPrnStrings = appSettings->supportPrnStrings;
 
 	  doNotReuseExistingBones = appSettings->doNotReuseExistingBones;
+
+	  if (!appSettings->skeletonCheck.empty())
+		skeletonCheck = appSettings->skeletonCheck;
    }
 }
 
@@ -394,7 +397,9 @@ bool NifImporter::DoImport()
    ImportAnimation();
    return true;
 }
-
+bool NifImporter::IsSkyrim() const {
+	return (nifVersion == 0x14020007 && userVersion == 12);
+}
 bool NifImporter::IsFallout3() const {
 	return (nifVersion == 0x14020007 && userVersion == 11);
 }
