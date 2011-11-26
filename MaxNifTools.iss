@@ -27,25 +27,25 @@ OutputDir=.\Output
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
+Name: "max14"; Description: "3ds Max 2012 (Win32)"; Types: custom;
+Name: "max14x64"; Description: "3ds Max 2012 (x64)"; Types: custom;
+Name: "max13"; Description: "3ds Max 2011 (Win32)"; Types: custom;
+Name: "max13x64"; Description: "3ds Max 2011 (x64)"; Types: custom;
+Name: "max12"; Description: "3ds Max 2010 (Win32)"; Types: custom;
+Name: "max12x64"; Description: "3ds Max 2010 (x64)"; Types: custom;
+Name: "max11"; Description: "3ds Max 2009 (Win32)"; Types: custom;
+Name: "max11x64"; Description: "3ds Max 2009 (x64)"; Types: custom;
+Name: "max10"; Description: "3ds Max 2008 (Win32)"; Types: custom;
+Name: "max10x64"; Description: "3ds Max 2008 (x64)"; Types: custom;
+Name: "max9"; Description: "3ds Max 9 (Win32)"; Types: custom;
+Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
+Name: "max8"; Description: "3ds Max 8"; Types: custom;
+Name: "max7"; Description: "3ds Max 7"; Types: custom;
+Name: "max6"; Description: "3ds Max 6"; Types: custom;
+Name: "max5"; Description: "3ds Max 5"; Types: custom;
 Name: "gmax12"; Description: "gmax 1.2"; Types: custom;
 ;Name: "max4"; Description: "3ds Max 4"; Types: custom;
 ;Name: "max42"; Description: "3ds Max 4.2"; Types: custom;
-Name: "max5"; Description: "3ds Max 5"; Types: custom;
-Name: "max6"; Description: "3ds Max 6"; Types: custom;
-Name: "max7"; Description: "3ds Max 7"; Types: custom;
-Name: "max8"; Description: "3ds Max 8"; Types: custom;
-Name: "max9"; Description: "3ds Max 9 (Win32)"; Types: custom;
-Name: "max9x64"; Description: "3ds Max 9 (x64)"; Types: custom;
-Name: "max10"; Description: "3ds Max 2008 (Win32)"; Types: custom;
-Name: "max10x64"; Description: "3ds Max 2008 (x64)"; Types: custom;
-Name: "max11"; Description: "3ds Max 2009 (Win32)"; Types: custom;
-Name: "max11x64"; Description: "3ds Max 2009 (x64)"; Types: custom;
-Name: "max12"; Description: "3ds Max 2010 (Win32)"; Types: custom;
-Name: "max12x64"; Description: "3ds Max 2010 (x64)"; Types: custom;
-Name: "max13"; Description: "3ds Max 2011 (Win32)"; Types: custom;
-Name: "max13x64"; Description: "3ds Max 2011 (x64)"; Types: custom;
-Name: "max14"; Description: "3ds Max 2012 (Win32)"; Types: custom;
-Name: "max14x64"; Description: "3ds Max 2012 (x64)"; Types: custom;
 ;Name: "src"; Description: "Program Source";
 
 [Files]

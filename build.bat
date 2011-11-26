@@ -1,4 +1,4 @@
-@echo off
+@echo on
 
 IF EXIST "setbuildenv.bat" call setbuildenv.bat
 
@@ -21,7 +21,6 @@ if "%MAXINSTALLPATH90%"   == "" set MAXINSTALLPATH90=%Program_32%\AutoDesk\3ds M
 if "%MAXINSTALLPATH2008%" == "" set MAXINSTALLPATH2008=%Program_32%\AutoDesk\3ds Max 2008
 if "%MAXINSTALLPATH2009%" == "" set MAXINSTALLPATH2009=%Program_32%\AutoDesk\3ds Max 2009
 if "%MAXINSTALLPATH2010%" == "" set MAXINSTALLPATH2010=%Program_32%\AutoDesk\3ds Max 2010
-if "%3DSMAX_2011_SDK_PATH%" == "" set MAXINSTALLPATH2011=%3DSMAX_2011_SDK_PATH%
 if "%MAXINSTALLPATH2011%" == "" set MAXINSTALLPATH2011=%Program_32%\AutoDesk\Autodesk 3ds Max 2011 SDK
 if "%ADSK_3DSMAX_SDK_2012%" == "" set MAXINSTALLPATH2012=%ADSK_3DSMAX_SDK_2012%
 if "%MAXINSTALLPATH2012%" == "" set MAXINSTALLPATH2012=%Program_32%\AutoDesk\3ds Max 2012 SDK
