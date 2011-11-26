@@ -116,7 +116,7 @@ Exporter::Result Exporter::doExport(NiNodeRef &root, INode *node)
 				bsx->SetData( 0x00000007 );
 				root->AddExtraData(DynamicCast<NiExtraData>(bsx));
 			}
-			else if (mExportType != NIF_WO_ANIM)
+			else if ( (mExportType != NIF_WO_ANIM) && !IsSkyrim() )
 			{
 				BSXFlagsRef bsx = CreateNiObject<BSXFlags>();
 				bsx->SetName("BSX");

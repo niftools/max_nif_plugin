@@ -7,6 +7,8 @@ NifTools MaxPlugin
     o All
       - Recompiled with Skyrim modified niflib
       - Add 3ds max 2011, 2012 support
+      - Add Skyrim special cases
+      - Fix usage of tangentspace flags
       
       3.6
     o Unreleased build

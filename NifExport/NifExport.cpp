@@ -537,19 +537,24 @@ int NifExport::DoExportInternal(const TCHAR *name, ExpInterface *ei, Interface *
 
    if ( Exporter::mStartNifskopeAfterStart )
    {
-      string nifskope = Exporter::mNifskopeDir + "\\Nifskope.exe";
-      if (_access(nifskope.c_str(), 04) != -1) {
-         char buffer[260*2];
-         sprintf(buffer, "\"%s\" \"%s\"", nifskope.c_str(), path);
-         STARTUPINFO si; PROCESS_INFORMATION pi;
-         memset(&si, 0, sizeof(si)); memset(&pi, 0, sizeof(pi));
-         si.cb = sizeof(si);
-         si.dwFlags = STARTF_USESHOWWINDOW;
-         si.wShowWindow = SW_SHOWNORMAL;        
-         if ( CreateProcess(NULL, buffer, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, Exporter::mNifskopeDir.c_str(), &si, &pi) )
-            CloseHandle( pi.hThread ), CloseHandle( pi.hProcess );
-      }
-
+	   //string nifskope = Exporter::mNifskopeDir + "\\Nifskope.exe";
+	   //if (_access(nifskope.c_str(), 04) != -1) {
+	   //   char buffer[260*2];
+	   //   sprintf(buffer, "\"%s\" \"%s\"", nifskope.c_str(), path);
+	   //   STARTUPINFO si; PROCESS_INFORMATION pi;
+	   //   memset(&si, 0, sizeof(si)); memset(&pi, 0, sizeof(pi));
+	   //   si.cb = sizeof(si);
+	   //   si.dwFlags = STARTF_USESHOWWINDOW;
+	   //   si.wShowWindow = SW_SHOWNORMAL;        
+	   //   if ( CreateProcess(NULL, buffer, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, Exporter::mNifskopeDir.c_str(), &si, &pi) )
+	   //      CloseHandle( pi.hThread ), CloseHandle( pi.hProcess );
+	   //}
+	   string nifskope = Exporter::mNifskopeDir;
+	   string::size_type idx = nifskope.find("%1");
+	   if (idx != string::npos) {
+		   nifskope.replace(idx, 2, path);
+		   WinExec(nifskope.c_str(), SW_SHOWNORMAL);
+	   }
    }
    return true;
 }
