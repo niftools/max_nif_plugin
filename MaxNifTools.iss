@@ -185,6 +185,20 @@ begin
   Result := True;
 end;
 
+function RegSoftware32(value: Boolean): String;
+begin
+  if ( IsWin64() ) then begin
+      Result := 'SOFTWARE\Wow6432Node\';
+  end else begin
+      Result := 'SOFTWARE\';
+  end;
+end;
+
+function RegSoftware64(value: Boolean): String;
+begin
+  Result := 'SOFTWARE\';
+end;
+
 function GetOptionString(value: Boolean): String;
 begin
   if value then begin
@@ -414,31 +428,31 @@ begin
   Result := '';
   case Param of
     'gmax12':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\gmax', 'uninstallpath', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\gmax', 'uninstallpath', Result) then
           Result := ExpandConstant('{sd}{\}gmax12');
     'max4':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax4');
     'max42':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax42');
     'max5':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 5', 'uninstallpath', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 5', 'uninstallpath', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax5');
     'max6':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\6.0', 'InstallDir', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\6.0', 'InstallDir', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax6');
     'max7':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\7.0', 'InstallDir', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\7.0', 'InstallDir', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax7');
     'max8':
-        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\8.0', 'InstallDir', Result) then
+        if not RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\8.0', 'InstallDir', Result) then
           Result := ExpandConstant('{sd}{\}3dsmax8');
     'max9': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -448,9 +462,9 @@ begin
         end;
     'max9x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\9.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -459,9 +473,9 @@ begin
         end;
     'max10': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -471,9 +485,9 @@ begin
         end;
     'max10x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\10.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -482,9 +496,9 @@ begin
         end;
     'max11': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -494,9 +508,9 @@ begin
         end;
     'max11x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\11.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -505,9 +519,9 @@ begin
         end;
     'max12': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -517,9 +531,9 @@ begin
         end;
     'max12x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\12.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -528,9 +542,9 @@ begin
         end;
     'max13': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -540,9 +554,9 @@ begin
         end;
     'max13x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\13.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -551,9 +565,9 @@ begin
         end;
     'max14': 
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0\' + Names[I], 'Installdir', Result) then begin
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0\' + Names[I], 'Installdir', Result) then begin
                 break;
               end;
             end;
@@ -563,9 +577,9 @@ begin
         end;
     'max14x64':
         begin
-          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0', Names) then begin
+          if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\14.0', Names) then begin
             for I := 0 to GetArrayLength(Names)-1 do begin
-              if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
+              if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware64() + 'Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
                 break;              
             end;
           end;
@@ -585,100 +599,100 @@ begin
   Result := '';
   case Param of
     'gmax 1.2':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\gmax', 'uninstallpath', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\gmax', 'uninstallpath', Result);
     '3ds Max 4':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result);
     '3ds Max 4.2':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 4', 'uninstallpath', Result);
     '3ds Max 5':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\3ds max 5', 'uninstallpath', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Microsoft\Windows\CurrentVersion\Uninstall\3ds max 5', 'uninstallpath', Result);
     '3ds Max 6':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\6.0', 'InstallDir', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\6.0', 'InstallDir', Result);
     '3ds Max 7':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\7.0', 'InstallDir', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\7.0', 'InstallDir', Result);
     '3ds Max 8':
-        RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\8.0', 'InstallDir', Result);
+        RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\8.0', 'InstallDir', Result);
     '3ds Max 9 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 9 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\9.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2008 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2008 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\10.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2009 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2009 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\11.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2010 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2010 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\12.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2011 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2011 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\13.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2012 (Win32)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
     '3ds Max 2012 (x64)':
-        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0', Names) then begin
+        if RegGetSubkeyNames(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0', Names) then begin
           for I := 0 to GetArrayLength(Names)-1 do begin
-            if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
+            if RegQueryStringValue(HKEY_LOCAL_MACHINE, RegSoftware32() + 'Autodesk\3dsMax\14.0\' + Names[I], 'InstallDir', Result) then
               break;              
           end;
         end;
