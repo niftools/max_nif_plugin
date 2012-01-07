@@ -38,11 +38,14 @@ NifImporter::NifImporter()
 
 INode* NifImporter::CreateImportNode(const char *name, Object *obj, INode* parent)
 {
+#if USE_IMPORTNODE
 	ImpNode* impNode = i->CreateNode();
+	impNode->Reference(obj);
 	if (INode *n = impNode->GetINode()) {
 		n->SetName(const_cast<TCHAR*>(name));
 		n->SetObjectRef(obj);
 		i->AddNodeToScene(impNode);
+		this->RegisterNode(name, n);
 		if (parent)
 		{
 			parent->AttachChild(impNode->GetINode());
@@ -52,6 +55,21 @@ INode* NifImporter::CreateImportNode(const char *name, Object *obj, INode* paren
 		}
 	}
 	return impNode->GetINode();
+#else
+	if ( INode* n = gi->CreateObjectNode(obj) )
+	{
+		n->SetName(const_cast<TCHAR*>(name));
+		this->RegisterNode(name, n);
+		if (parent)
+		{
+			parent->AttachChild(n);
+			ASSERT(parent == n->GetParentNode());
+		}
+		return n;
+	}
+	return NULL;
+	
+#endif
 }
 
 void NifImporter::ReadBlocks()
@@ -182,6 +200,8 @@ void NifImporter::LoadIniSettings()
    ignoreRootNode = GetIniValue(NifImportSection, "IgnoreRootNode", true);
    weldVertices = GetIniValue(NifImportSection, "WeldVertices", false);
    weldVertexThresh = GetIniValue(NifImportSection, "WeldVertexThresh", 0.01f);
+   dummyBonesAsLines = GetIniValue(NifImportSection, "DummyBonesAsLines", false);
+   
 
    // Biped
    importBones = GetIniValue(BipedImportSection, "ImportBones", true);
@@ -267,7 +287,7 @@ void NifImporter::SaveIniSettings()
    SetIniValue(AnimImportSection, "AddTimeTags", addTimeTags);
    SetIniValue(NifImportSection, "WeldVertices", weldVertices);
    SetIniValue(NifImportSection, "WeldVertexThresh", weldVertexThresh);
-
+   SetIniValue(NifImportSection, "DummyBonesAsLines", dummyBonesAsLines);
 
    SetIniValue<string>(NifImportSection, "CurrentApp", autoDetect ? "AUTO" : appSettings->Name );
 }
@@ -286,7 +306,8 @@ INode* NifImporter::FindNode(Niflib::NiObjectNETRef node)
 	if (itr != nodeMap.end())
 		return (*itr).second;
 
-	return gi->GetINodeByName(node->GetName().c_str());
+	//return gi->GetINodeByName(node->GetName().c_str());
+	return GetNode(node->GetName());
 }
 
 INode *NifImporter::GetNode(Niflib::NiNodeRef node)
@@ -302,7 +323,28 @@ INode *NifImporter::GetNode(Niflib::NiObjectNETRef obj)
 			return n;
 		}
 	}
-	return gi->GetINodeByName(obj->GetName().c_str());
+	//return gi->GetINodeByName(obj->GetName().c_str());
+	return GetNode(obj->GetName());
+}
+
+void NifImporter::RegisterNode(const string& name, INode* inode){
+	nodeNameMap[name] = inode;
+}
+INode *NifImporter::GetNode(const string& name){
+	
+	NameToNodeMap::iterator itr = nodeNameMap.find(name);
+	if (itr != nodeNameMap.end())
+		return (*itr).second;
+
+	INode *node  = gi->GetINodeByName(name.c_str());
+	if (node != NULL) {
+		nodeNameMap[name] = node;
+	}
+	return node;
+}
+
+INode *NifImporter::GetNode(const TSTR& name){
+	return GetNode( string(name.data()) );
 }
 
 bool NifImporter::DoImport()
@@ -321,19 +363,26 @@ bool NifImporter::DoImport()
    if (!isBiped && importSkeleton && importBones)
    {
       if (importSkeleton && !skeleton.empty()) {
-         NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
-         if (skelImport.isValid())
+         try
          {
-            // Enable Skeleton specific items
-            skelImport.isBiped = true;
-            skelImport.importBones = true;
-            // Disable undesirable skeleton items
-            skelImport.enableCollision = false;
-            skelImport.enableAnimations = false;
-            skelImport.suppressPrompts = true;
-            skelImport.DoImport();
-            if (!skelImport.useBiped && removeUnusedImportedBones)
-               importedBones = GetNamesOfNodes(skelImport.nodes);
+            NifImporter skelImport(skeleton.c_str(), i, gi, suppressPrompts);
+            if (skelImport.isValid())
+            {
+               // Enable Skeleton specific items
+               skelImport.isBiped = true;
+               skelImport.importBones = true;
+               // Disable undesirable skeleton items
+               skelImport.enableCollision = false;
+               skelImport.enableAnimations = false;
+               skelImport.suppressPrompts = true;
+               skelImport.DoImport();
+               if (!skelImport.useBiped && removeUnusedImportedBones)
+                  importedBones = GetNamesOfNodes(skelImport.nodes);
+            }
+         }
+         catch (RuntimeError &error)
+         {
+            // ignore import errors and continue
          }
       }
    } else if (hasSkeleton && useBiped && importBones) {

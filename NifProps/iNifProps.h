@@ -25,6 +25,17 @@ enum DismemberBodyPartType {
    BP_RIGHTLEG2 = 11, /*!< Right Leg 2 */
    BP_RIGHTLEG3 = 12, /*!< Right Leg 3 */
    BP_BRAIN = 13, /*!< Brain */
+
+   BP_SKY_HEAD = 30,
+   BP_SKY_UNK1 = 31,
+   BP_SKY_TORSO1 = 32,
+   BP_SKY_HANDS1 = 33,
+   BP_SKY_HANDS2 = 34,
+   BP_SKY_UNK2 = 35,
+   BP_SKY_UNK3 = 36,
+   BP_SKY_FEET = 37,
+   BP_SKY_TORSO2 = 38,
+
    BP_SECTIONCAP_HEAD = 101, /*!< Section Cap | Head */
    BP_SECTIONCAP_HEAD2 = 102, /*!< Section Cap | Head 2 */
    BP_SECTIONCAP_LEFTARM = 103, /*!< Section Cap | Left Arm */

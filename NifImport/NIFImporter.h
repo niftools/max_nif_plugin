@@ -87,12 +87,17 @@ public:
    bool weldVertices;
    float weldVertexThresh;
 
+   bool dummyBonesAsLines;
+
    vector<Niflib::NiObjectRef> blocks;
    vector<Niflib::NiNodeRef> nodes;
    map<string,int> ctrlCount; // counter for number of controllers referencing a node
 
    typedef map<Niflib::NiObjectNETRef, INode*> NodeToNodeMap;
+   typedef map<string, INode*, ltstr> NameToNodeMap;
    NodeToNodeMap nodeMap;
+   NameToNodeMap nodeNameMap;
+
 
    NifImporter(const TCHAR *Name,ImpInterface *I,Interface *GI, BOOL SuppressPrompts);
    virtual void Initialize();
@@ -152,6 +157,11 @@ public:
 
    INode *GetNode(Niflib::NiNodeRef node);
    INode *GetNode(Niflib::NiObjectNETRef obj);
+
+   void RegisterNode(const string& name, INode* inode);
+   INode *GetNode(const string& name);
+   INode *GetNode(const TSTR& name);
+
    string GetSkeleton(AppSettings *appSettings);
 
    bool ShowDialog();

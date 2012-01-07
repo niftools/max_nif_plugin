@@ -69,7 +69,7 @@ const EnumLookupType ShaderTypes[] = {
    {-1, NULL},
 };
 
-const EnumLookupType BSShaderTypes[] = { 
+extern const EnumLookupType BSShaderTypes[] = { 
    { 0, "Default"},
    { 1, "BSShaderPPLightingProperty"},
    { 2, "BSShaderNoLightingProperty"},
@@ -81,6 +81,13 @@ const EnumLookupType BSShaderTypes[] = {
    //{ 8, "VolumetricFogShaderProperty"},
    //{ 9, "HairShaderProperty"},
    {10, "Lighting30ShaderProperty"},
+   {100, "SkyrimDefault"},
+   {101, "SkyrimEnvMap"},
+   {102, "SkyrimGlow"},
+   {103, "SkyrimSkin"},
+   {106, "SkyrimHair"},
+   {111, "SkyrimParallax"},
+   {115, "SkyrimEye"},
    {-1, NULL},
 };
 
@@ -109,7 +116,8 @@ static const TexChannel texChannelNames[STD2_NMAX_TEXMAPS] = {
    {IDS_CHAN_HEIGHT,    IDS_CHAN_HEIGHT,           MONO_CHANNEL   },
    {IDS_CHAN_REFLECTION,IDS_CHAN_REFLECTION,       REFL_CHANNEL   },
    {IDS_CHAN_OPACITY,   IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
-   {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
+   {IDS_CHAN_SPECULAR,  IDS_CHAN_SPECULAR,         CLR_CHANNEL   },
+   {IDS_CHAN_PARALLAX,  IDS_CHAN_PARALLAX,         MONO_CHANNEL   },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
    {IDS_CHAN_EMPTY,     IDS_MAXCHAN_EMPTY,         UNSUPPORTED_CHANNEL },
@@ -137,6 +145,8 @@ enum
    C_HEIGHT,
    C_REFLECTION,
    C_OPACITY,
+   C_SPECULAR,
+   C_PARALLAX,
    C_MAX_SUPPORTED,
 };
 
@@ -148,14 +158,14 @@ static const int nifShaderStdIDToChannel[N_ID_CHANNELS] = {
    C_BASE,     // 1 - diffuse           
    C_DARK,     // 2 - specular
    C_GLOSS,    // 3 - Glossiness (Shininess in 3ds Max release 2.0 and earlier)
-   -1,         // 4 - Specular Level (Shininess strength in 3ds Max release 2.0 and earlier)
+   C_SPECULAR, // 4 - Specular Level (Shininess strength in 3ds Max release 2.0 and earlier)
    C_GLOW,     // 5 - self-illumination 
    C_OPACITY,  // 6 - opacity
    -1,         // 7 - filter color
    C_NORMAL,   // 8 - bump              
    C_REFLECTION,//9 - reflection        
    -1,         // 10 - refraction 
-   -1,         // 11 - displacement
+   C_HEIGHT,   // 11 - displacement
 };
 
 enum 

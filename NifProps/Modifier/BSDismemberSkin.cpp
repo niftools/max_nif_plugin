@@ -52,6 +52,17 @@ const EnumLookupType BodyPartFlags[] =
    {BP_RIGHTLEG2, "Right Leg 2"},
    {BP_RIGHTLEG3, "Right Leg 3"},
    {BP_BRAIN, "Brain"},
+
+   {BP_SKY_HEAD, "Skyrim Head"},
+   {BP_SKY_TORSO1, "Skyrim Torso 1"},
+   {BP_SKY_TORSO2, "Skyrim Torso 2"},
+   {BP_SKY_HANDS1, "Skyrim Hands 1"},
+   {BP_SKY_HANDS2, "Skyrim Hands 2"},
+   {BP_SKY_FEET, "Skyrim Feet"},
+   {BP_SKY_UNK1, "Skyrim Unk 1"},
+   {BP_SKY_UNK2, "Skyrim Unk 2"},
+   {BP_SKY_UNK3, "Skyrim Unk 3"},
+
    {BP_SECTIONCAP_HEAD, "Section Cap | Head"},
    {BP_SECTIONCAP_HEAD2, "Section Cap | Head 2"},
    {BP_SECTIONCAP_LEFTARM, "Section Cap | Left Arm"},

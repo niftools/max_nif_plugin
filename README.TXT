@@ -1,5 +1,5 @@
-                        MaxPlugins 3.7
-                        ==============
+                        MaxPlugins 3.7.2
+                        ================
 
  
     This plugin currently consists of an exporter, importer and a utility 

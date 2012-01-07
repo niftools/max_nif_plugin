@@ -198,6 +198,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 6|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -434,6 +435,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 7|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -670,6 +672,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 8|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -787,6 +790,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 5|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1378,6 +1382,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1495,6 +1500,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - gmax|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1612,6 +1618,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release - gmax|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -1729,6 +1736,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug - Max 4.2|x64"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
 			>
 			<Tool
@@ -2945,6 +2953,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				OutputFile="C:\Program Files\Autodesk\3ds Max 2012\plugins\NifPlugins.dlu"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>

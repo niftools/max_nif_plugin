@@ -9,6 +9,9 @@ NifTools MaxPlugin
       - Add 3ds max 2011, 2012 support
       - Add Skyrim special cases
       - Fix usage of tangentspace flags
+      - Update Dismember enumeration list
+      - Update Skyrim Texture export support specular map
+      - New bone import routines using dummy
       
       3.6
     o Unreleased build

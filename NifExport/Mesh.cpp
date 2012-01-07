@@ -374,6 +374,9 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	   data->SetUVSet(i, grp.uvs[i]);
    }
 
+   //if (IsSkyrim() && grp.vcolors.size() == 0)
+   //   grp.vcolors.resize(grp.verts.size(), Color4(1.0f,1.0f,1.0f,1.0f));
+
 	if (mVertexColors && grp.vcolors.size() > 0)
 	{
 		bool allWhite = true;

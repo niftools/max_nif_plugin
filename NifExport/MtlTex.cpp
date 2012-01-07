@@ -2,6 +2,7 @@
 #include "stdmat.h"
 #include "shaders.h"
 #include "AppSettings.h"
+#include "gen/enums.h"
 #include "obj/NiWireframeProperty.h"
 #include "obj/NiAlphaProperty.h"
 #include "obj/NiStencilProperty.h"
@@ -22,7 +23,8 @@
 #include "ObjectRegistry.h"
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
-C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION, C_OPACITY,
+C_SPECULAR, C_PARALLAX
 };
 
 static bool GetTexFullName(Texmap *texMap, TSTR& fName)
@@ -56,14 +58,144 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		return;
 
 
-	if (IsFallout3() || IsSkyrim())
+	if (IsSkyrim())
 	{
-		BSShaderPPLightingPropertyRef texProp;
-		if (IsSkyrim()) {
-			texProp = new BSLightingShaderProperty();
-		} else {
-			texProp = new BSShaderPPLightingProperty();
+		BSLightingShaderPropertyRef texProp = new BSLightingShaderProperty();
+
+      //0=default 1=EnvMap, 2=Glow, 5=Skin, 6=Hair, 7=Unknown, 11=Ice/Parallax, 15=Eye.
+      BSShaderType shaderType = (BSShaderType)0;
+		texProp->SetSkyrimShaderType(shaderType);
+
+		BSShaderTextureSetRef texset = new BSShaderTextureSet();
+		texProp->SetTextureSet( texset );
+
+		vector<string> textures;
+		textures.resize(9);
+
+      //BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+      //if (!envStr.isNull() || !dispStr.isNull())
+      //	shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+      //texProp->SetShaderFlags(shFlags);
+      texProp->SetGlossiness(80);
+      texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
+      texProp->SetSpecularStrength(1.0f);
+      texProp->SetLightingEffect1(0.3f);
+      texProp->SetLightingEffect1(2.0f);
+      texProp->SetEnvironmentMapStrength(1.0f);
+
+		TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
+
+		if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+			StdMat2 *m = (StdMat2*)mtl;
+
+			if (m->GetMapState(ID_DI) == 2) {
+				diffuseStr = m->GetMapName(ID_DI);
+				if (Texmap *texMap = m->GetSubTexmap(ID_DI)) {
+					GetTexFullName(texMap, diffuseStr);
+				}
+			} else if (m->GetMapState(ID_AM) == 2) {
+				diffuseStr = m->GetMapName(ID_AM);
+				if (Texmap *texMap = m->GetSubTexmap(ID_AM)) {
+					GetTexFullName(texMap, diffuseStr);
+				}
+			}
+			if (m->GetMapState(ID_BU) == 2) {
+				normalStr = m->GetMapName(ID_BU);     
+				if (Texmap *texMap = m->GetSubTexmap(ID_BU)) {
+					if (texMap->ClassID() == GNORMAL_CLASS_ID) {
+						texMap = texMap->GetSubTexmap(0);
+						GetTexFullName(texMap, normalStr);
+					} else {
+						GetTexFullName(texMap, normalStr);
+					}
+				}
+			}
+			if (m->GetMapState(ID_SP) == 2) {
+				envStr = m->GetMapName(ID_SP);     
+				if (Texmap *texMap = m->GetSubTexmap(ID_SP)) {
+					if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+						Texmap *envMap = texMap->GetSubTexmap(0);
+						Texmap *envMaskMap = texMap->GetSubTexmap(1);
+						GetTexFullName(envMap, envStr);
+						GetTexFullName(envMaskMap, envMaskStr);
+					} else {
+						GetTexFullName(texMap, envStr);
+					}
+				}
+			}
+			if (m->GetMapState(ID_SI) == 2) {
+				glowStr = m->GetMapName(ID_SI);     
+				if (Texmap *texMap = m->GetSubTexmap(ID_SI)) {
+					GetTexFullName(texMap, glowStr);
+				}
+			}
+			if (m->GetMapState(ID_RL) == 2) {
+				dispStr = m->GetMapName(ID_RL);     
+				if (Texmap *texMap = m->GetSubTexmap(ID_RL)) {
+					GetTexFullName(texMap, dispStr);
+				}
+			}
+
+         //Color specular = TOCOLOR(lightingShaderRef->GetSpecularColor());
+         //Color emittance = TOCOLOR(lightingShaderRef->GetEmissiveColor());
+         //float shininess = lightingShaderRef->GetGlossiness();
+         //float alpha = lightingShaderRef->GetAlpha();
+
+         //Color ambient = Color(0.588f, 0.588f, 0.588f);
+         //Color diffuse = Color(0.588f, 0.588f, 0.588f);
+
+         //mtl->SetShinStr(0.0,0);
+         //mtl->SetShininess(shininess/100.0,0);
+         //mtl->SetOpacity(alpha*100.0f,0);
+
+
+         TimeValue t = 0;
+         texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
+         //texProp->SetSpecularColor(m->getsh);
+         texProp->SetSpecularStrength(m->GetShinStr(t));
+         texProp->SetAlpha(m->GetOpacity(t));
+         texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
+         //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
+
+         //mtl->SetShinStr(0.0,0);
+         //mtl->SetShininess(shininess/100.0,0);
+         //mtl->SetOpacity(alpha*100.0f,0);
+         //mtl->SetSpecularColor(alpha*100.0f,0);
+
+         //texProp->SetLightingEffect1(0.3f);
+         //texProp->SetLightingEffect1(2.0f);
+         //texProp->SetEnvironmentMapStrength(1.0f);
+
 		}
+
+		textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+		if (normalStr.isNull()) {
+			char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+			_splitpath(textures[0].c_str(), drive, dir, fname, ext);
+			strcat(fname, "_n");
+			_makepath(path_buffer, drive, dir, fname, ext);
+			textures[1] = path_buffer;			
+		}
+		else
+			textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+		if (!glowStr.isNull())
+			textures[2] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+		if (!dispStr.isNull())
+			textures[3] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
+		if (!envStr.isNull())
+			textures[4] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+      if (!envMaskStr.isNull())
+         textures[5] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+
+		texset->SetTextures(textures);
+
+		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+		parent->AddProperty(prop);
+
+	}
+	else if (IsFallout3())
+	{
+		BSShaderPPLightingPropertyRef texProp = new BSShaderPPLightingProperty();
 		
 		texProp->SetFlags(1);
 		texProp->SetShaderType( SHADER_DEFAULT );
@@ -139,6 +271,8 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 			textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
 		if (!envMaskStr.isNull())
 			textures[2] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+		if (!glowStr.isNull())
+			textures[3] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
 		if (glowStr.isNull()){
 			char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
 			_splitpath(textures[0].c_str(), drive, dir, fname, ext);
@@ -153,7 +287,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		if (!envStr.isNull())
 			textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
 
-		BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+		BSShaderFlags shFlags = BSShaderFlags(SF_SPECULAR | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_ZBUFFER_TEST);
 		if (!envStr.isNull() || !dispStr.isNull())
 			shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
 		texProp->SetShaderFlags(shFlags);
@@ -588,10 +722,187 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 			parent->AddProperty(alphaProp);
 		}
 
-
-
 		bool useDefaultShader = true;
-		if (IsFallout3() || IsSkyrim())
+      if (IsSkyrim())
+      {
+         if (BSLightingShaderPropertyRef texProp = new BSLightingShaderProperty())
+         {
+            extern const EnumLookupType BSShaderTypes[];
+            int shaderType = StringToEnum(CustomShader, BSShaderTypes);
+            if (shaderType<100 || shaderType > 200)
+               shaderType = 0;
+            else 
+               shaderType -= 100;
+            texProp->SetSkyrimShaderType(shaderType);
+
+            BSShaderTextureSetRef texset = new BSShaderTextureSet();
+            texProp->SetTextureSet( texset );
+
+            vector<string> textures;
+            textures.resize(9);
+
+            //BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+            //if (!envStr.isNull() || !dispStr.isNull())
+            //	shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+            //texProp->SetShaderFlags(shFlags);
+            SkyrimLightingShaderFlags1 flags1 = (SkyrimLightingShaderFlags1)(SLSF1_SPECULAR|SLSF1_SKINNED|SLSF1_8|SLSF1_CAST_SHADOWS|SLSF1_22|SLSF1_25|SLSF1_ZBUFFER_TEST);
+            SkyrimLightingShaderFlags2 flags2 = (SkyrimLightingShaderFlags2)(SLSF2_ZBUFFER_WRITE|SLSF2_15);
+            texProp->SetGlossiness(80);
+            texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
+            texProp->SetSpecularStrength(1.0f);
+            texProp->SetLightingEffect1(0.3f);
+            texProp->SetLightingEffect1(2.0f);
+            texProp->SetEnvironmentMapStrength(1.0f);
+
+            TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr, specularStr, parallaxStr;
+
+            if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+               StdMat2 *m = (StdMat2*)mtl;
+
+               if(mtl && mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) ) {
+                  StdMat2 *m = (StdMat2*)mtl;
+                  if (m->GetMapState(C_BASE) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_BASE)) {
+                        GetTexFullName(texMap, diffuseStr);
+                     }
+                  }
+
+                  if (m->GetMapState(C_NORMAL) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_NORMAL)) {
+                        if (texMap->ClassID() == GNORMAL_CLASS_ID) {
+                           texMap = texMap->GetSubTexmap(0);
+                           GetTexFullName(texMap, normalStr);
+                        } else {
+                           GetTexFullName(texMap, normalStr);
+                        }
+                     }
+                  }
+                  if (m->GetMapState(C_ENVMASK) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_ENVMASK)) {
+                        if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+                           Texmap *envMap = texMap->GetSubTexmap(0);
+                           Texmap *envMaskMap = texMap->GetSubTexmap(1);
+                           GetTexFullName(envMap, envStr);
+                           GetTexFullName(envMaskMap, envMaskStr);
+                        } else {
+                           GetTexFullName(texMap, envMaskStr);
+                        }
+                     }
+                  }
+                  if (m->GetMapState(C_GLOW) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_GLOW)) {
+                        GetTexFullName(texMap, glowStr);
+                     }
+                  }
+                  if (m->GetMapState(C_HEIGHT) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_HEIGHT)) {
+                        GetTexFullName(texMap, dispStr);
+                     }
+                  }
+                  if (m->GetMapState(C_ENV) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_ENV)) {
+                        if (texMap->ClassID() == Class_ID(MASK_CLASS_ID, 0)) {
+                           GetTexFullName(texMap->GetSubTexmap(0), envStr);
+                           GetTexFullName(texMap->GetSubTexmap(1), envMaskStr);
+                        } else {
+                           GetTexFullName(texMap, envStr);
+                        }
+                     }
+                  }
+                  if (m->GetMapState(C_SPECULAR) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_SPECULAR)) {
+                        GetTexFullName(texMap, specularStr);
+                     }
+                  }
+                  if (m->GetMapState(C_PARALLAX) == 2) {
+                     if (Texmap *texMap = m->GetSubTexmap(C_PARALLAX)) {
+                        GetTexFullName(texMap, specularStr);
+                     }
+                  }
+               }
+               textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+               if (normalStr.isNull()) {
+                  char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+                  _splitpath(textures[0].c_str(), drive, dir, fname, ext);
+                  strcat(fname, "_n");
+                  _makepath(path_buffer, drive, dir, fname, ext);
+                  textures[1] = path_buffer;			
+               }
+               else
+                  textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+               if (!glowStr.isNull())
+               {
+                  textures[2] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+                  flags1 = (SkyrimLightingShaderFlags1)(flags1 | SLSF1_SKINNED | SLSF1_21 | SLSF2_SOFT_LIGHT);
+               }
+               if (!dispStr.isNull())
+               {
+                  textures[3] = mAppSettings->GetRelativeTexPath(string(dispStr), mTexPrefix);
+                  //flags1 = (SkyrimLightingShaderFlags1)(flags1 | Niflib::SLSF1_Skinned);
+               }
+               if (!envStr.isNull())
+               {
+                  textures[4] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+                  flags1 = (SkyrimLightingShaderFlags1)(flags1 | Niflib::SLSF1_ENVIRONMENT_MAPPING);
+               }
+               if (!envMaskStr.isNull())
+               {
+                  textures[5] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+                  flags1 = (SkyrimLightingShaderFlags1)(flags1 | Niflib::SLSF1_ENVIRONMENT_MAPPING);
+               }
+               if (!specularStr.isNull())
+               {
+                  textures[7] = mAppSettings->GetRelativeTexPath(string(specularStr), mTexPrefix);
+                  flags1 = (SkyrimLightingShaderFlags1)(flags1 | Niflib::SLSF1_SPECULAR_MAP);
+               }
+
+               if ( m->GetTwoSided() ) flags2 = (SkyrimLightingShaderFlags2)(flags2 | SLSF2_DOUBLE_SIDED);
+
+
+               texProp->SetShaderFlags1(flags1);
+               texProp->SetShaderFlags2(flags2);
+
+               TimeValue t = 0;
+               texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
+               //texProp->SetSpecularColor(m->getsh);
+               texProp->SetSpecularStrength(m->GetShinStr(t));
+               texProp->SetAlpha(m->GetOpacity(t));
+               texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
+               //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
+
+               //texProp->SetLightingEffect1(0.3f);
+               //texProp->SetLightingEffect1(2.0f);
+               //texProp->SetEnvironmentMapStrength(1.0f);
+            }
+
+            textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);
+            if (normalStr.isNull()) {
+               char path_buffer[_MAX_PATH], drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
+               _splitpath(textures[0].c_str(), drive, dir, fname, ext);
+               strcat(fname, "_n");
+               _makepath(path_buffer, drive, dir, fname, ext);
+               textures[1] = path_buffer;			
+            }
+            else
+               textures[1] = mAppSettings->GetRelativeTexPath(string(normalStr), mTexPrefix);
+            if (!glowStr.isNull())
+               textures[2] = mAppSettings->GetRelativeTexPath(string(glowStr), mTexPrefix);
+            if (!parallaxStr.isNull())
+               textures[3] = mAppSettings->GetRelativeTexPath(string(parallaxStr), mTexPrefix);
+            if (!envStr.isNull())
+               textures[4] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+            if (!envMaskStr.isNull())
+               textures[5] = mAppSettings->GetRelativeTexPath(string(envMaskStr), mTexPrefix);
+            if (!envStr.isNull())
+               textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
+
+            texset->SetTextures(textures);
+
+            NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+            parent->AddProperty(prop);
+         }
+      }
+		else if (IsFallout3())
 		{
 			NiObjectRef root;
 			if (CustomShader != NULL && strlen(CustomShader) != 0)
@@ -692,7 +1003,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 				if (!envStr.isNull())
 					textures[5] = mAppSettings->GetRelativeTexPath(string(envStr), mTexPrefix);
 
-				BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+				BSShaderFlags shFlags = BSShaderFlags(SF_SPECULAR | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_ZBUFFER_TEST);
 				if (!envStr.isNull() || !dispStr.isNull() || !envMaskStr.isNull())
 					shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
 				texProp->SetShaderFlags(shFlags);

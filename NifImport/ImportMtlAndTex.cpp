@@ -22,6 +22,7 @@ HISTORY:
 #include "obj/NiDitherProperty.h"
 #include "obj/NiSpecularProperty.h"
 #include "obj/NiTextureProperty.h"
+#include "obj/BSLightingShaderProperty.h"
 #include "obj/BSShaderNoLightingProperty.h"
 #include "obj/BSShaderPPLightingProperty.h"
 #include "obj/BSShaderTextureSet.h"
@@ -35,6 +36,7 @@ using namespace Niflib;
 
 enum { C_BASE, C_DARK, C_DETAIL, C_GLOSS, C_GLOW, C_BUMP, C_NORMAL, C_UNK2, 
        C_DECAL0, C_DECAL1, C_DECAL2, C_ENVMASK, C_ENV, C_HEIGHT, C_REFLECTION,
+       C_OPACITY, C_SPECULAR, C_PARALLAX
 };
 
 #undef GNORMAL_CLASS_ID
@@ -214,7 +216,8 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 	vector<NiPropertyRef> props = avObject->GetProperties();
 	NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props);
 	BSShaderPropertyRef shaderRef = SelectFirstObjectOfType<BSShaderProperty>(props);
-	if (matRef != NULL || shaderRef != NULL){
+   BSLightingShaderPropertyRef lightingShaderRef = SelectFirstObjectOfType<BSLightingShaderProperty>(props);
+   if (matRef != NULL || shaderRef != NULL || lightingShaderRef != NULL){
 
 		StdMat2 *m = NewDefaultStdMat();
 
@@ -237,7 +240,6 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 		NiAlphaPropertyRef alphaRef = avObject->GetPropertyByType(NiAlphaProperty::TYPE);
 		NiStencilPropertyRef stencilRef = avObject->GetPropertyByType(NiStencilProperty::TYPE);
 		NiShadePropertyRef shadeRef = avObject->GetPropertyByType(NiShadeProperty::TYPE);
-
 
 		if (IsFallout3() || IsSkyrim()) {
 			m->SetAmbient(Color(0.588f, 0.588f, 0.588f),0);
@@ -396,6 +398,24 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 				}
 			}
 		}
+      if (lightingShaderRef != NULL) {
+         if ( BSShaderTextureSetRef textures = lightingShaderRef->GetTextureSet() ) {
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+               m->SetSubTexmap(ID_DI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+               m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
+               m->SetSubTexmap(ID_SI, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )
+               m->SetSubTexmap(ID_RL, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) {
+               if ( Texmap* mask = CreateTexture( textures->GetTexture(2) ) )
+                  tex = CreateMask(NULL, tex, mask);
+               m->SetSubTexmap(ID_SP, tex);
+            }
+         }
+      }
+
 		return m;
 	}
 	return NULL;
@@ -675,6 +695,64 @@ bool NifImporter::ImportNiftoolsShader(ImpNode *node, NiAVObjectRef avObject, St
 		}
 		setMAXScriptValue(ref, "CustomShader", 0, TSTR(lighting30ShadeRef->GetType().GetTypeName().c_str()));
 	}
+
+   if ( BSLightingShaderPropertyRef lightingShaderRef = SelectFirstObjectOfType<BSLightingShaderProperty>(props) )
+   {
+      // Material like properties
+      {
+         //Color ambient = TOCOLOR(lightingShaderRef->GetAmbientColor());
+         //Color diffuse = TOCOLOR(lightingShaderRef->GetDiffuseColor());
+         Color specular = TOCOLOR(lightingShaderRef->GetSpecularColor());
+         Color emittance = TOCOLOR(lightingShaderRef->GetEmissiveColor());
+         float shininess = lightingShaderRef->GetGlossiness();
+         float alpha = lightingShaderRef->GetAlpha();
+
+         Color ambient = Color(0.588f, 0.588f, 0.588f);
+         Color diffuse = Color(0.588f, 0.588f, 0.588f);
+
+         mtl->SetShinStr(0.0,0);
+         mtl->SetShininess(shininess/100.0,0);
+         mtl->SetOpacity(alpha*100.0f,0);
+
+         setMAXScriptValue(ref, "ambient", 0, ambient );
+         setMAXScriptValue(ref, "diffuse", 0, diffuse );
+         setMAXScriptValue(ref, "specular", 0, specular );
+         setMAXScriptValue(ref, "emittance", 0, emittance );
+         setMAXScriptValue(ref, "shininess", 0, shininess );
+         setMAXScriptValue(ref, "alpha", 0, alpha );
+      }
+      // Texture Set
+      {
+         if ( BSShaderTextureSetRef textures = lightingShaderRef->GetTextureSet() ) {
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(0) ) )
+               mtl->SetSubTexmap(C_BASE, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
+               mtl->SetSubTexmap(C_NORMAL, CreateNormalBump(NULL, tex));
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(2) ) ) // Glow/Skin/Hair
+               mtl->SetSubTexmap(C_GLOW, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) ) // Height/Parallax
+               mtl->SetSubTexmap(C_HEIGHT, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) ) // Environment
+               mtl->SetSubTexmap(C_ENV, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(5) ) ) // Environment Mask
+               mtl->SetSubTexmap(C_ENVMASK, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(7) ) ) //specular
+               mtl->SetSubTexmap(C_SPECULAR, tex);
+            if ( Texmap* tex = CreateTexture( textures->GetTexture(8) ) ) //Parallax
+               mtl->SetSubTexmap(C_PARALLAX, tex);
+         }
+      }
+
+      if (NiStencilPropertyRef stencilRef = SelectFirstObjectOfType<NiStencilProperty>(props)) {
+         
+      }
+      int flags2 = lightingShaderRef->GetShaderFlags2();
+      mtl->SetTwoSided( (flags2 & SLSF2_DOUBLE_SIDED) ? TRUE : FALSE );
+
+      extern const EnumLookupType BSShaderTypes[];
+      TSTR shaderType = EnumToString(lightingShaderRef->GetSkyrimShaderType()+100, BSShaderTypes);
+      setMAXScriptValue(ref, "CustomShader", 0, shaderType);
+   }
 
 
 	return true;

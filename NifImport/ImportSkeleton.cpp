@@ -98,9 +98,9 @@ bool NifImporter::IsBiped()
       if (rootNode){
          list<NiExtraDataRef> extraData = rootNode->GetExtraData();
          if (!extraData.empty()) {
-			 if ( BSXFlagsRef flags = SelectFirstObjectOfType<BSXFlags>(extraData) ) {
-				 return (flags->GetData() & 0x4);
-			 }
+            if ( BSXFlagsRef flags = SelectFirstObjectOfType<BSXFlags>(extraData) ) {
+               return (flags->GetData() & 0x4);
+            }
          }
       }
    }
@@ -173,7 +173,7 @@ void NifImporter::ImportBipeds(vector<NiNodeRef>& nodes)
          if (master)
          {
             master->SetRootName(const_cast<TCHAR*>(bipname.c_str()));
-            
+
             //if (INode *rootNode = gi->GetINodeByName(bipname.c_str())) {
             //   if (Control *c = rootNode->GetTMController()) {
             //      if (IBipMaster8 *master8 = GetBipMaster8Interface(c)) {
@@ -262,10 +262,10 @@ static bool HasBipedPosDOF(LPCTSTR name)
    //   These are nodes which have a full translation DOF and 
    //   there for do not effect the scale value we are toying with
    return (  wildcmpi("Bip?? ? Clavicle", name) 
-          || wildcmpi("Bip?? ? Toe?", name) 
-          || wildcmpi("Bip?? ? Finger?", name) 
-          || wildcmpi("Bip?? *Twist*", name) 
-          );
+      || wildcmpi("Bip?? ? Toe?", name) 
+      || wildcmpi("Bip?? ? Finger?", name) 
+      || wildcmpi("Bip?? *Twist*", name) 
+      );
 }
 
 static float CalcScale(INode *bone, NiNodeRef node, vector<NiNodeRef>& children)
@@ -480,8 +480,8 @@ INode *NifImporter::CreateBone(const string& name, Point3 startPos, Point3 endPo
             n->BoneAsLine(1);
             n->ShowBone(2);
 #else
-			//n->BoneAsLine(1);
-			n->ShowBone(1);
+            //n->BoneAsLine(1);
+            n->ShowBone(1);
 #endif
          }
          return result.n;
@@ -496,9 +496,21 @@ INode *NifImporter::CreateHelper(const string& name, Point3 startPos)
    if (DummyObject *ob = (DummyObject *)gi->CreateInstance(HELPER_CLASS_ID,Class_ID(DUMMY_CLASS_ID,0))) {
       const float DUMSZ = 1.0f;
       ob->SetBox(Box3(Point3(-DUMSZ,-DUMSZ,-DUMSZ),Point3(DUMSZ,DUMSZ,DUMSZ)));
-	  if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
+
+      if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
+         n->SetWireColor( RGB(192,192,192) );
+
          Quat q; q.Identity();
          PosRotScaleNode(n, startPos, q, 1.0f, prsPos);
+
+#if VERSION_3DSMAX > ((6000<<16)+(15<<8)+0) // Version 6
+         n->BoneAsLine(dummyBonesAsLines ? 1 : 0);
+         n->ShowBone(2);
+#else
+         //n->BoneAsLine(1);
+         n->ShowBone(1);
+#endif
+
          return n;
       }
    }
@@ -519,8 +531,8 @@ INode *NifImporter::CreateCamera(const string& name)
       ob->Enable(1);
       ob->NewCamera(0);
       ob->SetFOV(0, TORAD(75.0f));
-	  if (INode *n = gi->CreateObjectNode(ob)) {
-      //if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
+      if (INode *n = gi->CreateObjectNode(ob)) {
+         //if (INode *n = CreateImportNode(name.c_str(), ob, NULL)) {
          n->Hide(TRUE);
          n->BoneAsLine(1);
          return n;
@@ -585,7 +597,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
          for (list<NiStringExtraDataRef>::iterator itr = strings.begin(); itr != strings.end(); ++itr){
             if (strmatch((*itr)->GetName(), "Prn")) {
                parentname = (*itr)->GetData();
-               if (INode *pn = gi->GetINodeByName(parentname.c_str())){
+               if (INode *pn = GetNode(parentname)){
                   // Apparently Heads tend to need to be rotated 90 degrees on import for 
                   if (!rotate90Degrees.empty() && wildmatch(rotate90Degrees, parentname)) {
                      m4 *= TOMATRIX4(RotateYMatrix(TORAD(90)));
@@ -607,7 +619,7 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
             Matrix44 tm = parent->GetLocalTransform() * node->GetLocalTransform();
             name = realname;
             len += tm.GetTranslation().Magnitude();
-			parent = parent->GetParent();
+            parent = parent->GetParent();
          }
       }
 
@@ -640,12 +652,12 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
 
 
       INode *bone = NULL;
-	  if (!doNotReuseExistingBones) // Games like BC3 reuse the same bone names
-	  {
-		  bone = FindNode(node);
-		  if (bone == NULL) 
-			  bone = gi->GetINodeByName(name.c_str());
-	  }
+      if (!doNotReuseExistingBones) // Games like BC3 reuse the same bone names
+      {
+         bone = FindNode(node);
+         if (bone == NULL) 
+            bone = GetNode(name);
+      }
       if (bone)
       {
          // Is there a better way of "Affect Pivot Only" behaviors?
@@ -659,9 +671,9 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
       else
       {
          bool isDummy = ( (uncontrolledDummies && !HasControllerRef(ctrlCount, name))
-                     || (!dummyNodeMatches.empty() && wildmatch(dummyNodeMatches, name))
-                     || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TYPE))
-                      );
+            || (!dummyNodeMatches.empty() && wildmatch(dummyNodeMatches, name))
+            || (convertBillboardsToDummyNodes && node->IsDerivedType(NiBillboardNode::TYPE))
+            );
          if (wildmatch("Camera*", name)) {
             if (enableCameras) {
                if (bone = CreateCamera(name)) {
@@ -669,10 +681,11 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
                   bone->Hide(node->GetVisibility() ? FALSE : TRUE);
                }
             }
-         }else if (isDummy && createNubsForBones)
+         }else if (isDummy || createNubsForBones) {
             bone = CreateHelper(name, p);
-         else if (bone = CreateBone(name, p, pp, zAxis))
-         {
+            PosRotScaleNode(bone, p, q, scale, prs);
+            //bone->Hide(node->GetVisibility() ? FALSE : TRUE);
+         } else if (bone = CreateBone(name, p, pp, zAxis)) {
             PosRotScaleNode(bone, p, q, scale, prs);
             bone->Hide(node->GetVisibility() ? FALSE : TRUE);
          }
@@ -683,20 +696,20 @@ void NifImporter::ImportBones(NiNodeRef node, bool recurse)
                if (mergeNonAccum && wildmatch("* NonAccum", parentname)) {
                   parentname = parentname.substr(0, parentname.length() - 9);
                }
-               if (INode *pn = gi->GetINodeByName(parentname.c_str()))
+               if (INode *pn = GetNode(parentname))
                   pn->AttachChild(bone, 1);
             }
-			RegisterNode(node, bone);
+            RegisterNode(node, bone);
          }
       }
       // Import UPB
       if (bone) ImportUPB(bone, node);
 
       // Import Havok Collision Data surrounding node,  
-	  //   unfortunately this causes double import of collision so I'm disabling it for now.
-	  if (enableCollision && node->GetParent()) {
-		ImportCollision(node);
-	  }
+      //   unfortunately this causes double import of collision so I'm disabling it for now.
+      if (enableCollision && node->GetParent()) {
+         ImportCollision(node);
+      }
 
       if (bone && recurse)
       {

@@ -1345,6 +1345,8 @@ END
 STRINGTABLE 
 BEGIN
     IDS_CHAN_OPACITY        "Opacity"
+    IDS_CHAN_SPECULAR       "Specular"
+    IDS_CHAN_PARALLAX       "Parallax"
 END
 
 #endif    // English (U.S.) resources

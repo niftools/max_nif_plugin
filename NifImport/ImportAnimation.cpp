@@ -493,7 +493,7 @@ bool NifImporter::AddNoteTracks(float time, string name, string target, NiTextKe
       gi->SetAnimRange(range);
 
       if (addNoteTracks /*&& (wildmatch("start*", textKeys.front().data))*/ ) {
-         if ( INode *n = gi->GetINodeByName(target.c_str()) ) {
+         if ( INode *n = GetNode(target) ) {
 //#if VERSION_3DSMAX > ((5000<<16)+(15<<8)+0) // Version 6+
 #if 1
             DefNoteTrack* nt = (DefNoteTrack*)NewDefaultNoteTrack();
@@ -703,7 +703,7 @@ bool KFMImporter::ImportAnimation()
             if (NULL == c)
                continue;
 
-            INode *n = gi->GetINodeByName(name.c_str());
+            INode *n = GetNode(name);
 
             if ((*lnk).priority != 0.0f) {
                npSetProp(n, NP_ANM_PRI, (*lnk).priority);
@@ -729,7 +729,7 @@ bool KFMImporter::ImportAnimation()
             }
             if (!var2.empty())
             {
-               if (INode *n = gi->GetINodeByName(name.c_str()))
+               if (INode *n = GetNode(name))
                {
                   if (Modifier* mod = GetMorpherModifier(n))
                   {
@@ -764,7 +764,7 @@ bool KFMImporter::ImportAnimation()
                stop = controller->GetStopTime();
             }
 
-            INode *n = gi->GetINodeByName(name.c_str());
+            INode *n = GetNode(name);
 
             if ((*lnk).priority != 0.0f) {
                npSetProp(n, NP_ANM_PRI, (*lnk).priority);
@@ -862,7 +862,7 @@ bool AnimationImport::GetTransformData(ControllerLink& lnk, string name, NiKeyfr
 
 Control *AnimationImport::GetTMController(const string& name)
 {
-   INode *n = ni.gi->GetINodeByName(name.c_str());
+   INode *n = ni.GetNode(name);
    if (NULL == n)
       return NULL;
 
@@ -887,7 +887,7 @@ Control *AnimationImport::GetTMController(NiObjectNETRef obj)
 
 Matrix3 AnimationImport::GetTM(const string& name, TimeValue t)
 {
-   INode *n = ni.gi->GetINodeByName(name.c_str());
+   INode *n = ni.GetNode(name);
    if (NULL == n)
       return Matrix3(true);
 
