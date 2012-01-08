@@ -84,7 +84,7 @@ extern const EnumLookupType BSShaderTypes[] = {
    {100, "SkyrimDefault"},
    {101, "SkyrimEnvMap"},
    {102, "SkyrimGlow"},
-   {103, "SkyrimSkin"},
+   {105, "SkyrimSkin"},
    {106, "SkyrimHair"},
    {111, "SkyrimParallax"},
    {115, "SkyrimEye"},

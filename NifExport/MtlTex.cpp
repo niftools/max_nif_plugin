@@ -80,7 +80,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
       texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
       texProp->SetSpecularStrength(1.0f);
       texProp->SetLightingEffect1(0.3f);
-      texProp->SetLightingEffect1(2.0f);
+      texProp->SetLightingEffect2(2.0f);
       texProp->SetEnvironmentMapStrength(1.0f);
 
 		TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
@@ -136,24 +136,12 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 				}
 			}
 
-         //Color specular = TOCOLOR(lightingShaderRef->GetSpecularColor());
-         //Color emittance = TOCOLOR(lightingShaderRef->GetEmissiveColor());
-         //float shininess = lightingShaderRef->GetGlossiness();
-         //float alpha = lightingShaderRef->GetAlpha();
-
-         //Color ambient = Color(0.588f, 0.588f, 0.588f);
-         //Color diffuse = Color(0.588f, 0.588f, 0.588f);
-
-         //mtl->SetShinStr(0.0,0);
-         //mtl->SetShininess(shininess/100.0,0);
-         //mtl->SetOpacity(alpha*100.0f,0);
-
 
          TimeValue t = 0;
          texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
          //texProp->SetSpecularColor(m->getsh);
-         texProp->SetSpecularStrength(m->GetShinStr(t));
-         texProp->SetAlpha(m->GetOpacity(t));
+         //texProp->SetSpecularStrength(m->GetShinStr(t) < 1.0f ? 3.0f : 0.0f);
+         texProp->SetAlpha(m->GetOpacity(t) / 100.0f);
          texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
          //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
 
@@ -189,9 +177,13 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
 		texset->SetTextures(textures);
 
-		NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
-		parent->AddProperty(prop);
-
+      // shader must be first, alpha can be second
+      NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+      vector<NiPropertyRef> properties = parent->GetProperties();
+      parent->ClearProperties();
+      parent->AddProperty(prop);
+      if (properties.size() > 0)
+         parent->AddProperty(properties[0]);
 	}
 	else if (IsFallout3())
 	{
@@ -650,7 +642,7 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 		if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
 		{
 			StdMat2 * smtl = (StdMat2*)mtl;
-			if (smtl->SupportsShaders()) {
+			if (smtl->SupportsShaders() && !IsSkyrim()) {
 				if (Shader *s = smtl->GetShader()) {
 					if (smtl->GetWire()){
 						NiWireframePropertyRef wireProp = CreateNiObject<NiWireframeProperty>();
@@ -680,13 +672,13 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 			vertexColor->SetLightingMode(LightMode(LightingMode));
 			vertexColor->SetFlags( (LightingMode << 3) + (SrcVertexMode << 4) );
 		}
-		if (SpecularEnable) {
+		if (SpecularEnable && !IsSkyrim()) {
 			NiSpecularPropertyRef prop = CreateNiObject<NiSpecularProperty>();
 			parent->AddProperty(prop);
 			prop->SetFlags(1);
 
 		}
-		if (Dither) {
+		if (Dither && !IsSkyrim()) {
 			NiDitherPropertyRef prop = CreateNiObject<NiDitherProperty>();
 			parent->AddProperty(prop);
 			prop->SetFlags(1);
@@ -741,17 +733,17 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
             vector<string> textures;
             textures.resize(9);
 
-            //BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
-            //if (!envStr.isNull() || !dispStr.isNull())
-            //	shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
-            //texProp->SetShaderFlags(shFlags);
             SkyrimLightingShaderFlags1 flags1 = (SkyrimLightingShaderFlags1)(SLSF1_SPECULAR|SLSF1_SKINNED|SLSF1_8|SLSF1_CAST_SHADOWS|SLSF1_22|SLSF1_25|SLSF1_ZBUFFER_TEST);
             SkyrimLightingShaderFlags2 flags2 = (SkyrimLightingShaderFlags2)(SLSF2_ZBUFFER_WRITE|SLSF2_15);
+
+            if (shaderType == 5)
+               flags2 = (SkyrimLightingShaderFlags2)(flags2 | SLSF2_SOFT_LIGHT);
+
             texProp->SetGlossiness(80);
             texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
             texProp->SetSpecularStrength(1.0f);
             texProp->SetLightingEffect1(0.3f);
-            texProp->SetLightingEffect1(2.0f);
+            texProp->SetLightingEffect2(2.0f);
             texProp->SetEnvironmentMapStrength(1.0f);
 
             TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr, specularStr, parallaxStr;
@@ -865,8 +857,8 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
                TimeValue t = 0;
                texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
                //texProp->SetSpecularColor(m->getsh);
-               texProp->SetSpecularStrength(m->GetShinStr(t));
-               texProp->SetAlpha(m->GetOpacity(t));
+               //texProp->SetSpecularStrength(m->GetShinStr(t) < 1.0f ? 3.0f : 0.0f);
+               texProp->SetAlpha(m->GetOpacity(t) / 100.0f);
                texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
                //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
 
@@ -898,9 +890,16 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
             texset->SetTextures(textures);
 
+            // shader must be first, alpha can be second
             NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
+            vector<NiPropertyRef> properties = parent->GetProperties();
+            parent->ClearProperties();
             parent->AddProperty(prop);
+            if (properties.size() > 0)
+               parent->AddProperty(properties[0]);
+
          }
+         useDefaultShader = false;
       }
 		else if (IsFallout3())
 		{
