@@ -1091,7 +1091,7 @@ void BSDSModifier::LocalDataChanged() {
          bool changed = false;
          changed = ( partitions.size() != flags.Count() );
          partitions.resize( flags.Count() );
-         for (int i=0; i<partitions.size(); ++i) {
+         for (unsigned int i=0; i<partitions.size(); ++i) {
             TSTR name = EnumToString(flags[i].bodyPart, BodyPartFlags);
             changed |= (name != partitions[i].GetNameRef()) ? true : false;
             partitions[i].SetName( name );

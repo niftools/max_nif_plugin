@@ -79,7 +79,7 @@ void Exporter::strippify(FaceGroup &grp)
    strips.clear();
 	unsigned short *data = (unsigned short *)malloc(grp.faces.size() * 3 * 2);
 
-	int i;
+	unsigned int i;
 	for (i=0; i<grp.faces.size(); i++)
 	{
 		data[i * 3 + 0] = grp.faces[i][0];
@@ -110,7 +110,7 @@ void Exporter::strippify(FaceGroup &grp)
 				strips.push_back(TriStrip(groups[g].numIndices));
 				TriStrip &strip = strips.back();
 
-				for (int s=0; s<groups[g].numIndices; s++)
+				for (unsigned int s=0; s<groups[g].numIndices; s++)
 					strip[s] = groups[g].indices[s];
 			}
 		}
@@ -129,7 +129,7 @@ void Exporter::strippify(FaceGroup &grp)
 				strips.push_back(TriStrip(rmGroups[g].numIndices));
 				TriStrip &strip = strips.back();
 
-				for (int s=0; s<rmGroups[g].numIndices; s++)
+				for (unsigned int s=0; s<rmGroups[g].numIndices; s++)
 				{
 					strip[s] = rmGroups[g].indices[s];
 

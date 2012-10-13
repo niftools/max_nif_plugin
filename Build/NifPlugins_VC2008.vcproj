@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="NifPlugins"
 	ProjectGUID="{466F2D3E-2663-4583-A05C-128683677617}"
 	RootNamespace="NifPlugins"
@@ -25,6 +25,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -40,6 +42,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -52,6 +56,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -75,6 +80,1612 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 6|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_6.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 7|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 7|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 8|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 8|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 5|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 5|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 9|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 9|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 4|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 4|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - gmax|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - gmax|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 4.2|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 4.2|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2008|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2008|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2009|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2009.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2009|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2009.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2010|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2010|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="pushd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(IntDir)\$(ProjectName).lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2011|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2011.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2011|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2011.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug - Max 2012|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2012.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max 2012|Win32"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2012.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="cd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				UsePrecompiledHeader="1"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -138,127 +1749,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 6|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_6.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 6|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 7|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -375,127 +1868,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 7|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_7.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 7|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 8|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -612,65 +1987,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 8|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_8.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 8|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
@@ -730,127 +2046,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 5|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 5|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 5|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_5.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -967,65 +2165,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 9|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 9|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
@@ -1085,127 +2224,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - Max 9|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - Max 9|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_9.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 4|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -1322,127 +2343,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 4|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_4.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 4|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - gmax|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -1558,65 +2461,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - gmax|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\gmax_Version_12.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - gmax|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
@@ -1676,127 +2520,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 4.2|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 4.2|x64"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 4.2|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_42.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -1913,65 +2639,6 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Debug - Max 2008|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Debug - Max 2008|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops"
@@ -2031,128 +2698,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - Max 2008|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - Max 2008|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2008.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 2009|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2009.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -2268,128 +2816,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - Max 2009|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2009.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - Max 2009|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2009.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 2010|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -2505,128 +2934,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - Max 2010|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - Max 2010|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 2011|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2011.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -2742,128 +3052,9 @@
 			/>
 		</Configuration>
 		<Configuration
-			Name="Release - Max 2011|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2011.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
 			Name="Release - Max 2011|x64"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2011.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Debug - Max 2012|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2012.vsprops;$(ProjectDir)Sheets\Debug_Settings.vsprops;$(SolutionDir)User_Settings.vsprops"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -2977,66 +3168,6 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release - Max 2012|Win32"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2012.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -3216,23 +3347,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3248,23 +3363,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3280,23 +3379,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3312,23 +3395,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3344,23 +3411,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3376,23 +3427,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3408,23 +3443,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3440,23 +3459,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3472,23 +3475,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3504,23 +3491,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3536,23 +3507,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3568,7 +3523,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3576,7 +3531,183 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3604,23 +3735,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3636,23 +3751,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3668,23 +3767,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3700,23 +3783,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3732,23 +3799,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3764,23 +3815,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3810,23 +3845,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3842,23 +3861,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3874,23 +3877,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3906,23 +3893,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3938,23 +3909,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3970,7 +3925,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -3978,7 +3933,183 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4006,23 +4137,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4038,23 +4153,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4070,23 +4169,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4102,23 +4185,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4134,23 +4201,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4166,23 +4217,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4198,23 +4233,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4230,23 +4249,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4262,23 +4265,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4294,23 +4281,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCResourceCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4326,23 +4297,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4358,7 +4313,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4366,7 +4321,183 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4394,23 +4525,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4426,23 +4541,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4458,23 +4557,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4490,23 +4573,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4522,23 +4589,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4554,23 +4605,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4585,13 +4620,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - gmax|Win32"
 						>
 						<Tool
@@ -4599,22 +4627,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4630,23 +4643,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4662,23 +4659,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4694,23 +4675,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4726,23 +4691,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4758,14 +4707,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
@@ -4774,7 +4715,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4782,7 +4723,197 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4810,23 +4941,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4842,23 +4957,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4874,23 +4973,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4906,23 +4989,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4938,23 +5005,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -4970,23 +5021,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5001,13 +5036,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - gmax|Win32"
 						>
 						<Tool
@@ -5015,22 +5043,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5046,23 +5059,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5078,23 +5075,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5110,23 +5091,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5142,23 +5107,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5174,14 +5123,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
@@ -5190,7 +5131,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5198,7 +5139,197 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5226,23 +5357,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 6|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 6|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 6|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5258,23 +5373,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 7|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 7|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 7|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5290,23 +5389,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 8|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 8|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 8|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5322,23 +5405,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 5|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 5|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 5|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5354,23 +5421,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 9|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - Max 9|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release - Max 9|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5386,23 +5437,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5417,13 +5452,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Release - gmax|Win32"
 						>
 						<Tool
@@ -5431,22 +5459,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - gmax|x64"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 4.2|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 4.2|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5462,23 +5475,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 4.2|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2008|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2008|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5494,23 +5491,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2008|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2009|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2009|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5526,23 +5507,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2009|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2010|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2010|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5558,23 +5523,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2010|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCustomBuildTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2011|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug - Max 2011|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5590,14 +5539,6 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2011|x64"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
 						Name="Debug - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
@@ -5606,7 +5547,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug - Max 2012|x64"
+						Name="Release - Max 2012|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5614,7 +5555,197 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release - Max 2012|Win32"
+						Name="Release - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 6|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 7|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 8|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 5|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 9|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - gmax|x64"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 4.2|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2008|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2009|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2010|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max 2011|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug - Max 2012|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -5904,25 +6035,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 6|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 6|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 6|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -5940,25 +6053,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 7|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 7|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 7|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -5976,25 +6071,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 8|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 8|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 8|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6012,25 +6089,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 5|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 5|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 5|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6048,25 +6107,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 9|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 9|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 9|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6084,25 +6125,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 4|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 4|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 4|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6120,25 +6143,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - gmax|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - gmax|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - gmax|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6156,7 +6161,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 4.2|x64"
+					Name="Release - Max 4.2|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6165,7 +6170,133 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 4.2|Win32"
+					Name="Release - Max 6|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 6|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 7|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 7|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 8|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 8|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 5|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 5|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 9|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 9|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 4|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 4|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - gmax|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - gmax|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)\$(InputName)1.obj"
+						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 4.2|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6182,6 +6313,10 @@
 						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\niflib 0.8.2\include\niflib.h"
+				>
 			</File>
 			<File
 				RelativePath="..\NifPlugins\NifPlugins.rc"
@@ -6199,23 +6334,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 6|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 6|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 6|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6231,23 +6350,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 7|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 7|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 7|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6263,23 +6366,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 8|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 8|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 8|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6295,23 +6382,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 5|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 5|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 5|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6327,23 +6398,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 9|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 9|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 9|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6359,23 +6414,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 4|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Debug - Max 4|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug - Max 4|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6391,23 +6430,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - gmax|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - gmax|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - gmax|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6423,23 +6446,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 4.2|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 4.2|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 4.2|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6455,23 +6462,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 2008|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 2008|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 2008|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6487,23 +6478,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 2009|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 2009|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 2009|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6519,23 +6494,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 2010|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 2010|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 2010|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6551,23 +6510,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 2011|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Release - Max 2011|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release - Max 2011|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6583,7 +6526,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug - Max 2012|x64"
+					Name="Release - Max 2012|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -6591,7 +6534,199 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release - Max 2012|Win32"
+					Name="Release - Max 6|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 6|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 7|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 7|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 8|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 8|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 5|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 5|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 9|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 9|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 4|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 4|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - gmax|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - gmax|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 4.2|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 4.2|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 2008|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2008|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 2009|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2009|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 2010|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2010|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 2011|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max 2011|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug - Max 2012|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

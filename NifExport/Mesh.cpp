@@ -98,7 +98,7 @@ struct VertexCompare
       if ((d = compare(lhs.norm,rhs.norm,normthresh)) != 0) return d;
       if ((d = compare(lhs.color,rhs.color,vthresh)) != 0) return d;
       if ((d = lhs.uvs.size() - rhs.uvs.size()) != 0) return d;
-      for (int i=0; i<lhs.uvs.size(); ++i) {
+      for (unsigned int i=0; i<lhs.uvs.size(); ++i) {
          if ((d = compare(lhs.uvs[i],rhs.uvs[i],vthresh)) != 0) return d;
       }
       return 0;
@@ -199,7 +199,7 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		q.MakeMatrix(rtx);
 		mesh = copymesh = new Mesh(*mesh);
 		{
-			int n = mesh->getNumVerts();
+			unsigned int n = mesh->getNumVerts();
 			for ( unsigned int i = 0; i < n; ++i ) {
 				Point3& vert = mesh->getVert(i);
 				vert = mtx * vert;
@@ -224,12 +224,12 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		bool hasvc = false;
 		if (mesh->mapSupport(MAP_ALPHA))
 		{
-			mesh->setVCDisplayData(MAP_ALPHA);         int n = mesh->getNumVertCol();
+			mesh->setVCDisplayData(MAP_ALPHA);         unsigned int n = mesh->getNumVertCol();
 			if (n > vertColors.size())
 				vertColors.assign(n, Color4(1.0f, 1.0f, 1.0f, 1.0f));
 			VertColor *vertCol = mesh->vertColArray;
 			if (vertCol) {
-				for (int i=0; i<n; ++i) {
+				for (unsigned int i=0; i<n; ++i) {
 					VertColor c = vertCol[ i ];
 					float a = (c.x + c.y + c.z) / 3.0f;
 					vertColors[i].a = a;
@@ -241,11 +241,11 @@ Exporter::Result Exporter::exportMesh(NiNodeRef &ninode, INode *node, TimeValue 
 		{
 			mesh->setVCDisplayData(0);
 			VertColor *vertCol = mesh->vertColArray;
-			int n = mesh->getNumVertCol();
+			unsigned int n = mesh->getNumVertCol();
 			if (n > vertColors.size())
 				vertColors.assign(n, Color4(1.0f, 1.0f, 1.0f, 1.0f));
 			if (vertCol) {
-				for (int i=0; i<n; ++i) {
+				for (unsigned int i=0; i<n; ++i) {
 					VertColor col = vertCol[ i ];
 					vertColors[i] = Color4(col.x, col.y, col.z, vertColors[i].a);
 					hasvc |= (col.x != 1.0f || col.y != 1.0f || col.z != 1.0f);
@@ -356,17 +356,17 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	} else {
       shape = new NiTriShape();
       data = new NiTriShapeData(grp.faces);
+	  
 	}
 
    if ( IsFallout3() || IsSkyrim() )
       shape->SetFlags( 14 );
-
    data->SetVertices(grp.verts);
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
    data->SetUVSetMap(grp.uvMapping);
-
-   int nUVs = grp.uvs.size();
+   shape->GetData()->SetTspaceFlag(16);
+   int nUVs = grp.uvs.size(); //new
    if ( IsFallout3() || IsSkyrim() )
       nUVs = min(1, nUVs);
    data->SetUVSetCount(nUVs);
@@ -392,6 +392,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
 	}
 
 	data->SetConsistencyFlags(CT_STATIC);
+
 	shape->SetData(data);
 
    if (Exporter::mTangentAndBinormalExtraData && (Exporter::mNifVersionInt > VER_4_2_2_0))
@@ -469,7 +470,7 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
    } 
    grp.vmap.insert(range.first, n);
 #else
-   for (int i=0; i<grp.vgrp.size(); i++) {
+   for (unsigned int i=0; i<grp.vgrp.size(); i++) {
       if ( vc.compare(vg, i) == 0 )
          return i;
    }
@@ -479,7 +480,7 @@ int Exporter::addVertex(FaceGroup &grp, int face, int vi, Mesh *mesh, const Matr
    grp.vgrp.push_back(vg);
    grp.verts.push_back(TOVECTOR3(vg.pt));
    grp.vnorms.push_back(TOVECTOR3(vg.norm));
-   for (int i=0; i< grp.uvs.size(); ++i) {
+   for (unsigned int i=0; i< grp.uvs.size(); ++i) {
       TexCoords& uvs = grp.uvs[i];
       uvs.push_back(vg.uvs[i]);
    }
@@ -598,7 +599,7 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
             grp.vgrp.reserve(nv);
             grp.verts.reserve(nv);
             grp.vnorms.reserve(nv);
-            for (int i=0; i<grp.uvs.size(); ++i)
+            for (unsigned int i=0; i<grp.uvs.size(); ++i)
                grp.uvs[i].reserve(nv);
             grp.vcolors.reserve(nv);
             grp.vidx.reserve(nv);
@@ -610,7 +611,7 @@ bool Exporter::splitMesh(INode *node, Mesh& mesh, FaceGroups &grps, TimeValue t,
          }
 
          Triangle tri;
-         for (int i=0; i<3; i++)
+         for (unsigned int i=0; i<3; i++)
             tri[i] = addVertex(grp, face, vi[i], &mesh, texm, vertColors);
          grp.faces.push_back(tri);
 
@@ -742,7 +743,7 @@ bool Exporter::makeSkin(NiTriBasedGeomRef shape, INode *node, FaceGroup &grp, Ti
                FaceMap fmap;
                NiTriBasedGeomDataRef data = DynamicCast<NiTriBasedGeomData>(shape->GetData());
                vector<Triangle> tris = data->GetTriangles();
-               for (int i=0; i<tris.size(); ++i) {
+               for (unsigned int i=0; i<tris.size(); ++i) {
                   Triangle tri = tris[i];
                   fmap[ rotate(tri) ] = i;
                }

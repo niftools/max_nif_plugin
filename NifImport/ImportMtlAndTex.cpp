@@ -257,7 +257,6 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 				m->SetSelfIllumColor(c,0);
 			}
 			m->SetShinStr(0.0,0);
-			m->SetShininess(matRef->GetGlossiness()/100.0,0);
 			m->SetOpacity(matRef->GetTransparency(),0);
 		}
 		bool hasShaderAttributes = (wireRef != NULL) || (stencilRef != NULL) || (shadeRef != NULL);

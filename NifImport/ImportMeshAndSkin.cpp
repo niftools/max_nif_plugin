@@ -179,7 +179,7 @@ void NifImporter::SetNormals(Mesh& mesh, const vector<Niflib::Triangle>& tris, c
 	if (n.size() > 0)
 	{
 		bool needNormals = false;
-		for (int i=0; i<n.size(); i++){
+		for (unsigned int i=0; i<n.size(); i++){
 			Vector3 v = n[i];
 			Point3 norm(v.x, v.y, v.z);
 			if (norm != mesh.getNormal(i)) {
@@ -199,12 +199,12 @@ void NifImporter::SetNormals(Mesh& mesh, const vector<Niflib::Triangle>& tris, c
 				specNorms->SetNumNormals(n.size());
 
 				Point3* norms = specNorms->GetNormalArray();
-				for (int i=0; i<n.size(); i++){
+				for (unsigned int i=0; i<n.size(); i++){
 					Vector3 v = n[i];
 					norms[i] = Point3(v.x, v.y, v.z);
 				}
 				MeshNormalFace* pFaces = specNorms->GetFaceArray();
-				for (int i=0; i<tris.size(); i++){
+				for (unsigned int i=0; i<tris.size(); i++){
 					const Triangle& tri = tris[i];
 					pFaces[i].SpecifyNormalID(0, tri.v1);
 					pFaces[i].SpecifyNormalID(1, tri.v2);
@@ -774,7 +774,7 @@ bool NifImporter::ImportSkin(ImpNode *node, NiTriBasedGeomRef triGeom, int v_sta
                   continue;
 
                bsdsmd->SetActivePartition( partitions.size() - 1 );
-               for (int j=0; j < partitions.size(); ++j ) {
+               for (unsigned int j=0; j < partitions.size(); ++j ) {
                   flags[j].bodyPart = (DismemberBodyPartType)partitions[j].bodyPart;
                   flags[j].partFlag = partitions[j].partFlag;
                }

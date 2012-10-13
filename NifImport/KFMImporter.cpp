@@ -46,9 +46,8 @@ void KFMImporter::ReadBlocks()
             if (-1 != _taccess(action_filename.c_str(), 0)){
                if (action_filename != last_file) {
 				   Niflib::NifInfo info;
-				   Niflib::NifOptions opts;
-				   opts.exceptionOnErrors = false;
-                   ctrllist = DynamicCast<NiControllerSequence>(ReadNifList(action_filename, &info, &opts));
+				   int opts;
+                   ctrllist = DynamicCast<NiControllerSequence>(ReadNifList(action_filename, &info));
                }
                if (((*it).unk_int2 && (*it).unk_int2 <= ctrllist.size())) {
                   if (NiControllerSequenceRef ctrlSeq = ctrllist[(*it).unk_int2-1])

@@ -1192,7 +1192,7 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 	if (data == NULL)
 		return false;
 	vector<NiInterpolatorRef> interpolators = ctrl->GetInterpolators();
-	int nmorphs = data->GetMorphCount();
+	unsigned int nmorphs = data->GetMorphCount();
 	if (ni.nifVersion >= VER_10_1_0_106)
 	{
 		if ((interpolators.size() < nmorphs) || nmorphs == 0)
@@ -1200,7 +1200,7 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 	}
 	else
 	{
-		for (int i=0; i<nmorphs; i++)
+		for (unsigned int i=0; i<nmorphs; i++)
 		{
 			if (NiFloatInterpolatorRef interp = new NiFloatInterpolator())
 			{
@@ -1240,7 +1240,7 @@ bool AnimationImport::ImportGeoMorph(INode *n, NiGeomMorpherControllerRef ctrl, 
 	n->EvalWorldState(0, TRUE);
 
 	// Create meshes for morph
-	for (int i=1; i<nmorphs; ++i) // Skip first morph as its the baseline
+	for (unsigned int i=1; i<nmorphs; ++i) // Skip first morph as its the baseline
 	{
 		string frameName = (ni.nifVersion >= VER_10_1_0_106) ? data->GetFrameName(i) : FormatString("Frame #%d", i);
 		vector<Vector3> verts = data->GetMorphVerts(i);
