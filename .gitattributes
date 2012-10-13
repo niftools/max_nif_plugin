@@ -1,0 +1,13 @@
+*.bat	eol=crlf
+*.vcproj	eol=crlf
+*.vsprops	eol=crlf
+*.sln	eol=crlf
+*.ini	eol=crlf
+*.iss	eol=crlf
+*.sh	eol=lf
+*.zip	binary
+*.cpp	text
+*.h	text
+.gitattributes	text
+.gitignore	text
+
