@@ -365,7 +365,6 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    data->SetNormals(grp.vnorms);
    data->SetVertexIndices(grp.vidx);
    data->SetUVSetMap(grp.uvMapping);
-   shape->GetData()->SetTspaceFlag(16);
    int nUVs = grp.uvs.size(); //new
    if ( IsFallout3() || IsSkyrim() )
       nUVs = min(1, nUVs);

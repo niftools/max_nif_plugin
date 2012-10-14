@@ -26,15 +26,51 @@ enum DismemberBodyPartType {
    BP_RIGHTLEG3 = 12, /*!< Right Leg 3 */
    BP_BRAIN = 13, /*!< Brain */
 
-   BP_SKY_HEAD = 30,
-   BP_SKY_UNK1 = 31,
-   BP_SKY_TORSO1 = 32,
-   BP_SKY_HANDS1 = 33,
-   BP_SKY_HANDS2 = 34,
-   BP_SKY_UNK2 = 35,
-   BP_SKY_UNK3 = 36,
-   BP_SKY_FEET = 37,
-   BP_SKY_TORSO2 = 38,
+BP_SKY_HEAD = 30, /*!< Head */ 
+BP_SKY_HAIR = 31, /*!< Hair */ 
+BP_SKY_BODY = 32, /*!< Body */ 
+BP_SKY_HAND = 33, /*!< Hands */ 
+BP_SKY_FOREARMS = 34, /*!< Forearms */ 
+BP_SKY_AMULET = 35, /*!< Amulet */ 
+BP_SKY_RING = 36, /*!< Ring */ 
+BP_SKY_FEET = 37, /*!< FEET */ 
+BP_SKY_CALVES = 38, /*!< CALVES */ 
+BP_SKY_SHIELD = 39, /*!< SHIELD */ 
+BP_SKY_TAIL = 40, /*!< TAIL */ 
+BP_SKY_LONG_HAIR = 41, /*!< LONG HAIR */  
+BP_SKY_CIRCLET = 42, /*!< CIRCLET */  
+BP_SKY_EARS = 43, /*!< EARS */  
+BP_SKY_DECAPITATED_HEAD = 50, /*!< DECAPITATED HEAD */  
+BP_SKY_DECAPITATE = 51, /*!< DECAPITATE */  
+BP_SKY_FX01 = 61, /*!< FX01 */  
+BP_SKY_BLOODIED_DRAGON_HEADS = 44, /*!< Used in bloodied dragon heads, so it is free for NPCs */  
+ 
+
+BP_SKY_BLOODIED_DRAGON_HEADS_1 = 45, /*!< Used in bloodied dragon wings, so it is free for NPCs */
+BP_SKY_BLOODIED_DRAGON_HEADS_2 = 47, /*!< Used in bloodied dragon tails, so it is free for NPCs */
+BP_SKY_HELMET = 130, /*!< Used in helmetts that conceal the whole head and neck inside */
+BP_SKY_OPEN_FACE_HELMET = 131, /*!< Used in open faced helmets\hoods (Also the nightingale hood) */
+BP_SKY_DISABLE_HAIR_HEADPART = 141, /*!< Disables Hair Geometry like 131 and 31 */
+BP_SKY_CIRCLETS_ACCESOARIES = 142, /*!< Used in circlets */
+BP_SKY_DISABLE_EAR_HEADPART = 143, /*!< Disabled Ear geometry to prevent clipping issues? */
+BP_SKY_GORE_COVERS_HEAD_NECK = 150, /*!< The gore that covers a decapitated head neck */
+BP_SKY_NECK_DECAPITATION_POINT = 230, /*!< Neck, where 130 and this meets is the decapitation point of the neck */
+
+BP_SKY_FACE_MOUTH = 44, /*!< face/mouth */
+BP_SKY_NECK = 45, /*!< neck (like a cape, scarf, or shawl, neck-tie etc) */
+BP_SKY_CHEST = 46, /*!< chest primary or outergarment */
+BP_SKY_BACK = 47, /*!< back (like a backpack/wings etc) */
+BP_SKY_MISC_FX = 48, /*!< misc/FX (use for anything that doesnt fit in the list) */
+BP_SKY_PELVIS = 49, /*!< pelvis primary or outergarment */
+BP_SKY_PELVIS_1 = 52, /*!< pelvis secondary or undergarment */
+BP_SKY_LEG = 53, /*!< leg primary or outergarment or right leg */
+BP_SKY_LEG_1 = 54, /*!< leg secondary or undergarment or leftt leg */
+BP_SKY_FACE = 55, /*!< face alternate or jewelry */
+BP_SKY_CHEST_1 = 56, /*!< chest secondary or undergarment */
+BP_SKY_SHOULDER = 57, /*!< shoulder */
+BP_SKY_ARM_1 = 58, /*!< arm secondary or undergarment or left arm */
+BP_SKY_ARM = 59, /*!< arm primary or outergarment or right arm */
+BP_SKY_MISC_FX_1 = 60, /*!< misc/FX (use for anything that doesnt fit in the list)*/
 
    BP_SECTIONCAP_HEAD = 101, /*!< Section Cap | Head */
    BP_SECTIONCAP_HEAD2 = 102, /*!< Section Cap | Head 2 */
