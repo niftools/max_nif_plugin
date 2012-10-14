@@ -398,7 +398,7 @@ NiTriBasedGeomRef Exporter::makeMesh(NiNodeRef &parent, Mtl *mtl, FaceGroup &grp
    {
       // enable traditional tangents and binormals for non-oblivion meshes
       if ( !IsOblivion() && (Exporter::mNifVersionInt >= VER_10_0_1_0) )
-         data->SetTspaceFlag( 0x01 );
+         data->SetTspaceFlag( 16 );
 	   shape->UpdateTangentSpace(Exporter::mTangentAndBinormalMethod);
    }
 
