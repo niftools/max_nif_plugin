@@ -31,7 +31,7 @@ HISTORY:
 #include "maxscrpt\Parser.h"
 //static inline void set_error_trace_back_active( BOOL value ) { trace_back_active = value; }
 #else
-#include "maxscript/maxscript.h"
+#include <maxscript/maxscript.h>
 #include <maxscript/compiler/parser.h>
 #endif
 
