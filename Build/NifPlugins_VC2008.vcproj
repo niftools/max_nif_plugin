@@ -43,6 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -107,6 +108,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -171,6 +173,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -235,6 +238,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -299,6 +303,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -363,6 +368,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -427,6 +433,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -491,6 +498,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -555,6 +563,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -619,6 +628,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -683,6 +693,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -747,6 +758,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -811,6 +823,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -875,6 +888,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -939,6 +953,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1003,6 +1018,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1067,6 +1083,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1131,6 +1148,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1196,6 +1214,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1260,6 +1279,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1325,6 +1345,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1389,6 +1410,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="2"
 			/>
 			<Tool
@@ -1455,6 +1477,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1519,6 +1542,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1584,6 +1608,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
@@ -1648,6 +1673,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="1"
 			/>
 			<Tool
