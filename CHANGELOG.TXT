@@ -3,6 +3,11 @@ NifTools MaxPlugin
 
     Change log
     ----------
+     3.9  
+     clamp value fixed
+     vertex color now exports correct
+     disabled nimaterial on skyrim mesh export
+    
      3.8
       Recompiled with official niftools niflib(niflib 0.8.2)
       refixed so it should export tangent set 4097 on nitrishapedata section
