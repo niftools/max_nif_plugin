@@ -2512,7 +2512,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\include&quot;"
 				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="2"
 			/>
@@ -2527,6 +2527,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\lib&quot;"
 				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -2577,6 +2578,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\include&quot;"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -2589,6 +2591,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\x64\lib&quot;"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -3083,6 +3086,142 @@
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
+		<Configuration
+			Name="Release - Max x64|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="pushd $(SolutionDir)&#x0D;&#x0A;call &quot;$(SolutionDir)makeconfig.bat&quot;&#x0D;&#x0A;popd&#x0D;&#x0A;"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\include&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
+				UsePrecompiledHeader="2"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\x64\lib&quot;"
+				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(IntDir)\$(ProjectName).lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="if exist &quot;%MaxInstallDir%\plugcfg&quot; (&#x0D;&#x0A;if not exist &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot; (&#x0D;&#x0A;copy &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;%MaxInstallDir%\plugcfg\MaxNifTools.ini&quot;&#x0D;&#x0A;)&#x0D;&#x0A;)&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)Readme.txt&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(SolutionDir)MaxNifTools.ini&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /D /Y /I &quot;$(TargetPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release - Max x64|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(ProjectDir)Sheets\Max_System_$(PlatformName).vsprops;$(ProjectDir)Sheets\Max_Version_2010.vsprops;$(ProjectDir)Sheets\Release_Settings.vsprops"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+				ExcludedFromBuild="true"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				TargetEnvironment="3"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\include&quot;"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\x64\lib&quot;"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -3400,6 +3539,22 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\NifProps\dds\dds.h"
@@ -3612,6 +3767,22 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\NifProps\dds\dds.rc"
@@ -3822,6 +3993,22 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCResourceCompilerTool"
 						/>
 					</FileConfiguration>
 				</File>
@@ -4050,6 +4237,22 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\NifProps\dds\dxtlib.h"
@@ -4276,6 +4479,22 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\NifProps\dds\veroverrides.h"
@@ -4500,6 +4719,22 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release - Max x64|x64"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
 						/>
 					</FileConfiguration>
 				</File>
@@ -5141,6 +5376,22 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release - Max 2012|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max x64|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release - Max x64|x64"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

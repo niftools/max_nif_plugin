@@ -82,6 +82,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
       texProp->SetLightingEffect1(0.3f);
       texProp->SetLightingEffect2(2.0f);
       texProp->SetEnvironmentMapScale(1.0f);
+	  texProp->SetTextureClampMode(Niflib::TexClampMode::WRAP_S_WRAP_T);//changed
 
 		TSTR diffuseStr, normalStr, glowStr, dispStr, envStr, envMaskStr;
 
@@ -474,14 +475,14 @@ void Exporter::makeMaterial(NiAVObjectRef &parent, Mtl *mtl)
 		name = "default";
 	}
 
-	mtlProp->SetName(name);
+   
+    mtlProp->SetName(name);
 
 	NiPropertyRef prop = DynamicCast<NiProperty>(mtlProp);
-	parent->AddProperty(prop);
+	/*parent->AddProperty(prop);*/
 
 	makeTexture(parent, mtl);
-}
-
+	}
 
 Mtl *Exporter::getMaterial(INode *node, int subMtl)
 {
@@ -624,45 +625,45 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
 	if (ok) // civ4 shader
 	{
-		if ( !IsSkyrim() ) // skyrim does not use material properties
-		{
-			NiMaterialPropertyRef mtlProp = CreateNiObject<NiMaterialProperty>();
-			parent->AddProperty(mtlProp);
+		//if ( !IsSkyrim() ) // skyrim does not use material properties
+		//{
+		//	NiMaterialPropertyRef mtlProp = CreateNiObject<NiMaterialProperty>();
+		//	parent->AddProperty(mtlProp);
 
-			mtlProp->SetName((char*)mtl->GetName());
-			mtlProp->SetAmbientColor(TOCOLOR3(ambient));
-			mtlProp->SetDiffuseColor(TOCOLOR3(diffuse));
-			mtlProp->SetSpecularColor(TOCOLOR3(specular));
-			mtlProp->SetEmissiveColor(TOCOLOR3(emittance));
-			mtlProp->SetGlossiness(shininess);
-			mtlProp->SetTransparency(alpha);
-		}
-		if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
-		{
-			StdMat2 * smtl = (StdMat2*)mtl;
-			if (smtl->SupportsShaders() && !IsSkyrim()) {
-				if (Shader *s = smtl->GetShader()) {
-					if (smtl->GetWire()){
-						NiWireframePropertyRef wireProp = CreateNiObject<NiWireframeProperty>();
-						wireProp->SetFlags(1);
-						parent->AddProperty(wireProp);
-					}
-					if (smtl->GetTwoSided()){
-						NiStencilPropertyRef stencil = CreateNiObject<NiStencilProperty>();
-						stencil->SetStencilFunction(TEST_GREATER);
-						stencil->SetStencilState(false);
-						stencil->SetPassAction(ACTION_INCREMENT);
-						stencil->SetFaceDrawMode(DRAW_BOTH);
-						parent->AddProperty(stencil);
-					}
-					if (smtl->IsFaceted()) {
-						NiShadePropertyRef shade = CreateNiObject<NiShadeProperty>();
-						shade->SetFlags(0);
-						parent->AddProperty(shade);
-					}
-				}
-			}
-		}
+		//	mtlProp->SetName((char*)mtl->GetName());
+		//	mtlProp->SetAmbientColor(TOCOLOR3(ambient));
+		//	mtlProp->SetDiffuseColor(TOCOLOR3(diffuse));
+		//	mtlProp->SetSpecularColor(TOCOLOR3(specular));
+		//	mtlProp->SetEmissiveColor(TOCOLOR3(emittance));
+		//	mtlProp->SetGlossiness(shininess);
+		//	mtlProp->SetTransparency(alpha);
+		//}
+		//if(mtl->ClassID() == Class_ID(DMTL_CLASS_ID, 0) )
+		//{
+		//	/*StdMat2 * smtl = (StdMat2*)mtl;
+		//	if (smtl->SupportsShaders() && !IsSkyrim()) {
+		//		if (Shader *s = smtl->GetShader()) {
+		//			if (smtl->GetWire()){
+		//				NiWireframePropertyRef wireProp = CreateNiObject<NiWireframeProperty>();
+		//				wireProp->SetFlags(1);
+		//				parent->AddProperty(wireProp);
+		//			}
+		//			if (smtl->GetTwoSided()){
+		//				NiStencilPropertyRef stencil = CreateNiObject<NiStencilProperty>();
+		//				stencil->SetStencilFunction(TEST_GREATER);
+		//				stencil->SetStencilState(false);
+		//				stencil->SetPassAction(ACTION_INCREMENT);
+		//				stencil->SetFaceDrawMode(DRAW_BOTH);
+		//				parent->AddProperty(stencil);
+		//			}
+		//			if (smtl->IsFaceted()) {
+		//				NiShadePropertyRef shade = CreateNiObject<NiShadeProperty>();
+		//				shade->SetFlags(0);
+		//				parent->AddProperty(shade);
+		//			}
+		//		}*/
+		//	}
+		//}
 		if (mVertexColors && VertexColorsEnable) {
 			NiVertexColorPropertyRef vertexColor = CreateNiObject<NiVertexColorProperty>();
 			parent->AddProperty(vertexColor);
@@ -736,7 +737,6 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
 
             if (shaderType == 5)
                flags2 = (SkyrimShaderPropertyFlags2)(flags2 | SLSF2_SOFT_LIGHTING);
-
             texProp->SetGlossiness(80);
             texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
             texProp->SetSpecularStrength(1.0f);
@@ -891,11 +891,11 @@ bool Exporter::exportNiftoolsShader(NiAVObjectRef parent, Mtl* mtl)
             // shader must be first, alpha can be second
             NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
             vector<NiPropertyRef> properties = parent->GetProperties();
-            parent->ClearProperties();
+            /*parent->ClearProperties();*/
             parent->AddProperty(prop);
             if (properties.size() > 0)
                parent->AddProperty(properties[0]);
-
+               
          }
          useDefaultShader = false;
       }
