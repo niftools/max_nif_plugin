@@ -2512,7 +2512,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2010 SDK\maxsdk\include&quot;"
 				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 				UsePrecompiledHeader="2"
 			/>
@@ -2527,11 +2527,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2010 SDK\maxsdk\lib&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib\Win32\Release&quot;;$(NOINHERIT)"
 				ModuleDefinitionFile="$(ProjectDir)..\NifPlugins\NifPlugins.def"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(IntDir)\$(ProjectName).lib"
+				TargetMachine="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -2578,7 +2579,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\include&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -2591,7 +2593,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\x64\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\ofmaxsdk\x64\lib&quot;"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 			/>
@@ -3182,7 +3184,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\include&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\NvTriStrip&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2\TriStripper&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\qhull\src&quot;;&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib 0.8.2&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2010 SDK\maxsdk\include&quot;"
+				PreprocessorDefinitions="NIFLIB_STATIC_LINK"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -3195,7 +3198,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Autodesk\3ds Max 2012\maxsdk\x64\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Users\esmeralda\Documents\Visual Studio 2008\niflib\x64\Release - Max x64&quot;;&quot;C:\Program Files (x86)\Autodesk\3ds Max 2010 SDK\maxsdk\x64\lib&quot;;$(NOINHERIT)"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="17"
