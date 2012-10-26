@@ -13,7 +13,6 @@ namespace Niflib
 
 }
 using namespace Niflib;
-
 class BitmapTex;
 class AppSettings;
 class StdMat2;

@@ -3,9 +3,11 @@
 #include "shaders.h"
 #include "AppSettings.h"
 #include "gen/enums.h"
+#include "Ref.h"
 #include "obj/NiWireframeProperty.h"
 #include "obj/NiAlphaProperty.h"
 #include "obj/NiStencilProperty.h"
+#include "obj/NiGeometry.h"
 #include "obj/NiShadeProperty.h"
 #include "obj/NiVertexColorProperty.h"
 #include "obj/NiDitherProperty.h"
@@ -142,7 +144,7 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
          texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
          //texProp->SetSpecularColor(m->getsh);
          //texProp->SetSpecularStrength(m->GetShinStr(t) < 1.0f ? 3.0f : 0.0f);
-         texProp->SetAlpha(m->GetOpacity(t) / 100.0f);
+         texProp->SetAlpha(1);
          texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
          //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
 
@@ -178,13 +180,14 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
 		texset->SetTextures(textures);
 
+	 
       // shader must be first, alpha can be second
       NiPropertyRef prop = DynamicCast<NiProperty>(texProp);
       vector<NiPropertyRef> properties = parent->GetProperties();
       parent->ClearProperties();
-      parent->AddProperty(prop);
-      if (properties.size() > 0)
-         parent->AddProperty(properties[0]);
+      NiGeometryRef geom = DynamicCast<NiGeometry>(parent);
+	  geom->SetBSProperty(1, prop);
+      
 	}
 	else if (IsFallout3())
 	{
