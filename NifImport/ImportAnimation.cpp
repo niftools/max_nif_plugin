@@ -15,7 +15,7 @@ HISTORY:
 #  include <IFrameTagManager.h>
 #endif
 #if VERSION_3DSMAX < (14000<<16) // Version 14 (2012)
-#include "maxscrpt\Strings.h"
+#include "maxscrpt/Strings.h"
 #else
 #include "maxscript/maxscript.h"
 #endif
