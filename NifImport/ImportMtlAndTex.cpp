@@ -213,7 +213,8 @@ Texmap* NifImporter::CreateTexture(const string& filename)
 StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avObject)
 {
 	// Texture
-	vector<NiPropertyRef> props = avObject->GetProperties();
+	NiGeometryRef geoprop=DynamicCast<NiGeometry>(avObject);
+	vector<NiPropertyRef> props = geoprop->GetProperties();
 	NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props);
 	BSShaderPropertyRef shaderRef = SelectFirstObjectOfType<BSShaderProperty>(props);
    BSLightingShaderPropertyRef lightingShaderRef = SelectFirstObjectOfType<BSLightingShaderProperty>(props);
