@@ -1,1 +1,7 @@
-NifPlugins_VC2008.ncb
+*.suo
+*.ncb
+*.obj
+*.dlu
+*.user
+Staging
+Temp
