@@ -217,7 +217,7 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
 	vector<NiPropertyRef> props = geoprop->GetProperties();
 	NiMaterialPropertyRef matRef = SelectFirstObjectOfType<NiMaterialProperty>(props);
 	BSShaderPropertyRef shaderRef = SelectFirstObjectOfType<BSShaderProperty>(props);
-	BSLightingShaderPropertyRef lightingShaderRef = SelectFirstObjectOfType<BSLightingShaderProperty>(props);
+   BSLightingShaderPropertyRef lightingShaderRef = SelectFirstObjectOfType<BSLightingShaderProperty>(props);
    if (matRef != NULL || shaderRef != NULL || lightingShaderRef != NULL){
 
 		StdMat2 *m = NewDefaultStdMat();
@@ -404,8 +404,6 @@ StdMat2 *NifImporter::ImportMaterialAndTextures(ImpNode *node, NiAVObjectRef avO
                m->SetSubTexmap(ID_DI, tex);
             if ( Texmap* tex = CreateTexture( textures->GetTexture(1) ) )
                m->SetSubTexmap(ID_BU, CreateNormalBump(NULL, tex));
-
-
             if ( Texmap* tex = CreateTexture( textures->GetTexture(3) ) )
                m->SetSubTexmap(ID_SI, tex);
             if ( Texmap* tex = CreateTexture( textures->GetTexture(4) ) )

@@ -763,8 +763,8 @@ void NifShader::Illum(ShadeContext &sc, IllumParams &ip)
 
             ip.specIllumOut += s * rj * I * Cs;
 
-         } // END, if specular
-      }  // END, illuminate
+         } // end, if specular
+      }  // end, illuminate
 
    } // for each light
 

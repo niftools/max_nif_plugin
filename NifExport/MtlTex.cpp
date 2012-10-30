@@ -74,6 +74,10 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 		vector<string> textures;
 		textures.resize(9);
 
+      //BSShaderFlags shFlags = BSShaderFlags(SF_ZBUFFER_TEST | SF_SHADOW_MAP | SF_SHADOW_FRUSTUM | SF_EMPTY | SF_UNKNOWN_31);
+      //if (!envStr.isNull() || !dispStr.isNull())
+      //	shFlags = BSShaderFlags(shFlags | SF_MULTIPLE_TEXTURES);
+      //texProp->SetShaderFlags(shFlags);
       texProp->SetGlossiness(80);
       texProp->SetSpecularColor(Color3(0.933f,0.855f,0.804f));
       texProp->SetSpecularStrength(1.0f);
@@ -138,9 +142,21 @@ void Exporter::makeTexture(NiAVObjectRef &parent, Mtl *mtl)
 
          TimeValue t = 0;
          texProp->SetGlossiness(m->GetShininess(t) * 100.0f);
+         //texProp->SetSpecularColor(m->getsh);
+         //texProp->SetSpecularStrength(m->GetShinStr(t) < 1.0f ? 3.0f : 0.0f);
          texProp->SetAlpha(1);
          texProp->SetSpecularColor(TOCOLOR3(m->GetSpecular(t)));
-         
+         //texProp->SetEmissiveColor(TOCOLOR(m->GetEmmis(t)));
+
+         //mtl->SetShinStr(0.0,0);
+         //mtl->SetShininess(shininess/100.0,0);
+         //mtl->SetOpacity(alpha*100.0f,0);
+         //mtl->SetSpecularColor(alpha*100.0f,0);
+
+         //texProp->SetLightingEffect1(0.3f);
+         //texProp->SetLightingEffect1(2.0f);
+         //texProp->SetEnvironmentMapStrength(1.0f);
+
 		}
 
 		textures[0] = mAppSettings->GetRelativeTexPath(string(diffuseStr), mTexPrefix);

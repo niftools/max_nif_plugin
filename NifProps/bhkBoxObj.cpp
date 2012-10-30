@@ -124,13 +124,13 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_INVALID_HVK_MATERIAL,
-      
+      END,
 
     PB_LENGTH, _T("length"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_LENGTH,
       p_default,	   0.0,
       p_range,		0.0, float(1.0E30),
       p_ui, box_params, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_LENGTHEDIT, IDC_LENSPINNER, SPIN_AUTOSCALE,
-      
+      END,
 
     PB_WIDTH, _T("width"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_WIDTH,
       p_default,	   0.0,

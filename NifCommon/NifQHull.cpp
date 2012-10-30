@@ -3,14 +3,14 @@
 
 extern "C"
 {
-#include <libqhull/libqhull.h>
-#include <libqhull/mem.h>
-#include <libqhull/qset.h>
-#include <libqhull/geom.h>
-#include <libqhull/merge.h>
-#include <libqhull/poly.h>
-#include <libqhull/io.h>
-#include <libqhull/stat.h>
+#include <../qhull/src/libqhull/libqhull.h>
+#include <../qhull/src/libqhull/mem.h>
+#include <../qhull/src/libqhull/qset.h>
+#include <../qhull/src/libqhull/geom.h>
+#include <../qhull/src/libqhull/merge.h>
+#include <../qhull/src/libqhull/poly.h>
+#include <../qhull/src/libqhull/io.h>
+#include <../qhull/src/libqhull/stat.h>
 };
 
 using namespace Niflib;
