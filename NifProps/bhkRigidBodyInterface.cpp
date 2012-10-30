@@ -155,7 +155,7 @@ FPInterfaceDesc thebhkRigidBodyInterface(
          "Bullet", 6,
          "User", 7,
          "Null", 8,
-   end);
+   END);
 
 FPInterfaceDesc *bhkRigidBodyInterface::GetDesc() {
    return &thebhkRigidBodyInterface;
