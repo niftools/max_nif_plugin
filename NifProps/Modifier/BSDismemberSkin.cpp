@@ -612,32 +612,32 @@ static ParamBlockDesc2 BSDS_desc ( ms_pblock,
 	ms_by_vertex, _T("byVertex"), TYPE_BOOL, P_RESET_DEFAULT, IDS_BY_VERTEX,
 		p_default, false,
 		p_ui, ms_map_main, TYPE_SINGLECHEKBOX, IDC_MS_SEL_BYVERT,
-		end,
+		END,
 
 	ms_ignore_backfacing, _T("ignoreBackfacing"), TYPE_BOOL, P_RESET_DEFAULT, IDS_IGNORE_BACKFACING,
 		p_default, false,
 		p_ui, ms_map_main, TYPE_SINGLECHEKBOX, IDC_MS_IGNORE_BACKFACES,
-		end,
+		END,
 
 	ms_matid, _T("materialID"), TYPE_INT, P_TRANSIENT|P_RESET_DEFAULT, IDS_RB_MATERIALID,
 		p_default, 1,
 		p_range, 1, 65535,
 		p_ui, ms_map_main, TYPE_SPINNER, EDITTYPE_INT,
 			IDC_MS_MATID, IDC_MS_MATIDSPIN, .5f,
-		end,
+		END,
 
 	ms_ignore_visible, _T("ignoreVisibleEdges"), TYPE_BOOL, P_RESET_DEFAULT, IDS_IGNORE_VISIBLE,
 		p_default, false,
 		p_ui, ms_map_main, TYPE_SINGLECHEKBOX, IDC_MS_IGNORE_VISEDGE,
-		end,
+		END,
 
 	ms_planar_threshold, _T("planarThreshold"), TYPE_ANGLE, P_RESET_DEFAULT, IDS_RB_THRESHOLD,
 		p_default, PI/4.0f,	// Default value for angles has to be in radians.
 		p_range, 0.0f, 180.0f,	// but range given in degrees.
 		p_ui, ms_map_main, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
 			IDC_MS_PLANAR, IDC_MS_PLANARSPINNER, .1f,
-		end,
-	end
+		END,
+	END
 );
 
 static BSDSClassDesc BSDSDesc;

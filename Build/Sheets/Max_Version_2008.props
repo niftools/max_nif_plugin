@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\User_Settings.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <MaxInstallDir>$(MAXINSTALLPATH2008)\</MaxInstallDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>USE_BIPED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <PreBuildEvent>
+      <Message>Checking Environment Variables ...</Message>
+      <Command>IF NOT EXIST "$(MaxInstallDir)" (
+  echo :
+  echo : The variable MAXINSTALLPATH2008 is not defined.
+  echo : Set environment variable or edit User_Settings.vsprops to correct. 
+  echo :
+  EXIT 2
+) else (
+  echo : Using MAXINSTALLPATH2008=$(MAXINSTALLPATH2008)
+)
+</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="MaxInstallDir">
+      <Value>$(MaxInstallDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

@@ -191,54 +191,54 @@ static ParamBlockDesc2 havok_param_blk (
 
     PB_MATERIAL, _T("material"), TYPE_INT, 0,	IDS_DS_MATERIAL,
       p_default,	NP_INVALID_HVK_MATERIAL,
-      end,
+      END,
 
 	PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		bv_type_shapes, 
 	  p_range, 		0, 6, 
 	  p_ui, 			havok_params,	TYPE_RADIO, 8, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_SPHERE, IDC_RDO_CAPSULE, IDC_RDO_PROXY_MESH, IDC_RDO_CONVEX, IDC_RDO_PACKED_STRIPS, IDC_RDO_OBB,
-	  end,
+	  END,
 
 	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
 	  p_default, 	FALSE, 
 	  p_ui,			opt_params, TYPE_SINGLECHEKBOX, IDC_OPT_ENABLE,
-	  end,
+	  END,
   
 	PB_FACETHRESH,	_T("faceThresh"),	TYPE_FLOAT, P_RESET_DEFAULT, IDS_OPT_FACETHRESH,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 90.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_FACETHRESH, IDC_OPT_FACETHRESHSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  end,
+	  END,
 
 	PB_EDGETHRESH,		_T("edgeThresh"),		TYPE_FLOAT, 0, IDS_OPT_EDGETHRESH,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 90.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_EDGETHRESH, IDC_OPT_EDGETHRESHSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  end,
+	  END,
 
     PB_BIAS,		_T("bias"),		TYPE_FLOAT, 0, IDS_OPT_BIAS,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 1.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_BIAS, IDC_OPT_BIASSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  end,
+	  END,
 
 	PB_LAYER, _T("layer"), TYPE_INT, P_ANIMATABLE,	IDS_DS_LAYER,
 	  p_default,	NP_DEFAULT_HVK_LAYER,
-	  end,
+	  END,
 
 	PB_FILTER, _T("filter"), TYPE_INT, P_ANIMATABLE,	IDS_DS_FILTER,
 	  p_default,	NP_DEFAULT_HVK_FILTER,
 	  p_range, 		0, 255, 
 	  p_ui,			subshape_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ED_FILTER, IDC_SP_FILTER, 0.01f,
 	  p_uix,		subshape_params,
-	  end,
+	  END,
 
 
-   end,
-   end
+   END,
+   END
    );
 
 static bhkRigidBodyModifierClassDesc bhkRigidBodyModifierDesc;

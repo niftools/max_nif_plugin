@@ -49,7 +49,7 @@ public:
 
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
+   void ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_CAPSULE); }
 
@@ -134,27 +134,27 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
        p_default,	NP_DEFAULT_HVK_MATERIAL,
-       end,
+       END,
 
     PB_RADIUS1, _T("radius1"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS1,
        p_default,	   0.0,
        p_range,		float(0), float(1.0E30),
        p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS1, IDC_RADSPINNER1, SPIN_AUTOSCALE,
-       end,
+       END,
 
     PB_RADIUS2, _T("radius2"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS2,
        p_default,	   0.0,
        p_range,		float(0), float(1.0E30),
        p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS2, IDC_RADSPINNER2, SPIN_AUTOSCALE,
-       end,
+       END,
 
     PB_LENGTH, _T("length"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_LENGTH,
        p_default,	   0.0,
        p_range,		float(-1.0E30), float(1.0E30),
        p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_LENGTHEDIT, IDC_LENSPINNER, SPIN_AUTOSCALE,
-       end,
+       END,
 
-    end
+    END
     );
 
 // static ClassDesc must be declared after static paramblock
@@ -254,7 +254,7 @@ void bhkCapsuleObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *pre
    this->ip = ip;
 }
 
-void bhkCapsuleObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void bhkCapsuleObject::ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
    param_blk.SetUserDlgProc();
    SimpleObject::EndEditParams(ip,flags,next);

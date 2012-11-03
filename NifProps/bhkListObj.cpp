@@ -80,7 +80,7 @@ public:
 
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
+   void ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_LIST); }
 
@@ -159,13 +159,13 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_DEFAULT_HVK_MATERIAL,
-      end,
+      END,
 
 	PB_MESHLIST,   _T("meshList"),  TYPE_INODE_TAB,		0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_MESHLIST,
 	  p_ui,       list_params, TYPE_NODELISTBOX, IDC_LIST1,IDC_ADD,0,IDC_REMOVE,
-	  end,
+	  END,
 
-    end
+    END
     );
 
 // bug in pb desc? forces us to use this rather than in inline version
@@ -385,7 +385,7 @@ void bhkListObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
 
 }
 
-void bhkListObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void bhkListObject::ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
    param_blk.SetUserDlgProc();
 
@@ -570,7 +570,7 @@ int bhkListObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
    vpt->getGW()->polyline(2, pts, NULL, NULL, FALSE, NULL);
 
    //UpdateMesh(t);
-   //mesh.render( gw, mtl, NULL, COMP_ALL);	
+   //mesh.rENDer( gw, mtl, NULL, COMP_ALL);	
    gw->setRndLimits(rlim);
    return 0;
 }

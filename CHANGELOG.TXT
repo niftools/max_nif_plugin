@@ -1,8 +1,16 @@
 NifTools MaxPlugin
 ==================
-
+    
     Change log
     ----------
+	 4.0 
+
+	 now bslightening shader is correcly attached to nitrishape when exporting
+	 alpha value fixed on bslighteningshader
+    
+	 UPGRADED
+	 VS 2010
+
      3.9  
      clamp value fixed
      vertex color now exports correct

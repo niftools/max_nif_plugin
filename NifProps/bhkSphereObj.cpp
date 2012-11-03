@@ -143,26 +143,26 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
        p_default,	NP_INVALID_HVK_MATERIAL,
-       end,
+       END,
 
     PB_RADIUS, _T("radius"), TYPE_FLOAT, P_ANIMATABLE,	IDS_RB_RADIUS,
        p_default,	   0.0,
        p_range,		float(0), float(1.0E30),
        p_ui, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_RADIUS, IDC_RADSPINNER, SPIN_AUTOSCALE,
-       end,
+       END,
 
     PB_SEGS, _T("segments"), TYPE_INT, P_ANIMATABLE,	IDS_RB_SEGS,
        p_default,	   16,
        p_range,		MIN_SEGMENTS, MAX_SEGMENTS,
        p_ui, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_SEGMENTS, IDC_SEGSPINNER, 1.0f,
-       end,
+       END,
 
     PB_SMOOTH, _T("smooth"), TYPE_INT, P_ANIMATABLE,	IDS_RB_SMOOTH,
        p_default,	   TRUE,
        p_ui, TYPE_SINGLECHEKBOX, IDC_OBSMOOTH,
-       end,
+       END,
 
-    end
+    END
     );
 
 // static ClassDesc must be declared after static paramblock

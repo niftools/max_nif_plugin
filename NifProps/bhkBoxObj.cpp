@@ -124,26 +124,26 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_INVALID_HVK_MATERIAL,
-      end,
+      END,
 
     PB_LENGTH, _T("length"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_LENGTH,
       p_default,	   0.0,
       p_range,		0.0, float(1.0E30),
       p_ui, box_params, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_LENGTHEDIT, IDC_LENSPINNER, SPIN_AUTOSCALE,
-      end,
+      END,
 
     PB_WIDTH, _T("width"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_WIDTH,
       p_default,	   0.0,
       p_range,		0.0, float(1.0E30),
       p_ui, box_params, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_WIDTHEDIT, IDC_WIDTHSPINNER, SPIN_AUTOSCALE,
-      end,
+      END,
 
     PB_HEIGHT, _T("height"), TYPE_FLOAT, P_ANIMATABLE,	IDS_DS_HEIGHT,
       p_default,	   0.0,
       p_range,		float(-1.0E30), float(1.0E30),
       p_ui, box_params, TYPE_SPINNER, EDITTYPE_UNIVERSE, IDC_HEIGHTEDIT, IDC_HEIGHTSPINNER, SPIN_AUTOSCALE,
-      end,
-    end
+      END,
+    END
     );
 
 // bug in pb desc? forces us to use this rather than in inline version

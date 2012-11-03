@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <NifBuildType>Release</NifBuildType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <SetChecksum>true</SetChecksum>
+    </Link>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <PreBuildEvent>
+      <Command>pushd $(SolutionDir)
+call "$(SolutionDir)makeconfig.bat"
+popd
+</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>if exist "$(MaxInstallDir)\plugcfg" (
+if not exist "$(MaxInstallDir)\plugcfg\MaxNifTools.ini" (
+copy "$(SolutionDir)MaxNifTools.ini" "$(MaxInstallDir)\plugcfg\MaxNifTools.ini"
+)
+)
+xcopy /D /Y /I "$(SolutionDir)Readme.txt" "$(OutDir)"
+xcopy /D /Y /I "$(SolutionDir)license.txt" "$(OutDir)"
+xcopy /D /Y /I "$(SolutionDir)ChangeLog.txt" "$(OutDir)"
+xcopy /D /Y /I "$(SolutionDir)Authors.txt" "$(OutDir)"
+xcopy /D /Y /I "$(SolutionDir)MaxNifTools.ini" "$(OutDir)"
+xcopy /D /Y /I "$(TargetPath)" "$(OutDir)"
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="NifBuildType">
+      <Value>$(NifBuildType)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
