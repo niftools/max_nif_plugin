@@ -81,7 +81,7 @@ public:
 
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next);
+   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_PROXY); }
 
@@ -517,7 +517,7 @@ void bhkProxyObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
    this->ip = ip;
 }
 
-void bhkProxyObject::ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void bhkProxyObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
    param_blk.SetUserDlgProc();
 
@@ -665,7 +665,7 @@ int ProxyObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPo
             }
 
             sp0 = m;
-            //ob->suspENDSnap = TRUE;								
+            //ob->suspendSnap = TRUE;								
             p0 = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
             p1 = p0 + Point3(.01,.01,.01);
             mat.SetTrans(float(.5)*(p0+p1));				
@@ -674,7 +674,7 @@ int ProxyObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPo
 
             if (msg==MOUSE_POINT) 
             {
-               //ob->suspENDSnap = FALSE;					
+               //ob->suspendSnap = FALSE;					
                return CREATE_STOP;
             }
             break;
