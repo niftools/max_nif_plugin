@@ -49,7 +49,7 @@ public:
 
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next);
+   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_CAPSULE); }
 
@@ -254,7 +254,7 @@ void bhkCapsuleObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *pre
    this->ip = ip;
 }
 
-void bhkCapsuleObject::ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void bhkCapsuleObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
    param_blk.SetUserDlgProc();
    SimpleObject::EndEditParams(ip,flags,next);

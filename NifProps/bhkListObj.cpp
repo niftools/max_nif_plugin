@@ -80,7 +80,7 @@ public:
 
    CreateMouseCallBack* GetCreateMouseCallBack();
    void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next);
+   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
    RefTargetHandle Clone(RemapDir& remap);
    TCHAR *GetObjectName() { return GetString(IDS_RB_LIST); }
 
@@ -385,7 +385,7 @@ void bhkListObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
 
 }
 
-void bhkListObject::ENDEditParams( IObjParam *ip, ULONG flags,Animatable *next )
+void bhkListObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
 {		
    param_blk.SetUserDlgProc();
 
@@ -570,7 +570,7 @@ int bhkListObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags)
    vpt->getGW()->polyline(2, pts, NULL, NULL, FALSE, NULL);
 
    //UpdateMesh(t);
-   //mesh.rENDer( gw, mtl, NULL, COMP_ALL);	
+   //mesh.render( gw, mtl, NULL, COMP_ALL);	
    gw->setRndLimits(rlim);
    return 0;
 }
