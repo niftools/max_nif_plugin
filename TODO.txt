@@ -1,8 +1,0 @@
-Issues!
-
-import texture dosnt get imported correcly.
-export collision needs changing on scale and unkown 7 needs to be written of atleast teh 2 first values then needs to be 0
-export collision needs changing on area to 0.0010 or whatever it is
-export coll material needs update.
-
-and prolly some more
