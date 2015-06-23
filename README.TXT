@@ -1,75 +1,43 @@
-                        MaxPlugins 3.7.2
-                        ================
+========================================================================
+    DYNAMIC LINK LIBRARY : EhamPlugin Project Overview
+========================================================================
 
- 
-    This plugin currently consists of an exporter, importer and a utility 
-     plugin for 3ds max and gmax for read and writing Gamebryo/Netimmerse
-     related files.
-    
-    Report problems and ask questions here:
-    
-        http://www.niftools.org/forum/viewforum.php?f=6
-        
-    A wiki for the 3ds Max plugins is available at:
-        
-        http://www.niftools.org/wiki/index.php/3ds_Max
- 
-        
-    Enjoy!
+AppWizard has created this EhamPlugin DLL for you.
 
-    Requirements
-    ------------
+This file contains a summary of what you will find in each of the files that
+make up your EhamPlugin application.
 
-      Plugins:
-        3D Studio Max 5, 6, 7, 8, 9, 2008, 2009, 2010, 2011, 2012
-        gmax 1.2
 
-    Installation
-    ------------
-    
-    Installer:
-        The installer will configure the plugins for whichever releases
-        you have available on your machine.  It will also optionally configure
-        texture paths for various games that we know there settings for.
-    
-    Copy NifPlugins.dlu, to your 3dsmax\plugins directory.
-    Copy MaxNifTools.ini to your 3dsmax\plugcfg directory.
-    
-    gmax notes:
-       NifPlugins.dlu goes in gmax\plugin folder
-       MaxNifTools.ini goes in gmax\plugCFG folder
-       winmm.dll goes in gmax folder where gmax.exe is located.
-         Do not place it in the windows system folder.
-        
-    Usage
-    -----
-    
-      Collision:
-        
-        Add bhkRigidBody from Create | Helpers | Niftools to represent
-          a rigid body in havok.
-          
-        Add bhkCollProxy or bhkRigidBody Modifier to represent shapes
-          and then link them to the bhkRigidBody.
-          
-      Exporter:
-        Export files using "File | Export | Netimmerse/Gamebryo (*.NIF, *.KF)".
+EhamPlugin.vcxproj
+    This is the main project file for VC++ projects generated using an Application Wizard.
+    It contains information about the version of Visual C++ that generated the file, and
+    information about the platforms, configurations, and project features selected with the
+    Application Wizard.
 
-      Importer:
-        Import files using "File | Import | Netimmerse/Gamebryo (*.NIF, *.KF)"
-  
-      Settings:
-        Its recommended that you edit the MaxNifTools.ini file to adjust 
-        paths and other settings to your machine to make it easier to work with.
-    
-        1. Remove irrelevant applications from the KnownApplications list
-        2. Fix the RootPaths, TexturePaths and TextureSearchPaths in the 
-            Applications for your machine.
-        
+EhamPlugin.vcxproj.filters
+    This is the filters file for VC++ projects generated using an Application Wizard. 
+    It contains information about the association between the files in your project 
+    and the filters. This association is used in the IDE to show grouping of files with
+    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
+    "Source Files" filter).
 
-    Additional Notes
-    ----------------
+EhamPlugin.cpp
+    This is the main DLL source file.
 
-    If your collision mesh comes out deformed, go to the utilities tab, 
-    choose "Reset XForm" and click "Reset Selected". This should fix it.
-    
+	When created, this DLL does not export any symbols. As a result, it
+	will not produce a .lib file when it is built. If you wish this project
+	to be a project dependency of some other project, you will either need to
+	add code to export some symbols from the DLL so that an export library
+	will be produced, or you can set the Ignore Input Library property to Yes
+	on the General propert page of the Linker folder in the project's Property
+	Pages dialog box.
+
+/////////////////////////////////////////////////////////////////////////////
+Other standard files:
+
+StdAfx.h, StdAfx.cpp
+    These files are used to build a precompiled header (PCH) file
+    named EhamPlugin.pch and a precompiled types file named StdAfx.obj.
+
+/////////////////////////////////////////////////////////////////////////////
+

@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\NifExport">
+      <UniqueIdentifier>{e9e08ec4-8888-4c24-89b0-61bb3ce3dc75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifExport">
+      <UniqueIdentifier>{af0bb519-08a2-463a-9d98-8004ed0108d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifCommon">
+      <UniqueIdentifier>{9c2e81e1-cfd9-4d70-aaca-b324df8e9388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifCommon">
+      <UniqueIdentifier>{ec562009-517a-4d0f-8cbb-cd8074407c6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifPlugins">
+      <UniqueIdentifier>{483995a0-285e-473f-bdcf-d158a26a4103}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps">
+      <UniqueIdentifier>{3a01af5e-293b-458f-86db-f51fd3b16704}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifExport\NvTriStrip">
+      <UniqueIdentifier>{74e442d0-c472-4f77-85d7-57e4a1fe16ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifExport\NvTriStrip">
+      <UniqueIdentifier>{4e97ad6f-4e74-4570-9961-b2fb1ae45e0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifPlugins">
+      <UniqueIdentifier>{e662f830-5da8-464b-a8e6-35c8a2791e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifProps">
+      <UniqueIdentifier>{c0281343-de74-4466-b6af-da30363edc93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps\Shader">
+      <UniqueIdentifier>{80f56bc7-a7ec-44cd-9d14-fc7a21b26724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps\Modifier">
+      <UniqueIdentifier>{13b4f415-424c-4410-a5c9-621090a64485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifProps\Modifier">
+      <UniqueIdentifier>{170f12f1-2505-421c-bd67-7fcdd28676fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifProps\Core">
+      <UniqueIdentifier>{7fe4cf2f-c140-4995-bb52-728b87c18420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps\Collision">
+      <UniqueIdentifier>{a1acbae0-227b-476e-9083-2e6a905f94d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifProps\Collision">
+      <UniqueIdentifier>{294e412f-ce15-4cf1-a841-f77eaf932fac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifCommon\qhull">
+      <UniqueIdentifier>{e2b2972d-f588-4775-841b-939e21441eb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifCommon\qhull">
+      <UniqueIdentifier>{c4ce95a1-2a4f-4e28-b18c-a48cda3ae742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifFurniture">
+      <UniqueIdentifier>{edbfb7e8-5c87-4319-8cde-5258ce5e2d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifFurniture">
+      <UniqueIdentifier>{f7d77d7e-3399-4f54-9b1d-e84934480f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifProps\Shader">
+      <UniqueIdentifier>{bdb8685c-e7f0-4181-a938-9f7de0c40795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps\Core">
+      <UniqueIdentifier>{3df19723-1fab-4cb6-b211-f5d68ddd4c7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifImport">
+      <UniqueIdentifier>{8f867bf5-68e5-461d-936c-a122a099a57c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\NifImport">
+      <UniqueIdentifier>{204bb609-f7f7-4631-8e0b-46ae716e607c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\NifProps\Nodes">
+      <UniqueIdentifier>{2ddb1112-aca8-4a09-ae9e-b55f5e23baa8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NifExport.h">
+      <Filter>Header Files\NifExport</Filter>
+    </ClInclude>
+    <ClInclude Include="niutils.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="Exporter.h">
+      <Filter>Header Files\NifExport</Filter>
+    </ClInclude>
+    <ClInclude Include="AppSettings.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="nifversion.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="NifPlugins.h">
+      <Filter>Header Files\NifPlugins</Filter>
+    </ClInclude>
+    <ClInclude Include="objectparams.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="NvTriStrip\NvTriStrip.h">
+      <Filter>Header Files\NifExport\NvTriStrip</Filter>
+    </ClInclude>
+    <ClInclude Include="NvTriStrip\NvTriStripObjects.h">
+      <Filter>Header Files\NifExport\NvTriStrip</Filter>
+    </ClInclude>
+    <ClInclude Include="NvTriStrip\VertexCache.h">
+      <Filter>Header Files\NifExport\NvTriStrip</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimKey.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="iNifProps.h">
+      <Filter>Header Files\NifProps\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NifGui.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="bhkRigidBodyInterface.h">
+      <Filter>Header Files\NifProps\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="NifStrings.h">
+      <Filter>Header Files\NifProps</Filter>
+    </ClInclude>
+    <ClInclude Include="bhkHelperInterface.h">
+      <Filter>Header Files\NifProps\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="bhkHelperFuncs.h">
+      <Filter>Header Files\NifProps\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\geom.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\io.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\libqhull.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\mem.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\merge.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\poly.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\qhull_a.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\qset.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\random.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\stat.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\niflib\qhull\src\libqhull\user.h">
+      <Filter>Header Files\NifCommon\qhull</Filter>
+    </ClInclude>
+    <ClInclude Include="FurnitureMarkers.h">
+      <Filter>Header Files\NifFurniture</Filter>
+    </ClInclude>
+    <ClInclude Include="NifFurniture.h">
+      <Filter>Header Files\NifFurniture</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderutil.h">
+      <Filter>Header Files\NifProps\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="NifImporter.h">
+      <Filter>Header Files\NifImport</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseImporter.h">
+      <Filter>Header Files\NifImport</Filter>
+    </ClInclude>
+    <ClInclude Include="Half.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeMeshes.h">
+      <Filter>Header Files\NifCommon</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NifExport.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="niutils.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Exporter.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="AppSettings.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="Coll.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="nimorph.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="MtlTex.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="Strips.cpp">
+      <Filter>Source Files\NifExport</Filter>
+    </ClCompile>
+    <ClCompile Include="NvTriStrip\NvTriStrip.cpp">
+      <Filter>Source Files\NifExport\NvTriStrip</Filter>
+    </ClCompile>
+    <ClCompile Include="NvTriStrip\NvTriStripObjects.cpp">
+      <Filter>Source Files\NifExport\NvTriStrip</Filter>
+    </ClCompile>
+    <ClCompile Include="NvTriStrip\VertexCache.cpp">
+      <Filter>Source Files\NifExport\NvTriStrip</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimKey.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="NifPlugins.cpp">
+      <Filter>Source Files\NifPlugins</Filter>
+    </ClCompile>
+    <ClCompile Include="NifShader.cpp">
+      <Filter>Source Files\NifProps\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="BSDismemberSkin.cpp">
+      <Filter>Source Files\NifProps\Modifier</Filter>
+    </ClCompile>
+    <ClCompile Include="NifGui.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkRigidBodyInterface.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkHelperInterface.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkRigidBodyModifier.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkHelperFuncs.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkProxyObj.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="NifQHull.cpp">
+      <Filter>Source Files\NifCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\geom.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\geom2.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\global.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\io.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\libqhull.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\mem.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\merge.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\poly.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\poly2.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\qset.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\random.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\rboxlib.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\stat.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\user.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\usermem.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\userprintf.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\niflib\qhull\src\libqhull\userprintf_rbox.c">
+      <Filter>Source Files\NifCommon\qhull</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkBoxObj.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkSphereObj.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkCapsuleObj.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="bhkListObj.cpp">
+      <Filter>Source Files\NifProps\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="NifFurniture.cpp">
+      <Filter>Source Files\NifFurniture</Filter>
+    </ClCompile>
+    <ClCompile Include="shaderutil.cpp">
+      <Filter>Source Files\NifProps\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="NifProps.cpp">
+      <Filter>Source Files\NifProps\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MaxNifImport.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="NifImporter.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportSkeleton.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="NifDialog.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportCollision.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMeshAndSkin.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMtlAndTex.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportAnimation.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportParticles.cpp">
+      <Filter>Source Files\NifImport</Filter>
+    </ClCompile>
+    <ClCompile Include="SwitchNode.cpp">
+      <Filter>Source Files\NifProps\Nodes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EhamPlugin.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EhamPlugin.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Modifier\AddDel16.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Modifier\AddDelMask16.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Modifier\bmp00003.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Modifier\selmask.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
