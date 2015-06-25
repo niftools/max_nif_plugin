@@ -1,25 +1,20 @@
-#ifndef __NIFGUI_H__
-#define __NIFGUI_H__
 
-/* Combo box control wrapper. */
+#pragma once
+
+/* Combo box control wrapper */
 class NpComboBox
 {
-
 public:
+	NpComboBox( HWND hWnd = NULL );
 
-	NpComboBox(HWND hWnd=NULL);
-
-	void			init(HWND hWnd);
-
-	int				add(const char *);
-
-	int				count() const;
-	void			select(int i);
-	int 			selection() const;
+	void		init( HWND hWnd );
+	int			add( const wchar_t* );
+	int			count( ) const;
+	void		select( int i );
+	int			selection( ) const;
+	void		remove( int i );
 
 private:
 
-	HWND			mWnd;
+	HWND		mWnd;
 };
-
-#endif __NIFGUI_H__

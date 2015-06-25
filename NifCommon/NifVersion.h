@@ -1,14 +1,5 @@
-//**********************************************************************
-//
-// FILE: BaseImporter.h
-//
-// CREATED BY: tazpn (Theo)
-//
-// HISTORY:
-//	 Copyright (c) 2006, All Rights Reserved.
-//**********************************************************************/
-#ifndef NIFVERSION_H
-#define NIFVERSION_H
+
+#pragma once
 
 #include "config.h"
 
@@ -38,5 +29,3 @@
 
 #define COPYRIGHTYEARINT 2012
 #define COPYRIGHTYEAR "2012"
-
-#endif

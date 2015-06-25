@@ -1,148 +1,125 @@
-/**********************************************************************
-*<
-FILE: bhkProxyObj.cpp
 
-DESCRIPTION:	Collision Proxy Object Implementation
+#include "stdafx.h"
 
-CREATED BY: tazpn (Theo)
+extern void compute_convex_hull( Mesh& mesh, Mesh& outMesh );
 
-HISTORY: 
-  V1.0 - Derived from 3ds max prim box example
-
-*>	Copyright (c) 2006, All Rights Reserved.
-**********************************************************************/
-#pragma warning( disable:4800 )
-#include <max.h>
-#include "MAX_Mem.h"
-#include <map>
-#include "NifProps.h"
-#include "iparamm.h"
-#include "Simpobj.h"
-#include "surf_api.h"
-#include "notify.h"
-#include "macroRec.h"
-#include "bhkRigidBodyInterface.h"
-#include "NifGui.h"
-#include "NifStrings.h"
-#include "bhkHelperFuncs.h"
-#include <stdmat.h>
-#include <meshdelta.h>
-#ifndef _countof
-#define _countof(x) (sizeof(x)/sizeof((x)[0]))
-#endif
-
-extern void compute_convex_hull(Mesh& mesh, Mesh& outmesh);
-
-Class_ID BHKPROXYOBJECT_CLASS_ID = Class_ID(0x3f087788, BHKRIGIDBODYCLASS_DESC.PartB());
+Class_ID BHKPROXYOBJECT_CLASS_ID = Class_ID( 0x3f087788, BHKRIGIDBODYCLASS_DESC.PartB( ) );
 class ProxyPickObjectMode;
 
 class bhkProxyValidatorClass : public PBValidator
 {
 public:
-	class bhkProxyObject *mod;
-private:
-	BOOL Validate(PB2Value &v) 
-	{
-		INode *node = (INode*) v.r;
-		if (node->TestForLoop(FOREVER,(ReferenceMaker *) mod)!=REF_SUCCEED) return FALSE;
+	class bhkProxyObject* mod;
 
-		ObjectState os = node->EvalWorldState(0);
-		//Allow only tri object derived objects
-		if (os.obj->CanConvertToType(triObjectClassID)  && os.obj->SuperClassID() != SHAPE_CLASS_ID) {			
+private:
+	
+	BOOL Validate( PB2Value& v )
+	{
+		INode* node = (INode*) v.r;
+		if( node->TestForLoop( FOREVER, (ReferenceMaker*) mod ) != REF_SUCCEED )
+			return FALSE;
+
+		ObjectState os = node->EvalWorldState( 0 );
+
+		// Allow only tri object derived objects
+		if( os.obj->CanConvertToType( triObjectClassID ) && os.obj->SuperClassID( ) != SHAPE_CLASS_ID )
 			return TRUE;
-		}
+
 		return FALSE;
-	};
+	}
 };
 
 class bhkProxyObject : public SimpleObject2
 {
-	typedef SimpleObject2 BaseClass;
-public:			
-   // Class vars
-   IParamMap2 *pmapParam;
-   IObjParam *ip;
-   ProxyPickObjectMode *pickObMode;
-   IParamMap2 *pbvParams[1]; //proxy
-   Interface		*mIP;
-   bhkProxyValidatorClass validator;
-   ICustButton		*iPickButton;
-   Mesh proxyMesh;
-   Point3 proxyPos;
-   bool forceRedraw;
+public:
+	// Class vars
+	IParamMap2*			 pmapParam;
+	IObjParam*			 ip;
+	ProxyPickObjectMode* pickObMode;
+	IParamMap*			 pbvParams[ 1 ]; // Proxy
+	Interface*			 mIP;
+	bhkProxyValidatorClass validator;
+	ICustButton*		 iPickButton;
+	Mesh				 proxyMesh;
+	Point3				 proxyPos;
+	bool				 forceRedraw;
 
-   bhkProxyObject(BOOL loading);		
-   ~bhkProxyObject();		
+	bhkProxyObject( BOOL loading );
+	~bhkProxyObject( );
 
-   // From Object
-   int CanConvertToType(Class_ID obtype);
-   Object* ConvertToType(TimeValue t, Class_ID obtype);
-   void GetCollapseTypes(Tab<Class_ID> &clist,Tab<TSTR*> &nlist);
+	// From object
+	int						CanConvertToType( Class_ID obtype );
+	Object*					ConvertToType( TimeValue t, Class_ID obtype );
+	void					GetCollapseTypes( Tab<Class_ID>& clist, Tab<TSTR*>& nlist ) { Object::GetCollapseTypes( clist, nlist ); }
 
-   CreateMouseCallBack* GetCreateMouseCallBack();
-   void BeginEditParams( IObjParam  *ip, ULONG flags,Animatable *prev);
-   void EndEditParams( IObjParam *ip, ULONG flags,Animatable *next);
-   RefTargetHandle Clone(RemapDir& remap);
-   TCHAR *GetObjectName() { return GetString(IDS_RB_PROXY); }
+	CreateMouseCallBack*	GetCreateMouseCallBack( );
 
-   int	NumParamBlocks() { return 1; }					// return number of ParamBlocks in this instance
-   IParamBlock2* GetParamBlock(int i) { return pblock2; } // return i'th ParamBlock
-   IParamBlock2* GetParamBlockByID(BlockID id) { return (pblock2->ID() == id) ? pblock2 : NULL; } // return id'd ParamBlock
+	void					BeginEditParams( IObjParam* ip, ULONG flags, Animatable* prev );
+	void					EndEditParams( IObjParam* ip, ULONG flags, Animatable* next );
 
-   // Animatable methods		
-   void DeleteThis() {delete this;}
-   Class_ID ClassID() { return BHKPROXYOBJECT_CLASS_ID; } 
-   SClass_ID SuperClassID() { return HELPER_CLASS_ID; }
+	RefTargetHandle			Clone( RemapDir& remap );
 
-   // From SimpleObject
-   void BuildMesh(TimeValue t);
-   BOOL OKtoDisplay(TimeValue t);
-   void InvalidateUI();
+	const TCHAR*			GetObjectName( ) { return GetString( IDS_RB_PROXY ); }
 
-   int Display(TimeValue t, INode* inode, ViewExp *vpt, int flags);
+	// Return number of ParamBlocks in this instance
+	int						NumParamBlocks( ) { return 1; }
+	// Return the i'th ParamBlock
+	IParamBlock2*			GetParamBlock( int i ) { return pblock2; }
+	// Return id'd ParamBlock
+	IParamBlock2*			GetParamBlockByID( BlockID id ) { return ( pblock2->ID( ) == id ) ? pblock2 : NULL; }
 
-   void BuildEmpty();
-   void BuildColBox();
-   void BuildColStrips();
-   void BuildColPackedStrips();
-   void BuildColConvex();
-   void BuildColCapsule();
-   void BuildColOBB();
-   void BuildOptimize(Mesh&mesh);
+	// Animatable methods
+	void					DeleteThis( ) { delete this; }
+	Class_ID				ClassID( ) { return BHKPROXYOBJECT_CLASS_ID; }
+	SClass_ID				SuperClassID( ) { return HELPER_CLASS_ID; }
 
-   void UpdateUI();
-   void CreateMesh();
+	// From SimpleObject
+	void					BuildMesh( TimeValue t );
+	BOOL					OKtoDisplay( TimeValue t ) { return TRUE; }
+	void					InvalidateUI( );
 
-   Modifier *CreateWSMMod(INode *)
-   {
-	   return NULL;
-   }
+	int						Display( TimeValue t, INode* inode, ViewExp* vpt, int flags );
+
+	void					BuildEmpty( );
+	void					BuildColBox( );
+	void					BuildColStrips( );
+	void					BuildColPackedStrips( );
+	void					BuildColConvex( );
+	void					BuildColCapsule( );
+	void					BuildColOBB( );
+	void					BuildOptimize( Mesh& mesh );
+
+	void					UpdateUI( );
+	void					CreateMesh( );
+
+	Modifier* CreateWSMMod( INode* )
+	{
+		return NULL;
+	}
 };
 
 //--- ClassDescriptor and class vars ---------------------------------
 
-// The class descriptor for box
-class bhkProxyObjClassDesc : public ClassDesc2 
+// The class descriptor for proxy
+class bhkProxyObjClassDesc : public ClassDesc2
 {
 public:
-   bhkProxyObjClassDesc();
-   int 			   IsPublic() { return 1; }
-   void *			Create(BOOL loading = FALSE) {
-      return new bhkProxyObject(loading);
-   }
-   const TCHAR *	ClassName() { return GetString(IDS_RB_PROXY_CLASS); }
-   SClass_ID		SuperClassID() { return HELPER_CLASS_ID; }
-   Class_ID		   ClassID() { return BHKPROXYOBJECT_CLASS_ID; }
-   const TCHAR* 	Category() { return "NifTools"; }
+	bhkProxyObjClassDesc( );
 
-   const TCHAR*	InternalName() { return _T("bhkProxyShape"); }	// returns fixed parsable name (scripter-visible name)
-   HINSTANCE		HInstance() { return hInstance; }			// returns owning module handle
+	int				IsPublic( ) { return 1; }
+	void*			Create( BOOL loading = FALSE ) {  return new bhkProxyObject( loading ); }
+	const TCHAR*	ClassName( ) { return GetString( IDS_RB_PROXY_CLASS ); }
+	SClass_ID		SuperClassID( ) { return HELPER_CLASS_ID; }
+	Class_ID		ClassID( ) { return BHKPROXYOBJECT_CLASS_ID; }
+	const TCHAR*	Category( ) { return _T( "NifTools" ); }
+
+	// Returns fixed parsable name (scripter-visible name )
+	const TCHAR*	InternalName( ) { return _T( "bhkProxyShape" ); }
+	// Returns owning module handle
+	HINSTANCE		HInstance( ) { return hInstance; }
 };
 
-extern ClassDesc2* GetbhkProxyObjDesc();
-
-// in prim.cpp  - The dll instance handle
-extern HINSTANCE hInstance;
+extern ClassDesc2* GetbhkProxyObjDesc( );
 
 //--- Parameter map/block descriptors -------------------------------
 
@@ -169,378 +146,426 @@ static ParamBlockDesc2 param_blk (
     // params
     PB_MATERIAL, _T("material"), TYPE_INT, P_ANIMATABLE,	IDS_DS_MATERIAL,
       p_default,	NP_INVALID_HVK_MATERIAL,
-      END,
+      p_end,
 
     PB_BOUND_TYPE, 	_T("boundType"),	TYPE_INT, 0, IDS_BV_BOUNDING_TYPE,
 	  p_default, 		0, 
 	  p_range, 			0, 5, 
 	  p_ui, 			list_params,	TYPE_RADIO, 7, IDC_RDO_NO_COLL, IDC_RDO_AXIS_ALIGNED_BOX, IDC_RDO_STRIPS_SHAPE, IDC_RDO_PACKED_STRIPS, IDC_RDO_CONVEX, IDC_RDO_CAPSULE, IDC_RDO_OBB,
-	  END,
+	  p_end,
 
 	PB_MESHLIST,   _T("meshProxy"),  TYPE_INODE_TAB,		0,	P_AUTO_UI|P_VARIABLE_SIZE,	IDS_MESHLIST,
 	  p_ui,       list_params, TYPE_NODELISTBOX, IDC_LIST1,IDC_ADD,0,IDC_REMOVE,
-	  END,
+	  p_end,
 
     PB_CENTER,   _T("center"),  TYPE_POINT3,  P_TRANSIENT,	IDS_CENTER,
-	  END,
+	  p_end,
 
 
 	PB_OPT_ENABLE,	_T("enableOptimize"), TYPE_BOOL, 0, IDS_OPT_ENABLE,
 	  p_default, 	FALSE, 
 	  p_ui,			opt_params, TYPE_SINGLECHEKBOX, IDC_OPT_ENABLE,
-	  END,
+	  p_end,
 
 	PB_FACETHRESH,	_T("faceThresh"),	TYPE_FLOAT, P_RESET_DEFAULT, IDS_OPT_FACETHRESH,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 90.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_FACETHRESH, IDC_OPT_FACETHRESHSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  END,
+	  p_end,
 
 	PB_EDGETHRESH,		_T("edgeThresh"),		TYPE_FLOAT, 0, IDS_OPT_EDGETHRESH,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 90.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_EDGETHRESH, IDC_OPT_EDGETHRESHSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  END,
+	  p_end,
 
 	PB_BIAS,		_T("bias"),		TYPE_FLOAT, 0, IDS_OPT_BIAS,
 	  p_default, 	0.1f, 
 	  p_range, 		0.0f, 1.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_BIAS, IDC_OPT_BIASSPIN, 0.01f,
 	  p_uix,		opt_params,
-	  END,
+	  p_end,
 
 	PB_MAXEDGE,		_T("maxEdge"),		TYPE_FLOAT, 0, IDS_OPT_MAXEDGE,
 	  p_default, 	0.0f, 
 	  p_range, 		0.0f, 1000.0f, 
 	  p_ui,			opt_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_OPT_MAXEDGE, IDC_OPT_MAXEDGESPIN, SPIN_AUTOSCALE,
 	  p_uix,		opt_params,
-	  END,
+	  p_end,
 
 	PB_LAYER, _T("layer"), TYPE_INT, P_ANIMATABLE,	IDS_DS_LAYER,
 	  p_default,	NP_DEFAULT_HVK_LAYER,
-	  END,
+	  p_end,
 
     PB_FILTER, _T("filter"), TYPE_INT, P_ANIMATABLE,	IDS_DS_FILTER,
 	  p_default,	NP_DEFAULT_HVK_FILTER,
 	  p_range, 		0, 255, 
 	  p_ui,			subshape_params, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_ED_FILTER, IDC_SP_FILTER, 0.01f,
 	  p_uix,		subshape_params,
-	  END,
+	  p_end,
 
-    END
-    );
+    p_end
+);
 
 // bug in pb desc? forces us to use this rather than in inline version
-static bhkProxyObjClassDesc listDesc;
-extern ClassDesc2* GetbhkProxyObjDesc() { return &listDesc; }
-bhkProxyObjClassDesc::bhkProxyObjClassDesc() {
-   param_blk.SetClassDesc(this);
+static bhkProxyObjClassDesc proxyDesc;
+extern ClassDesc2* GetbhkProxyObjDesc( ) { return &proxyDesc; }
+
+bhkProxyObjClassDesc::bhkProxyObjClassDesc( ) 
+{
+	param_blk.SetClassDesc( this );
 }
 
+class ProxyPickObjectMode : public PickModeCallback, public PickNodeCallback
+{
+public:
+	bhkProxyObject* mod;
 
-class ProxyPickObjectMode : 
-	public PickModeCallback,
-	public PickNodeCallback {
-public:		
-	bhkProxyObject *mod;
-
-	BOOL HitTest(IObjParam *ip,HWND hWnd,ViewExp *vpt,IPoint2 m,int flags);
-	BOOL Pick(IObjParam *ip,ViewExp *vpt);
-	void EnterMode(IObjParam *ip);
-	void ExitMode(IObjParam *ip);
-	BOOL RightClick(IObjParam *ip,ViewExp *vpt)	{return TRUE;}
-	BOOL Filter(INode *node);		
-	PickNodeCallback *GetFilter() {return this;}
+	BOOL			  HitTest( IObjParam* ip, HWND hWnd, ViewExp* vpt, IPoint2 m, int flags );
+	BOOL			  Pick( IObjParam* ip, ViewExp* vpt );
+	void			  EnterMode( IObjParam* ip ) { mod->iPickButton->SetCheck( TRUE ); }
+	void			  ExitMode( IObjParam* ip ) { mod->iPickButton->SetCheck( FALSE ); }
+	BOOL			  RightClick( IObjParam* ip, ViewExp* vpt ) { return TRUE; }
+	BOOL			  Filter( INode* node );
+	PickNodeCallback* GetFilter( ) { return this; }
 };
-
-//--- ProxyPickObjectMode ------------------------------------------------
-
-BOOL ProxyPickObjectMode::Filter(INode *node)
-{
-	if (node) {
-		node->BeginDependencyTest();
-		mod->NotifyDependents(FOREVER,0,REFMSG_TEST_DEPENDENCY);
-		if (node->EndDependencyTest()) {		
-			return FALSE;
-		} 
-		////added code for looptest
-		//if (node->TestForLoop(FOREVER,(ReferenceMaker *) mod)!=REF_SUCCEED)
-		//   return FALSE;
-
-		for (int i = 0;i < mod->pblock2->Count(PB_MESHLIST); i++) {
-			INode *tnode = NULL;
-			mod->pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-			if  (node == tnode)
-				return FALSE;
-		}
-
-		ObjectState os = node->EvalWorldState(0);
-		//added code such that lines are not selected
-		if ( (os.obj->IsSubClassOf(triObjectClassID) || os.obj->CanConvertToType(triObjectClassID))
-			&& (os.obj->SuperClassID() != SHAPE_CLASS_ID) 
-			) 
-		{			
-			return TRUE;
-		}
-		if (os.obj->SuperClassID() == HELPER_CLASS_ID && os.obj->ClassID().PartB() == BHKRIGIDBODYCLASS_DESC.PartB() ) {
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-BOOL ProxyPickObjectMode::HitTest(
-							 IObjParam *ip,HWND hWnd,ViewExp *vpt,IPoint2 m,int flags)
-{
-	INode *node = mod->mIP->PickNode(hWnd,m, this);	//added "this" argument such that the Filter above is used
-	return node?TRUE:FALSE;
-}
-
-BOOL ProxyPickObjectMode::Pick(IObjParam *ip,ViewExp *vpt)
-{
-	BOOL rv = FALSE;
-	if (INode *node = vpt->GetClosestHit()) {
-		theHold.Begin();
-		ObjectState os = node->EvalWorldState(0);
-		if (os.obj->CanConvertToType(triObjectClassID)) {
-			mod->pblock2->Append(PB_MESHLIST,1,&node,1);
-			rv = TRUE;
-		}
-		theHold.Accept(GetString(IDS_ADD_MESH));
-	}
-	return rv;
-}
-
-void ProxyPickObjectMode::EnterMode(IObjParam *ip)
-{mod->iPickButton->SetCheck(TRUE);}
-
-void ProxyPickObjectMode::ExitMode(IObjParam *ip)
-{mod->iPickButton->SetCheck(FALSE);}
 
 static ProxyPickObjectMode thePickMode;
 
-
-
-class ProxyParamDlgProc : public ParamMap2UserDlgProc {
+class ProxyParamDlgProc : public ParamMap2UserDlgProc
+{
 public:
-   bhkProxyObject *so;
-   HWND thishWnd;
-   NpComboBox		mCbMaterial;
+	bhkProxyObject* so;
+	HWND thishWnd;
+	NpComboBox mCbMaterial;
 
-   ProxyParamDlgProc(bhkProxyObject *s) {so=s;thishWnd=NULL;}
-   INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);
-   void Update(TimeValue t);
-   void DeleteThis() {delete this;}
+	ProxyParamDlgProc( bhkProxyObject* s )
+	{
+		so = s;
+		thishWnd = NULL;
+	}
 
-   //--- ParamDlgProc --------------------------------
-   void TurnSpinner(HWND hWnd,int SpinNum,BOOL ison)
-   {	
-      ISpinnerControl *spin2 = GetISpinner(GetDlgItem(hWnd,SpinNum));
-      if (ison) spin2->Enable();else spin2->Disable();
-      ReleaseISpinner(spin2);
-   };
+	INT_PTR		DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+	void		Update( TimeValue t );
+	void		DeleteThis( ) { delete this; }
 
+	//--- ParamDlgProc --------------------------------
+	void TurnSpinner( HWND hWnd, int SpinNum, BOOL ison )
+	{
+		ISpinnerControl* spin2 = GetISpinner( GetDlgItem( hWnd, SpinNum ) );
+		if( ison )
+			spin2->Enable( );
+
+		else
+			spin2->Disable( );
+
+		ReleaseISpinner( spin2 );
+	}
 };
 
-void ProxyParamDlgProc::Update(TimeValue t)
+class ProxyObjCreateCallBack : public CreateMouseCallBack
 {
-   if (!thishWnd) 
-      return;
-   return;
-}
+	bhkProxyObject* ob;
+	Point3 p0;
+	Point3 p1;
+	IPoint2 sp0;
+	IPoint2 sp1;
+	BOOL square;
 
-INT_PTR ProxyParamDlgProc::DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
-{
-   thishWnd=hWnd;
-   switch (msg) 
-   {
-   case WM_INITDIALOG: 
-      {
-		  mCbMaterial.init(GetDlgItem(hWnd, IDC_CB_MATERIAL));
-		  mCbMaterial.add("<Default>");
-		  for (const char **str = NpHvkMaterialNames; *str; ++str)
-			  mCbMaterial.add(*str);
-		  Interval valid;
-		  int sel = NP_INVALID_HVK_MATERIAL;
-		  so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid);
-		  mCbMaterial.select( sel + 1 );
-		 // Disable all types not currently implemented
-		  EnableWindow(GetDlgItem(hWnd, IDC_RDO_CAPSULE), CanCalcCapsule() ? TRUE : FALSE);
-		  EnableWindow(GetDlgItem(hWnd, IDC_RDO_OBB), CanCalcOrientedBox() ? TRUE : FALSE);
-		 //EnableWindow(GetDlgItem(hWnd, IDC_RDO_PACKED_STRIPS), FALSE);
+public:
+	int		proc( ViewExp* vpt, int msg, int point, int flags, IPoint2 m, Matrix3& mat );
+	void	SetObj( bhkProxyObject* obj ) { ob = obj; }
+};
 
-         Update(t);
-         break;
-      }
-   case WM_DESTROY:
-	   if (so && so->iPickButton != NULL) {
-		   ReleaseICustButton(so->iPickButton);
-		   so->iPickButton = NULL;
-	   }
-	   break;
-
-   case WM_COMMAND:
-      switch (LOWORD(wParam)) 
-      {
-      case IDC_CB_MATERIAL:
-         if (HIWORD(wParam)==CBN_SELCHANGE) {
-            so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection() - 1 );
-         }
-         break;
-
-	  case IDC_BTN_CLONE:
-		  so->CreateMesh();
-		  break;
-      }
-      break;	
-   }
-   return FALSE;
-}
+static ProxyObjCreateCallBack proxyCreateCB;
 
 namespace
 {
-	class CloneMeshDlgProc : public ParamMap2UserDlgProc {
+	class CloneMeshDlgProc : public ParamMap2UserDlgProc
+	{
 	public:
-		bhkProxyObject *mod;
-		CloneMeshDlgProc(bhkProxyObject* m) {mod = m;}		
-		void DeleteThis() {delete this;}		
+		bhkProxyObject* mod;
 
-		INT_PTR DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
-		{
-			switch (msg) 
-			{
-			case WM_COMMAND:
-				switch (LOWORD(wParam))
-				{
-				case IDC_BTN_CLONE:
-					mod->CreateMesh();
-					return TRUE;
+		CloneMeshDlgProc( bhkProxyObject* m ) { mod = m; }
 
-				default:
-					return FALSE;
-				}
-			}
-			return FALSE;
-		}
+		INT_PTR		DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+		void		DeleteThis( ) { delete this; }
 	};
 
+	INT_PTR CloneMeshDlgProc::DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+	{
+		switch( msg )
+		{
+		case WM_COMMAND:
+			switch( LOWORD( wParam ) )
+			{
+			case IDC_BTN_CLONE:
+				mod->CreateMesh( );
+				return TRUE;
+
+			default:
+				return FALSE;
+			}
+		}
+
+		return FALSE;
+	}
 
 	// Controller for subshape properies: layer and filter
-	class SubShapeDlgProc : public ParamMap2UserDlgProc {
+	class SubShapeDlgProc : public ParamMap2UserDlgProc
+	{
 	public:
-		bhkProxyObject *mod;
-		NpComboBox		mCbLayer;
-		SubShapeDlgProc(bhkProxyObject* m) {mod = m;}		
-		INT_PTR DlgProc(TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam);		
-		void DeleteThis() {delete this;}		
+		bhkProxyObject*			mod;
+		NpComboBox				mCbLayer;
+
+		SubShapeDlgProc( bhkProxyObject* m ) { mod = m; }
+
+		INT_PTR		DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
+		void		DeleteThis( ) { delete this; }
 	};
 
-	INT_PTR SubShapeDlgProc::DlgProc (TimeValue t,IParamMap2 *map,HWND hWnd,UINT msg,WPARAM wParam,LPARAM lParam)
+	INT_PTR SubShapeDlgProc::DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 	{
-		switch (msg) 
+		switch( msg )
 		{
 		case WM_INITDIALOG:
 			{
-				mCbLayer.init(GetDlgItem(hWnd, IDC_CB_LAYER));
-				for (const char **str = NpHvkLayerNames; *str; ++str)
-					mCbLayer.add(*str);
+				mCbLayer.init( GetDlgItem( hWnd, IDC_CB_LAYER ) );
+				for( const wchar_t** str = NpHvkLayerNames; *str; ++str )
+					mCbLayer.add( *str );
 
 				int sel = NP_DEFAULT_HVK_LAYER;
 				Interval valid;
-				mod->pblock2->GetValue( PB_LAYER, 0, sel, valid);
+
+				mod->pblock2->GetValue( PB_LAYER, 0, sel, valid );
 				mCbLayer.select( sel );
 
-				Update(t);
-				break;
+				Update( t );
 			}
+			break;
 
 		case WM_DESTROY:
 			break;
 
 		case WM_COMMAND:
-			switch (LOWORD(wParam))
+			switch( LOWORD( wParam ) )
 			{
 			case IDC_CB_LAYER:
-				if (HIWORD(wParam)==CBN_SELCHANGE) {
-					mod->pblock2->SetValue( PB_LAYER, 0, mCbLayer.selection() );
-				}
+				if( HIWORD( wParam ) == CBN_SELCHANGE )
+					mod->pblock->SetValue( PB_LAYER, 0, mCbLayer.selection( ) );
 				break;
 
 			default:
 				return FALSE;
 			}
-		}		
+		}
+
 		return FALSE;
 	}
+};
+
+// =============================================================
+// ProxyPickObjectMode
+// =============================================================
+
+BOOL ProxyPickObjectMode::Filter( INode* node )
+{
+	if( node )
+	{
+		node->BeginDependencyTest( );
+		mod->NotifyDependents( FOREVER, 0, REFMSG_TEST_DEPENDENCY );
+
+		if( node->EndDependencyTest( ) )
+			return FALSE;
+
+		for( int i = 0; i < mod->pblock2->Count( PB_MESHLIST ); i++ )
+		{
+			INode* tnode = NULL;
+			mod->pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER );
+			
+			if( node == tnode )
+				return FALSE;
+		}
+
+		ObjectState os = node->EvalWorldState( 0 );
+
+		// Added code such that lines are not selected
+		if( ( os.obj->IsSubClassOf( triObjectClassID ) || os.obj->CanConvertToType( triObjectClassID ) )
+			&& ( os.obj->SuperClassID( ) != SHAPE_CLASS_ID ) )
+		{
+			return TRUE;
+		}
+
+		if( os.obj->SuperClassID( ) == HELPER_CLASS_ID && os.obj->ClassID( ).PartB( ) == BHKRIGIDBODYCLASS_DESC.PartB( ) )
+			return TRUE;
+	}
+
+	return FALSE;
 }
 
-//--- Proxy methods -------------------------------
+BOOL ProxyPickObjectMode::HitTest( IObjParam* ip, HWND hWnd, ViewExp* vpt, IPoint2 m, int flags )
+{
+	INode* node = mod->mIP->PickNode( hWnd, m, this ); //added "this" argument such that the Filter above is used
+	return node ? TRUE : FALSE;
+}
 
+BOOL ProxyPickObjectMode::Pick( IObjParam* ip, ViewExp* vpt )
+{
+	BOOL rv = FALSE;
+	if( INode* node = vpt->GetClosestHit( ) )
+	{
+		theHold.Begin( );
 
-bhkProxyObject::bhkProxyObject(BOOL loading)
+		ObjectState os = node->EvalWorldState( 0 );
+		if( os.obj->CanConvertToType( triObjectClassID ) )
+		{
+			mod->pblock2->Append( PB_MESHLIST, 1, &node, 1 );
+			rv = TRUE;
+		}
+
+		theHold.Accept( GetString( IDS_ADD_MESH ) );
+	}
+
+	return rv;
+}
+
+// =============================================================
+// ProxyParamDlgProc
+// =============================================================
+
+void ProxyParamDlgProc::Update( TimeValue t )
+{
+	if( !thishWnd )
+		return;
+
+	return;
+}
+
+INT_PTR ProxyParamDlgProc::DlgProc( TimeValue t, IParamMap2* map, HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+{
+	thishWnd = hWnd;
+
+	switch( msg )
+	{
+	case WM_INITDIALOG:
+		{
+			mCbMaterial.init( GetDlgItem( hWnd, IDC_CB_MATERIAL ) );
+			mCbMaterial.add( _T( "<Default>" ) );
+
+			for( const wchar_t** str = NpHvkMaterialNames; *str; ++str )
+				mCbMaterial.add( *str );
+
+			Interval valid;
+			int sel = NP_INVALID_HVK_MATERIAL;
+
+			so->pblock2->GetValue( PB_MATERIAL, 0, sel, valid );
+			mCbMaterial.select( sel + 1 );
+
+			EnableWindow( GetDlgItem( hWnd, IDC_RDO_CAPSULE ), CanCalcCapsule( ) ? TRUE : FALSE );
+			EnableWindow( GetDlgItem( hWnd, IDC_RDO_OBB ), CanCalcOrientedBox( ) ? TRUE : FALSE );
+
+			Update( t );
+		}
+		break;
+
+	case WM_DESTROY:
+		if( so && so->iPickButton != NULL )
+		{
+			ReleaseICustButton( so->iPickButton );
+			so->iPickButton = NULL;
+		}
+		break;
+
+	case WM_COMMAND:
+		switch( LOWORD( wParam ) )
+		{
+		case IDC_CB_MATERIAL:
+			if( HIWORD( wParam ) == CBN_SELCHANGE )
+				so->pblock2->SetValue( PB_MATERIAL, 0, mCbMaterial.selection( ) - 1 );
+			break;
+
+		case IDC_BTN_CLONE:
+			so->CreateMesh( );
+			break;
+		}
+		break;
+	}
+
+	return FALSE;
+}
+
+// =============================================================
+// bhkProxyObject
+// =============================================================
+
+bhkProxyObject::bhkProxyObject( BOOL loading )
 {
 	pmapParam = NULL;
 	ip = NULL;
 	pickObMode = NULL;
-	pbvParams[0] = NULL;
-	mIP = NULL;	
+	pbvParams[ 0 ] = NULL;
+	mIP = NULL;
 	iPickButton = NULL;
 	validator.mod = this;
 	forceRedraw = false;
 
-   SetAFlag(A_PLUGIN1);
-   listDesc.MakeAutoParamBlocks(this);
-   assert(pblock2);
+	SetAFlag( A_PLUGIN1 );
+	proxyDesc.MakeAutoParamBlocks( this );
+	
+	assert( pblock2 );
 }
 
-bhkProxyObject::~bhkProxyObject() 
+bhkProxyObject::~bhkProxyObject( )
 {
-   param_blk.SetUserDlgProc();
-   if (pmapParam) {
-      pmapParam  = NULL;
-   }
+	param_blk.SetUserDlgProc( );
+	if( pmapParam )
+		pmapParam = NULL;
 }
 
-void bhkProxyObject::BeginEditParams(IObjParam *ip,ULONG flags,Animatable *prev)
+void bhkProxyObject::BeginEditParams( IObjParam* ip, ULONG flags, Animatable* prev )
 {
-   BaseClass::BeginEditParams(ip,flags,prev);
-   mIP = ip;
+	SimpleObject2::BeginEditParams( ip, flags, prev );
+	mIP = ip;
 
-   listDesc.BeginEditParams(ip,this,flags,prev);
-   param_blk.SetUserDlgProc(new ProxyParamDlgProc(this));
-   param_blk.SetUserDlgProc(clone_params, new CloneMeshDlgProc(this));
-   param_blk.SetUserDlgProc(subshape_params, new SubShapeDlgProc(this));
-   pmapParam = pblock2->GetMap(list_params);
+	proxyDesc.BeginEditParams( ip, this, flags, prev );
+	
+	param_blk.SetUserDlgProc( new ProxyParamDlgProc( this ) );
+	param_blk.SetUserDlgProc( clone_params, new CloneMeshDlgProc( this ) );
+	param_blk.SetUserDlgProc( subshape_params, new SubShapeDlgProc( this ) );
 
-   this->ip = ip;
+	pmapParam = pblock2->GetMap( list_params );
+
+	this->ip = ip;
 }
 
-void bhkProxyObject::EndEditParams( IObjParam *ip, ULONG flags,Animatable *next )
-{		
-   param_blk.SetUserDlgProc();
-
-   BaseClass::EndEditParams(ip,flags,next);
-   this->ip = NULL;
-   pmapParam = NULL;
-
-   if (iPickButton != NULL) {
-	   ReleaseICustButton(iPickButton);
-	   iPickButton = NULL;
-   }
-
-   // tear down the appropriate auto-rollouts
-   listDesc.EndEditParams(ip, this, flags, next);
-   mIP = NULL;
-}
-
-void bhkProxyObject::UpdateUI()
+void bhkProxyObject::EndEditParams( IObjParam* ip, ULONG flags, Animatable* next )
 {
-   if (ip == NULL)
-      return;
-   ProxyParamDlgProc* dlg = static_cast<ProxyParamDlgProc*>(pmapParam->GetUserDlgProc());
-   dlg->Update(ip->GetTime());
+	param_blk.SetUserDlgProc( );
+
+	SimpleObject2::EndEditParams( ip, flags, next );
+	this->ip = NULL;
+	pmapParam = NULL;
+
+	if( iPickButton != NULL )
+	{
+		ReleaseICustButton( iPickButton );
+		iPickButton = NULL;
+	}
+
+	// Tear down the appropriate auto-rollouts
+	proxyDesc.EndEditParams( ip, this, flags, next );
+	mIP = NULL;
+}
+
+void bhkProxyObject::UpdateUI( )
+{
+	if( ip == NULL )
+		return;
+
+	ProxyParamDlgProc* dlg = static_cast<ProxyParamDlgProc*>( pmapParam->GetUserDlgProc( ) );
+	dlg->Update( ip->GetTime( ) );
 }
 
 enum 
@@ -553,456 +578,498 @@ enum
    NEGZ = 5,	// bottom
 };
 
-void bhkProxyObject::BuildMesh(TimeValue t)
+void bhkProxyObject::BuildMesh( TimeValue t )
 {
-	ivalid = FOREVER;	
-	
-	int bvType = 0;
-	pblock2->GetValue(PB_BOUND_TYPE, 0, bvType, FOREVER, 0);
+	ivalid = FOREVER;
 
-	BuildEmpty();
-	
-	switch (bvType)
-	{ 
+	int bvType = 0;
+	pblock2->GetValue( PB_BOUND_TYPE, 0, bvType, FOREVER, 0 );
+
+	BuildEmpty( );
+
+	switch( bvType )
+	{
 	default:
 	case bv_type_none:
 		// Delete mesh.
 		break;
 
-	case bv_type_box: // box
-		BuildColBox();
+	case bv_type_box: // Box
+		BuildColBox( );
 		break;
 
 	case bv_type_shapes: // Shapes
-		BuildColStrips();
-		//BuildBox(mesh,,,)
+		BuildColStrips( );
 		break;
 
-	case bv_type_packed: // Packed
-		BuildColPackedStrips();
-		//BuildSphere();
+	case bv_type_packed:
+		BuildColPackedStrips( );
 		break;
 
-	case bv_type_convex:
-		BuildColConvex();
-		//BuildScubaMesh();
+	case bv_type_convex: // Convex
+		BuildColConvex( );
 		break;
 
-	case bv_type_capsule:
-		BuildColCapsule();
+	case bv_type_capsule: // Capsule
+		BuildColCapsule( );
 		break;
 
 	case bv_type_obb:
-		BuildColOBB();
+		BuildColOBB( );
 		break;
 	}
 }
 
-Object* bhkProxyObject::ConvertToType(TimeValue t, Class_ID obtype)
+Object* bhkProxyObject::ConvertToType( TimeValue t, Class_ID obtype )
 {
-	if (obtype == triObjectClassID)
+	if( obtype == triObjectClassID )
 	{
 		int bvType = 0;
-		pblock2->GetValue(PB_BOUND_TYPE, 0, bvType, FOREVER, 0);
-		if (bvType != 0) 
+		pblock2->GetValue( PB_BOUND_TYPE, 0, bvType, FOREVER, 0 );
+
+		if( bvType != 0 )
 		{
-			TriObject *ob = CreateNewTriObject();
+			TriObject* ob = CreateNewTriObject( );
 #if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
-			ob->GetMesh().CopyBasics(proxyMesh);
+			ob->GetMesh( ).CopyBasics( proxyMesh );
 #else
-			ob->GetMesh() = proxyMesh;
+			ob->GetMesh( ) = proxyMesh;
 #endif
-			ob->SetChannelValidity(TOPO_CHAN_NUM,ObjectValidity(t));
-			ob->SetChannelValidity(GEOM_CHAN_NUM,ObjectValidity(t));
+
+			ob->SetChannelValidity( TOPO_CHAN_NUM, ObjectValidity( t ) );
+			ob->SetChannelValidity( GEOM_CHAN_NUM, ObjectValidity( t ) );
+
 			return ob;
 		}
 	}
+
 	return 0;
 }
 
-int bhkProxyObject::CanConvertToType(Class_ID obtype)
+int bhkProxyObject::CanConvertToType( Class_ID obtype )
 {
-	if (obtype == triObjectClassID) {
+	if( obtype == triObjectClassID )
+	{
 		int bvType = 0;
-		pblock2->GetValue(PB_BOUND_TYPE, 0, bvType, FOREVER, 0);
-		return (bvType != 0) ? TRUE : FALSE;
+		pblock2->GetValue( PB_BOUND_TYPE, 0, bvType, FOREVER, 0 );
+
+		return ( bvType != 0 ) ? TRUE : FALSE;
 	}
+	
 	return FALSE;
 }
 
-
-void bhkProxyObject::GetCollapseTypes(Tab<Class_ID> &clist,Tab<TSTR*> &nlist)
+CreateMouseCallBack* bhkProxyObject::GetCreateMouseCallBack( )
 {
-   Object::GetCollapseTypes(clist, nlist);
+	proxyCreateCB.SetObj( this );
+	return &proxyCreateCB;
 }
 
-class ProxyObjCreateCallBack: public CreateMouseCallBack {
-   bhkProxyObject *ob;
-   Point3 p0,p1;
-   IPoint2 sp0, sp1;
-   BOOL square;
-public:
-   int proc( ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat );
-   void SetObj(bhkProxyObject *obj) { ob = obj; }
-};
-
-int ProxyObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat ) {
-   Point3 d;
-   if (msg == MOUSE_FREEMOVE)
-   {
-      vpt->SnapPreview(m,m,NULL, SNAP_IN_3D);
-   }
-
-   else if (msg==MOUSE_POINT||msg==MOUSE_MOVE) {
-      switch(point) {
-         case 0:
-            // Find the node and plug in the wire color
-            {
-               ULONG handle;
-               ob->NotifyDependents(FOREVER, (PartID)&handle, REFMSG_GET_NODE_HANDLE);
-               INode *node = GetCOREInterface()->GetINodeByHandle(handle);
-               if (node) node->SetWireColor(RGB(255, 0, 0));
-            }
-
-            sp0 = m;
-            //ob->suspendSnap = TRUE;								
-            p0 = vpt->SnapPoint(m,m,NULL,SNAP_IN_3D);
-            p1 = p0 + Point3(.01,.01,.01);
-            mat.SetTrans(float(.5)*(p0+p1));				
-
-			ob->pmapParam->Invalidate();				
-
-            if (msg==MOUSE_POINT) 
-            {
-               //ob->suspendSnap = FALSE;					
-               return CREATE_STOP;
-            }
-            break;
-      }
-   }
-   else
-      if (msg == MOUSE_ABORT) {		
-         return CREATE_ABORT;
-      }
-
-      return TRUE;
+void bhkProxyObject::InvalidateUI( )
+{
+	param_blk.InvalidateUI( pblock2->LastNotifyParamID( ) );
+	if( pmapParam )
+		pmapParam->Invalidate( );
 }
 
-static ProxyObjCreateCallBack listCreateCB;
-
-CreateMouseCallBack* bhkProxyObject::GetCreateMouseCallBack() 
+RefTargetHandle bhkProxyObject::Clone( RemapDir& remap )
 {
-   listCreateCB.SetObj(this);
-   return(&listCreateCB);
+	bhkProxyObject* newob = new bhkProxyObject( FALSE );
+
+	newob->ReplaceReference( 0, remap.CloneRef( pblock2 ) );
+	newob->ivalid.SetEmpty( );
+
+	BaseClone( this, newob, remap );
+	return newob;
 }
 
-
-BOOL bhkProxyObject::OKtoDisplay(TimeValue t) 
+int bhkProxyObject::Display( TimeValue t, INode* inode, ViewExp* vpt, int flags )
 {
-   return TRUE;
-}
-
-void bhkProxyObject::InvalidateUI() 
-{
-   param_blk.InvalidateUI(pblock2->LastNotifyParamID());
-   if (pmapParam) pmapParam->Invalidate();
-}
-
-RefTargetHandle bhkProxyObject::Clone(RemapDir& remap) 
-{
-   bhkProxyObject* newob = new bhkProxyObject(FALSE);	
-   newob->ReplaceReference(0,remap.CloneRef(pblock2));
-   newob->ivalid.SetEmpty();	
-   BaseClone(this, newob, remap);
-   return(newob);
-}
-
-int bhkProxyObject::Display(TimeValue t, INode* inode, ViewExp *vpt, int flags) 
-{
-	if (forceRedraw)
+	if( forceRedraw )
 	{
-		Interface *gi = GetCOREInterface();
-		gi->ForceCompleteRedraw();
+		Interface* gi = GetCOREInterface( );
+		gi->ForceCompleteRedraw( );
 	}
 
 	Matrix3 m;
-	Color color = Color(inode->GetWireColor());
-	GraphicsWindow *gw = vpt->getGW();
-	Material *mtl = gw->getMaterial();
-	m = inode->GetObjectTM(t);
-	gw->setTransform(m);
-	DWORD rlim = gw->getRndLimits();
+	Color color = Color( inode->GetWireColor( ) );
+	GraphicsWindow* gw = vpt->getGW( );
+	Material* mtl = gw->getMaterial( );
 
-	DWORD newrlim = GW_WIREFRAME|GW_Z_BUFFER;
+	m = inode->GetObjectTM( t );
+	gw->setTransform( m );
+
+	DWORD rlim = gw->getRndLimits( );
+	DWORD newrlim = GW_WIREFRAME | GW_Z_BUFFER;
+
 #if VERSION_3DSMAX >= ((5000<<16)+(15<<8)+0) // Version 5+
+
 	newrlim |= GW_EDGES_ONLY;
+
 #endif
-	gw->setRndLimits(newrlim);
 
-	if (inode->Selected()) 
-		gw->setColor( LINE_COLOR, GetSelColor());
-	else if(!inode->IsFrozen() && !inode->Dependent())
-		gw->setColor( LINE_COLOR, color);
+	gw->setRndLimits( newrlim );
 
-	Matrix3 m3(true);
+	if( inode->Selected( ) )
+		gw->setColor( LINE_COLOR, GetSelColor( ) );
 
+	else if( !inode->IsFrozen( ) && !inode->Dependent( ) )
+		gw->setColor( LINE_COLOR, color );
+
+	Matrix3 m3( true );
 	float size = 20.0f;
-	Point3 pts[5];
+	Point3 pts[ 5 ];
+
 	// X
-	pts[0] = Point3(-size, 0.0f, 0.0f); pts[1] = Point3(size, 0.0f, 0.0f);
-	vpt->getGW()->polyline(2, pts, NULL, NULL, FALSE, NULL);
+	pts[ 0 ] = Point3( -size, 0.0f, 0.0f ); 
+	pts[ 1 ] = Point3( size, 0.0f, 0.0f );
+	vpt->getGW( )->polyline( 2, pts, NULL, NULL, FALSE, NULL );
 
 	// Y
-	pts[0] = Point3(0.0f, -size, 0.0f); pts[1] = Point3(0.0f, size, 0.0f);
-	vpt->getGW()->polyline(2, pts, NULL, NULL, FALSE, NULL);
+	pts[ 0 ] = Point3( 0.0f, -size, 0.0f ); 
+	pts[ 1 ] = Point3( 0.0f, size, 0.0f );
+	vpt->getGW( )->polyline( 2, pts, NULL, NULL, FALSE, NULL );
 
 	// Z
-	pts[0] = Point3(0.0f, 0.0f, -size); pts[1] = Point3(0.0f, 0.0f, size);
-	vpt->getGW()->polyline(2, pts, NULL, NULL, FALSE, NULL);
-
-	//UpdateMesh(t);
+	pts[ 0 ] = Point3( 0.0f, 0.0f, -size ); 
+	pts[ 1 ] = Point3( 0.0f, 0.0f, size );
+	vpt->getGW( )->polyline( 2, pts, NULL, NULL, FALSE, NULL );
 
 	int bvType = 0;
-	pblock2->GetValue(PB_BOUND_TYPE, 0, bvType, FOREVER, 0);
-	if (bvType != 0)
+	pblock2->GetValue( PB_BOUND_TYPE, 0, bvType, FOREVER, 0 );
+	
+	if( bvType != 0 )
 	{
-		Matrix3 tm = gw->getTransform();
-		Matrix3 proxyTM(true);
-		proxyTM.SetTranslate(proxyPos);
-		gw->setTransform(proxyTM);
-		proxyMesh.render( gw, mtl, NULL, COMP_ALL);	
-		gw->setTransform(tm);
+		Matrix3 tm = gw->getTransform( );
+		Matrix3 proxyTM( true );
+
+		proxyTM.SetTranslate( proxyPos );
+		gw->setTransform( proxyTM );
+
+		proxyMesh.render( gw, mtl, NULL, COMP_ALL );
+		gw->setTransform( tm );
 	}
-	gw->setRndLimits(rlim);
+
+	gw->setRndLimits( rlim );
+
 	return 0;
 }
 
-void bhkProxyObject::BuildEmpty()
+void bhkProxyObject::BuildEmpty( )
 {
-	BuildBox(mesh, 10.0f, 10.0f, 10.0f);
-	proxyMesh.FreeAll();
+	BuildBox( mesh, 10.0f, 10.0f, 10.0f );
+	proxyMesh.FreeAll( );
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
 }
 
-void bhkProxyObject::BuildColBox()
+void bhkProxyObject::BuildColBox( )
 {
-	Box3 box; box.Init();
-	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
-		INode *tnode = NULL;
-		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-		if (tnode)
+	Box3 box;
+	box.Init( );
+
+	for( int i = 0; i < pblock2->Count( PB_MESHLIST ); i++ )
+	{
+		INode* tnode = NULL;
+		pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER, i );
+
+		if( tnode )
 		{
-			ObjectState os = tnode->EvalWorldState(0);
-			Matrix3 wm = tnode->GetNodeTM(0);
-			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-			if (tri)
+			ObjectState os = tnode->EvalWorldState( 0 );
+			Matrix3 wm = tnode->GetNodeTM( 0 );
+			TriObject* tri = (TriObject*) os.obj->ConvertToType( 0, Class_ID( TRIOBJ_CLASS_ID, 0 ) );
+
+			if( tri )
 			{
-				Box3 box2; box2.Init();
-				Mesh& mesh = tri->GetMesh();
-				CalcAxisAlignedBox(mesh, box2, &wm);
+				Box3 box2;
+				box2.Init( );
+
+				Mesh& mesh = tri->GetMesh( );
+				CalcAxisAlignedBox( mesh, box2, &wm );
 				box += box2;
 			}
 		}
 	}
-	BuildBox(proxyMesh, box.Max().y-box.Min().y, box.Max().x-box.Min().x, box.Max().z-box.Min().z);
 
-	MNMesh mn(proxyMesh);
-	Matrix3 tm(true);
-	tm.SetTranslate(box.Center());
-	mn.Transform(tm);
-	mn.OutToTri(proxyMesh);
+	BuildBox( proxyMesh, box.Max( ).y - box.Min( ).y, box.Max( ).x - box.Min( ).x, box.Max( ).z - box.Min( ).z );
 
-	//proxyPos = box.Center();
-	proxyPos = Point3::Origin;
-	forceRedraw = true;
-}
+	MNMesh mn( proxyMesh );
+	Matrix3 tm( true );
 
-void bhkProxyObject::BuildColStrips()
-{
-	proxyMesh.FreeAll();
-	MeshDelta md(proxyMesh);
-	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
-		INode *tnode = NULL;
-		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-		if (tnode)
-		{
-			ObjectState os = tnode->EvalWorldState(0);
-			Matrix3 wm = tnode->GetNodeTM(0);
-			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-			if (tri)
-			{
-				Mesh& mesh = tri->GetMesh();
-				MeshDelta tmd (mesh);
-				md.AttachMesh(proxyMesh, mesh, wm, 0);
-				md.Apply(proxyMesh);
-			}
-		}
-	}
-	BuildOptimize(proxyMesh);
-	proxyPos = Point3::Origin;
-	forceRedraw = true;
-}
-
-void bhkProxyObject::BuildColPackedStrips()
-{
-	BuildColStrips();
-}
-
-void bhkProxyObject::BuildColConvex()
-{
-	proxyMesh.FreeAll();
-	MeshDelta md(proxyMesh);
-	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
-		INode *tnode = NULL;
-		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-		if (tnode)
-		{
-			ObjectState os = tnode->EvalWorldState(0);
-			Matrix3 wm = tnode->GetNodeTM(0);
-			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-			if (tri)
-			{
-				Mesh& mesh = tri->GetMesh();
-				MeshDelta tmd (mesh);
-				md.AttachMesh(proxyMesh, mesh, wm, 0);
-				md.Apply(proxyMesh);
-			}
-		}
-	}
-	compute_convex_hull(proxyMesh, proxyMesh);
-
-	BuildOptimize(proxyMesh);
+	tm.SetTranslate( box.Center( ) );
+	mn.Transform( tm );
+	mn.OutToTri( proxyMesh );
 
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
 }
 
-void bhkProxyObject::BuildColCapsule()
+void bhkProxyObject::BuildColStrips( )
 {
-	proxyMesh.FreeAll();
-	MeshDelta md(proxyMesh);
-	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
-		INode *tnode = NULL;
-		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-		if (tnode)
+	proxyMesh.FreeAll( );
+
+	MeshDelta md( proxyMesh );
+	for( int i = 0; i < pblock2->Count( PB_MESHLIST ); i++ )
+	{
+		INode* tnode = NULL;
+		pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER, i );
+
+		if( tnode )
 		{
-			ObjectState os = tnode->EvalWorldState(0);
-			Matrix3 wm = tnode->GetNodeTM(0);
-			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-			if (tri)
+			ObjectState os = tnode->EvalWorldState( 0 );
+			Matrix3 wm = tnode->GetNodeTM( 0 );
+
+			TriObject* tri = (TriObject*) os.obj->ConvertToType( 0, Class_ID( TRIOBJ_CLASS_ID, 0 ) );
+			if( tri )
 			{
-				Mesh& mesh = tri->GetMesh();
-				MeshDelta tmd (mesh);
-				md.AttachMesh(proxyMesh, mesh, wm, 0);
-				md.Apply(proxyMesh);
+				Mesh& mesh = tri->GetMesh( );
+				MeshDelta tmd( mesh );
+
+				md.AttachMesh( proxyMesh, mesh, wm, 0 );
+				md.Apply( proxyMesh );
 			}
 		}
 	}
+
+	BuildOptimize( proxyMesh );
+	proxyPos = Point3::Origin;
+	forceRedraw = true;
+}
+
+void bhkProxyObject::BuildColPackedStrips( )
+{
+	BuildColStrips( );
+	
+}
+
+void bhkProxyObject::BuildColConvex( )
+{
+	proxyMesh.FreeAll( );
+
+	MeshDelta md( proxyMesh );
+	for( int i = 0; i < pblock2->Count( PB_MESHLIST ); i++ )
+	{
+		INode* tnode = NULL;
+		pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER, i );
+
+		if( tnode )
+		{
+			ObjectState os = tnode->EvalWorldState( 0 );
+			Matrix3 wm = tnode->GetNodeTM( 0 );
+
+			TriObject* tri = (TriObject*) os.obj->ConvertToType( 0, Class_ID( TRIOBJ_CLASS_ID, 0 ) );
+			if( tri )
+			{
+				Mesh& mesh = tri->GetMesh( );
+				MeshDelta tmd( mesh );
+
+				md.AttachMesh( proxyMesh, mesh, wm, 0 );
+				md.Apply( proxyMesh );
+			}
+		}
+	}
+
+	compute_convex_hull( proxyMesh, proxyMesh );
+
+	BuildOptimize( proxyMesh );
+	proxyPos = Point3::Origin;
+	forceRedraw = true;
+}
+
+void bhkProxyObject::BuildColCapsule( )
+{
+	proxyMesh.FreeAll( );
+
+	MeshDelta md( proxyMesh );
+	for( int i = 0; i < pblock2->Count( PB_MESHLIST ); i++ )
+	{
+		INode* tnode = NULL;
+		pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER, i );
+
+		if( tnode )
+		{
+			ObjectState os = tnode->EvalWorldState( 0 );
+			Matrix3 wm = tnode->GetNodeTM( 0 );
+
+			TriObject* tri = (TriObject*) os.obj->ConvertToType( 0, Class_ID( TRIOBJ_CLASS_ID, 0 ) );
+			if( tri )
+			{
+				Mesh& mesh = tri->GetMesh( );
+				MeshDelta tmd( mesh );
+
+				md.AttachMesh( proxyMesh, mesh, wm, 0 );
+				md.Apply( proxyMesh );
+			}
+		}
+	}
+
 	Point3 pt1 = Point3::Origin;
 	Point3 pt2 = Point3::Origin;
-	float r1 = 0.0;
-	float r2 = 0.0;
+	float r1 = 0.0f;
+	float r2 = 0.0f;
 
-	if (proxyMesh.getNumVerts() > 3) // Doesn't guarantee that the mesh is not a plane.
+	if( proxyMesh.getNumVerts( ) > 3 ) // Doesn't guarantee that the mesh is not a plane
 	{
-		CalcCapsule(proxyMesh, pt1, pt2, r1, r2);
-		BuildCapsule(proxyMesh, pt1, pt2, r1, r2);
+		CalcCapsule( proxyMesh, pt1, pt2, r1, r2 );
+		BuildCapsule( proxyMesh, pt1, pt2, r1, r2 );
 	}
 
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
 }
 
-void bhkProxyObject::BuildColOBB()
+void bhkProxyObject::BuildColOBB( )
 {
-	proxyMesh.FreeAll();
-	MeshDelta md(proxyMesh);
-	for (int i = 0;i < pblock2->Count(PB_MESHLIST); i++) {
-		INode *tnode = NULL;
-		pblock2->GetValue(PB_MESHLIST,0,tnode,FOREVER,i);	
-		if (tnode)
+	proxyMesh.FreeAll( );
+
+	MeshDelta md( proxyMesh );
+	for( int i = 0; i < pblock2->Count( PB_MESHLIST ); i++ )
+	{
+		INode* tnode = NULL;
+		pblock2->GetValue( PB_MESHLIST, 0, tnode, FOREVER, i );
+
+		if( tnode )
 		{
-			ObjectState os = tnode->EvalWorldState(0);
-			Matrix3 wm = tnode->GetNodeTM(0);
-			TriObject *tri = (TriObject *)os.obj->ConvertToType(0, Class_ID(TRIOBJ_CLASS_ID, 0));
-			if (tri)
+			ObjectState os = tnode->EvalWorldState( 0 );
+			Matrix3 wm = tnode->GetNodeTM( 0 );
+
+			TriObject* tri = (TriObject*) os.obj->ConvertToType( 0, Class_ID( TRIOBJ_CLASS_ID, 0 ) );
+			if( tri )
 			{
-				Mesh& mesh = tri->GetMesh();
-				MeshDelta tmd (mesh);
-				md.AttachMesh(proxyMesh, mesh, wm, 0);
-				md.Apply(proxyMesh);
+				Mesh& mesh = tri->GetMesh( );
+				MeshDelta tmd( mesh );
+
+				md.AttachMesh( proxyMesh, mesh, wm, 0 );
+				md.Apply( proxyMesh );
 			}
 		}
 	}
-	Matrix3 rtm(true);
-	Point3 center = Point3::Origin;;
-	float udim = 0.0f, vdim = 0.0f, ndim = 0.0f;
 
-	if (proxyMesh.getNumVerts() > 3) // Doesn't guarantee that the mesh is not a plane.
+	Matrix3 rtm( true );
+	Point3 center = Point3::Origin;
+	float udim = 0.0f;
+	float vdim = 0.0f;
+	float ndim = 0.0f;
+
+	if( proxyMesh.getNumVerts( ) > 3 ) // Doesn't guarantee that the mesh is not a plane.
 	{
 		// First build a convex mesh to put the box around;
-		// the method acts oddly if extra vertices are present.
-		BuildColConvex();
-		CalcOrientedBox(proxyMesh, udim, vdim, ndim, center, rtm);
-		BuildBox(proxyMesh, vdim, udim, ndim);
+		// the method acts oddly if extra vertices are present
+		BuildColConvex( );
+		CalcOrientedBox( proxyMesh, udim, vdim, ndim, center, rtm );
+		BuildBox( proxyMesh, vdim, udim, ndim );
 	}
 
-	MNMesh mn(proxyMesh);
-	mn.Transform(rtm);
-	mn.OutToTri(proxyMesh);
+	MNMesh mn( proxyMesh );
+	mn.Transform( rtm );
+	mn.OutToTri( proxyMesh );
 
 	proxyPos = Point3::Origin;
 	forceRedraw = true;
 }
 
-
-void bhkProxyObject::BuildOptimize(Mesh& mesh)
+void bhkProxyObject::BuildOptimize( Mesh& mesh )
 {
 	BOOL enable = FALSE;
-	pblock2->GetValue(PB_OPT_ENABLE, 0, enable, FOREVER, 0);
-	if (enable)
+	pblock2->GetValue( PB_OPT_ENABLE, 0, enable, FOREVER, 0 );
+	
+	if( enable )
 	{
-		float maxedge, facethresh, edgethresh, bias;
-		pblock2->GetValue(PB_MAXEDGE, 0, maxedge, FOREVER, 0);
-		pblock2->GetValue(PB_FACETHRESH, 0, facethresh, FOREVER, 0);
-		pblock2->GetValue(PB_EDGETHRESH, 0, edgethresh, FOREVER, 0);
-		pblock2->GetValue(PB_BIAS, 0, bias, FOREVER, 0);
+		float maxedge;
+		float facethresh;
+		float edgethresh;
+		float bias;
+
+		pblock2->GetValue( PB_MAXEDGE, 0, maxedge, FOREVER, 0 );
+		pblock2->GetValue( PB_FACETHRESH, 0, facethresh, FOREVER, 0 );
+		pblock2->GetValue( PB_EDGETHRESH, 0, edgethresh, FOREVER, 0 );
+		pblock2->GetValue( PB_BIAS, 0, bias, FOREVER, 0 );
 
 		DWORD flags = OPTIMIZE_AUTOEDGE;
-		mesh.Optimize(facethresh, edgethresh, bias, maxedge, flags, NULL);
+		mesh.Optimize( facethresh, edgethresh, bias, maxedge, flags, NULL );
 	}
 }
 
-void bhkProxyObject::CreateMesh()
+void bhkProxyObject::CreateMesh( )
 {
-	if (Interface *gi = this->mIP)
+	if( Interface* gi = this->mIP )
 	{
-		if (const Mesh* pMesh = &this->proxyMesh)
+		if( const Mesh* pMesh = &this->proxyMesh )
 		{
-			if (TriObject *triObject = CreateNewTriObject())
+			if( TriObject* triObject = CreateNewTriObject( ) )
 			{
-				MNMesh mnmesh(*pMesh);
-				Mesh& mesh = triObject->GetMesh();
-				mnmesh.OutToTri(mesh);
+				MNMesh mnmesh( *pMesh );
+				Mesh& mesh = triObject->GetMesh( );
+				mnmesh.OutToTri( mesh );
 
-				INode *node = gi->CreateObjectNode(triObject);
-				// Wireframe Red color
-				StdMat2 *collMat = NewDefaultStdMat();
-				collMat->SetDiffuse(Color(1.0f, 0.0f, 0.0f), 0);
-				collMat->SetWire(TRUE);
-				collMat->SetFaceted(TRUE);
-				gi->GetMaterialLibrary().Add(collMat);
-				node->SetMtl(collMat);
+				INode* node = gi->CreateObjectNode( triObject );
 
-				node->SetPrimaryVisibility(FALSE);
-				node->SetSecondaryVisibility(FALSE);
-				node->BoneAsLine(TRUE);
-				node->SetRenderable(FALSE);
-				node->SetWireColor( RGB(255,0,0) );
+				// Wireframe red color
+				StdMat2* collMat = NewDefaultStdMat( );
 
-				gi->SelectNode(node);
+				collMat->SetDiffuse( Color( 1.0f, 0.0f, 0.0f ), 0 );
+				collMat->SetWire( TRUE );
+				collMat->SetFaceted( TRUE );
+
+				gi->GetMaterialLibrary( ).Add( collMat );
+				node->SetMtl( collMat );
+
+				node->SetPrimaryVisibility( FALSE );
+				node->SetSecondaryVisibility( FALSE );
+				node->BoneAsLine( TRUE );
+				node->SetRenderable( FALSE );
+				node->SetWireColor( RGB( 255, 0, 0 ) );
+
+				gi->SelectNode( node );
 			}
 		}
 	}
+}
+
+// =============================================================
+// ProxyObjCreateCallBack
+// =============================================================
+
+int ProxyObjCreateCallBack::proc(ViewExp *vpt,int msg, int point, int flags, IPoint2 m, Matrix3& mat )
+{
+	Point3 d;
+	if( msg == MOUSE_FREEMOVE )
+		vpt->SnapPreview( m, m, NULL, SNAP_IN_3D );
+
+	else if( msg == MOUSE_POINT || msg == MOUSE_MOVE )
+	{
+		switch( point )
+		{
+		case 0: // Find the node and plug in the wire color
+			{
+				ULONG handle;
+				ob->NotifyDependents( FOREVER, (PartID) &handle, REFMSG_GET_NODE_HANDLE );
+				INode* node = GetCOREInterface( )->GetINodeByHandle( handle );
+
+				if( node )
+					node->SetWireColor( RGB( 255, 0, 0 ) );
+			}
+
+			sp0 = m;
+
+			p0 = vpt->SnapPoint( m, m, NULL, SNAP_IN_3D );
+			p1 = p0 + Point3( .01f, .01f, .01f );
+
+			mat.SetTrans( float( .5f ) * ( p0 + p1 ) );
+			ob->pmapParam->Invalidate( );
+
+			if( msg == MOUSE_POINT )
+				return CREATE_STOP;
+
+			break;
+
+		}
+	}
+	else
+	{
+		if( msg == MOUSE_ABORT )
+			return CREATE_ABORT;
+	}
+
+	return TRUE;
 }

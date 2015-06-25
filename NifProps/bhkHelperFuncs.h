@@ -1,5 +1,5 @@
-#ifndef __BHKHELPERFUNCS_H__
-#define __BHKHELPERFUNCS_H__
+
+#pragma once
 
 extern void CalcAxisAlignedBox(Mesh& mesh, Box3& box);
 extern void CalcAxisAlignedBox(Mesh& mesh, Box3& box, Matrix3* tm);
@@ -15,5 +15,3 @@ extern void BuildSphere(Mesh&mesh, float radius, int segs=32, int smooth=1, floa
 extern void BuildCapsule(Mesh &mesh, Point3 pt1, Point3 pt2, float r1, float r2);
 extern void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs, 
 						   float radius1, float radius2, float cylh);
-
-#endif

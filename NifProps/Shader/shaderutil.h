@@ -1,13 +1,5 @@
-////////////////////////////////////////////////////////////
-//
-//	Shader UI Utility routines
-//
 
-#ifndef SHADERUTIL_H
-#define SHADERUTIL_H
-
-//#include "ICompositeShader.h"
-//#include "expmtlControl.h"
+#pragma once
 
 #define ALPHA_MIN	0.015f
 #define ALPHA_MAX	0.5f
@@ -150,5 +142,3 @@ inline float DegToRdn( float d ){ return d * (1.0f/180.0f) * Pi; } // d/360*2*pi
 inline float RdnToDeg( float r ){ return r * 180.0f * (1.0f/Pi); } // r/2pi*360
 
 Point3 RotateVec( Point3& p, Point3& axis, float rdn );
-
-#endif

@@ -1,13 +1,5 @@
-//////////////////////////////////////////////////////////////////////
-//
-// Shader UI Utilities
-//
-#include "shaders.h"
-#include "shaderUtil.h"
-#include "iColorMan.h"
-#include "toneop.h"
 
-#include "3dsmaxport.h"
+#include "stdafx.h"
 
 static const float Pi = 3.1415926f;
 static const float Pi2 = Pi * Pi;
@@ -75,11 +67,7 @@ Color OrenNayarIllum( Point3& N, Point3& L, Point3& V, float rough, Color& rho, 
 
 // perpendicular to N, in the U (reference) direction
 Point3 GetTangent( ShadeContext &sc, int uvChan )
-{
-// Point3 basisVecs[ 3 ];
-// sc.DPdUVW( basisVecs, uvChan ); // 0 is vtxclr, 1..n is uv channels, max_meshmaps in mesh.h
-// Point3 U = Normalize( basisVecs[0] );
-   
+{ 
    Point3 U = sc.VectorFrom( Point3( 0.01f, 0.0f, 1.0f ), REF_OBJECT );
 //Retry:
    U = Normalize( U );
@@ -88,10 +76,6 @@ Point3 GetTangent( ShadeContext &sc, int uvChan )
 
    // the line between the tip of vec[0] and its projection on N is tangent
    float UN = Dot( U, N );
-// if ( Abs(UN) > 0.9999999f ){
-//    U = sc.VectorFrom( Point3( 0.01f, 1.0f, 0.0f ), REF_OBJECT ); 
-//    goto Retry;
-// }
    Point3 T = U - N * UN;
    T = Normalize( T );
    return T;
@@ -175,46 +159,6 @@ void CombineComponentsAdd( IllumParams& ip )
    ip.finalC = COMBINE_ADD(ip); 
 }
 
-//void CombineComponentsCompShader::ChooseSpecularMethod(TimeValue t, RenderGlobalContext* rgc)
-//{
-//   useComposite = true;
-//   if (rgc == NULL) {
-//      ToneOperatorInterface* tint = static_cast<ToneOperatorInterface*>(
-//         GetCOREInterface(TONE_OPERATOR_INTERFACE));
-//      if (tint != NULL) {
-//         ToneOperator* top = tint->GetToneOperator();
-//         if (top != NULL && top->Active(t))
-//            useComposite = false;
-//      }
-//   } else {
-//      ToneOperator* top = rgc->pToneOp;
-//      if (top != NULL && top->Active(t))
-//         useComposite = false;
-//   }
-//}
-//
-//void CombineComponentsCompShader::CombineComponents( ShadeContext &sc, IllumParams& ip )
-//{
-//   if (useComposite) {
-//      Color spec, diff, rem;
-//      spec = ip.specIllumOut + ip.reflIllumOut;
-//      rem = 1.0f - spec;
-//      rem = Bound( rem );
-//      diff = ip.ambIllumOut + ip.diffIllumOut  + ip.selfIllumOut;
-//      ip.finalC = spec + ip.finalAttenuation * rem * diff +  rem * ip.transIllumOut; 
-//   } else {
-//      ip.finalC = COMBINE_ADD(ip); 
-//   }
-//}
-//
-//BaseInterface* CombineComponentsCompShader::GetInterface(Interface_ID id)
-//{
-//   if (id == ISPECULAR_COMPOSITE_SHADER_ID)
-//      return static_cast<ISpecularCompositeShader*>(this);
-//   return NULL;
-//}
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // transpColor utility
@@ -275,53 +219,48 @@ static ResourceDelete theResourceDelete;
 // mjm - end
 
 BOOL IsButtonChecked(HWND hWnd,int id)
-   {
+{
    ICustButton *iBut;
    BOOL res;
    iBut = GetICustButton(GetDlgItem(hWnd,id));
    res = iBut->IsChecked();
    ReleaseICustButton(iBut);
    return res;
-   }
+}
 
-void CheckButton(HWND hWnd,int id, BOOL check) {
+void CheckButton(HWND hWnd,int id, BOOL check) 
+{
    ICustButton *iBut;
    iBut = GetICustButton(GetDlgItem(hWnd,id));
    if( iBut )
       iBut->SetCheck(check);
    ReleaseICustButton(iBut);
-   }
+}
 
 void SetupLockButton(HWND hWnd,int id, BOOL check)
-   {
+{
    ICustButton *iBut;
    iBut = GetICustButton(GetDlgItem(hWnd,id));
    iBut->SetImage(hLockButtons,0,1,0,1,16,15);
    iBut->SetType(CBT_CHECK);
    ReleaseICustButton(iBut);
-   }
+}
 
-void SetupPadLockButton(HWND hWnd,int id, BOOL check) {
-   ICustButton *iBut;
-   iBut = GetICustButton(GetDlgItem(hWnd,id));
-   iBut->SetImage(hLockButtons,2,2,2,2,16,15);
-   iBut->SetType(CBT_CHECK);
-   ReleaseICustButton(iBut);
-   }
+void SetupPadLockButton(HWND hWnd,int id, BOOL check) 
+{
+	ICustButton *iBut;
+	iBut = GetICustButton(GetDlgItem(hWnd,id));
+	iBut->SetImage(hLockButtons,2,2,2,2,16,15);
+	iBut->SetType(CBT_CHECK);
+	ReleaseICustButton(iBut);
+}
  
 void LoadStdShaderResources()
-   {
-   static BOOL loaded=FALSE;
-   if (loaded) return;
-   loaded = TRUE; 
-   //HBITMAP hBitmap, hMask;
-   //hLockButtons = ImageList_Create(16, 15, TRUE, 2, 0);
-   //hBitmap = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DMTL_BUTTONS));
-   //hMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DMTL_MASKBUTTONS));
-   //ImageList_Add(hLockButtons,hBitmap,hMask);
-   //DeleteObject(hBitmap);
-   //DeleteObject(hMask);
-   }
+{
+	static BOOL loaded=FALSE;
+	if (loaded) return;
+	loaded = TRUE; 
+}
 
 
 //-HiLite Curve Control------------------------------------------------------
@@ -468,12 +407,6 @@ float ybr, ybl;
       VertLine(hdc,xcen+i, ytop, ry-1);
       VertLine(hdc,xcen-i, ytop, ly-1);   // fill in above curve
 
-//    if (ylast>=0) {
-//       SelectPen(hdc,linePen);
-//       VertLine(hdc, xcen+i-1, iy-1, ylast); // white dot marks curve
-//       VertLine(hdc, xcen-i+1, iy-1, ylast);
-//    }
-
       ylast = iy;
       ybr += slope;
       ybl += -slope;
@@ -508,12 +441,6 @@ float ybr, ybl;
          VertLine(hdc,xcen+i, r, ry); // start at center & spread out on both sides
       else if ( ry <= vals[i] )
          VertLine(hdc,xcen+i, vals[i]-1, ry); // start at center & spread out on both sides
-
-//    if (ylast>=0) {
-//       SelectPen(hdc,linePen);
-//       VertLine(hdc, xcen+i-1, iy-1, ylast); // white dot marks curve
-//       VertLine(hdc, xcen-i+1, iy-1, ylast);
-//    }
 
       ylast = iy;
       ybr += -slope;
