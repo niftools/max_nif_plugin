@@ -1,48 +1,22 @@
-/**********************************************************************
-*<
-FILE: AnimKey.h
 
-DESCRIPTION:	Animation Key Import Routines
+#include "stdafx.h"
 
-CREATED BY: tazpn (Theo)
+const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID( 0x118f7e02, 0xffee238a );
 
-HISTORY: 
-
-*>	Copyright (c) 2006, All Rights Reserved.
-**********************************************************************/
-#include "pch.h"
-// Max Headers
-#include <Max.h>
-#include <control.h>
-// Niflib Headers
-#include <niflib.h>
-#include <Key.h>
-
-#include "AnimKey.h"
-#include "niutils.h"
-
-
-const Class_ID IPOS_CONTROL_CLASS_ID = Class_ID(0x118f7e02,0xffee238a);
-enum {
-   IPOS_X_REF	=	0,
-   IPOS_Y_REF	=	1,
-   IPOS_Z_REF	=	2,
-   IPOS_W_REF	=	3,
-};
-
-template <typename T, typename U>
-T& InitLinKey(T& rKey, U& key, float time)
+template<typename T, typename U>
+T& InitLinKey( T& rKey, U& key, float time )
 {
-   rKey.time = TimeToFrame(time + key.time);
-   rKey.flags = 0;
-   return rKey;
+	rKey.time = TimeToFrame( time + key.time );
+	rKey.flags = 0;
+
+	return rKey;
 }
 
-template <typename T, typename U>
-T& InitFromLinKey(T& rKey, U& key, float time)
+template<typename T, typename U>
+T& InitFromLinKey( T& rKey, U& key, float time )
 {
-   rKey.time = time + FrameToTime(key.time);
-   return rKey;
+	rKey.time = time + FrameToTime( key.time );
+	return rKey;
 }
 
 template <typename T, typename U>
@@ -90,73 +64,72 @@ inline T& InitFromTCBKey(T& rKey, U& key, float time)
 // Specialized Linear Mappings
 
 template<>
-ILinFloatKey MapKey<ILinFloatKey,FloatKey>(FloatKey& key, float time)
+ILinFloatKey MapKey<ILinFloatKey, FloatKey>( FloatKey& key, float time )
 {
-   ILinFloatKey rKey;
-   rKey.val = key.data;
-   return InitLinKey(rKey, key, time);
+	ILinFloatKey rKey;
+	rKey.val = key.data;
+	return InitLinKey( rKey, key, time );
 }
 
 template<>
-ILinRotKey MapKey<ILinRotKey, QuatKey>(QuatKey& key, float time)
+ILinRotKey MapKey<ILinRotKey, QuatKey>( QuatKey& key, float time )
 {
-   ILinRotKey rKey;
-   rKey.val = TOQUAT(key.data, true);
-   return InitLinKey(rKey, key, time);
+	ILinRotKey rKey;
+	rKey.val = TOQUAT( key.data, true );
+	return InitLinKey( rKey, key, time );
 }
 
 template<>
-ILinScaleKey MapKey<ILinScaleKey, FloatKey>(FloatKey& key, float time)
+ILinScaleKey MapKey<ILinScaleKey, FloatKey>( FloatKey& key, float time )
 {
-   ILinScaleKey rKey;
-   rKey.val.s.Set(key.data, key.data, key.data);
-   rKey.val.q.Identity();
-   return InitLinKey(rKey, key, time);
+	ILinScaleKey rKey;
+	rKey.val.s.Set( key.data, key.data, key.data );
+	rKey.val.q.Identity( );
+
+	return InitLinKey( rKey, key, time );
 }
 
 template<>
-ILinPoint3Key MapKey<ILinPoint3Key, Vector3Key>(Vector3Key& key, float time)
+ILinPoint3Key MapKey<ILinPoint3Key, Vector3Key>( Vector3Key& key, float time )
 {
-   ILinPoint3Key rKey;
-   rKey.val = TOPOINT3(key.data);
-   return InitLinKey(rKey, key, time);
+	ILinPoint3Key rKey;
+	rKey.val = TOPOINT3( key.data );
+	return InitLinKey( rKey, key, time );
 }
-
 
 // Specialized Linear Mappings
 
 template<>
-FloatKey MapKey<FloatKey, ILinFloatKey>(ILinFloatKey& key, float time)
+FloatKey MapKey<FloatKey, ILinFloatKey>( ILinFloatKey& key, float time )
 {
    FloatKey rKey;
    rKey.data = key.val;
-   return InitFromLinKey(rKey, key, time);
+   return InitFromLinKey( rKey, key, time );
 }
 
 template<>
-Vector3Key MapKey<Vector3Key, ILinPoint3Key>(ILinPoint3Key& key, float time)
+Vector3Key MapKey<Vector3Key, ILinPoint3Key>( ILinPoint3Key& key, float time )
 {
    Vector3Key rKey;
-   rKey.data = TOVECTOR3(key.val);
-   return InitFromLinKey(rKey, key, time);
+   rKey.data = TOVECTOR3( key.val );
+   return InitFromLinKey( rKey, key, time );
 }
 
 template<>
-QuatKey MapKey<QuatKey, ILinRotKey>(ILinRotKey& key, float time)
+QuatKey MapKey<QuatKey, ILinRotKey>( ILinRotKey& key, float time )
 {
    QuatKey rKey;
-   rKey.data = TOQUAT(key.val, true);
-   return InitFromLinKey(rKey, key, time);
+   rKey.data = TOQUAT( key.val, true );
+   return InitFromLinKey( rKey, key, time );
 }
 
 template<>
-FloatKey MapKey<FloatKey, ILinScaleKey>(ILinScaleKey& key, float time)
+FloatKey MapKey<FloatKey, ILinScaleKey>( ILinScaleKey& key, float time )
 {
    FloatKey rKey;
-   rKey.data = (key.val[0] + key.val[1] + key.val[2]) / 3.0f;
-   return InitFromLinKey(rKey, key, time);
+   rKey.data = ( key.val[0] + key.val[1] + key.val[2] ) / 3.0f;
+   return InitFromLinKey( rKey, key, time );
 }
-
 
 // Specialized Bezier/Hybrid mappings
 
@@ -311,176 +284,154 @@ FloatKey MapKey<FloatKey, ITCBScaleKey>(ITCBScaleKey& key, float time)
 
 // Merge Keys
 
-template<> void MergeKey<ILinRotKey>(ILinRotKey& lhs, ILinRotKey& rhs) {
+template<> void MergeKey<ILinRotKey>( ILinRotKey& lhs, ILinRotKey& rhs )
+{
    lhs.val *= rhs.val;
 }
 
-template<> void MergeKey<IBezQuatKey>(IBezQuatKey& lhs, IBezQuatKey& rhs) {
+template<> void MergeKey<IBezQuatKey>( IBezQuatKey& lhs, IBezQuatKey& rhs )
+{
    lhs.val *= rhs.val;
 }
 
-template<> void MergeKey<ITCBRotKey>(ITCBRotKey& lhs, ITCBRotKey& rhs) {
+template<> void MergeKey<ITCBRotKey>( ITCBRotKey& lhs, ITCBRotKey& rhs )
+{
    lhs.val = Quat(lhs.val) * Quat(rhs.val);
 }
 
+// Interp keys
 
-template<> FloatKey InterpKey<FloatKey>(Control *subCtrl, TimeValue time, float timeOff) {
+template<> FloatKey InterpKey<FloatKey>( Control *subCtrl, TimeValue time, float timeOff ) 
+{
    FloatKey rKey;
-   memset(&rKey, 0, sizeof(rKey));
-   rKey.time = timeOff + FrameToTime(time);
-   Interval valid; valid.SetEmpty();
-   if (subCtrl->SuperClassID() == SClass_ID(CTRL_SCALE_CLASS_ID) ) {
+   memset( &rKey, 0, sizeof( rKey ) );
+   rKey.time = timeOff + FrameToTime( time );
+   
+   Interval valid; 
+   valid.SetEmpty();
+
+   if( subCtrl->SuperClassID( ) == SClass_ID( CTRL_SCALE_CLASS_ID ) ) 
+   {
       ScaleValue s;
-      subCtrl->GetValue(time, &s, valid, CTRL_ABSOLUTE);
-      rKey.data = Average(s.s);
-   } else {
-      subCtrl->GetValue(time, &rKey.data, valid, CTRL_ABSOLUTE);
-   }
+      subCtrl->GetValue( time, &s, valid, CTRL_ABSOLUTE );
+      rKey.data = Average( s.s );
+   } 
+   else
+      subCtrl->GetValue( time, &rKey.data, valid, CTRL_ABSOLUTE );
+
    return rKey;
 }
 
-template<> QuatKey InterpKey<QuatKey>(Control *subCtrl, TimeValue time, float timeOff) {
+template<> QuatKey InterpKey<QuatKey>( Control *subCtrl, TimeValue time, float timeOff )
+{
    QuatKey rKey;
-   memset(&rKey, 0, sizeof(rKey));
-   rKey.time = timeOff + FrameToTime(time);
-   Interval valid; valid.SetEmpty();
+   memset( &rKey, 0, sizeof( rKey ) );
+   rKey.time = timeOff + FrameToTime( time );
+   
+   Interval valid; 
+   valid.SetEmpty( );
+   
    Quat q;
-   subCtrl->GetValue(time, &q, valid, CTRL_ABSOLUTE);
-   rKey.data = TOQUAT(q, true);
+   subCtrl->GetValue( time, &q, valid, CTRL_ABSOLUTE );
+   rKey.data = TOQUAT( q, true );
+
    return rKey;
 }
 
-template<> Vector3Key InterpKey<Vector3Key>(Control *subCtrl, TimeValue time, float timeOff) {
+template<> Vector3Key InterpKey<Vector3Key>( Control *subCtrl, TimeValue time, float timeOff ) 
+{
    Vector3Key rKey;
-   memset(&rKey, 0, sizeof(rKey));
-   rKey.time = timeOff + FrameToTime(time);
-   Interval valid; valid.SetEmpty();
+   memset( &rKey, 0, sizeof( rKey ) );
+   rKey.time = timeOff + FrameToTime( time );
+
+   Interval valid; 
+   valid.SetEmpty();
+   
    Point3 p;
-   subCtrl->GetValue(time, &p, valid, CTRL_ABSOLUTE);
-   rKey.data = TOVECTOR3(p);
+   subCtrl->GetValue( time, &p, valid, CTRL_ABSOLUTE );
+   rKey.data = TOVECTOR3( p );
+
    return rKey;
 }
 
-float GetValue(Vector3& value, V3T type)
+float GetValue( Niflib::Vector3& value, V3T type )
 {
-   switch (type) {
-   case V3T_X: return value.x;
-   case V3T_Y: return value.y;
-   case V3T_Z: return value.z;
-   }
-   return 0.0f;
+	switch( type )
+	{
+	case V3T_X: return value.x;
+	case V3T_Y: return value.y;
+	case V3T_Z: return value.z;
+	}
+
+	return 0.0f;
 }
 
-void SetValue(Vector3& v, float value, V3T type)
+void SetValue( Niflib::Vector3& v, float value, V3T type )
 {
-   switch (type) {
-   case V3T_X: v.x = value; break;
-   case V3T_Y: v.y = value; break;
-   case V3T_Z: v.z = value; break;
-   }
+	switch( type )
+	{
+	case V3T_X: v.x = value; break;
+	case V3T_Y: v.y = value; break;
+	case V3T_Z: v.z = value; break;
+	}
 }
 
-FloatKey& CopyKey( FloatKey& dst, Vector3Key& src, V3T type)
+FloatKey& CopyKey( FloatKey& dst, Vector3Key& src, V3T type )
 {
-   dst.time = src.time;
-   dst.bias = src.bias;
-   dst.continuity = src.continuity;
-   dst.tension = src.tension;
-   dst.backward_tangent = GetValue(src.backward_tangent, type);
-   dst.forward_tangent = GetValue(src.forward_tangent, type);
-   dst.data = GetValue(src.data, type);
-   return dst;
+	dst.time = src.time;
+	dst.bias = src.bias;
+	dst.continuity = src.continuity;
+	dst.tension = src.tension;
+	dst.backward_tangent = GetValue( src.backward_tangent, type );
+	dst.forward_tangent = GetValue( src.forward_tangent, type );
+	dst.data = GetValue( src.data, type );
+
+	return dst;
 }
 
-Vector3Key& CopyKey( Vector3Key& dst, FloatKey& src, V3T type)
+Vector3Key& CopyKey( Vector3Key& dst, FloatKey& src, V3T type )
 {
-   dst.time = src.time;
-   dst.bias = src.bias;
-   dst.continuity = src.continuity;
-   dst.tension = src.tension;
-   SetValue(dst.backward_tangent, src.backward_tangent, type);
-   SetValue(dst.forward_tangent, src.forward_tangent, type);
-   SetValue(dst.data, src.data, type);
-   return dst;
+	dst.time = src.time;
+	dst.bias = src.bias;
+	dst.continuity = src.continuity;
+	dst.tension = src.tension;
+	
+	SetValue( dst.backward_tangent, src.backward_tangent, type );
+	SetValue( dst.forward_tangent, src.forward_tangent, type );
+	SetValue( dst.data, src.data, type );
+
+	return dst;
 }
 
-void SplitKeys(vector<Vector3Key>&keys, vector<FloatKey>&xkeys, vector<FloatKey>&ykeys, vector<FloatKey>&zkeys)
+void SplitKeys( std::vector<Vector3Key>& keys, std::vector<FloatKey>& xkeys, std::vector<FloatKey>& ykeys, std::vector<FloatKey>& zkeys )
 {
-   int n = keys.size();
-   xkeys.resize(n), ykeys.resize(n), zkeys.resize(n);
-   for (int i=0,n=keys.size(); i<n; ++i) {
-      Vector3Key& key = keys[i];
-      CopyKey(xkeys[i], key, V3T_X), CopyKey(ykeys[i], key, V3T_Y), CopyKey(zkeys[i], key, V3T_Z);
-   }
+	int n = keys.size( );
+	
+	xkeys.resize( n );
+	ykeys.resize( n );
+	zkeys.resize( n );
+
+	for( int i = 0, n = keys.size( ); i < n; ++i )
+	{
+		Vector3Key& key = keys[ i ];
+
+		CopyKey( xkeys[ i ], key, V3T_X );
+		CopyKey( ykeys[ i ], key, V3T_Y );
+		CopyKey( zkeys[ i ], key, V3T_Z );
+	}
 }
 
-void JoinKeys(vector<Vector3Key>&keys, vector<FloatKey>&xkeys, vector<FloatKey>&ykeys, vector<FloatKey>&zkeys)
+void JoinKeys( std::vector<Vector3Key>& keys, std::vector<FloatKey>& xkeys, std::vector<FloatKey>& ykeys, std::vector<FloatKey>& zkeys )
 {
-   int n = xkeys.size();
-   keys.resize(n);
-   for (int i=0; i<n; ++i) {
-      Vector3Key& key = keys[i];
-      CopyKey(key, xkeys[i], V3T_X), CopyKey(key, ykeys[i], V3T_Y), CopyKey(key, zkeys[i], V3T_Z);
-   }
-}
+	int n = xkeys.size( );
+	keys.resize( n );
 
-bool GetTranslationKeys(Control *c, vector<Vector3Key> keys, const vector<float>& times, float timeOffset)
-{
-   // separate xyz
-   if (c->ClassID() == IPOS_CONTROL_CLASS_ID) 
-   { 
-      KeyType kType = QUADRATIC_KEY;
-      vector<FloatKey> xkeys, ykeys, zkeys;
+	for( int i = 0; i < n; ++i )
+	{
+		Vector3Key& key = keys[ i ];
 
-      if (Control *x = c->GetXController()){
-         if (x->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-            kType = LINEAR_KEY;
-            GetKeys<FloatKey, ILinFloatKey>(x, xkeys, /*times,*/ timeOffset);
-         } else if (x->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-            kType = QUADRATIC_KEY;
-            GetKeys<FloatKey, IBezFloatKey>(x, xkeys, /*times,*/ timeOffset);
-         } else if (x->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-            kType = TBC_KEY;
-            GetKeys<FloatKey, ITCBFloatKey>(x, xkeys, /*times,*/ timeOffset);
-         } else {
-            kType = QUADRATIC_KEY;
-            GetKeys<FloatKey, IBezFloatKey>(x, xkeys, /*times,*/ timeOffset);
-         }
-      }
-      if (Control *y = c->GetYController()){
-         if (y->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, ILinFloatKey>(y, ykeys, /*times,*/ timeOffset);
-         } else if (y->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, IBezFloatKey>(y, ykeys, /*times,*/ timeOffset);
-         } else if (y->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, ITCBFloatKey>(y, ykeys, /*times,*/ timeOffset);
-         } else {
-            GetKeys<FloatKey, IBezFloatKey>(y, ykeys, /*times,*/ timeOffset);
-         }
-      }
-      if (Control *z = c->GetZController()){
-         if (z->ClassID() == Class_ID(LININTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, ILinFloatKey>(z, zkeys, /*times,*/ timeOffset);
-         } else if (z->ClassID() == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, IBezFloatKey>(z, zkeys, /*times,*/ timeOffset);
-         } else if (z->ClassID() == Class_ID(TCBINTERP_FLOAT_CLASS_ID,0)) {
-            GetKeys<FloatKey, ITCBFloatKey>(z, zkeys, /*times,*/ timeOffset);
-         } else {
-            GetKeys<FloatKey, IBezFloatKey>(z, zkeys, /*times,*/ timeOffset);
-         }
-      }
-      JoinKeys(keys, xkeys, ykeys, zkeys);
-      return true;
-   }
-   return false;
-}
-
-void ScaleKey(FloatKey& key, float mult) {
-	key.data *= mult;
-}
-
-void ScaleKeys(vector<FloatKey>&keys, float mult) {
-	for (int i=0, n = keys.size(); i<n; ++i) {
-		ScaleKey(keys[i], mult);
+		CopyKey( key, xkeys[ i ], V3T_X );
+		CopyKey( key, ykeys[ i ], V3T_Y );
+		CopyKey( key, zkeys[ i ], V3T_Z );
 	}
 }

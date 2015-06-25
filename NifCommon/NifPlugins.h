@@ -1,8 +1,5 @@
-#ifndef __NIFPLUGINS_H__
-#define __NIFPLUGINS_H__
 
-#include "nif_math.h"
-using Niflib::Vector3;
+#pragma once
 
 /* node properties */
 
@@ -14,16 +11,16 @@ using Niflib::Vector3;
 #define NP_HVK_PROXY_GEOM					_T("Proxy_Geometry")
 
 #define NP_HVK_MASS_OLD						_T("np_hvk_mass")
-#define NP_HVK_FRICTION_OLD				_T("np_hvk_frict")
-#define NP_HVK_RESTITUTION_OLD			_T("np_hvk_resti")
+#define NP_HVK_FRICTION_OLD					_T("np_hvk_frict")
+#define NP_HVK_RESTITUTION_OLD				_T("np_hvk_resti")
 
 
 /* default values */
-#define NP_DEFAULT_HVK_EMPTY					3.402823466e+38F
+#define NP_DEFAULT_HVK_EMPTY				3.402823466e+38F
 #define NP_DEFAULT_HVK_MASS					0.0f
 #define NP_DEFAULT_HVK_FRICTION				0.3f
 #define NP_DEFAULT_HVK_RESTITUTION			0.3f
-#define NP_DEFAULT_PROXY_GEOM			      _T("")
+#define NP_DEFAULT_PROXY_GEOM				_T("")
 
 
 // Custom Properties
@@ -74,19 +71,17 @@ enum NpFrnPos
 };
 
 /* property access */
-bool	npIsCollision(INode *node);
-void	npSetCollision(INode *node, bool coll);
+bool	npIsCollision( INode* node );
+void	npSetCollision( INode* node, bool coll );
 
-bool	npGetProp(INode *node, const TSTR &prop, int &value, int def=0);
-void	npSetProp(INode *node, const TSTR &prop, int value);
+bool	npGetProp( INode* node, const TSTR& prop, int& value, int def = 0 );
+void	npSetProp( INode* node, const TSTR& prop, int value );
 
-bool	npGetProp(INode *node, const TSTR &prop, float &value, float def=0.0f);
-void	npSetProp(INode *node, const TSTR &prop, float value);
+bool	npGetProp( INode* node, const TSTR& prop, float& value, float def = 0 );
+void	npSetProp( INode* node, const TSTR& prop, float value );
 
-bool	npGetProp(INode *node, const TSTR &prop, Vector3 &value, const Vector3 def=Vector3(0,0,0));
-void	npSetProp(INode *node, const TSTR &prop, const Vector3 &value);
+bool	npGetProp( INode* node, const TSTR& prop, Niflib::Vector3& value, Niflib::Vector3 def = Niflib::Vector3( 0, 0, 0 ) );
+void	npSetProp( INode* node, const TSTR& prop, const Niflib::Vector3& value );
 
-bool	npGetProp(INode *node, const TSTR &prop, TSTR &value, TSTR def=TSTR());
-void	npSetProp(INode *node, const TSTR &prop, const TSTR& value);
-
-#endif //  __NIFPLUGINS_H__
+bool	npGetProp( INode* node, const TSTR& prop, TSTR& value, TSTR def = TSTR( ) );
+void	npSetProp( INode* node, const TSTR& prop, const TSTR& value );

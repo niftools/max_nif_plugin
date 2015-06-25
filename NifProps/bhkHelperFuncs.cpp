@@ -1,11 +1,5 @@
-#pragma warning( disable:4800 )
 
-#include <map>
-#include "NifProps.h"
-#include "NifStrings.h"
-#include "NifPlugins.h"
-#include "NifGui.h"
-#include "meshadj.h"
+#include "stdafx.h"
 
 using namespace std;
 
@@ -585,7 +579,8 @@ void BuildScubaMesh(Mesh &mesh, int segs, int smooth, int llsegs,
 	edgelstr[0] = edgelstl[0] = 0;
 	edgelstr[1] = 1;
 	edgelstl[1] = capv;
-	for (int i=2;i<=sideedge;i++){ 
+	int i = 0;
+	for (i=2;i<=sideedge;i++){ 
 		edgelstr[i]=edgelstr[i-1]+capv;
 		edgelstl[i]=edgelstr[i]+dcapv;
 	}
@@ -795,13 +790,13 @@ public:
 	{
 		if (hMagicLib == NULL)
 		{
-			char curfile[_MAX_PATH];
+			wchar_t curfile[_MAX_PATH];
 			GetModuleFileName(hInstance, curfile, MAX_PATH);
 			PathRemoveFileSpec(curfile);
-			PathAppend(curfile, "NifMagic.dll");
-			hMagicLib = LoadLibraryA( curfile );
+			PathAppend(curfile, _T( "NifMagic.dll" ) );
+			hMagicLib = LoadLibraryW( curfile );
 			if (hMagicLib == NULL)
-				hMagicLib = LoadLibraryA( "Nifmagic.dll" );
+				hMagicLib = LoadLibraryW( _T( "Nifmagic.dll" ) );
 			CalcCapsule = (fnCalcCapsule)GetProcAddress( hMagicLib, "CalcCapsule" );
 			CalcOrientedBox = (fnCalcOrientedBox)GetProcAddress( hMagicLib, "CalcOrientedBox" );
 			CalcMassProps = (fnCalcMassProps)GetProcAddress( hMagicLib, "CalcMassProps" );
