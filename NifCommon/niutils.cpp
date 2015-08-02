@@ -804,13 +804,16 @@ Modifier *GetOrCreateSkin(INode *node)
    Modifier *skinMod = GetSkin(node);
    if (skinMod)
       return skinMod;   
-   
-   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
+   Object *pObj = node->GetObjectRef();
+   IDerivedObject *pDerObj = NULL;
+   if (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	   pDerObj = static_cast<IDerivedObject*>(pObj);
+   else pDerObj = CreateDerivedObject(pObj);
    //create a skin modifier and add it
    skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, SKIN_CLASSID);
-   dobj->SetAFlag(A_LOCK_TARGET);
-   dobj->AddModifier(skinMod);
-   dobj->ClearAFlag(A_LOCK_TARGET);
+   pDerObj->SetAFlag(A_LOCK_TARGET);
+   pDerObj->AddModifier(skinMod);
+   pDerObj->ClearAFlag(A_LOCK_TARGET);
    node->SetObjectRef(dobj);
    return skinMod;
 }

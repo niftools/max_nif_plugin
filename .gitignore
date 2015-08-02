@@ -22,3 +22,6 @@ Build/Debug
 _UpgradeReport_Files
 x64
 Debug
+/Build
+/ipch/nifplugins_vc2008-4447fb5f
+/NifPlugins_VC2010.sdf

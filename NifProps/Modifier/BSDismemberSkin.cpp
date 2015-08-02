@@ -2510,19 +2510,24 @@ void BSDSModifier::SelectUnused()
    ip->RedrawViews(ip->GetTime());
 }
 
-// Get or Create the Skin Modifier
+// Get or Create the BSDismember Modifier
 Modifier *GetOrCreateBSDismemberSkin(INode *node)
 {
    Modifier *skinMod = GetBSDismemberSkin(node);
    if (skinMod)
       return skinMod;   
-
-   IDerivedObject *dobj = CreateDerivedObject(node->GetObjectRef());
-   //create a skin modifier and add it
+   Object *pObj = node->GetObjectRef();
+   IDerivedObject *pDerObj = NULL;
+   if (pObj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+	   pDerObj = static_cast<IDerivedObject*>(pObj);
+   else {
+	   pDerObj = CreateDerivedObject(pObj);
+   }
+   //create a BSDismember modifier and add it
    skinMod = (Modifier*) CreateInstance(OSM_CLASS_ID, BSDSMODIFIER_CLASS_ID);
-   dobj->SetAFlag(A_LOCK_TARGET);
-   dobj->AddModifier(skinMod);
-   dobj->ClearAFlag(A_LOCK_TARGET);
+   pDerObj->SetAFlag(A_LOCK_TARGET);
+   pDerObj->AddModifier(skinMod);
+   pDerObj->ClearAFlag(A_LOCK_TARGET);
    node->SetObjectRef(dobj);
    return skinMod;
 }
